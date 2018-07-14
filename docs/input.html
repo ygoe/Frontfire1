@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Input controls - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Input controls</h1>
+
+		<p>
+			HTML defines a number of input control elements for most basic use cases.
+			They should be rendered platform-native in most environments.
+			To achieve a more modern and cross-platform consistent look, these controls are restyled by Frontfire.
+			There are also other enhancements to controls and entirely new controls.
+			The following samples show input controls for forms.
+		</p>
+		
+		<p>
+			The “Disabled” checkbox can be used to toggle the above controls and inspect their disabled appearance and behaviour.
+		</p>
+
+		<h2>Placeholder</h2>
+		
+		<p>
+			Text inputs can have a placeholder text that is shown when the input is empty. Add it with the standard <code>&lt;input placeholder="..."&gt;</code> attribute.
+		</p>
+		
+		<p class="placeholderSamples">
+			Postcode: <input type="text" placeholder="ex. 12345">
+		</p>
+		
+		<p>
+			<label><input type="checkbox" data-target="placeholderSamples"> Disabled</label>
+		</p>
+
+		<h2>Numeric input</h2>
+		
+		<p>
+			The tiny spinner buttons are now at a touch-friendly size.
+			Select an odd number between 1 and 30. And yes, 30 is not an odd number, but must be handled as well. Use the standard <code>&lt;input type="number"&gt;</code>, optionally with the <code>min</code>, <code>max</code> and <code>step</code> attributes.
+		</p>
+		
+		<p class="numericSamples">
+			<input type="number" min="1" max="30" step="2">
+		</p>
+
+		<p>
+			<label><input type="checkbox" data-target="numericSamples"> Disabled</label>
+		</p>
+
+		<h2>Segmented input</h2>
+		
+		<p>
+			Input fields can have labels at either side. To form such an input group, a wrapping element needs to be introduced.
+		</p>
+		
+		<p class="segmentedSamples">
+			<span class="segmented-input">
+				<input type="number">
+				<span class="label">ms</span>
+			</span>
+		</p>
+		
+		<p><samp>
+			&lt;span class="segmented-input"&gt;<br>
+			    &lt;input type="number"&gt;<br>
+			    &lt;span class="label"&gt;ms&lt;/span&gt;<br>
+			&lt;/span&gt;
+		</samp></p>
+		
+		<p>
+			The <code>.label</code> element may also be placed before the input, or one before and one after it.
+		</p>
+
+		<p class="segmentedSamples">
+			<span class="segmented-input">
+				<span class="label">&ge;</span>
+				<input type="text">
+			</span>
+		</p>
+
+		<p>
+			<label><input type="checkbox" data-target="segmentedSamples"> Disabled</label>
+		</p>
+
+		<h2>Icons</h2>
+		
+		<p>
+			Input fields can have icons at either side. In this example, Font Awesome icons (fa) are used.
+		</p>
+		
+		<p class="iconSamples">
+			<span class="segmented-input icon-left">
+				<i class="fa fa-envelope"></i>
+				<input type="email" placeholder="ex. mail@example.com">
+			</span>
+		</p>
+
+		<p><samp>
+			&lt;span class="segmented-input icon-left"&gt;<br>
+			    &lt;i class="fa fa-envelope"&gt;&lt;/i&gt;<br>
+			    &lt;input type="email"&gt;<br>
+			&lt;/span&gt;
+		</samp></p>
+		
+		<p class="iconSamples">
+			<span class="segmented-input icon-right">
+				<input type="tel" placeholder="ex. +1 2345 6789">
+				<i class="fa fa-phone"></i>
+			</span>
+		</p>
+
+		<p class="iconSamples">
+			<span class="segmented-input icon-right">
+				<input type="tel" class="input-validation-error" placeholder="ex. +1 2345 6789">
+				<i class="fa fa-phone"></i>
+			</span>
+		</p>
+
+		<p>
+			Instead of a static icon, there can also be a loading indicator displayed.
+		</p>
+		
+		<span class="segmented-input icon-right iconSamples">
+			<input type="text">
+			<i class="loading small"></i>
+		</span>
+
+		<p><samp>
+			&lt;span class="segmented-input icon-left"&gt;<br>
+			    &lt;input type="text"&gt;<br>
+			    &lt;i class="loading small"&gt;&lt;/i&gt;<br>
+			&lt;/span&gt;
+		</samp></p>
+		
+		<p>
+			<label><input type="checkbox" data-target="iconSamples"> Disabled</label>
+		</p>
+		
+		<h2>Transparent and borderless input boxes</h2>
+		
+		<p>
+			Text inputs have a border and a white opaque background by default. To blend them more into styled environments, they can also have no border and background.
+		</p>
+
+		<p class="transparentSamples" style="background: #f4ffc0; box-shadow: 0 0 15px 8px #f4ffc0;">
+			Type here: <input type="text" class="no-border transparent" value="Sample text"><br>
+			Type here: <input type="text" class="underline" value="Sample text"><br>
+		</p>
+		
+		<p>
+			<label><input type="checkbox" data-target="transparentSamples"> Disabled</label>
+		</p>
+
+		<h2>Checkboxes and radio buttons</h2>
+		
+		<p>
+			Checkbox and radio box inputs are styled to look consistent across all browsers.
+			They're also a little bigger than normal for easier touch interaction.
+			Checkbox and radio box controls should be grouped with their label text in a <code>&lt;label&gt;</code> element.
+			This can also include an icon.
+		</p>
+		
+		<p>
+			Checkboxes can be switched through all of the possible three states “checked”, “unchecked” and “indeterminate” by clicking on them.
+			This is normally not possible with HTML. Add the <code>three-state</code> CSS class to enable this feature.
+		</p>
+		
+		<p class="checkboxSamples">
+			<label><input type="checkbox"> <i class="fab fa-whatsapp"></i> WhatsApp</label> &nbsp; &nbsp;
+			<label><input type="checkbox" class="three-state"> All 3 states accessible</label> &nbsp; &nbsp;
+			<label disabled><input type="checkbox" disabled> Initially disabled</label>
+		</p>
+
+		<p class="checkboxSamples">
+			<label><input type="radio" name="opt" value="1"> Option 1</label> &nbsp; &nbsp;
+			<label><input type="radio" name="opt" value="2"> Option 2</label> &nbsp; &nbsp;
+			<label disabled><input type="radio" name="opt" value="3" disabled> Initially disabled</label>
+		</p>
+		
+		<p>
+			<label><input type="checkbox" data-target="checkboxSamples"> Disabled</label>
+		</p>
+
+		<h2>Auto-height textbox</h2>
+		
+		<p>
+			The following textarea grows as you type more text into it.
+			Add the <code>auto-height</code> CSS class to it to enable this feature.
+			It requires JavaScript to function but relies solely on CSS for proper resizing and precise measuring.
+		</p>
+		
+		<p>
+			<textarea class="auto-height"></textarea>
+		</p>
+		
+		<h2>Color button</h2>
+		
+		<p>
+			The default colour picker opens a platform-specific and much outdated colour selection dialog window.
+			On Windows 10, this dialog usually still originates from Windows 95, over 20 years ago.
+			Frontfire replaces that with a modern and simple colour palette in a little dropdown box.
+			Just use the standard <code>&lt;input type="color"&gt;</code>.
+		</p>
+		
+		<p class="colorSamples">
+			<input type="color">
+		</p>
+
+		<p>
+			<label><input type="checkbox" data-target="colorSamples"> Disabled</label>
+		</p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("input[data-target]").click(function () {
+			let targetClass = $(this).data("target");
+			$("." + targetClass + " input").disabled(this.checked);
+		});
+	</script>
+</body>
+</html>

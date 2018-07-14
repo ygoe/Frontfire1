@@ -1,0 +1,125 @@
+@import "../settings";
+
+$_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
+
+%message
+{
+	padding: 6px 10px;
+	position: relative;
+
+	&.closable
+	{
+		padding-right: 31px;
+	}
+	&.ff-closed
+	{
+		transform-origin: 50% 0%;
+		transition: transform $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+		transform: scaleY(0);
+		opacity: 0;
+	}
+
+	&.icon
+	{
+		padding-left: 35px;
+
+		i:empty
+		{
+			display: block;
+			float: left;
+			margin-top: 3px;
+			margin-left: -26px;
+			width: 20px;
+			text-align: center;
+		}
+	}
+}
+
+.critical
+{
+	@extend %message;
+	background: $criticalBackground;
+	color: $criticalColor;
+
+	a
+	{
+		color: $criticalLinkColor;
+		&:hover { color: $criticalLinkHoverColor; }
+	}
+}
+.error
+{
+	@extend %message;
+	background: $errorBackground;
+	color: $errorColor;
+
+	a
+	{
+		color: $errorLinkColor;
+		&:hover { color: $errorLinkHoverColor; }
+	}
+}
+.warning
+{
+	@extend %message;
+	background: $warningBackground;
+	color: $warningColor;
+
+	a
+	{
+		color: $warningLinkColor;
+		&:hover { color: $warningLinkHoverColor; }
+	}
+}
+.information
+{
+	@extend %message;
+	background: $informationBackground;
+	color: $informationColor;
+
+	a
+	{
+		color: $informationLinkColor;
+		&:hover { color: $informationLinkHoverColor; }
+	}
+}
+.success
+{
+	@extend %message;
+	background: $successBackground;
+	color: $successColor;
+
+	a
+	{
+		color: $successLinkColor;
+		&:hover { color: $successLinkHoverColor; }
+	}
+}
+
+.ff-message-close-button
+{
+	position: absolute;
+	display: block;
+	top: 0;
+	right: 0;
+	width: 25px;
+	height: 32px;
+	color: inherit !important;
+	opacity: 0.6;
+	text-align: center;
+	font-size: 19px;
+	line-height: 28px;
+	transition: opacity 0.2s;
+
+	&::after
+	{
+		display: block;
+		content: '\D7';
+	}
+	&:hover
+	{
+		color: inherit;
+		opacity: 1;
+		transition: opacity 0s;
+	}
+}

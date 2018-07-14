@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Menu - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Menu</h1>
+		
+		<p>
+			Menus can be used as navigation of a website or for more complex web applications.
+			A menu consists of a menu bar that contains menu items.
+		</p>
+
+		<h2>Simple menu</h2>
+		
+		<p>
+			This is a simple menu with some items that are left-aligned.
+		</p>
+
+		<ul class="menu">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li><a href="#">Nowhere</a></li>
+			<li><a href="#">Somewhere else</a></li>
+		</ul>
+		
+		<p><samp>
+			&lt;ul class="menu"&gt;<br>
+			    &lt;li&gt;&lt;a href="#"&gt;Page 1&lt;/a&gt;&lt;/li&gt;<br>
+			    &lt;li&gt;&lt;a href="#"&gt;Page 2&lt;/a&gt;&lt;/li&gt;<br>
+			    &lt;li&gt;&lt;a href="#"&gt;Nowhere&lt;/a&gt;&lt;/li&gt;<br>
+			    &lt;li&gt;&lt;a href="#"&gt;Somewhere else&lt;/a&gt;&lt;/li&gt;<br>
+			&lt;/ul&gt;
+		</samp></p>
+
+		<h2>Right-aligned menu</h2>
+
+		<p>
+			The entire menu can also be aligned to the right end by adding the <code>right</code> CSS class to the menu element.
+		</p>
+		
+		<p>
+			An item can be highlighted by adding the <code>active</code> CSS class to it.
+			This can be used to indicate the current page in a website navigation menu.
+		</p>
+		
+		<ul class="menu right">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li class="active"><a href="#">Nowhere</a></li>
+			<li><a href="#">Somewhere else</a></li>
+		</ul>
+
+		<h2>Left- and right-aligned items</h2>
+
+		<p>
+			When adding the <code>both</code> CSS class to the menu element, you can align some items to the left and others to the right end.
+			The space in between is declared with a pseudo menu item with the <code>stretch</code> class.
+		</p>
+		
+		<ul class="menu both">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li><a href="#">Nowhere</a></li>
+			<li class="stretch"></li>
+			<li><a href="#">Account</a></li>
+		</ul>
+		
+		<p><samp>
+		&lt;ul class="menu both"&gt;<br>
+		    (left-aligned items)<br>
+		    &lt;li class="stretch"&gt;&lt;/li&gt;<br>
+		    (right-aligned items)<br>
+		&lt;/ul&gt;
+		</samp></p>
+
+		<h2>Non-link items</h2>
+
+		<p>
+			Menu items can also be non-interactive and only show some text. Add the <code>text</code> CSS class to such menu items.
+			In this example, an additional horizontal padding was added to the menu element to align with potential content padding.
+		</p>
+
+		<ul class="menu both" style="padding: 0 40px;">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li><a href="#">Nowhere</a></li>
+			<li class="stretch"></li>
+			<li class="text">Hello, user!</li>
+			<li><a href="#">Account</a></li>
+		</ul>
+
+		<p>
+			This example shows a text on the left side, as placeholder for an image or other content,
+			while all interactive menu items are at the right end.
+		</p>
+
+		<ul class="menu both">
+			<li class="text">[Logo]</li>
+			<li class="stretch"></li>
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li><a href="#">Nowhere</a></li>
+		</ul>
+
+		<h2>Dropdown menus</h2>
+		
+		<p>
+			Menus can also have submenus. (For now, only one submenu level is supported.) They open as a dropdown when the menu item is clicked.
+			Items with a submenu can have an indicator, either with the <code>submenu-arrow</code> or <code>submenu-dots</code> class added to the menu element.
+		</p>
+		
+		<p>
+			Menu items can be disabled by adding the <code>disabled</code> HTML attribute (not a CSS class).
+		</p>
+		
+		<p>
+			Separator items are added as simple menu items with no CSS class and a single dash (<code>-</code>) as content.
+		</p>
+
+		<ul class="menu both submenu-arrow">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li>
+				<a href="#">More</a>
+				<ul>
+					<li><a href="#">Subitem 1</a></li>
+					<li><a href="#">Subitem 2</a></li>
+					<li disabled><a href="#">Subitem 3</a></li>
+					<li>-</li>
+					<li><a href="#">Subitem 4</a></li>
+				</ul>
+			</li>
+			<li id="evenMoreMenu">
+				<a href="#">Even more</a>
+				<ul>
+					<li><a href="/">Subitem 1</a></li>
+					<li><a href="/">Subitem 2</a></li>
+				</ul>
+			</li>
+			<li class="stretch"></li>
+			<li>
+				<a href="#">Account</a>
+				<ul>
+					<li><a href="#">Edit profile</a></li>
+					<li><a href="#">Review privacy settings</a></li>
+					<li>-</li>
+					<li><a href="#">Log out</a></li>
+				</ul>
+			</li>
+		</ul>
+
+		<p>
+			<label><input id="disableCheckbox" type="checkbox"> Disable "Even more" menu</label>
+		</p>
+
+		<h2>Vertical menu</h2>
+		
+		<p>
+			A vertical menu can be created by adding the <code>vertical</code> CSS class to the menu element.
+			The width must be restricted if there is no bounding container, otherwise the vertical menu will span the entire available paragraph width.
+		</p>
+
+		<ul class="menu vertical submenu-arrow" style="width: 150px;">
+			<li><a href="#">Page 1</a></li>
+			<li><a href="#">Page 2</a></li>
+			<li>
+				<a href="#">More</a>
+				<ul>
+					<li><a href="#">Subitem 1</a></li>
+					<li><a href="#">Subitem 2</a></li>
+					<li disabled><a href="#">Subitem 3</a></li>
+					<li>-</li>
+					<li><a href="#">Subitem 4</a></li>
+				</ul>
+			</li>
+			<li id="evenMoreMenu">
+				<a href="#">Even more</a>
+				<ul>
+					<li><a href="/">Subitem 1</a></li>
+					<li><a href="/">Subitem 2</a></li>
+				</ul>
+			</li>
+			<li class="active"><a href="#">Nowhere</a></li>
+			<li><a href="#">Somewhere else</a></li>
+		</ul>
+
+		<p class="filler-text">
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in augue bibendum, efficitur nunc vel, placerat massa. Duis enim dui, ultrices eu felis cursus, lacinia fermentum erat. Mauris id ipsum mi. Duis nec vulputate sem, vel egestas justo. Maecenas suscipit tristique lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut sollicitudin ex laoreet mi tempus, id mollis dolor scelerisque. Mauris iaculis tristique ligula, eget efficitur sapien iaculis sed. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+		</p>
+
+		<p class="filler-text">
+			Fusce varius urna eget justo egestas, non convallis dolor condimentum. Donec eget augue ut ligula porttitor consequat. Donec eu magna sit amet risus auctor pharetra at at mi. Integer eget mattis ex, nec pharetra eros. Proin nec sem tempus, efficitur dui sit amet, aliquam urna. Phasellus tincidunt pellentesque molestie. In hendrerit scelerisque venenatis. Mauris commodo consequat nulla id hendrerit. Suspendisse a porta sapien. Sed id tortor eu nulla semper dictum. Curabitur at neque eleifend, dignissim odio ut, viverra turpis.
+		</p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#disableCheckbox").change(function () {
+			$("#evenMoreMenu").disabled($("#disableCheckbox").prop("checked"));
+		});
+		$("#evenMoreMenu").disabled($("#disableCheckbox").prop("checked"));
+		$("input[type=checkbox], input[type=radio]").styleCheckbox();
+	</script>
+</body>
+</html>

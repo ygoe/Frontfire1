@@ -1,0 +1,72 @@
+﻿/*! frontfire.scss v0.1 | MIT License | unclassified.software/source/frontfire */
+
+@import "functions";
+@import "settings";
+@import "normalize";
+
+*
+{
+	box-sizing: border-box;
+}
+
+html.reset-all-cursors *
+{
+	cursor: inherit !important;
+}
+
+html:not(.simple-dimmer)
+{
+	& > body.ff-dimming > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim)
+	{
+		transition: filter 0.4s ease-out;
+	}
+	& > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim)
+	{
+		filter: blur(2px) grayscale(0.5);
+	}
+}
+.ff-background-dimmer
+{
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(64, 64, 64, 0.5);
+	-webkit-tap-highlight-color: transparent;
+	opacity: 0;
+	transition: opacity 0.4s ease-out;
+	pointer-events: none;
+	&.noinput
+	{
+		pointer-events: auto;
+	}
+}
+
+.group:before,
+.group:after
+{
+	content: "";
+	display: table;
+} 
+.group:after
+{
+	clear: both;
+}
+
+@import "modules/page";
+@import "modules/typography";
+@import "modules/images";
+@import "modules/message";
+@import "modules/form";
+@import "modules/input";
+@import "modules/modal";
+@import "modules/tabs";
+@import "modules/dropdown";
+@import "modules/menu";
+@import "modules/resizable";
+@import "modules/slider";
+@import "modules/carousel";
+@import "modules/offcanvas";
+@import "modules/accordion";

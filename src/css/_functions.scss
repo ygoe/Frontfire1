@@ -1,0 +1,25 @@
+// Fix up some broken Sass functions with a correct implementation
+@function strip-unit($number)
+{
+	@if type-of($number) == 'number' and not unitless($number)
+	{
+		@return $number / ($number * 0 + 1);
+	}
+	@return $number;
+}
+@function mix($color1, $color2, $amount)
+{
+	$amount: strip-unit($amount) / 100;
+	@return rgb(
+		red($color1) * (1 - $amount) + red($color2) * $amount,
+		green($color1) * (1 - $amount) + green($color2) * $amount,
+		blue($color1) * (1 - $amount) + blue($color2) * $amount);
+}
+@function lighten($color, $amount)
+{
+	@return mix($color, #ffffff, $amount);
+}
+@function darken($color, $amount)
+{
+	@return mix($color, #000000, $amount);
+}

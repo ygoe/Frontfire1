@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Images - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main>
+		<div class="page-width">
+			<h1>Images</h1>
+
+			<h2>Block images</h2>
+			
+			<p>
+				Block images always take the entire row. They are always centered and need the <code>center</code> class.
+				Block images are always restricted to the available width and are scaled down if necessary. To maintain the original aspect ratio, you must not explicitly set the height of the image.
+			</p>
+			
+			<p>
+				Additional effects are available with the <code>shadow</code> class for a slight drop shadow and the <code>white-margin</code> class for a white margin around the image. Both classes can be combined (and in fact should if you want to see the white margin unless your page background isn’t white).
+			</p>
+			
+			<img class="center shadow" src="images/pexels-adventure-alps-climbing-dawn-551853.jpg" style="width: 300px;">
+			<br>
+			<img class="center shadow white-margin" src="images/pexels-macbook-pro-beside-spiral-notebook-669616.jpg" style="width: 470px;">
+			
+			<p>
+				Images can be expanded to always fill the entire row with the <code>full-width</code> class. Be aware that these images may become very tall on wide windows. So images with a wide aspect ratio are most suitable for this. You might also restrict the content width like on this page.
+			</p>
+			
+			<img class="full-width" src="images/pexels-bridge-hiking-wooden-bridge-23380.jpg">
+			
+			<p>
+				To make images even bigger, they can be placed outside of a <code>.page-width</code> element to fill the entire window width. The page-width container must be closed before and reopened after the image element. Since there must only be a single <code>&lt;main&gt;</code> element on a page, if you want to break it up to allow full-width content, you have to introduce another level between <code>&lt;main&gt;</code> and the content that applies the <code>.page-width</code> class for restricted width. A simple <code>&lt;div class="page-width"&gt;</code> will do. Look at the source code of this page to see how it’s done.
+			</p>
+		</div>
+		
+		<div style="background: url(images/pexels-architecture-buildings-city-842948.jpg) 50% 50%; background-size: cover; height: 30vw;">
+		</div>
+			
+		<div class="page-width">
+			<h2>Floating images</h2>
+
+			<p>
+				Floating images are aligned at the left or right side with the <code>left</code> or <code>right</code> class. Following content flows around the image at the other side.
+				Floating images are always restricted to half the available width and are scaled down if necessary. To maintain the original aspect ratio, you must not explicitly set the height of the image.
+			</p>
+			
+			<p>
+				If an image should stop floating below a minimum width, one of the classes <code>require-minitab</code>, <code>require-tablet</code>, <code>require-desktop</code> and <code>require-wide</code> can be added.
+				The image will then turn to a block image if the viewport gets narrower than the specified type.
+				The image remains aligned at the side where it would have floated. This can be overridden with the classes <code>narrow-left</code>, <code>narrow-right</code> and <code>narrow-center</code>.
+			</p>
+			
+			<img class="right" src="images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg" style="width: 400px;">
+			
+			<p class="filler-text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in augue bibendum, efficitur nunc vel, placerat massa. Duis enim dui, ultrices eu felis cursus, lacinia fermentum erat. Mauris id ipsum mi. Duis nec vulputate sem, vel egestas justo. Maecenas suscipit tristique lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut sollicitudin ex laoreet mi tempus, id mollis dolor scelerisque. Mauris iaculis tristique ligula, eget efficitur sapien iaculis sed. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque. Nulla sed tempus diam, in semper odio. Sed malesuada volutpat neque vitae dignissim. Praesent sit amet sem porttitor, convallis ex varius, vulputate diam. Vivamus a enim ac velit mattis cursus. Maecenas vestibulum tincidunt eros in vulputate.
+			</p>
+
+			<img class="left shadow require-minitab narrow-center" src="images/pexels-adventure-alps-climbing-dawn-551853.jpg" style="width: 200px;">
+			
+			<p class="filler-text">
+				Fusce varius urna eget justo egestas, non convallis dolor condimentum.
+			</p>
+
+			<img class="right circle require-minitab narrow-center" src="images/pexels-two-person-shaking-each-others-hands-872957-square.jpg" style="width: 150px;">
+			
+			<p>
+				Images can be clipped to a circular shape with the <code>circle</code> class, like here on the right side. Text still flows around the bounding rectangle of the image though. Text flowing along the actual shape requires a lot more markup which is not shown here for now.
+			</p>
+			
+			<p class="filler-text">
+				Donec eros neque, pharetra eget nisl finibus, sagittis mattis ligula. Sed a urna porttitor, egestas dui finibus, semper augue. Nulla vel eros massa. Quisque lacinia, orci ac viverra faucibus, libero urna posuere magna, eget sagittis lectus mi id felis. Etiam at magna sit amet urna euismod tincidunt sed nec lorem. Cras vitae lorem turpis. Quisque rhoncus, justo at mattis sagittis, nibh nisl tempor lectus, id commodo est sapien quis ante.
+			</p>
+
+			<p class="filler-text">
+				Quisque porta nibh justo, iaculis rhoncus mi malesuada nec. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque. Nulla sed tempus diam, in semper odio. Sed malesuada volutpat neque vitae dignissim. Praesent sit amet sem porttitor, convallis ex varius, vulputate diam. Vivamus a enim ac velit mattis cursus. Maecenas vestibulum tincidunt eros in vulputate. Pellentesque egestas massa mauris, ac vestibulum orci pulvinar ut. Donec porttitor congue odio, auctor efficitur magna lobortis ut. Sed efficitur sollicitudin leo in lacinia.
+			</p>
+			
+			<h2>Subtitles</h2>
+
+			<p>
+				To combine an image with a subtitle text below it, use a <code>&lt;div&gt;</code> element that contains the image and then the subtitle content.
+				For floating images, the <code>&lt;div&gt;</code> element has the <code>image-left</code> or <code>image-right</code> class.
+				For block images, the <code>&lt;div&gt;</code> element has the <code>image-center</code> or <code>image-full-width</code> class.
+			</p>
+			
+			<p><samp>
+				&lt;div class="image-right"&gt;<br>
+				    &lt;img src="image.jpg"&gt;<br>
+				    This text describes the image above.<br>
+				&lt;/div&gt;
+			</samp></p>
+			
+			<p>
+				The same <code>require-</code> and <code>narrow-</code> classes as described above can be used here to configure behaviour for smaller screens.
+			</p>
+			
+			<div class="image-right" style="width: 160px;">
+				<img src="images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg">
+				This text describes the image above.
+			</div>
+			
+			<p class="filler-text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in augue bibendum, efficitur nunc vel, placerat massa. Duis enim dui, ultrices eu felis cursus, lacinia fermentum erat. Mauris id ipsum mi. Duis nec vulputate sem, vel egestas justo. Maecenas suscipit tristique lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut sollicitudin ex laoreet mi tempus, id mollis dolor scelerisque. Mauris iaculis tristique ligula, eget efficitur sapien iaculis sed. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+			</p>
+
+			<div class="image-center">
+				<img class="shadow" src="images/pexels-adventure-alps-climbing-dawn-551853.jpg" style="width: 300px;">
+				Here is a longer text that describes what you can see in the centered image directly above it.
+			</div>
+			
+			<p class="filler-text">
+				Fusce varius urna eget justo egestas, non convallis dolor condimentum. Donec eget augue ut ligula porttitor consequat. Donec eu magna sit amet risus auctor pharetra at at mi. Integer eget mattis ex, nec pharetra eros. Proin nec sem tempus, efficitur dui sit amet, aliquam urna. Phasellus tincidunt pellentesque molestie. In hendrerit scelerisque venenatis. Mauris commodo consequat nulla id hendrerit. Suspendisse a porta sapien. Sed id tortor eu nulla semper dictum. Curabitur at neque eleifend, dignissim odio ut, viverra turpis.
+			</p>
+
+			<div class="image-full-width">
+				<img class="shadow" src="images/pexels-bridge-hiking-wooden-bridge-23380.jpg">
+				Here is a longer text that describes what you can see in the centered image directly above it. And some more words to fill up the line for sure.
+			</div>
+			
+			<p class="filler-text">
+				Donec eros neque, pharetra eget nisl finibus, sagittis mattis ligula. Sed a urna porttitor, egestas dui finibus, semper augue. Nulla vel eros massa. Quisque lacinia, orci ac viverra faucibus, libero urna posuere magna, eget sagittis lectus mi id felis. Etiam at magna sit amet urna euismod tincidunt sed nec lorem. Cras vitae lorem turpis. Quisque rhoncus, justo at mattis sagittis, nibh nisl tempor lectus, id commodo est sapien quis ante.
+			</p>
+			
+			<h2>Links</h2>
+			
+			<p>
+				Images can be placed in a hyperlink as well. The image then becomes part of the link and can be clicked.
+			</p>
+
+			<a href=""><img class="center" src="images/pexels-architecture-buildings-city-842948.jpg" style="width: 75%;"></a>
+			
+			<p class="filler-text">
+				Fusce varius urna eget justo egestas, non convallis dolor condimentum.
+			</p>
+
+			<div class="image-right" style="width: 160px;">
+				<a href=""><img src="images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg"></a>
+				This text describes the image above.
+			</div>
+			
+			<p class="filler-text">
+				Donec eget augue ut ligula porttitor consequat. Donec eu magna sit amet risus auctor pharetra at at mi. Integer eget mattis ex, nec pharetra eros. Proin nec sem tempus, efficitur dui sit amet, aliquam urna. Phasellus tincidunt pellentesque molestie. In hendrerit scelerisque venenatis. Mauris commodo consequat nulla id hendrerit. Suspendisse a porta sapien. Sed id tortor eu nulla semper dictum. Curabitur at neque eleifend, dignissim odio ut, viverra turpis.
+			</p>
+
+			<p class="filler-text">
+				Quisque porta nibh justo, iaculis rhoncus mi malesuada nec. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque. Nulla sed tempus diam, in semper odio. Sed malesuada volutpat neque vitae dignissim. Praesent sit amet sem porttitor, convallis ex varius, vulputate diam. Vivamus a enim ac velit mattis cursus. Maecenas vestibulum tincidunt eros in vulputate. Pellentesque egestas massa mauris, ac vestibulum orci pulvinar ut. Donec porttitor congue odio, auctor efficitur magna lobortis ut. Sed efficitur sollicitudin leo in lacinia.
+			</p>
+		</div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+</body>
+</html>

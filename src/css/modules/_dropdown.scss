@@ -1,0 +1,58 @@
+@import "../settings";
+
+.dropdown
+{
+	display: none;
+}
+
+.ff-dropdown-container
+{
+	position: absolute;
+	z-index: 500;
+	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+	background: white;
+	color: black;
+
+	.dropdown
+	{
+		display: block;
+	}
+
+	&.bordered
+	{
+		border: 1px solid #0078d7;
+	}
+
+	&.animate-bottom,
+	&.animate-top,
+	&.animate-left,
+	&.animate-right
+	{
+		opacity: 0;
+		&.open
+		{
+			opacity: 1;
+			transition: transform $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+		}
+		&.closed
+		{
+			transition: transform $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+		}
+	}
+	&.animate-bottom,
+	&.animate-top
+	{
+		transform: scaleY(0);
+		&.open { transform: scaleY(1); }
+	}
+	&.animate-left,
+	&.animate-right
+	{
+		transform: scaleX(0);
+		&.open { transform: scaleX(1); }
+	}
+	&.animate-bottom { transform-origin: 50% 0%; }
+	&.animate-top { transform-origin: 50% 100%; }
+	&.animate-left { transform-origin: 100% 50%; }
+	&.animate-right { transform-origin: 0% 50%; }
+}

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dragging - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Dragging</h1>
+
+		<style>
+			.draggable
+			{
+				display: inline-block;
+				vertical-align: top;
+				width: 120px;
+				height: 80px;
+				border: 1px solid #80d030;
+				background: #ccecac;
+				padding: 5px 10px;
+				text-align: center;
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+
+			.draggable.dragging
+			{
+				box-shadow: rgba(0, 0, 0, 0.2) 0 3px 6px;
+			}
+
+			.draggable.large
+			{
+				width: 250px;
+				height: 140px;
+			}
+
+			.draggable .draggable
+			{
+				background: #b9e58d;
+			}
+
+			.draggable span
+			{
+				background: #505050;
+				color: #ffffff;
+			}
+
+			.container
+			{
+				border: 1px dashed silver;
+				height: 250px;
+			}
+
+			.container.grid
+			{
+				border: none;
+				background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect fill="none" stroke="lightsalmon" stroke-width="1" x="0" y="0" width="21" height="21"/></svg>') #f8f8f8;
+			}
+		</style>
+
+		<h2>Basic draggable</h2>
+
+		<div id="draggableAny" class="draggable" data-opt-drag-cursor="move"><input type="checkbox" checked> Drag me anywhere (if checked)</div>
+		<div id="draggableX" class="draggable" data-opt-drag-cursor="col-resize">Drag me horizontally</div>
+		<div id="draggableY" class="draggable" data-opt-drag-cursor="row-resize">Drag me vertically</div>
+
+		<h2>Draggable within a container</h2>
+
+		<div id="container1" class="container">
+			<div id="draggableCont" class="draggable large" style="cursor: grab;" data-opt-drag-cursor="grabbing">
+				Drag me within the container<br>
+				<div id="draggableParent" class="draggable" style="cursor: grab;" data-opt-drag-cursor="grabbing">Drag me within my parent</div>
+			</div>
+		</div>
+
+		<h2>Auto-scrolling</h2>
+
+		<div id="draggableScroll" class="draggable">Drag me out of the page to scroll</div>
+
+		<h2>Reverting</h2>
+
+		<div id="draggableRevert" class="draggable">Drag me and I'll come back</div>
+
+		<h2>Stacking</h2>
+
+		<div class="draggable draggable-stack">1. Drag me and I'll be at the top</div>
+		<div class="draggable draggable-stack">2. Drag me and I'll be at the top</div>
+		<div class="draggable draggable-stack">3. Drag me and I'll be at the top</div>
+		<div class="draggable draggable-stack">4. Drag me and I'll be at the top</div>
+		<div class="draggable draggable-stack">5. Drag me and I'll be at the top</div>
+
+		<h2>Drag handle</h2>
+
+		<div id="draggableHandle" class="draggable">
+			<span style="display: block;">Drag me<br>here</span>
+			<span style="display: inline-block; position: relative; top: 40px;">or here</span>
+		</div>
+		<div id="draggableCancel" class="draggable">Drag me <span>but not here</span></div>
+
+		<p>&nbsp;</p>
+
+		<h2>Snapping to grid within the container</h2>
+
+		<div id="container2" class="container grid">
+			<div id="draggableGrid" class="draggable">Drag me with grid snapping</div>
+			<div id="draggableGridX" class="draggable">Drag me horizontally with grid</div>
+		</div>
+
+		<h2>Drag move event handler</h2>
+
+		<p>The following draggable element will stick to a circle line around the centre.</p>
+
+		<div style="margin-top: 30px; position: relative; width: 150px; height: 150px; border: dashed 1px gray; border-radius: 100%;">
+			<div id="draggableCircle" style="position: absolute; top: -20px; left: 55px; width: 40px; height: 40px; border-radius: 100%; background: #80d030;"></div>
+		</div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#draggableAny").draggable();
+		$("#draggableAny").on("draggablestart", function (event) {
+			if (!$("#draggableAny input").get(0).checked)
+				event.preventDefault();
+		});
+
+		$("#draggableX").draggable({ axis: "x" });
+		$("#draggableY").draggable({ axis: "y" });
+
+		$("#draggableCont").draggable({ containment: "#container1" });
+		$("#draggableParent").draggable({ containment: "parent" });
+		$("#draggableParent").on("draggablestart", function () {
+			$(this).addClass("dragging");
+		});
+		$("#draggableParent").on("draggableend", function () {
+			$(this).removeClass("dragging");
+		});
+
+		$("#draggableScroll").draggable({ scroll: true, containment: "html" });
+
+		$("#draggableRevert").draggable();
+		$("#draggableRevert").on("draggableend", function (event) {
+			event.revert();
+		});
+
+		$(".draggable-stack").draggable({ stack: ".draggable-stack" });
+
+		$("#draggableHandle").draggable({ handle: "span" });
+		$("#draggableCancel").draggable({ cancel: "span" });
+
+		$("#draggableGrid").draggable({ containment: "#container2", grid: [20, 20] });
+		$("#draggableGridX").draggable({ containment: "#container2", axis: "x", grid: [20, 20] });
+
+		$("#draggableCircle").draggable();
+		$("#draggableCircle").on("draggablemove", function (event) {
+			var draggableRadius = $("#draggableCircle").outerWidth() / 2;
+			var circleRect = $("#draggableCircle").parent().rect();
+			var radius = circleRect.width / 2;
+
+			// Compute angle of draggable from centre
+			var angle = Math.atan2(
+				(event.newPoint.top + draggableRadius) - (circleRect.top + radius),
+				(event.newPoint.left + draggableRadius) - (circleRect.left + radius));
+
+			// Determine point on circle at this angle
+			event.newPoint = {
+				top: Math.round(Math.sin(angle) * radius * 100) / 100 + circleRect.top + radius - draggableRadius,
+				left: Math.round(Math.cos(angle) * radius * 100) / 100 + circleRect.left + radius - draggableRadius
+			};
+		});
+	</script>
+</body>
+</html>

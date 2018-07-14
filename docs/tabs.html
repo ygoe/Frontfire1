@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tabs - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Tabs</h1>
+		
+		<p>
+			Tabs are pages with separate content that can be switched through.
+			To create a tab control, define a <code>&lt;div class="tabs"&gt;</code> element that contains the individual tab pages.
+			Each tab page is a <code>&lt;div&gt;</code> element.
+			The tab header text is defined in the <code>title</code> HTML attribute of each tab page element.
+		</p>
+
+		<h2>Multiple tabs</h2>
+
+		<div class="tabs">
+			<div title="Tab 1">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula. Praesent imperdiet sed turpis vitae vehicula. Morbi pretium, nisi eget laoreet finibus, metus ante dapibus nunc, ac consectetur erat est tincidunt turpis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae urna tempor, dictum tortor id, accumsan tortor. Ut tortor est, finibus nec porttitor a, consectetur et orci. Proin fringilla lacus lorem, quis pellentesque libero fermentum sit amet. Maecenas vel dolor ultricies, sagittis risus vitae, tincidunt magna. Praesent quis congue felis. Morbi varius sapien risus, sed lobortis velit tincidunt ac.
+			</div>
+			<div title="Tab 2">
+				Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque. Phasellus eu nunc tempus, hendrerit diam vel, porta mauris. Donec sit amet turpis ut sapien dapibus sodales. Nulla in elit ut enim malesuada elementum non quis dui. Donec luctus tincidunt elit nec convallis. Morbi lorem nunc, sollicitudin ac blandit ut, pharetra sed dolor.
+			</div>
+			<div title="Tab 3">
+				Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna. Nullam faucibus nisl id convallis euismod. Phasellus massa massa, rhoncus in iaculis ac, blandit a velit. Suspendisse nec justo et enim lobortis porttitor. Nunc eget dui interdum, tristique neque lobortis, fringilla dui. Vestibulum sodales non metus a vehicula. Pellentesque sit amet ornare mauris.
+			</div>
+		</div>
+		
+		<p><samp>
+			&lt;div class="tabs"&gt;<br>
+			    &lt;div title="Tab 1"&gt;<br>
+			        Content of page 1<br>
+			    &lt;/div&gt;<br>
+			    &lt;div title="Tab 2"&gt;<br>
+			        Content of page 2<br>
+			    &lt;/div&gt;<br>
+			    ...<br>
+			&lt;/div&gt;
+		</samp></p>
+
+		<h2>Preselected page</h2>
+
+		<p>
+			A tab page can be preselected at load time by adding the <code>active</code> CSS class to the page element.
+		</p>
+		
+		<div class="tabs">
+			<div title="Tab 1">
+				Content of page 1
+			</div>
+			<div title="Tab 2" class="active">
+				Content of page 2
+			</div>
+			<div title="Tab 3">
+				Content of page 3
+			</div>
+		</div>
+
+		<h2>Same height for all pages</h2>
+
+		<p>
+			If all tab pages should have the same height of the largest page content, add the <code>same-height</code> CSS class to the tab container element. Click through the pages below to see how the height does not change, compared to above.
+		</p>
+		
+		<div class="tabs same-height">
+			<div title="Tab 1">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula. Praesent imperdiet sed turpis vitae vehicula. Morbi pretium, nisi eget laoreet finibus, metus ante dapibus nunc, ac consectetur erat est tincidunt turpis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae urna tempor, dictum tortor id, accumsan tortor. Ut tortor est, finibus nec porttitor a, consectetur et orci. Proin fringilla lacus lorem, quis pellentesque libero fermentum sit amet. Maecenas vel dolor ultricies, sagittis risus vitae, tincidunt magna. Praesent quis congue felis. Morbi varius sapien risus, sed lobortis velit tincidunt ac.
+			</div>
+			<div title="Tab 2">
+				Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque. Phasellus eu nunc tempus, hendrerit diam vel, porta mauris. Donec sit amet turpis ut sapien dapibus sodales. Nulla in elit ut enim malesuada elementum non quis dui. Donec luctus tincidunt elit nec convallis. Morbi lorem nunc, sollicitudin ac blandit ut, pharetra sed dolor.
+			</div>
+			<div title="Tab 3">
+				Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna. Nullam faucibus nisl id convallis euismod. Phasellus massa massa, rhoncus in iaculis ac, blandit a velit. Suspendisse nec justo et enim lobortis porttitor. Nunc eget dui interdum, tristique neque lobortis, fringilla dui. Vestibulum sodales non metus a vehicula. Pellentesque sit amet ornare mauris.
+			</div>
+		</div>
+
+		<h2>Synchronised tabs</h2>
+
+		<p>
+			When the tab page is changed, an <code>activeTabChange</code> event is raised.
+			The tab page can be determined and switched by code. This is done through a plugin extension function with a syntax similar to other jQuery functions.
+			Both features combined can be used to synchronise the selected page in two tab containers.
+			(This does not need to be the case on page load, as shown here, but any interaction will also update the other control.)
+		</p>
+		
+		<div id="syncSource" class="tabs">
+			<div title="Tab 1">
+				Content of page 1
+			</div>
+			<div title="Tab 2" class="active">
+				Content of page 2
+			</div>
+			<div title="Tab 3">
+				Content of page 3
+			</div>
+		</div>
+
+		<br>
+
+		<div id="syncTarget" class="tabs">
+			<div title="Tab 1">
+				Content of page 1
+			</div>
+			<div title="Tab 2">
+				Content of page 2
+			</div>
+			<div title="Tab 3">
+				Content of page 3
+			</div>
+		</div>
+		
+		<p><samp>
+			$("#tab1").on("activeTabChange", function () {<br>
+			    $("#tab2").tabs.activeTab($("#tab1").tabs.activeTab().index());<br>
+			});
+		</samp></p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		var syncSource = $("#syncSource");
+		var syncTarget = $("#syncTarget");
+		syncSource.on("activeTabChange", function () {
+			syncTarget.tabs.activeTab(syncSource.tabs.activeTab().index());
+		});
+		syncTarget.on("activeTabChange", function () {
+			syncSource.tabs.activeTab(syncTarget.tabs.activeTab().index());
+		});
+	</script>
+</body>
+</html>

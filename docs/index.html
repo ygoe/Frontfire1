@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Frontfire Web Frontend Framework</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Web Frontend Framework</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Introduction</h1>
+
+		<p>
+			The Frontfire Web Frontend Framework offers essential styles and effects combined with a consistent set of interactive widgets and layout utilities.
+			It is suitable for web pages and web applications that need a modern and consistent look and feel and use responsive design to work on all devices and screen sizes.
+			All interactions are fully touch-aware and work with any type of pointing device.
+		</p>
+		
+		<h2>Requirements</h2>
+		
+		<p>
+			Frontfire is built from the ground up to support modern and widespread web browsers.
+			This includes Mozilla Firefox, Google Chrome, Microsoft Edge and Apple Safari, but also the last version of Microsoft Internet Explorer 11.
+			This framework builds upon <a href="https://jquery.com">jQuery</a> and was tested with version 3.2 and up.
+		</p>
+		
+		<h2>Download</h2>
+		
+		<p>
+			Download the current development snapshot of Frontfire and copy the files into your website.
+		</p>
+		
+		<div class="buttons">
+			<a id="download1" href="https://github.com/ygoe/Frontfire/blob/master/dist/frontfire.zip?raw=true" class="button default">Complete archive</a>
+			<a id="download2" href="https://github.com/ygoe/Frontfire/archive/master.zip" class="button">Source archive</a>
+		</div>
+		
+		<p>
+			For more information, please visit the <a href="https://github.com/ygoe/Frontfire">GitHub repository page</a>.
+		</p>
+		
+		<p>
+			There are currently no CDN offerings available so you have to host the files yourself.
+		</p>
+		
+		<h2>Building</h2>
+		
+		<p>
+			Frontfire is written in modern JavaScript and SASS. The distribution files are converted to browser-compatible JavaScript and standard CSS with a set of public tools (CSS: sassc, csso; JavaScript: rollup, babel, uglifyjs) bundled in the Mini Web Compiler application for Windows.
+		</p>
+		
+		<p>
+			To customise the styles with the provided SASS variables, you can either build your own version of Frontfire and use the build output files statically, or just include all SASS source files into your web project and build the CSS file right there.
+		</p>
+		
+		<p>
+			When building your own version, you can also leave out certain modules that you don’t need to further reduce the file size.
+		</p>
+		
+		<hr class="wide">
+		
+		<h1>Installation</h1>
+		
+		<p>
+			To install Frontfire to your website, just include two files into your HTML pages.
+			Additionally, a recent version of <a href="https://jquery.com">jQuery</a> is required for Frontfire to work.
+		</p>
+		
+		<p>
+			The files are minified and can be further compressed with GZip compression in HTTP.
+		</p>
+		
+		<table>
+			<tr>
+				<th>File</th>
+				<th>Minified</th>
+				<th>Compressed</th>
+			</tr>
+			<tr>
+				<td>frontfire.min.css</td>
+				<td class="right">53 kB</td>
+				<td class="right">9 kB</td>
+			</tr>
+			<tr>
+				<td>frontfire.min.js</td>
+				<td class="right">47 kB</td>
+				<td class="right">15 kB</td>
+			</tr>
+			<tr>
+				<th>Total</th>
+				<th class="right">100 kB</th>
+				<th class="right">24 kB</th>
+			</tr>
+		</table>
+		
+		<p>
+			It is recommended to include all stylesheets at the end of the HTML <code>&lt;head&gt;</code> and all scripts at the end of the HTML <code>&lt;body&gt;</code> element. Then include your site-specific styles and scripts after the library files to be able to customise the library’s styles and build upon the library’s scripts.
+		</p>
+		
+		<p><samp>
+			&lt;head&gt;<br>
+			    <b>&lt;link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css"&gt;</b><br>
+			&lt;/head&gt;<br>
+			&lt;body&gt;<br>
+			    ...<br>
+			    &lt;script src="lib/jquery/js/jquery-3.3.1.min.js"&gt;&lt;/script&gt;<br>
+			    <b>&lt;script src="lib/frontfire/js/frontfire.min.js"&gt;&lt;/script&gt;</b><br>
+			&lt;/body&gt;
+		</samp></p>
+
+		<hr class="wide">
+		
+		<h1>Demos</h1>
+		
+		<p>
+			These pages showcase the features of Frontfire and explain its usage.
+		</p>
+		
+		<h2>Typography</h2>
+		
+		<p>
+			At the heart of every web page is content. It consists mostly of text. A consistent set of styles gives that content a comprehensible look and a nice feel. When using Frontfire, you are free of the basic tasks of typography design. Many of the everyday questions are already answered in a modern and versatile way. You can still customise the appearance with SASS variables if you like.
+		</p>
+
+		<ul>
+			<li><a href="typography.html">Typography</a></li>
+			<li><a href="images.html">Images</a></li>
+		</ul>
+
+		<h2>Layout</h2>
+		
+		<p>
+			Layouts arrange content in ways that are familiar from other environments like desktop applications. Most of these layouts are interactive and adapt to any screen size.
+		</p>
+
+		<ul>
+			<li><a href="dropdown.html">Dropdown</a></li>
+			<li><a href="menu.html">Menu</a></li>
+			<li><a href="modal.html">Modal</a></li>
+			<li><a href="tabs.html">Tabs</a></li>
+			<li><a href="carousel.html">Carousel</a></li>
+			<li><a href="offcanvas.html">Off-canvas</a></li>
+			<li><a href="accordion.html">Accordion</a></li>
+		</ul>
+
+		<h2>Forms</h2>
+
+		<p>
+			Forms let the user input data. Frontfire provides a responsive form layout as well as several specialised widgets for advanced data interactions.
+		</p>
+		
+		<ul>
+			<li><a href="form.html">Form layouts</a></li>
+			<li><a href="input.html">Input controls</a></li>
+			<li><a href="messages.html">Messages</a></li>
+			<li><a href="slider.html">Slider</a></li>
+		</ul>
+
+		<h2>Drag &amp; Drop</h2>
+		
+		<p>
+			Drag &amp; drop interactions add pointer-based behaviours to any element. You can add mouse- and touch-based features with just a few lines of code. Some of these interactions are also the basis for other widgets.
+		</p>
+
+		<ul>
+			<li><a href="dragging.html">Dragging</a></li>
+			<li><a href="resizing.html">Resizing</a></li>
+			<li><a href="sorting.html">Sorting</a></li>
+		</ul>
+
+		<hr class="wide">
+		
+		<h1>Why not …</h1>
+		
+		<p>
+			Why have I created a new library and not used one of the established solutions? Here are a few things to compare.
+		</p>
+		
+		<h2>Bootstrap</h2>
+		
+		<p>
+			Bootstrap’s main point is its responsive grid feature. Nearly everything is based on it.
+			My experience with real-world websites though is that the grid isn’t flexible enough.
+			The grid cannot be used to shrink the navigation just when it needs to.
+			The grid cannot be used to relayout text and images when space runs out. And images can be any arbitrary size.
+			So I still ended up defining my own break points and all the media query logic behind it.
+			Customising responsive layouts requires lots of complex CSS code to undo the defaults.
+			Instead of using Bootstrap and then undoing half of it, I decided to redo just the half I needed, in the way I needed it.
+		</p>
+		
+		<h2>jQuery UI</h2>
+		
+		<p>
+			jQuery UI’s set of widgets is very limited to start with.
+			The other main disadvantage is that it is entirely touch-unaware. The only input method it supports is a mouse.
+			While there is a compatibility shim library that translates touch to mouse events, it still has two disadvantages:
+			It only supports touch, not the generic pointer events that also include the stylus, and it inherits the limitations of mouse events, i. e. it cannot support multi-touch.
+			And the file size of jQuery UI is just way too large for what it can do.
+		</p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+	
+	<script>
+		if (!location.hostname.match(/github\.io$/)) {
+			$("#download1").attr("href", "../dist/frontfire.zip");
+			$("#download2").attr("href", "../dist/frontfire-src.zip");
+		}
+	</script>
+</body>
+</html>

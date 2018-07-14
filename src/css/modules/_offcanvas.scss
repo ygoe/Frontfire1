@@ -1,0 +1,21 @@
+@import "../settings";
+
+.off-canvas
+{
+	visibility: hidden;
+	position: fixed;
+	z-index: 1200;
+	top: 0;
+	height: 100vh;
+	padding: 10px;
+	background: #eeeeee;
+	color: black;
+	touch-action: pan-y;
+	overflow-y: auto;
+	max-width: 85vw;
+	border: 2px solid red;
+	&.ff-off-canvas
+	{
+		visibility: visible;
+	}
+}

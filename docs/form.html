@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Form layouts - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+	<style>
+		.form-single-row.custom
+		{
+			grid-template-columns: repeat(4, max-content);
+		}
+		@media (max-width: 500px)
+		{
+			.form-single-row.custom
+			{
+				grid-template-columns: repeat(2, max-content);
+			}
+		}
+		@media (max-width: 360px)
+		{
+			.form-single-row.custom
+			{
+				grid-template-columns: max-content;
+			}
+		}
+	</style>
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Form layouts</h1>
+
+		<p>
+			The following samples show form fields in different responsive layouts.
+		</p>
+		
+		<form>
+			<h2>Single-field layout</h2>
+			
+			<p>
+				In a simple layout, a field always covers a full row from the left to the right edge.
+				All fields are wrapped in a <code>&lt;div class="form-row"&gt;</code> element.
+				A validation error message can be displayed below each field.
+			</p>
+
+			<div class="form-row">
+				<div class="label">Field label</div>
+				<input type="text">
+				<div></div>
+			</div>
+
+			<p><samp>
+				&lt;div class="form-row"&gt;<br>
+				    &lt;div class="label"&gt;Field label&lt;/div&gt;<br>
+				    &lt;input type="text"&gt;<br>
+				    &lt;div&gt;&lt;/div&gt;<br>
+				&lt;/div&gt;
+			</samp></p>
+
+			<p>
+				Validation errors are added with the <code>input-validation-error</code> class on the input element and the <code>field-validation-error</code> class on the following label that contains the error message. These classes are automatically set by ASP.NET Core tag helpers.
+			</p>
+
+			<div class="form-row">
+				<div class="label">Field label</div>
+				<input type="text" class="input-validation-error">
+				<div class="field-validation-error">Error message</div>
+			</div>
+
+			<p><samp>
+				&lt;div class="form-row"&gt;<br>
+				    &lt;div class="label"&gt;Field label&lt;/div&gt;<br>
+				    &lt;input type="text" class="input-validation-error"&gt;<br>
+				    &lt;div class="field-validation-error"&gt;Error message&lt;/div&gt;<br>
+				&lt;/div&gt;
+			</samp></p>
+
+			<p>
+				This also works for checkbox fields. For now, the first (label class) element can be left out.
+			</p>
+
+			<div class="form-row">
+				<label><input type="checkbox"> Keep me updated</label>
+				<div></div>
+			</div>
+
+			<div class="form-row">
+				<label><input type="checkbox" class="input-validation-error"> Accept terms of service</label>
+				<div class="field-validation-error">Acceptance required.</div>
+			</div>
+
+			<p><samp>
+				&lt;div class="form-row"&gt;<br>
+				    &lt;label&gt;&lt;input type="checkbox"&gt; Keep me updated&lt;/label&gt;<br>
+				    &lt;div&gt;&lt;/div&gt;<br>
+				&lt;/div&gt;
+			</samp></p>
+
+			<h2>Multi-field layout</h2>
+			
+			<p>
+				Multiple fields can be placed in a single row. If nothing else is specified, all fields share the row width equally.
+				Error message elements need to be present but may be empty. The grid layout ensures that all parts are placed at the same vertical offset.
+			</p>
+
+			<div class="form-row">
+				<div class="label">First field label</div>
+				<input type="text">
+				<div></div>
+
+				<div class="label">Second field label</div>
+				<input type="number" class="input-validation-error">
+				<div class="field-validation-error">Error message</div>
+			</div>
+
+			<p><samp>
+				&lt;div class="form-row"&gt;<br>
+				    &lt;div class="label"&gt;First field label&lt;/div&gt;<br>
+				    &lt;input type="text"&gt;<br>
+				    &lt;div&gt;&lt;/div&gt;<br>
+				    <br>
+				    &lt;div class="label"&gt;Second field label&lt;/div&gt;<br>
+				    &lt;input type="number" class="input-validation-error"&gt;<br>
+				    &lt;div class="field-validation-error"&gt;Error message&lt;/div&gt;<br>
+				&lt;/div&gt;
+			</samp></p>
+
+			<p>
+				Now the class <code>require-minitab</code> indicates that all fields are placed below each other if the view width drops under the width of a mini tablet.
+				The following classes are available: <code>require-minitab</code>, <code>require-tablet</code>, <code>require-desktop</code>, <code>require-wide</code>
+			</p>
+
+			<div class="form-row require-minitab">
+				<div class="label">First field label</div>
+				<input type="text" class="input-validation-error">
+				<div class="field-validation-error">Error message</div>
+
+				<div class="label">Second field label</div>
+				<input type="number">
+				<div></div>
+			</div>
+
+			<p>
+				When no validation messages are used, the document structure can be simplified by leaving them out.
+				The class <code>no-validation</code> must be used for the row in this case.
+			</p>
+
+			<div class="form-row no-validation require-minitab">
+				<div class="label">First field label</div>
+				<input type="text">
+
+				<div class="label">Second field label</div>
+				<span class="segmented-input icon-left">
+					<i class="fa fa-envelope"></i>
+					<input type="email" placeholder="ex. mail@example.com">
+				</span>
+			</div>
+			
+			<p>
+				To set different widths for each field, the CSS property <code>grid-template-columns</code> must be set for the row.
+				This property of the CSS grid layout accepts a list of width values for each column.
+				Common values are <code>1fr</code> (and other numeric values with the <code>fr</code> unit) for proportional widths,
+				<code>max-content</code> for the content’s desired width, and fixed lenghts in pixels or other units.
+				See the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns">CSS specification</a> for details.
+			</p>
+
+			<div class="form-row require-minitab" style="grid-template-columns: 1fr 1fr max-content max-content;">
+				<div class="label">First field label</div>
+				<input type="text" class="input-validation-error">
+				<div class="field-validation-error">Error message</div>
+
+				<div class="label">Second field label with so much text that it needs a second line is most cases</div>
+				<input type="text">
+				<div></div>
+
+				<div class="label"></div>
+				<label><input type="checkbox"> Checkbox 1</label>
+				<div></div>
+
+				<div class="label"></div>
+				<label><input type="checkbox" class="input-validation-error"> Checkbox 2</label>
+				<div class="field-validation-error">First error<br>Second error</div>
+			</div>
+			
+			<h2>Custom layout</h2>
+			
+			<p>
+				Custom (responsive) layouts can be achieved by defining a CSS class for a row that defines the column widths separately.
+				In a CSS stylesheet, different values can be assigned to the class using media queries.
+				In this example, no labels or validation messages can be used because the option fields may be arranged in one or more rows and columns.
+			</p>
+
+			<div class="form-single-row custom">
+				<label><input type="radio" name="radio1" value="1"> Option 1</label>
+				<label><input type="radio" name="radio1" value="2"> Option 2</label>
+				<label><input type="radio" name="radio1" value="3"> Option 3</label>
+				<label><input type="radio" name="radio1" value="4" class="input-validation-error"> Option 4</label>
+			</div>
+
+			<h2>Buttons</h2>
+			
+			<p>
+				Most forms have a set of buttons at their end to let the user perform actions.
+				These buttons should be placed in a <code>&lt;div class="buttons"&gt;</code> element for proper spacing.
+			</p>
+			
+			<div class="buttons">
+				<button class="default"><i class="fa fa-check"></i> OK</button>
+				<button>Cancel</button>
+				<button disabled>What?</button>
+				<button class="caution"><i class="fa fa-trash-alt"></i> Delete</button>
+				<button class="narrow"><i class="fa fa-phone"></i></button>
+				<button class="narrow"><i class="fa fa-eject"></i></button>
+			</div>
+
+			<p><samp>
+				&lt;div class="buttons"&gt;<br>
+				    &lt;button class="default"&gt;&lt;i class="fa fa-check"&gt;&lt;/i&gt; OK&lt;/button&gt;<br>
+				    &lt;button&gt;Cancel&lt;/button&gt;<br>
+				    ...<br>
+				&lt;/div&gt;
+			</samp></p>
+		</form>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+</body>
+</html>

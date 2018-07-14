@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Slider - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<style>
+			.slider.red .ff-range
+			{
+				background: tomato;
+			}
+			.slider.gradient .ff-range
+			{
+				background: linear-gradient(to right, #6ee02c 0px, #6ee02c 130px, #e5d824 160px, #e5d824 210px, #ed5725 240px, #ed5725 100%);
+			}
+			.slider.large-handle
+			{
+				height: 30px;
+				border-width: 12px;
+				border-left-width: 11px;
+				border-right-width: 11px;
+			}
+			.slider.large-handle .ff-handle
+			{
+				width: 22px;
+				height: 18px;
+				top: -6px;
+				border: 1px solid white;
+				text-align: center;
+				font-size: 0.8em;
+				line-height: 1.2em;
+				font-weight: bold;
+				color: white;
+				cursor: pointer;
+			}
+		</style>
+
+		<h1>Slider</h1>
+		
+		<p>
+			Sliders are a visual method to select one or more values within a valid range.
+			They show a range, sometimes with a scale, and have a handle for the selected value.
+			The handle can only be moved within the range, not outside of it.
+			HTML does not offer a similar input control so this is a completely new implementation.
+		</p>
+		
+		<h2>Configuration</h2>
+		
+		<p>
+			As with many other Frontfire controls, options can be specified with the JavaScript function that enables the control from an HTML element.
+			If this isn’t accessible because you’re using the built-in autostart feature, or a markup declaration is preferred over code, all options can also be specified with <code>data-opt-...</code> HTML attributes individually or with a <code>data-opt</code> attribute for all options.
+			The option names for <code>data</code> attributes must be converted from camelCase to dash-case just like CSS properties are between JavaScript and CSS syntax. (Example: <code>smallTickLabels</code> and <code>small-tick-labels</code>)
+		</p>
+
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>orientation</code></td>
+				<td>String</td>
+				<td>The orientation of the slider. Values: h (horizontal), v (vertical)</td>
+				<td>h</td>
+			</tr>
+			<tr>
+				<td><code>value</code></td>
+				<td>Number</td>
+				<td>The initially selected slider value.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>min</code></td>
+				<td>Number</td>
+				<td>The lower end of the selectable range.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>max</code></td>
+				<td>Number</td>
+				<td>The upper end of the selectable range.</td>
+				<td>100</td>
+			</tr>
+			<tr>
+				<td><code>rangeBase</code></td>
+				<td>Multiple</td>
+				<td>The base value of the range rectangle. Values: min (minimum), max (maximum), any specific number</td>
+				<td>min</td>
+			</tr>
+			<tr>
+				<td><code>largeStep</code></td>
+				<td>Number</td>
+				<td>The size of a large step.</td>
+				<td>10</td>
+			</tr>
+			<tr>
+				<td><code>smallStep</code></td>
+				<td>Number</td>
+				<td>The size of a small step. This is the minimum granularity that can be set.</td>
+				<td>1</td>
+			</tr>
+			<tr>
+				<td><code>largeTicks</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether ticks are displayed at the large step.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>smallTicks</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether ticks are displayed at the small step.</td>
+				<td>false</td>
+			</tr>
+			<tr>
+				<td><code>largeTickLabels</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the large step ticks have their value as label.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>smallTickLabels</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the small step ticks have their value as label.</td>
+				<td>false</td>
+			</tr>
+			<tr>
+				<td><code>tickPlacement</code></td>
+				<td>String</td>
+				<td>The location of the tick marks in the slider. Values: topleft, bottomright, both, none</td>
+				<td>topleft</td>
+			</tr>
+		</table>
+
+		<h2>Basic slider</h2>
+
+		<p>Sliders can be placed in horizontal (default) and vertical orientation (<code>orientation</code> option is “v”). The dimensions can be set through the usual CSS attributes.</p>
+
+		<div class="slider" style="margin: 40px 0;"></div>
+
+		<div class="slider" style="margin: 0 30px; height: 250px;" data-opt-orientation="v" data-opt-large-step="20"></div>
+
+		<h2>Ticks and labels</h2>
+
+		<p>
+			There are options for different step, ticks, label and tick placement settings.
+			The following examples show different configurations.
+		</p>
+		
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="5" data-opt-large-step="10" data-opt-large-ticks="false"></div>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="5" data-opt-large-step="10" data-opt-large-tick-labels="false"></div>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="5" data-opt-large-step="10"></div>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="5" data-opt-large-step="10" data-opt-small-ticks="true"></div>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="5" data-opt-large-step="10" data-opt-small-ticks="true" data-opt-small-tick-labels="true"></div>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="2" data-opt-large-step="10" data-opt-small-ticks="true" data-opt-tick-placement="both"></div>
+
+		<p>
+			Also different range base settings and vertical orientation.
+		</p>
+
+		<div class="slider" style="margin: 40px 0;" data-opt-small-step="1" data-opt-large-step="10" data-opt-small-ticks="true" data-opt-tick-placement="bottomright" data-opt-range-base="100"></div>
+
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 10, largeStep: 20, tickPlacement: 'none' }"></div>
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 10, largeStep: 20, rangeBase: 25 }"></div>
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 10, largeStep: 20, tickPlacement: 'both', rangeBase: 50 }"></div>
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 10, largeStep: 20, smallTicks: true, smallTickLabels: true, tickPlacement: 'both', rangeBase: 75 }"></div>
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 5, largeStep: 20, smallTicks: true, tickPlacement: 'bottomright', rangeBase: 100 }"></div>
+		<div class="slider" style="float: left; margin: 0 30px; height: 250px;" data-opt="{ value: 40, orientation: 'v', smallStep: 5, largeStep: 20, smallTicks: true, tickPlacement: 'bottomright' }"></div>
+		<div style="clear: left;"></div>
+
+		<h2>Get and set value</h2>
+
+		<p>
+			The slider value can be retrieved and set by code.
+			This is done through a plugin extension function with a syntax similar to other jQuery functions.
+		</p>
+		
+		<div id="slider1" class="slider" style="margin: 30px 0;" data-opt-small-step="5" data-opt-large-step="10" data-opt-small-ticks="true"></div>
+
+		<p>
+			<button id="getValueButton">Get value</button>
+			<input id="setValueInput" type="number" style="width: 150px;">
+			<button id="setValueButton">Set value</button> &nbsp; &nbsp;
+			<label><input id="slider1Checkbox" type="checkbox"> Disable slider</label>
+		</p>
+		
+		<p><samp>
+			var value = $("#slider1").slider.value();<br>
+			$("#slider1").slider.value(value);
+		</samp></p>
+
+		<h2>Events</h2>
+
+		<p>
+			The slider provides an event to notify about a changed value.
+			This event can be blocked so that certain inacceptable values cannot be set.
+			In the following example, high values can be blocked and the slider range colour is set through a CSS class depending on the value.
+		</p>
+
+		<div id="slider2" class="slider" style="margin: 30px 0;" data-opt-small-step="0.0001"></div>
+
+		<p>
+			<span id="slider2Value" style="display: inline-block; width: 100px;">No value yet</span>
+			<label><input id="slider2Checkbox" type="checkbox"> Allow high values</label>
+		</p>
+		
+		<p><samp>
+			$("#slider2").on("valuechange", function (event) {<br>
+			    var value = $("#slider2").slider.value();<br>
+			    $("#slider2").toggleClass("red", value &gt; 60);<br>
+			    if (value &gt; 60 &amp;&amp; !$("#slider2Checkbox").prop("checked"))<br>
+			        $("#slider2").slider.value(60);<br>
+			});
+		</samp></p>
+
+		<h2>Range gradient background</h2>
+
+		<p>Using a CSS gradient with absolute lengths (depends on the actual slider size), also with custom content at a fixed position (at value 9) in the range element</p>
+
+		<div id="slider3" class="slider gradient" style="margin: 40px 0; width: 300px;" data-opt="{ value: 9, smallStep: 0.001, largeStep: 1, min: 0, max: 10 }"></div>
+
+		<h2>Multiple values</h2>
+		
+		<p>
+			A slider can also present multiple values at once. A separate handle is displayed for each value.
+			All handles can be moved individually. There are the advanced options for multiple values:
+		</p>
+
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>values</code></td>
+				<td>Array</td>
+				<td>The initially selected slider values.</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><code>handleCount</code></td>
+				<td>Number</td>
+				<td>The number of slider handles.</td>
+				<td>1</td>
+			</tr>
+			<tr>
+				<td><code>handleInteractionMode</code></td>
+				<td>String</td>
+				<td>How multiple handles interact with each other while dragging. Values: locked, push, free</td>
+				<td>locked</td>
+			</tr>
+			<tr>
+				<td><code>rangeOverflowEqual</code></td>
+				<td>Boolean</td>
+				<td>Overflow the range if the two handles have the same value.</td>
+				<td>false</td>
+			</tr>
+			<tr>
+				<td><code>ranges</code></td>
+				<td>Array</td>
+				<td>Individual ranges. Overrides the rangeBase option and two-handle range behaviour.<br>
+					Each range object has the properties: start, end, overflowEqual, color, className.<br>
+					start and end can be fixed values, “min”/“max”, or zero-based handle references prefixed with “#”.</td>
+				<td></td>
+			</tr>
+		</table>
+
+		<h3>Handles locked against each other</h3>
+
+		<div class="slider" style="margin: 40px 0;" data-opt="{ smallStep: 0.001, largeStep: 1, min: 0, max: 24, handleCount: 2, values: [10, 18] }"></div>
+
+		<h3>Handles push each other</h3>
+
+		<div class="slider" style="margin: 40px 0;" data-opt="{ smallStep: 0.001, largeStep: 1, min: 0, max: 24, handleCount: 2, values: [10, 18], handleInteractionMode: 'push' }"></div>
+
+		<h3>Handles free</h3>
+
+		<p>
+			Don’t overflow the range on equal values (default):
+		</p>
+
+		<div class="slider" style="margin: 40px 0;" data-opt="{ smallStep: 1, largeStep: 1, min: 0, max: 24, handleCount: 2, values: [10, 18], handleInteractionMode: 'free' }"></div>
+
+		<p>
+			Overflow the range on equal values:
+		</p>
+
+		<div class="slider" style="margin: 40px 0;" data-opt="{ smallStep: 1, largeStep: 1, min: 0, max: 24, handleCount: 2, values: [10, 18], handleInteractionMode: 'free', rangeOverflowEqual: true }"></div>
+
+		<h3>Vertical layout</h3>
+
+		<div class="slider" style="margin: 0 30px; height: 250px;" data-opt="{ orientation: 'v', smallStep: 0.001, largeStep: 20, handleCount: 2, values: [20, 60] }"></div>
+
+		<h3>More handles and individual ranges between them</h3>
+
+		<p>
+			Ranges between handles, with one overflowing from last to first handle. Use this to specify high and low error and warning thresholds.
+		</p>
+
+		<div class="slider" style="margin: 40px 0;" data-opt="{ handleCount: 4, values: [10, 20, 70, 80], handleInteractionMode: 'push', ranges: [{ start: '#0', end: '#1', color: '#f9d869' }, { start: '#1', end: '#2', color: 'lightgreen' }, { start: '#2', end: '#3', color: '#f9d869' }, { start: '#3', end: '#0', color: 'lightcoral' }] }"></div>
+
+		<p>
+			Ranges with “min”, “max”, constant values and a handle reference (at “D”); also customised dimensions and styled handles with custom content.
+		</p>
+
+		<div id="slider4" class="slider large-handle" style="margin: 40px 0;" data-opt="{ handleCount: 5, values: [10, 20, 55, 70, 80], handleInteractionMode: 'push', ranges: [{ start: 'min', end: 25, color: '#81c5f7' }, { start: 25, end: '#3', color: 'lightgreen' }, { start: '#3', end: 'max', color: 'lightcoral' }] }"></div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#getValueButton").click(function () {
+			$("#setValueInput").val($("#slider1").slider.value());
+		})
+		$("#setValueInput").spinner();
+		$("#setValueButton").click(function () {
+			$("#slider1").slider.value($("#setValueInput").val());
+		})
+		$("#slider1Checkbox").change(function () {
+			$("#slider1").disabled($("#slider1Checkbox").prop("checked"));
+		});
+		$("#slider1").disabled($("#slider1Checkbox").prop("checked"));
+
+		$("#slider2").on("valuechange", function (event) {
+			var value = $("#slider2").slider.value();
+			$("#slider2Value").text("Value: " + value);
+			$("#slider2").toggleClass("red", value > 60);
+			if (value > 60 && !$("#slider2Checkbox").prop("checked"))
+				$("#slider2").slider.value(60);
+		});
+
+		var range = $("#slider3 .ff-range").first();
+		range.css("overflow", "hidden");
+		range.html("<div style='margin-left: 261px; font-size: 8px; line-height: 9px; font-weight: 900; color: white;'>!</div>");
+
+		var handles = $("#slider4 .ff-handle");
+		$(handles[0]).html("A<sub>0</sub>");
+		$(handles[1]).text("B");
+		$(handles[2]).text("C");
+		$(handles[3]).text("D");
+		$(handles[4]).text("E*");
+	</script>
+</body>
+</html>

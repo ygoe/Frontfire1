@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Off-canvas - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Off-canvas</h1>
+		
+		<p>
+			An off-canvas element appears on request on either side of the page and overlays or pushes away the main page content.
+			This can be used for navigation menus or other side panels that don’t need to be permanently visible.
+		</p>
+
+		<p>
+			To open an off-canvas element, call the <code>offCanvas</code> jQuery extension function on the element to show as off-canvas. The function takes the options as its single argument. The options are optional and can alternatively be specified as <code>data-opt</code> HTML attributes with the off-canvas HTML element. The following options are supported:
+		</p>
+
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>cancellable</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the user can close the off-canvas panel by clicking anywhere outside of it or pressing the Escape key.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>edge</code></td>
+				<td>String</td>
+				<td>The side from which the off-canvas opens. Values: left, right</td>
+				<td>left</td>
+			</tr>
+			<tr>
+				<td><code>push</code></td>
+				<td>Number</td>
+				<td>Push the page content to the side when showing the off-canvas panel. 0 doesn’t push, 0.5 pushes half-way, 1 pushes the full panel width.</td>
+				<td>1</td>
+			</tr>
+		</table>
+		
+		<p>
+			To open an off-canvas, use code like this:
+		</p>
+		
+		<p><samp>
+			$("#button1").click(function (event) {<br>
+			    $("#offCanvas1").offCanvas(options);<br>
+			});
+		</samp></p>
+
+		<p>
+			Here are a number of buttons that open the same off-canvas with different options.
+		</p>
+
+		<p>
+			<button id="openButton1" type="button">Left panel, scrolling</button>
+			<button id="openButton2" type="button">Left panel, non-cancellable</button>
+		</p>
+
+		<p>
+			<button id="openButton3a" type="button">Left panel, overlapping</button>
+			<button id="openButton3b" type="button">Left panel, half-pushing</button>
+		</p>
+
+		<p>
+			<button id="openButton3c" type="button">Right panel, overlapping</button>
+			<button id="openButton3d" type="button">Right panel, half-pushing</button>
+			<button id="openButton3e" type="button">Right panel, pushing</button>
+		</p>
+
+		<p>
+			The off-canvas can be closed by code. This is done through a plugin extension function with a syntax similar to other jQuery functions.
+		</p>
+		
+		<p><samp>
+			$("#offCanvas1").offCanvas.close(); 
+		</samp></p>
+
+		<p style="background: #f8f8f8; color: #a0a0a0; padding: 45vh 0; text-align: center;">
+			<em>This space is intentionally left blank to demonstrate the page scroll lock while an off-canvas element is open.</em>
+		</p>
+
+		<aside id="offCanvas1" class="off-canvas" style="width: 300px;">
+			<p>
+				Off-canvas 1
+			</p>
+
+			<p class="filler-text">
+				Fusce varius urna eget justo egestas, non convallis dolor condimentum. Donec eget augue ut ligula porttitor consequat. Donec eu magna sit amet risus auctor pharetra at at mi. Integer eget mattis ex, nec pharetra eros. Proin nec sem tempus, efficitur dui sit amet, aliquam urna. Phasellus tincidunt pellentesque molestie. In hendrerit scelerisque venenatis. Mauris commodo consequat nulla id hendrerit. Suspendisse a porta sapien. Sed id tortor eu nulla semper dictum. Curabitur at neque eleifend, dignissim odio ut, viverra turpis.
+			</p>
+
+			<p class="filler-text">
+				Donec eros neque, pharetra eget nisl finibus, sagittis mattis ligula. Sed a urna porttitor, egestas dui finibus, semper augue. Nulla vel eros massa. Quisque lacinia, orci ac viverra faucibus, libero urna posuere magna, eget sagittis lectus mi id felis. Etiam at magna sit amet urna euismod tincidunt sed nec lorem. Cras vitae lorem turpis. Quisque rhoncus, justo at mattis sagittis, nibh nisl tempor lectus, id commodo est sapien quis ante.
+			</p>
+
+			<p class="filler-text">
+				Quisque porta nibh justo, iaculis rhoncus mi malesuada nec. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque. Nulla sed tempus diam, in semper odio. Sed malesuada volutpat neque vitae dignissim. Praesent sit amet sem porttitor, convallis ex varius, vulputate diam. Vivamus a enim ac velit mattis cursus. Maecenas vestibulum tincidunt eros in vulputate. Pellentesque egestas massa mauris, ac vestibulum orci pulvinar ut. Donec porttitor congue odio, auctor efficitur magna lobortis ut. Sed efficitur sollicitudin leo in lacinia.
+			</p>
+
+			<p class="filler-text">
+				Pellentesque efficitur dapibus ante interdum elementum. Fusce scelerisque finibus lectus nec fermentum. Integer finibus, purus at maximus luctus, sapien nulla varius urna, id pulvinar ligula arcu nec tortor. Aenean vitae ornare arcu. Donec viverra id urna in iaculis. Nulla vestibulum sed mauris ut scelerisque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus sem tortor, hendrerit at velit non, accumsan ultricies felis. Aenean molestie ligula justo, nec efficitur lorem luctus ut. Quisque porta, nulla id placerat pretium, orci augue luctus dui, ac finibus urna diam vel lectus. Pellentesque ornare aliquet risus, eu feugiat tortor mollis ac. Integer tempus blandit dui sed rutrum.
+			</p>
+		</aside>
+
+		<aside id="offCanvas2" class="off-canvas">
+			<button id="closeButton2" type="button">Close</button>
+
+			<p>
+				Off-canvas 2
+			</p>
+		</aside>
+
+		<aside id="offCanvas3" class="off-canvas">
+			<p>
+				Off-canvas 3
+			</p>
+		</aside>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#openButton1").click(function () {
+			$("#offCanvas1").offCanvas();
+		});
+
+		$("#openButton2").click(function () {
+			$("#offCanvas2").offCanvas({ cancellable: false });
+		});
+		$("#closeButton2").click(function () {
+			$("#offCanvas2").offCanvas.close();
+		});
+
+		$("#openButton3a").click(function () {
+			$("#offCanvas3").offCanvas({ push: 0 });
+		});
+		$("#openButton3b").click(function () {
+			$("#offCanvas3").offCanvas({ push: 0.5 });
+		});
+
+		$("#openButton3c").click(function () {
+			$("#offCanvas3").offCanvas({ edge: "right", push: 0 });
+		});
+		$("#openButton3d").click(function () {
+			$("#offCanvas3").offCanvas({ edge: "right", push: 0.5 });
+		});
+		$("#openButton3e").click(function () {
+			$("#offCanvas3").offCanvas({ edge: "right" });
+		});
+	</script>
+</body>
+</html>

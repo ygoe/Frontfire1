@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Resizing - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Resizing</h1>
+
+		<style>
+			.resizable
+			{
+				position: absolute;
+				width: 120px;
+				height: 80px;
+				border: 1px solid #80d030;
+				background: #ccecac;
+				padding: 5px 10px;
+				text-align: center;
+				-moz-user-select: none;
+				-webkit-user-select: none;
+				user-select: none;
+			}
+
+			.resizable[disabled]
+			{
+				background: #cccccc;
+				border-color: #808080;
+			}
+
+			.resizable.resizing
+			{
+				box-shadow: rgba(0, 0, 0, 0.2) 0 3px 6px;
+			}
+
+			.container
+			{
+				position: relative;
+				border: 1px dashed silver;
+				height: 250px;
+			}
+
+			.container.grid
+			{
+				border: none;
+				background: url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><rect fill="none" stroke="lightsalmon" stroke-width="1" x="0" y="0" width="21" height="21"/></svg>') #f8f8f8;
+			}
+		</style>
+
+		<h2>Basic resizable</h2>
+
+		<div class="container">
+			<div id="resizableAny" class="resizable" data-opt-grid="[10,10]" data-opt-min-width="60"><input type="checkbox" checked> Resize me anywhere (if checked)</div>
+			<div id="resizableX" class="resizable" style="left: 200px;">Resize me horizontally</div>
+			<div id="resizableY" class="resizable" style="left: 400px;">Resize me vertically</div>
+			<div id="resizableLeft" class="resizable" style="left: 600px;">Resize me at left edge</div>
+		</div>
+
+		<h2>Resizable with minimum/maximum size</h2>
+
+		<div class="container">
+			<div id="resizableMin" class="resizable">Minimum size</div>
+			<div id="resizableMax" class="resizable" style="left: 200px;">Maximum size</div>
+		</div>
+
+		<h2>Resizable within a container</h2>
+
+		<div id="container1" class="container">
+			<div id="resizableCont" class="resizable">Resize me within the container</div>
+			<div id="resizableCont2" class="resizable" style="left: 200px;">Resize me within the container</div>
+		</div>
+		<label><input id="hideHandlesCheckbox" type="checkbox"> Hide handles</label>
+
+		<h2>Snapping to grid within the container</h2>
+
+		<div id="container2" class="container grid">
+			<div id="resizableGrid" class="resizable">Resize me with grid snapping</div>
+			<div id="resizableGridX" class="resizable" style="left: 210px;">Resize me horizontally with grid</div>
+		</div>
+
+		<h2>Resizable with fixed aspect ratio</h2>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			Aspect ratio is not yet implemented.
+		</p>
+
+		<div class="container">
+			<div id="resizableAR" class="resizable" data-resize-handles="nw,se">Resize me</div>
+		</div>
+
+		<h2>Snapping to grid with fixed aspect ratio</h2>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			Aspect ratio is not yet implemented.
+		</p>
+
+		<div class="container grid">
+			<div id="resizableGridAR" class="resizable">Resize me with grid snapping</div>
+		</div>
+
+		<h2>All features</h2>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			Aspect ratio is not yet implemented.
+		</p>
+
+		<div id="container3" class="container grid">
+			<div id="resizableGridARCont" class="resizable">Resize me with grid snapping</div>
+		</div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#resizableAny").resizable();
+		$("#resizableAny input").change(function () {
+			$("#resizableAny").disabled(!$("#resizableAny input").prop("checked"));
+		});
+
+		$("#resizableX").resizable({ handles: "w,e" });
+		$("#resizableY").resizable({ handles: "n,s" });
+		$("#resizableLeft").resizable({ handles: "w" });
+
+		$("#resizableMin").resizable({ minWidth: 80, minHeight: 80 });
+		$("#resizableMax").resizable({ maxWidth: 300, maxHeight: 250 });
+
+		$("#resizableCont").resizable({ containment: "#container1", maxWidth: 200, handleAddClass: "box" });
+		$("#resizableCont2").resizable({ containment: "#container1", handleAddClass: "box" });
+		$("#hideHandlesCheckbox").change(function () {
+			$("#resizableCont, #resizableCont2").toggleClass("hide-handles"); // $("#hideHandlesCheckbox").prop("checked")
+		});
+
+		$("#resizableGrid").resizable({ containment: "#container2", grid: [20, 20] });
+		$("#resizableGridX").resizable({ containment: "#container2", handles: "w,e", grid: [20, 20] });
+
+		$("#resizableAR").resizable({ aspectRatio: true });
+
+		$("#resizableGridAR").resizable({ grid: [20, 20], aspectRatio: true });
+
+		$("#resizableGridARCont").resizable({ containment: "#container3", grid: [20, 20], aspectRatio: true, minWidth: 60, minHeight: 60, maxWidth: 300, maxHeight: 200 });
+	</script>
+</body>
+</html>

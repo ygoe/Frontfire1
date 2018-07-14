@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Sorting - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<style>
+			ul.sortable > li
+			{
+				background: #eeeeee;
+				margin: 3px 0;
+				cursor: default;
+			}
+			ul ul.sortable > li
+			{
+				background: #dddddd;
+			}
+			ul.sortable .dragging
+			{
+				box-shadow: rgba(0, 0, 0, 0.3) 0 1px 5px;
+			}
+
+			div.sortable > div
+			{
+				display: inline-block;
+				margin-right: 0px;
+				border: 1px solid gray;
+				background: white;
+				padding: 20px;
+				cursor: default;
+			}
+
+			div.sortable.grid
+			{
+				width: 300px;
+				background: #ffffcc;
+			}
+
+			div.sortable.grid > div
+			{
+				min-width: 70px;
+				min-height: 70px;
+				margin: 10px;
+				text-align: center;
+			}
+
+			div.sortable.grid2 > div
+			{
+				margin: 4px;
+				padding: 4px 8px;
+				border: none;
+				border-radius: 3px;
+				background: #80a0c0;
+				color: white;
+				text-align: center;
+			}
+
+			.ff-sortable-placeholder
+			{
+				background: #ffccbb !important;
+			}
+
+			div.sortable.grid2 .ff-sortable-placeholder
+			{
+				border: 1px dashed #c0d0e0 !important;
+				padding: 3px 7px;
+				background: #f0f4f8 !important;
+			}
+		</style>
+
+		<h1>Sorting</h1>
+
+		<h2>Vertical layout</h2>
+
+		<p>
+			Sortable list items:
+		</p>
+		
+		<ul class="sortable">
+			<li>Item 1</li>
+			<li>Item 2</li>
+			<li>Item 3</li>
+			<li>Item 4</li>
+			<li>Item 5</li>
+			<li>Item 6</li>
+			<li>Item 7</li>
+			<li>Item 8</li>
+		</ul>
+		
+		<p>
+			Sortable table body rows:
+		</p>
+		
+		<table>
+			<thead>
+				<tr>
+					<th>Column A</th>
+					<th>Column B</th>
+					<th>Column C</th>
+					<th>Column D</th>
+				</tr>
+			</thead>
+			<tbody class="sortable">
+				<tr>
+					<td>A1 Text</td>
+					<td>B1</td>
+					<td>C1</td>
+					<td>D1</td>
+				</tr>
+				<tr>
+					<td>A2</td>
+					<td>B2 Text</td>
+					<td>C2</td>
+					<td>D2</td>
+				</tr>
+				<tr>
+					<td>A3</td>
+					<td>B3</td>
+					<td>C3 Text</td>
+					<td>D3</td>
+				</tr>
+				<tr>
+					<td>A4</td>
+					<td>B4</td>
+					<td>C4</td>
+					<td>D4 Text</td>
+				</tr>
+				<tr>
+					<td>A5</td>
+					<td>B5</td>
+					<td>C5</td>
+					<td>D5</td>
+				</tr>
+			</tbody>
+		</table>
+
+		<h2>Horizontal layout</h2>
+
+		<div class="sortable">
+			<div>A</div>
+			<div>B</div>
+			<div>C</div>
+			<div>D</div>
+			<div>E</div>
+			<div>F</div>
+			<div>G with extras</div>
+			<div>H</div>
+		</div>
+
+		<h2>Regular grid layout</h2>
+
+		<div class="sortable grid">
+			<div>A</div>
+			<div>B</div>
+			<div>C</div>
+			<div>D</div>
+			<div>E</div>
+			<div>F</div>
+			<div>G</div>
+			<div>H</div>
+		</div>
+
+		<h2>Irregular grid layout</h2>
+
+		<div class="sortable grid2" data-opt-drag-cursor="grabbing">
+			<div>Lorem</div>
+			<div>ipsum</div>
+			<div>dolor</div>
+			<div>sit</div>
+			<div>amet</div>
+			<div>consectetur</div>
+			<div>adipiscing</div>
+			<div>elit</div>
+			<div>Duis</div>
+			<div>ante</div>
+			<div>nibh</div>
+			<div>mattis</div>
+			<div>ut</div>
+			<div>efficitur</div>
+			<div>a</div>
+			<div>posuere</div>
+			<div>semper</div>
+			<div>quam</div>
+			<div>Vivamus</div>
+			<div>efficitur</div>
+			<div>dolor</div>
+			<div>at</div>
+			<div>diam</div>
+			<div>gravida</div>
+			<div>vitae</div>
+			<div>porttitor</div>
+			<div>turpis</div>
+			<div>venenatis</div>
+			<div>Fusce</div>
+			<div>convallis</div>
+			<div>metus</div>
+			<div>eget</div>
+			<div>gravida</div>
+			<div>pulvinar</div>
+		</div>
+
+		<h2>Events</h2>
+
+		<div id="sortable1" class="sortable">
+			<div>Lorem</div>
+			<div>ipsum</div>
+			<div>dolor</div>
+			<div>sit</div>
+			<div>amet</div>
+			<div>consectetur</div>
+			<div>adipiscing</div>
+			<div>elit</div>
+		</div>
+
+		<p id="sortable1Status">
+			No event yet
+		</p>
+
+		<p>
+			<label><input id="sortable1Checkbox" type="checkbox"> Deny new placement</label>
+		</p>
+
+		<h2>Nested sortables</h2>
+
+		<ul class="sortable" data-opt="{ axis: 'y', containment: 'parent', dragClass: 'dragging' }">
+			<li>
+				A
+				<ul class="sortable" data-opt="{ axis: 'y', containment: 'parent', dragClass: 'dragging' }">
+					<li>A1</li>
+					<li>A2</li>
+					<li>A3</li>
+					<li>A4</li>
+				</ul>
+			</li>
+			<li>
+				B
+				<ul class="sortable" data-opt="{ axis: 'y', containment: 'parent', dragClass: 'dragging' }">
+					<li>B1</li>
+					<li>B2</li>
+					<li>B3</li>
+					<li>B4</li>
+				</ul>
+			</li>
+			<li>
+				C
+				<ul class="sortable" data-opt="{ axis: 'y', containment: 'parent', dragClass: 'dragging' }">
+					<li>C1</li>
+					<li>C2</li>
+					<li>C3</li>
+					<li>C4</li>
+				</ul>
+			</li>
+		</ul>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#sortable1").on("sortablestart", function (event) {
+			$("#sortable1Status").text("Element \"" + $(event.target).text() + "\" picked up");
+		});
+		$("#sortable1").on("sortablechange", function (event) {
+			$("#sortable1Status").text("Element \"" + $(event.target).text() + "\" placed " +
+				(event.after ? "after \"" + $(event.after).text() + "\"" : "at start"));
+		});
+		$("#sortable1").on("sortableend", function (event) {
+			$("#sortable1Status").text("Element \"" + $(event.target).text() + "\" dropped " +
+				(event.after ? "after \"" + $(event.after).text() + "\"" : "at start"));
+			if ($("#sortable1Checkbox").prop("checked"))
+				event.preventDefault();
+		});
+	</script>
+</body>
+</html>

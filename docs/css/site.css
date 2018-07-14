@@ -1,0 +1,45 @@
+﻿header
+{
+	background: #383838;
+	padding: 20px 0 2px;
+	border-bottom: 1px solid silver;
+}
+header a
+{
+	font-size: 1.8em;
+	font-weight: 300;
+	color: white;
+	font-variant-ligatures: discretionary-ligatures;
+}
+header a:hover
+{
+	color: #d0e0ff;
+}
+header a img
+{
+	width: 36px;
+	height: 36px;
+	vertical-align: middle;
+	margin: 0 16px 6px 0;
+}
+footer
+{
+	margin-top: 30px;
+	border-top: 1px solid silver;
+	padding: 6px 0 20px;
+	color: gray;
+	font-size: 0.85em;
+	font-variant-ligatures: discretionary-ligatures;
+}
+
+.filler-text
+{
+	color: #909090;
+}
+
+samp
+{
+	display: block;
+	border-left: 10px solid #cceedd;
+	padding-left: 10px;
+}

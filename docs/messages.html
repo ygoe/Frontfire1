@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Messages - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Messages</h1>
+		
+		<p>
+			Messages, or message boxes, can be used to highlight important or informative notifications to the user. They are often used at the top of a form to inform the user about the issues that occurred while processing the form data provided. There are several message levels, ordered by severity. The described CSS classes can be added to any element. It should be a block element though and it is encouraged to use the classes only on <code>&lt;div&gt;</code> or <code>&lt;p&gt;</code> elements.
+		</p>
+		
+		<p>
+			The icon needs to be included in the markup manually, so you have total freedom about whether or not and which icon from which source (graphics, font) to use. When using an icon, the additional <code>icon</code> CSS class must be applied to provide some space at the left side.
+		</p>
+		
+		<p>
+			A critical message has the highest severity and is defined with the <code>critical</code> CSS class. 
+		</p>
+		
+		<p class="critical icon">
+			<i class="fa fa-bolt"></i>
+			This is a critical message. Something <i>really, really bad</i> has happened. You better go take care of it right now. <a href="#">More information.</a>
+		</p>
+
+		<p>
+			An error message has the second-highest severity and is defined with the <code>error</code> CSS class. 
+		</p>
+		
+		<p class="error icon">
+			<i class="fa fa-times-circle"></i>
+			This is an error message. Something hasn't quite worked but we could still handle it. You should take a look though. <a href="#">More information.</a>
+		</p>
+
+		<p>
+			A warning message is defined with the <code>warning</code> CSS class. 
+		</p>
+		
+		<p class="warning icon closable">
+			<i class="fa fa-exclamation-triangle"></i>
+			This is a warning message. Something wasn't as expected but might still be okay anyway. <a href="#">More information.</a>
+		</p>
+
+		<p>
+			An information message is defined with the <code>information</code> CSS class. 
+		</p>
+		
+		<p class="information icon closable">
+			<i class="fa fa-info-circle"></i>
+			This is an information message. Just so you know. Sed malesuada ac erat vitae scelerisque. Cras rhoncus erat nec leo vehicula iaculis. Integer molestie felis quis justo laoreet faucibus. Quisque ornare molestie imperdiet. Suspendisse vel imperdiet erat. Phasellus vel posuere enim. Maecenas sagittis nec lectus id sollicitudin. Donec sit amet tortor neque. <a href="#">More information.</a>
+		</p>
+
+		<p>
+			A success message is defined with the <code>success</code> CSS class. 
+		</p>
+		
+		<p class="success icon closable">
+			<i class="fa fa-check"></i>
+			This is a success message. Congratulations, everything went fine! <a href="#">More information.</a>
+		</p>
+		
+		<h2>Closable messages</h2>
+		
+		<p>
+			Messages can be closed by adding the <code>closable</code> CSS class to them.
+		</p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+</body>
+</html>

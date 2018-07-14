@@ -1,0 +1,106 @@
+@import "../settings";
+@import "../compatibility";
+
+form
+{
+	display: inline;
+
+	h1 { margin-bottom: 8px; }
+	h2, h3, h4, h5, h6 { margin-bottom: 0; }
+}
+
+.form-row .label:not(:first-child)   // IE compat default, overridden in feature query
+{
+	margin-top: 1em;
+}
+.form-row   // IE compat
+{
+	#{selector-nest($textInputs, "> &")},
+	.ff-input-wrapper
+	{
+		display: block;
+		width: 100%;
+	}
+}
+.form-single-row   // fallback to vertical layout, overridden in feature query
+{
+	display: flex;
+	flex-direction: column;
+}
+
+// The actual form grid layout, only if CSS grid is supported by the browser (which is all except IE)
+@supports (display: grid)
+{
+	.form-row,
+	.form-single-row
+	{
+		margin-top: 1em;
+		margin-bottom: 1em;
+		display: grid;
+		grid-auto-columns: 1fr;
+		justify-content: space-between;
+	}
+	.form-row   // normal 3-line form rows with labels and validation messages
+	{
+		grid-template-rows: max-content max-content max-content;
+		grid-gap: 1px 1em;
+		grid-auto-flow: column;
+	}
+	.form-single-row   // no labels or validation messages, just controls; allows custom responsive layouts
+	{
+		grid-gap: 1em;
+		grid-auto-flow: row;
+	}
+
+	.form-row.no-validation
+	{
+		grid-template-rows: max-content max-content;
+	}
+	.form-row .label
+	{
+		@include user-select(none);
+		align-self: end;
+		transition: color $animationDuration $animationFunction;
+	}
+	.form-row .label:not(:first-child)   // override IE compat default
+	{
+		margin-top: 0px;
+	}
+	.form-row .label[disabled]
+	{
+		color: $disabledLabelColor;
+	}
+	.form-row label   // to contain a checkbox or radiobox
+	{
+		justify-self: start;
+		align-self: center;
+	}
+
+	// Responsive single-column fallbacks
+	@mixin too-narrow
+	{
+		grid-template-columns: 100% !important;
+		grid-auto-flow: row;
+
+		.label:not(:first-child)
+		{
+			margin-top: 1em;
+		}
+	}
+	@media (max-width: $viewportWidthPhone)
+	{
+		.form-row.require-minitab { @include too-narrow; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		.form-row.require-tablet { @include too-narrow; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		.form-row.require-desktop { @include too-narrow; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		.form-row.require-wide { @include too-narrow; }
+	}
+}

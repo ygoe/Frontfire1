@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Carousel - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<style>
+			.carousel .item
+			{
+				padding: 80px 20px 20px;
+				font-size: 2em;
+				line-height: 130%;
+				font-weight: 300;
+			}
+
+			.carousel.dark-indicator .item
+			{
+				color: white;
+			}
+			
+			.image-items .item
+			{
+				background-position: 50% 50%;
+				background-size: cover;
+				text-align: center;
+				text-shadow: 0 0 12px white, 0 0 8px white, 0 0 4px white, 0 0 2px white;
+			}
+		</style>
+
+		<h1>Carousel</h1>
+		
+		<p>
+			A carousel contains multiple items that are arranged horizontally and can be scrolled through.
+			The number of items visible at a time is configurable.
+			Below are several demonstrations of different carousel configurations.
+		</p>
+
+		<p>
+			The options are easiest specified as <code>data-opt</code> HTML attributes with the carousel HTML element. The following options are supported for carousels:
+		</p>
+
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>active</code></td>
+				<td>Number</td>
+				<td>The index of the initially active item.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>items</code></td>
+				<td>Number</td>
+				<td>The number of items concurrently visible.</td>
+				<td>1</td>
+			</tr>
+			<tr>
+				<td><code>dotsEach</code></td>
+				<td>Number</td>
+				<td>Show an indicator dot each x items. -1 means the same value as items.</td>
+				<td>-1</td>
+			</tr>
+			<tr>
+				<td><code>gutter</code></td>
+				<td>Number</td>
+				<td>The margin between two items in pixels.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>indicator</code></td>
+				<td>Boolean</td>
+				<td>Shows the indicator dots for the active item.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>autoPlay</code></td>
+				<td>Boolean</td>
+				<td>Starts looping through all items automatically.</td>
+				<td>false</td>
+			</tr>
+			<tr>
+				<td><code>autoPlayInterval</code></td>
+				<td>Number</td>
+				<td>Autoplay item switch interval in milliseconds.</td>
+				<td>4000</td>
+			</tr>
+			<tr>
+				<td><code>pauseOnHover</code></td>
+				<td>Boolean</td>
+				<td>Pauses autoplay while the carousel is hovered with the mouse.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>dragCursor</code></td>
+				<td>String</td>
+				<td>The mouse cursor to show during dragging.</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td><code>animation</code></td>
+				<td>String</td>
+				<td>The animation between items. Values: slide-all, slide-in, slide-out, fade, slide-fade.<br>
+					For more than one visible item, only slide-all is supported and automatically used.</td>
+				<td>slide-all</td>
+			</tr>
+		</table>
+		
+		<p>
+			When the active item is changed, an <code>activeItemChange</code> event is raised.
+		</p>
+		
+		<p>
+			The active item can be determined and switched by code. This is done through a plugin extension function with a syntax similar to other jQuery functions.
+		</p>
+		
+		<p><samp>
+			var index = $("#carousel1").carousel.activeItem();<br>
+			$("#carousel1").carousel.activeItem(indexOrItem);
+		</samp></p>
+		
+		<h2>Simple carousel</h2>
+		
+		<p>
+			A simple carousel consists of a <code>&lt;div class="carousel"&gt;</code> element with a <code>&lt;div&gt;</code> child element for each item.
+			Items can contain anything and will be arranged to the full width of the carousel so that only a single item is visible.
+			Items are individually coloured and have additional padding in this example.
+		</p>
+		
+		<p>
+			Below the visible item there is a page indicator that tells the user which is the currently visible page and how many pages there are.
+			The pages can be switched by dragging them to the left or right with any pointing device (mouse, touch, stylus).
+		</p>
+
+		<div class="carousel">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+			<div class="item" style="background: #e8f5c1;">Item 3</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+		</div>
+		
+		<p><samp>
+			&lt;div class="carousel"&gt;<br>
+			    &lt;div&gt;Item 1&lt;/div&gt;<br>
+			    &lt;div&gt;Item 2&lt;/div&gt;<br>
+			    ...<br>
+			&lt;/div&gt;
+		</samp></p>
+
+		<h2>Multiple visible items</h2>
+
+		<p>
+			Multiple items can be visible by setting the <code>items</code> option to a number greater than 1.
+			The <code>gutter</code> option can be used to keep same spacing between the items.
+		</p>
+		
+		<h3>3 items out of 6 visible, varying item height</h3>
+
+		<div class="carousel" data-opt-items="3" data-opt-gutter="20">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2<br>Line 2<br>Line 3</div>
+			<div class="item" style="background: #e8f5c1;">Item 3<br>Line 2</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+		</div>
+
+		<h3>3 items out of 7 visible</h3>
+
+		<div class="carousel" data-opt-items="3" data-opt-gutter="20">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+			<div class="item" style="background: #e8f5c1;">Item 3</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+			<div class="item" style="background: #c0c0c0;">Item 7</div>
+		</div>
+
+		<h3>3 items out of 7 visible, with individual indicator dots</h3>
+
+		<div class="carousel" data-opt-items="3" data-opt-dots-each="1" data-opt-gutter="20">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+			<div class="item" style="background: #e8f5c1;">Item 3</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+			<div class="item" style="background: #c0c0c0;">Item 7</div>
+		</div>
+
+		<h3>4 items out of 2 visible</h3>
+
+		<div class="carousel" data-opt-items="4" data-opt-gutter="20">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+		</div>
+
+		<h2>Inline and dark indicator</h2>
+		
+		<p>
+			The indicator dots can be moved to the inside of the carousel by adding the <code>inline-indicator</code> CSS class to the carousel element.
+		</p>
+
+		<p>
+			The indicator dots can be inverted for light display on a dark background by adding the <code>dark-indicator</code> CSS class to the carousel element.
+		</p>
+
+		<div class="carousel inline-indicator dark-indicator" style="width: 50%; margin: 0 auto;" data-opt-gutter="40" data-opt-drag-cursor="grabbing">
+			<div class="item" style="background: #791313;">Item 1</div>
+			<div class="item" style="background: #796213;">Item 2</div>
+			<div class="item" style="background: #607913;">Item 3</div>
+			<div class="item" style="background: #13793d;">Item 4</div>
+			<div class="item" style="background: #135579;">Item 5</div>
+			<div class="item" style="background: #541379;">Item 6</div>
+		</div>
+
+		<h2>Smaller indicator</h2>
+
+		<p>
+			The indicator dots size can be decreased by adding the <code>small-indicator</code> CSS class to the carousel element.
+		</p>
+
+		<div class="carousel small-indicator" style="width: 50%; margin: 0 auto;" data-opt-gutter="40" data-opt-drag-cursor="grabbing">
+			<div class="item" style="background: #f5c1c1;">Item 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+			<div class="item" style="background: #e8f5c1;">Item 3</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+		</div>
+
+		<h2>Autoplay</h2>
+		
+		<p>
+			Below are examples with auto-play enabled. See the options above.
+		</p>
+
+		<div class="carousel" data-opt="{ items: 3, gutter: 20, autoPlay: true }">
+			<div class="item" style="background: #f5c1c1;"><a href="">Item</a> 1</div>
+			<div class="item" style="background: #f5e9c1;">Item 2</div>
+			<div class="item" style="background: #e8f5c1;">Item 3</div>
+			<div class="item" style="background: #c1f5d7;">Item 4</div>
+			<div class="item" style="background: #c1e3f5;">Item 5</div>
+			<div class="item" style="background: #e2c1f5;">Item 6</div>
+			<div class="item" style="background: #c0c0c0;">Item 7</div>
+			<div class="item" style="background: #d0d0d0;">Item 8</div>
+			<div class="item" style="background: #e0e0e0;">Item 9</div>
+		</div>
+
+		<h2>Different animations</h2>
+
+		<p>
+			The default animation slide-all can be seen in the examples above.
+			Here are the other supported animations.
+		</p>
+
+		<div style="width: 47%; margin-right: 6%; float: left; margin-bottom: 1em;">
+			<h3>slide-out</h3>
+
+			<div class="carousel" data-opt-animation="slide-out">
+				<div class="item" style="background: #f5c1c1; text-align: center;">Item 1</div>
+				<div class="item" style="background: #f5e9c1; text-align: center;">Item 2</div>
+				<div class="item" style="background: #e8f5c1; text-align: center;">Item 3</div>
+				<div class="item" style="background: #c1f5d7; text-align: center;">Item 4</div>
+				<div class="item" style="background: #c1e3f5; text-align: center;">Item 5</div>
+				<div class="item" style="background: #e2c1f5; text-align: center;">Item 6</div>
+			</div>
+		</div>
+
+		<div style="width: 47%; float: left; margin-bottom: 1em;">
+			<h3>slide-in</h3>
+
+			<div class="carousel" data-opt-animation="slide-in">
+				<div class="item" style="background: #f5c1c1; text-align: center;">Item 1</div>
+				<div class="item" style="background: #f5e9c1; text-align: center;">Item 2</div>
+				<div class="item" style="background: #e8f5c1; text-align: center;">Item 3</div>
+				<div class="item" style="background: #c1f5d7; text-align: center;">Item 4</div>
+				<div class="item" style="background: #c1e3f5; text-align: center;">Item 5</div>
+				<div class="item" style="background: #e2c1f5; text-align: center;">Item 6</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<div style="width: 47%; margin-right: 6%; float: left; margin-bottom: 1em;">
+			<h3>fade</h3>
+
+			<div class="carousel" data-opt-animation="fade">
+				<div class="item" style="background: #f5c1c1; text-align: center;">Item 1</div>
+				<div class="item" style="background: #f5e9c1; text-align: center;">Item 2</div>
+				<div class="item" style="background: #e8f5c1; text-align: center;">Item 3</div>
+				<div class="item" style="background: #c1f5d7; text-align: center;">Item 4</div>
+				<div class="item" style="background: #c1e3f5; text-align: center;">Item 5</div>
+				<div class="item" style="background: #e2c1f5; text-align: center;">Item 6</div>
+			</div>
+		</div>
+
+		<div style="width: 47%; float: left; margin-bottom: 1em;">
+			<h3>slide-fade</h3>
+
+			<div class="carousel" data-opt-animation="slide-fade">
+				<div class="item" style="background: #f5c1c1; text-align: center;">Item 1</div>
+				<div class="item" style="background: #f5e9c1; text-align: center;">Item 2</div>
+				<div class="item" style="background: #e8f5c1; text-align: center;">Item 3</div>
+				<div class="item" style="background: #c1f5d7; text-align: center;">Item 4</div>
+				<div class="item" style="background: #c1e3f5; text-align: center;">Item 5</div>
+				<div class="item" style="background: #e2c1f5; text-align: center;">Item 6</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<h2>Different animations with autoplay</h2>
+
+		<div style="width: 45%; margin-right: 10%; float: left; margin-bottom: 1em;">
+			<h3>slide-out</h3>
+
+			<div class="carousel image-items" data-opt-animation="slide-out" data-opt-auto-play="true">
+				<div class="item" style="background-image: url(images/pexels-adventure-alps-climbing-dawn-551853.jpg);">Item 1</div>
+				<div class="item" style="background-image: url(images/pexels-bridge-hiking-wooden-bridge-23380.jpg);">Item 2</div>
+				<div class="item" style="background-image: url(images/pexels-macbook-pro-beside-spiral-notebook-669616.jpg);">Item 3</div>
+				<div class="item" style="background-image: url(images/pexels-two-person-shaking-each-others-hands-872957.jpg);">Item 4</div>
+				<div class="item" style="background-image: url(images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg);">Item 5</div>
+				<div class="item" style="background-image: url(images/pexels-sea-dawn-landscape-nature-139781.jpg);">Item 6</div>
+			</div>
+		</div>
+
+		<div style="width: 45%; float: left; margin-bottom: 1em;">
+			<h3>slide-in</h3>
+
+			<div class="carousel image-items" data-opt-animation="slide-in" data-opt-auto-play="true">
+				<div class="item" style="background-image: url(images/pexels-adventure-alps-climbing-dawn-551853.jpg);">Item 1</div>
+				<div class="item" style="background-image: url(images/pexels-bridge-hiking-wooden-bridge-23380.jpg);">Item 2</div>
+				<div class="item" style="background-image: url(images/pexels-macbook-pro-beside-spiral-notebook-669616.jpg);">Item 3</div>
+				<div class="item" style="background-image: url(images/pexels-two-person-shaking-each-others-hands-872957.jpg);">Item 4</div>
+				<div class="item" style="background-image: url(images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg);">Item 5</div>
+				<div class="item" style="background-image: url(images/pexels-sea-dawn-landscape-nature-139781.jpg);">Item 6</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<div style="width: 45%; margin-right: 10%; float: left; margin-bottom: 1em;">
+			<h3>fade</h3>
+
+			<div class="carousel image-items" data-opt-animation="fade" data-opt-auto-play="true">
+				<div class="item" style="background-image: url(images/pexels-adventure-alps-climbing-dawn-551853.jpg);">Item 1</div>
+				<div class="item" style="background-image: url(images/pexels-bridge-hiking-wooden-bridge-23380.jpg);">Item 2</div>
+				<div class="item" style="background-image: url(images/pexels-macbook-pro-beside-spiral-notebook-669616.jpg);">Item 3</div>
+				<div class="item" style="background-image: url(images/pexels-two-person-shaking-each-others-hands-872957.jpg);">Item 4</div>
+				<div class="item" style="background-image: url(images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg);">Item 5</div>
+				<div class="item" style="background-image: url(images/pexels-sea-dawn-landscape-nature-139781.jpg);">Item 6</div>
+			</div>
+		</div>
+
+		<div style="width: 45%; float: left; margin-bottom: 1em;">
+			<h3>slide-fade</h3>
+
+			<div class="carousel image-items" data-opt-animation="slide-fade" data-opt-auto-play="true">
+				<div class="item" style="background-image: url(images/pexels-adventure-alps-climbing-dawn-551853.jpg);">Item 1</div>
+				<div class="item" style="background-image: url(images/pexels-bridge-hiking-wooden-bridge-23380.jpg);">Item 2</div>
+				<div class="item" style="background-image: url(images/pexels-macbook-pro-beside-spiral-notebook-669616.jpg);">Item 3</div>
+				<div class="item" style="background-image: url(images/pexels-two-person-shaking-each-others-hands-872957.jpg);">Item 4</div>
+				<div class="item" style="background-image: url(images/pexels-yellow-petaled-flower-besides-brown-stone-235418.jpg);">Item 5</div>
+				<div class="item" style="background-image: url(images/pexels-sea-dawn-landscape-nature-139781.jpg);">Item 6</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+</body>
+</html>

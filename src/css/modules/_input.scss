@@ -1,0 +1,593 @@
+@import "../settings";
+@import "../compatibility";
+
+// ========== Labels ==========
+
+label
+{
+	@include user-select(none);
+	transition: color $animationDuration $animationFunction;
+	&[disabled]
+	{
+		color: $textboxDisabledColor;
+	}
+}
+
+.field-validation-error
+{
+	color: $validationErrorText;
+}
+
+// ========== Text fields ==========
+
+#{$textInputs}
+{
+	border: 1px solid $textboxBorder;
+	border-radius: 0;
+	background: $textboxBackground;
+	color: $textboxColor;
+	padding: 4px 8px;
+	box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
+	transition: border $animationDuration $animationFunction, color $animationDuration $animationFunction;
+
+	&:hover:not(:disabled), &:focus:not(:disabled)
+	{
+		border-color: $textboxFocusBorder;
+		// Remove Chrome default style
+		outline: none;
+		&.input-validation-error
+		{
+			border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+		}
+	}
+	&:disabled
+	{
+		border-color: $textboxDisabledBorder;
+		color: $textboxDisabledColor;
+	}
+
+	// For IE, must be separate from ::placeholder (cannot use @extend)
+	&:-ms-input-placeholder
+	{
+		font-style: italic;
+		opacity: 0.33;
+	}
+	// For Edge, must be separate from ::placeholder (cannot use @extend)
+	&::-ms-input-placeholder
+	{
+		font-style: italic;
+		opacity: 0.33;
+	}
+	&::placeholder
+	{
+		font-style: italic;
+		opacity: 0.33;
+	}
+
+	&.input-validation-error
+	{
+		border-color: $validationErrorText;
+		background-color: $validationErrorBackground;
+	}
+
+	&.no-border
+	{
+		border: none;
+		box-shadow: none;
+		padding: 2px 0px;
+	}
+	&.underline
+	{
+		border-top: none;
+		border-left: none;
+		border-right: none;
+		box-shadow: none;
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+	&.transparent
+	{
+		background-color: transparent;
+	}
+}
+
+input[type=number]
+{
+	// Make it a bit nicer
+	padding-right: 4px;
+
+	.ff-input-wrapper &
+	{
+		// Remove default spinner buttons, see https://stackoverflow.com/a/23374725
+		-moz-appearance:textfield;
+		&::-webkit-outer-spin-button, &::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+		// Reset to normal padding
+		padding-right: 8px;
+	}
+}
+
+.ff-input-wrapper
+{
+	display: inline-flex !important;
+	input
+	{
+		min-width: 0;
+		flex-grow: 1;
+		width: 100%;
+	}
+}
+
+// Wrapper for auto-height textarea
+.ff-textarea-wrapper
+{
+	position: relative;
+
+	textarea
+	{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		resize: none;
+		// DEBUG:
+		//background: transparent;
+		//color: rgba(0, 0, 0, 0.3);
+	}
+	div
+	{
+		width: 100%;
+		white-space: pre-wrap;
+		visibility: hidden;
+		// DEBUG:
+		//visibility: visible;
+		//color: red;
+	}
+}
+
+// Text field with label at either side
+.segmented-input
+{
+	display: flex;
+
+	> .label
+	{
+		border-top: 1px solid $textboxBorder;
+		border-bottom: 1px solid $textboxBorder;
+		background: $inputLabelBackground;
+		padding: 4px 8px;
+		white-space: nowrap;
+		transition: border $animationDuration $animationFunction, background $animationDuration $animationFunction, color $animationDuration $animationFunction;
+		&:first-child { border-left: 1px solid $textboxBorder; }
+		&:last-child { border-right: 1px solid $textboxBorder; }
+	}
+	&[disabled] > .label
+	{
+		border-color: $textboxDisabledBorder;
+	}
+
+	%textbox-icon
+	{
+		z-index: 10;
+		width: 25px;
+		text-align: center;
+		align-self: center;
+		pointer-events: none;
+	}
+	&.icon-left
+	{
+		> i:empty
+		{
+			@extend %textbox-icon;
+			margin-right: -25px;
+			padding-left: 9px;
+		}
+		> input
+		{
+			padding-left: 32px;
+		}
+	}
+	&.icon-right
+	{
+		> input
+		{
+			padding-right: 32px;
+		}
+		> i:empty
+		{
+			@extend %textbox-icon;
+			margin-left: -25px;
+			padding-right: 9px;
+		}
+	}
+	
+	> input
+	{
+		width: 100%;
+	}
+}
+
+// ========== Buttons ==========
+
+#{$buttonInputs},
+div.buttons a,
+a.button
+{
+	display: inline-block;
+	text-align: center;
+	border: none;
+	border-radius: 0;
+	background: $buttonBackground;
+	color: $buttonColor;
+	padding: 5px 9px;   // textbox padding + 1 for the missing border
+	min-width: 75px;
+	cursor: pointer;
+	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, border $animationDuration $animationFunction;
+
+	&:hover:not(:disabled),
+	&:focus:not(:disabled)
+	{
+		background: $buttonHoverBackground;
+		transition: background 0s;
+		// Remove Chrome default style
+		outline: none;
+	}
+	&:active:not(:disabled)
+	{
+		background: $buttonPressedBackground;
+		transition: background 0s;
+		color: $buttonPressedColor;
+	}
+	&:disabled
+	{
+		background: $buttonDisabledBackground;
+		color: $buttonDisabledColor;
+		cursor: default;
+	}
+
+	&.default:not(:disabled),
+	&[type=submit]:not(:disabled)
+	{
+		background: $buttonDefaultBackground;
+		color: $buttonDefaultColor;
+
+		&:hover,
+		&:focus
+		{
+			background: $buttonDefaultHoverBackground;
+			transition: background 0s;
+		}
+		&:active
+		{
+			background: $buttonDefaultPressedBackground;
+			transition: background 0s;
+			color: $buttonDefaultPressedColor;
+		}
+	}
+
+	&.caution:not(:disabled)
+	{
+		background: $buttonCautionBackground;
+		color: $buttonCautionColor;
+
+		&:hover,
+		&:focus
+		{
+			background: $buttonCautionHoverBackground;
+			transition: background 0s;
+		}
+		&:active
+		{
+			background: $buttonCautionPressedBackground;
+			transition: background 0s;
+			color: $buttonCautionPressedColor;
+		}
+	}
+
+	&.transparent:not(:disabled)
+	{
+		background: $buttonTransparentBackground;
+		color: $buttonTransparentColor;
+
+		&:hover,
+		&:focus
+		{
+			background: $buttonTransparentHoverBackground;
+			transition: background 0s;
+		}
+		&:active
+		{
+			background: $buttonTransparentPressedBackground;
+			transition: background 0s;
+			color: $buttonTransparentPressedColor;
+		}
+	}
+
+	.ff-input-wrapper &,
+	&.narrow
+	{
+		min-width: round($defaultFontSize * $defaultLineHeight + 10px);   // line height + vertical padding
+		padding-left: 4px;
+		padding-right: 4px;
+	}
+
+	&:not(.narrow) i:empty
+	{
+		margin-right: 3px;
+	}
+}
+
+div.buttons
+{
+	button,
+	a
+	{
+		margin-right: 10px;
+		&:last-child
+		{
+			margin-right: 0;
+		}
+	}
+	
+	form &
+	{
+		padding-top: 20px;
+	}
+}
+.ff-input-wrapper,
+div.buttons.narrow
+{
+	button
+	{
+		+ button
+		{
+			margin-left: 0px;
+			border-left: 1px solid $buttonGroupSeparatorColor;
+
+			&:disabled
+			{
+				border-left-color: $buttonGroupDisabledSeparatorColor;
+			}
+		}
+	}
+}
+
+// For color buttons that are not converted
+input[type=color]
+{
+	height: 30px;
+	padding: 5px 15px;
+}
+
+// Color picker
+.ff-input-wrapper button.ff-colorbutton
+{
+	position: relative;
+
+	div
+	{
+		position: absolute;
+		top: 0px;
+		right: 0px;
+		bottom: 0px;
+		left: 0px;
+		margin: 6px;
+		border: 1px solid white;
+		line-height: 0.5em;
+	}
+}
+.dropdown.ff-colorpicker > div
+{
+	&::after
+	{
+		display: block;
+		content: '';
+		clear: left;
+	}
+
+	button
+	{
+		min-width: 0;
+		width: 24px;
+		height: 18px;
+		float: left;
+		margin: 0px;
+		//@media (min-resolution: 192dpi)   // 2 device pixels per CSS pixel, can render half pixels
+		//{
+		//	margin: 0.5px;
+		//}
+		&:not(:first-child)
+		{
+			margin-left: 0;
+		}
+		&.active
+		{
+			//outline: 1px dotted black;
+			border: 1px solid black;
+			&.dark
+			{
+				border-color: white;
+			}
+		}
+	}
+	&:not(:first-child) button
+	{
+		margin-top: 0;
+	}
+}
+
+// ========== Checkboxes, radioboxes ==========
+
+// Based on: http://www.inserthtml.com/2012/06/custom-form-radio-checkbox/
+input[type=checkbox].ff-checkbox,
+input[type=radio].ff-checkbox
+{
+	// Move our replacement span over the original checkbox.
+	// Don't hide it or it won't be focusable anymore.
+	width: 18px;
+	margin-right: -18px;
+	&:focus { outline: none; }
+
+	+ span
+	{
+		display: inline-block;
+		margin: 3px 0 -3px;
+		border: 1px solid $textboxBorder;
+		border-radius: 0;
+		background: $textboxBackground;
+		padding: 8px;
+		box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
+		position: relative;
+		transition: border $animationDuration $animationFunction, background $animationDuration $animationFunction;
+	}
+	&:disabled + span
+	{
+		border-color: $textboxDisabledBorder;
+	}
+	&:hover:not(:disabled) + span,
+	&:focus:not(:disabled) + span,
+	label:hover &:not(:disabled) + span
+	{
+		border-color: $textboxFocusBorder;
+		outline: none;
+	}
+	&.input-validation-error:hover:not(:disabled) + span,
+	&.input-validation-error:focus:not(:disabled) + span,
+	label:hover &.input-validation-error:not(:disabled) + span
+	{
+		border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+	}
+	&:active:not(:disabled) + span,
+	label:active &:not(:disabled) + span
+	{
+		border-color: $textboxFocusBorder;
+		background-color: $checkboxPressedBackground;
+		transition: background 0s;
+	}
+	&.input-validation-error:active:not(:disabled) + span,
+	label:active &.input-validation-error:not(:disabled) + span
+	{
+		border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+		background-color: mix($checkboxPressedBackground, $validationErrorBackground, 50%);
+	}
+	&:checked + span::before
+	{
+		content: '';
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		// IE 11 needs base64 encoding; plain utf8 or URI encoding won't show the image
+		// <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="black" stroke-width="2.2" points="1,5 5,9 11,3"/></svg>
+		background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==') no-repeat 50% 50%;
+		opacity: 1;
+		transition: opacity $animationDuration $animationFunction;
+	}
+	&:checked:disabled + span::before
+	{
+		opacity: 0.5;
+	}
+	&:indeterminate + span::before
+	{
+		content: '';
+		display: block;
+		position: absolute;
+		top: 4px;
+		left: 4px;
+		right: 4px;
+		bottom: 4px;
+		background: black;
+		transition: background $animationDuration $animationFunction;
+	}
+	&:indeterminate:disabled + span::before
+	{
+		background: gray;
+	}
+	&.input-validation-error + span
+	{
+		border-color: $validationErrorText;
+		background-color: $validationErrorBackground;
+	}
+
+	label & + span
+	{
+		margin-right: 4px;
+	}
+	label.empty & + span
+	{
+		margin-right: 0;
+	}
+}
+
+input[type=radio].ff-checkbox
+{
+	+ span
+	{
+		border-radius: 100%;
+	}
+	&:checked + span::before
+	{
+		display: block;
+		content: '';
+		position: absolute;
+		top: 4px;
+		bottom: 4px;
+		left: 4px;
+		right: 4px;
+		background: black;
+		border-radius: 100%;
+	}
+	&:checked:disabled + span::before
+	{
+		background: gray;
+	}
+	&:indeterminate + span::before
+	{
+		display: none;
+	}
+}
+
+.field.indent-checkbox
+{
+	padding-left: 26px;
+}
+.field.indent-checkbox > input.ff-checkbox
+{
+	margin-left: -26px;
+}
+
+// All allowed input types for reference:
+//
+// Text:
+// input:not([type]),
+// input[type^=date],   // includes date, datetime-local and obsolete datetime
+// input[type=email],
+// input[type=month],
+// input[type=number],
+// input[type=password],
+// input[type=search],
+// input[type=tel],
+// input[type=text],
+// input[type=time],
+// input[type=url],
+// input[type=week],
+//
+// Button:
+// input[type=button],
+// input[type=color],
+// input[type=image],
+// input[type=reset],
+// input[type=submit],
+//
+// Check/radio:
+// input[type=checkbox],
+// input[type=radio],
+//
+// Button with static text:
+// input[type=file],
+//
+// Slider (separate file):
+// input[type=range],
+//
+// Invisible:
+// input[type=hidden],

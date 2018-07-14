@@ -1,0 +1,188 @@
+@import "../settings";
+@import "../compatibility";
+
+.ff-accordion
+{
+}
+
+// ========== Header ==========
+
+.ff-accordion-header
+{
+	@include user-select(none);
+	cursor: pointer;
+	background: $accordionHeaderBackground;
+	color: $accordionHeaderColor;
+	padding: 5px 9px;   // see button
+	margin: 1px 0;
+	position: relative;
+	transition: background $animationDuration $animationFunction;
+	&:hover
+	{
+		background: $accordionHeaderHoverBackground;
+		transition: background 0s;
+	}
+	&:active
+	{
+		background: $accordionHeaderPressedBackground;
+		transition: background 0s;
+	}
+	
+	.expanded > &
+	{
+		background: $accordionExpandedHeaderBackground;
+		color: $accordionExpandedHeaderColor;
+		&:hover
+		{
+			background: $accordionExpandedHeaderHoverBackground;
+		}
+		&:active
+		{
+			background: $accordionExpandedHeaderPressedBackground;
+		}
+	}
+}
+
+// ----- Plus/minus icons -----
+
+.ff-accordion.plusminus > div > .ff-accordion-header
+{
+	padding-left: 28px;
+}
+.ff-accordion.plusminus-right > div > .ff-accordion-header
+{
+	padding-right: 28px;
+}
+
+.ff-accordion.plusminus > div > .ff-accordion-header::after,
+.ff-accordion.plusminus-right > div > .ff-accordion-header::after
+{
+	position: absolute;
+	display: block;
+	top: 5px;
+	content: '+';
+	font-size: 1.2em;
+	line-height: 110%;
+	font-weight: bold;
+}
+.ff-accordion.plusminus > div > .ff-accordion-header::after
+{
+	left: 9px;
+}
+.ff-accordion.plusminus-right > div > .ff-accordion-header::after
+{
+	right: 9px;
+}
+
+.ff-accordion.plusminus > div.expanded > .ff-accordion-header::after,
+.ff-accordion.plusminus-right > div.expanded > .ff-accordion-header::after
+{
+	content: '\2212';   // Minus
+}
+
+// ----- Side/down arrow icons -----
+
+.ff-accordion.sidearrows > div > .ff-accordion-header
+{
+	padding-left: 28px;
+}
+.ff-accordion.sidearrows-right > div > .ff-accordion-header
+{
+	padding-right: 28px;
+}
+
+.ff-accordion.sidearrows > div > .ff-accordion-header::after,
+.ff-accordion.sidearrows-right > div > .ff-accordion-header::after
+{
+	position: absolute;
+	display: block;
+	top: 5px;
+	//content: '\25BC';   // Filled triangle downward
+	//font-size: 0.7em;
+	//opacity: 0.4;
+	font-size: 1.6em;
+	line-height: 60%;
+	transform: scaleX(1.2);
+	transform-origin: 50% 80%;
+	transition: transform $animationDuration $animationFunction;
+}
+.ff-accordion.sidearrows > div > .ff-accordion-header::after
+{
+	left: 9px;
+	//transform: rotate(-90deg);
+	content: '\203A';   // Chevron right
+}
+.ff-accordion.sidearrows-right > div > .ff-accordion-header::after
+{
+	right: 9px;
+	//transform: rotate(90deg);
+	content: '\2039';   // Chevron left
+	transform-origin: 50% 80%;
+}
+
+.ff-accordion.sidearrows > div.expanded > .ff-accordion-header::after,
+.ff-accordion.sidearrows-right > div.expanded > .ff-accordion-header::after
+{
+	//transform: rotate(0deg);
+}
+.ff-accordion.sidearrows > div.expanded > .ff-accordion-header::after
+{
+	transform: rotate(90deg) scaleX(1.2);
+}
+.ff-accordion.sidearrows-right > div.expanded > .ff-accordion-header::after
+{
+	transform: rotate(-90deg) scaleX(1.2);
+}
+
+// ----- Up/down arrow icons -----
+
+.ff-accordion.updownarrows > div > .ff-accordion-header
+{
+	padding-left: 25px;
+}
+.ff-accordion.updownarrows-right > div > .ff-accordion-header
+{
+	padding-right: 25px;
+}
+
+.ff-accordion.updownarrows > div > .ff-accordion-header::after,
+.ff-accordion.updownarrows-right > div > .ff-accordion-header::after
+{
+	position: absolute;
+	display: block;
+	top: 5px;
+	content: '\25BC';   // Filled triangle downward
+	font-size: 0.7em;
+	opacity: 0.4;
+}
+.ff-accordion.updownarrows > div > .ff-accordion-header::after
+{
+	left: 9px;
+}
+.ff-accordion.updownarrows-right > div > .ff-accordion-header::after
+{
+	right: 9px;
+}
+
+.ff-accordion.updownarrows > div.expanded > .ff-accordion-header::after,
+.ff-accordion.updownarrows-right > div.expanded > .ff-accordion-header::after
+{
+	content: '\25B2';   // Filled triangle upward
+}
+
+// ========== Content ==========
+
+.ff-accordion-content
+{
+	overflow: hidden;
+	transition: height $animationDuration $animationFunction, transform $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+	transform: scaleY(0);
+	transform-origin: 0% 0%;
+	opacity: 0;
+	
+	.expanded > &
+	{
+		transform: scaleY(1);
+		opacity: 1;
+	}
+}

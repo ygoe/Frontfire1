@@ -1,0 +1,158 @@
+$viewportWidthPhone: 540px;
+$viewportWidthMinitab: 760px;
+$viewportWidthTablet: 900px;
+$viewportWidthDesktop: 1200px;
+
+$pageWidth: 900px;
+$smallPageWidthPadding: 15px;
+
+// ========== Animations ==========
+
+$animationDuration: 0.2s;
+$animationFunction: ease;
+
+// ========== Typography ==========
+
+// System fonts for Windows 7, Android 4, iOS 9/macOS 10.11, iOS 7/macOS 10.10, macOS 10.0-10.9
+$defaultFontFamily: "Segoe UI", "Roboto", "San Francisco", "Helvetica Neue", "Lucida Grande", sans-serif;
+// TODO: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+$monospaceFontFamily: Consolas, monospace;
+$defaultFontSize: 14px;
+$monospaceFontSize: 13px;
+$defaultLineHeight: 1.4;
+
+$headingWeight: 600;   // Semibold is better for Segoe UI; effectively 700 on Android
+
+$linkColor: #2755dd;
+$linkHoverColor: darken($linkColor, 25%);
+
+$tableGridColor: #d8d8d8;
+$tableHeaderBackground: #f4f4f4;
+
+$criticalBackground: #a11331;
+$criticalColor: #ffffff;
+$criticalLinkColor: #afc3ff;
+$criticalLinkHoverColor: lighten($criticalLinkColor, 25%);
+$errorBackground: #c44818;
+$errorColor: #ffffff;
+$errorLinkColor: #afc3ff;
+$errorLinkHoverColor: lighten($criticalLinkColor, 25%);
+$warningBackground: #f3d661;
+$warningColor: #000000;
+$warningLinkColor: $linkColor;
+$warningLinkHoverColor: $linkHoverColor;
+$informationBackground: #b8dff6;
+$informationColor: #000000;
+$informationLinkColor: $linkColor;
+$informationLinkHoverColor: $linkHoverColor;
+$successBackground: #c8f39d;
+$successColor: #000000;
+$successLinkColor: $linkColor;
+$successLinkHoverColor: $linkHoverColor;
+
+// ========== Images ==========
+
+$imageSubtitleColor: #666666;
+
+// ========== Layout ==========
+
+// Tabs
+
+$tabsBorderColor: #d8d8d8;
+$tabsActiveHeaderBackground: transparent;
+$tabsInactiveHeaderBackground: #f4f4f4;
+$tabsInactiveHeaderHoverBackground: #fafafa;
+$tabsInactiveHeaderPressedBackground: darken($tabsInactiveHeaderBackground, 15%);
+$tabsPageBackground: transparent;
+
+// Accordion
+
+$accordionHeaderBackground: #d8d8d8;
+$accordionHeaderHoverBackground: darken($accordionHeaderBackground, 8%);
+$accordionHeaderPressedBackground: darken($accordionHeaderBackground, 20%);
+$accordionHeaderColor: #000000;
+$accordionExpandedHeaderBackground: #f0f0f0;
+$accordionExpandedHeaderHoverBackground: darken($accordionExpandedHeaderBackground, 5%);
+$accordionExpandedHeaderPressedBackground: darken($accordionExpandedHeaderBackground, 15%);
+$accordionExpandedHeaderColor: #000000;
+
+// Menu
+
+$menuBackground: #505050;
+$menuColor: #ffffff;
+$menuHoverBackground: #686868;
+$menuHoverColor: #ffffff;
+$menuActiveBackground: #808080;
+$menuActiveColor: #ffffff;
+$menuOpenBackground: #606060;
+$menuOpenColor: #ffffff;
+
+// ========== Form ==========
+
+$disabledLabelColor: #a0a0a0;
+
+$validationErrorText: #ff0000;
+$validationErrorBackground: #ffdddd;
+
+$textboxBorder: #cccccc;
+$textboxFocusBorder: #999999;
+$textboxDisabledBorder: #e4e4e4;
+$textboxBackground: #ffffff;
+$textboxColor: #000000;
+$textboxDisabledColor: #a0a0a0;
+$inputLabelBackground: #f4f4f4;
+
+$buttonBackground: #d8d8d8;
+$buttonHoverBackground: darken($buttonBackground, 8%);
+$buttonPressedBackground: darken($buttonBackground, 20%);
+$buttonDisabledBackground: lighten($buttonBackground, 30%);
+$buttonColor: #000000;
+$buttonPressedColor: #000000;
+$buttonDisabledColor: #808080;
+
+$buttonDefaultBackground: #2755dd;
+$buttonDefaultHoverBackground: darken($buttonDefaultBackground, 15%);
+$buttonDefaultPressedBackground: darken($buttonDefaultBackground, 35%);
+$buttonDefaultColor: #ffffff;
+$buttonDefaultPressedColor: #ffffff;
+
+$buttonCautionBackground: $errorBackground;
+$buttonCautionHoverBackground: darken($buttonCautionBackground, 10%);
+$buttonCautionPressedBackground: darken($buttonCautionBackground, 30%);
+$buttonCautionColor: #ffffff;
+$buttonCautionPressedColor: #ffffff;
+
+$buttonTransparentBackground: transparent;
+$buttonTransparentHoverBackground: rgba(0, 0, 0, 0.07);
+$buttonTransparentPressedBackground: $buttonPressedBackground;
+$buttonTransparentColor: $linkColor;
+$buttonTransparentPressedColor: $buttonPressedColor;
+
+$buttonGroupSeparatorColor: $buttonHoverBackground;
+$buttonGroupDisabledSeparatorColor: lighten($buttonBackground, 7%);
+
+$checkboxPressedBackground: #d8d8d8;
+
+$textInputs: "input:not([type]), input[type^=date], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], textarea, select";
+$buttonInputs: "button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit]";
+
+// ========== Slider ==========
+
+$sliderWidth: 10px;   // Width of the track bar
+$sliderMargin: 8px;   // Touchable extra width besides the visible track bar
+$sliderHandleWidth: 16px;   // Width of the draggable handle
+$sliderHandleLength: 8px;   // Length of the draggable handle in drag direction
+
+$sliderBackground: #dddddd;
+$sliderRangeBackground: #69ce36;
+$sliderHandleBackground: #808080;
+$sliderHandleHoverBackground: #707070;
+$sliderHandlePressedBackground: #505050;
+$sliderSmallTickColor: #cccccc;
+$sliderLargeTickColor: #999999;
+$sliderTickLabelFontSize: 0.85em;
+
+$sliderDisabledBackground: #eeeeee;
+$sliderDisabledHandleBackground: #aaaaaa;
+$sliderDisabledSmallTickColor: #dddddd;
+$sliderDisabledLargeTickColor: #bbbbbb;

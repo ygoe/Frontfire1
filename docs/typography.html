@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Typography - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Typography</h1>
+		
+		<p>
+			Frontfire provides a rich set of basic typography styles. These styles are consistent and encourage design best practices without you having to think about it too much.
+		</p>
+
+		<h2>Headers</h2>
+		
+		<p>
+			The default HTML header elements are <code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>. They should be used correctly by their semantics, not their appearance. Most browsers’ default level-1 header has a too big font size which is why many people lazily start their document structure on the 4th level, completely leaving out the document root and the first three levels of structure. Frontfire comes with smaller header sizes by default to make it easier to use headers correctly without additional styling effort.
+		</p>
+
+		<div style="border-left: 1px solid black; padding-left: 20px;">
+
+			<h1>Header 1</h1>
+			<h2>Header 2</h2>
+			<h3>Header 3</h3>
+			<h4>Header 4</h4>
+			<h5>Header 5</h5>
+			<h6>Header 6</h6>
+
+		</div>
+
+		<h2>Text content</h2>
+
+		<p>
+			This is a default paragraph with text content, defined with the standard <code>&lt;p&gt;</code> element.
+		</p>
+
+		<p>
+			Paragraphs have a vertical margin between each other to make it clear to the user that a separate thought or topic has started.
+			Here’s some more useless text to make the margin more obvious even in wider browser windows.
+			Here’s some more useless text to make the margin more obvious even in wider browser windows.
+		</p>
+
+		<p class="right-align">
+			Paragraph content can be aligned to the left side (which is default without any special markup) with the <code>left-align</code> CSS class or to the right side with the <code>right-align</code> CSS class.
+		</p>
+
+		<p class="center">
+			Paragraph content can be centered with the <code>center</code> CSS class.
+		</p>
+
+		<p class="justify">
+			Finally, paragraph content can be justified with the <code>justify</code> CSS class. This only becomes more visible with multiple lines of text in a paragraph. Here you can see that all content lines in the paragraph have the same length, regardless of the actual width of the words in a line, unlike the other paragraphs on this page. This is achieved by evenly distributing the width of all white-space between the words. In very narrow paragraphs and without hyphenation, this can easily lead to highly noticeable inconsistencies in word distance. So use it with care.
+		</p>
+
+		<p>
+			<a href="#">Hyperlinks</a> are defined with the <code>&lt;a&gt;</code> element. They use a blue text colour by default because this is the established UI convention since the beginnings of the web and users can immediately recognise the blue link as clickable and navigatable. The colour and underlining effect can be configured.
+		</p>
+
+		<p>
+			Text may also contain <code>some inline code();</code> with the <code>&lt;code&gt;</code> within flow content. Besides code there can also be <tt>non-semantically monospace-styled text</tt> with the <code>&lt;tt&gt;</code> element. The <code>&lt;pre&gt;</code> and <code>&lt;samp&gt;</code> elements look the same. Monospace font can be applied to <code>&lt;textarea&gt;</code> elements with the <code>monospace</code> CSS class.
+		</p>
+
+		<p>
+			Press <kbd>Ctrl</kbd>+<kbd>Any</kbd> to tell the user what hotkey to press to activate some function with the <code>&lt;kbd&gt;</code> element.
+		</p>
+		
+		<p>
+			<span class="nowrap">Should it be absolutely necessary to not wrap certain text phrases,</span>
+			<span class="nowrap">you can apply the <code>nowrap</code> class to it,</span>
+			<span class="nowrap">either on the parent element altogether or</span>
+			<span class="nowrap">by surrounding the affected content with a <code>&lt;span&gt;</code> element.</span>
+		</p>
+
+		<h2>Separator</h2>
+
+		<p>
+			Separators with the <code>&lt;hr&gt;</code> element can be used to visually separate content with a horizontal line instead of whitespace.
+		</p>
+		
+		<hr>
+
+		<h2>Lists</h2>
+
+		<ul>
+			<li>There can be</li>
+			<li>unordered lists with the <code>&lt;ul&gt;</code> element that</li>
+			<li>only show a single bullet graphic</li>
+			<li>before each list item.</li>
+		</ul>
+
+		<ol>
+			<li>Ordered lists with the <code>&lt;ol&gt;</code> element have numbered</li>
+			<li>items each with a number increased</li>
+			<li>by one. This makes clear that order is relevant</li>
+			<li>and allows references to other items by their number.</li>
+		</ol>
+
+		<h2>Tables</h2>
+
+		<p>
+			Tables allow the presentation of tabular data. They really should not be used for layouting content as it was popular in the 1990s before the rise of CSS. You can define tables with the <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code> and <code>&lt;td&gt;</code> elements as usual. CSS classes can be applied to the <code>&lt;table&gt;</code> element to configure the appearance.
+		</p>
+		
+		<p>
+			This is a plain table with no additional styling.
+		</p>
+		
+		<table>
+			<tr>
+				<th>Column 1</th>
+				<th>Column 2</th>
+				<th>Column 3</th>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+		</table>
+
+		<p>
+			This table has the <code>no-border</code>, <code>no-vgrid</code> and <code>center</code> classes to eliminate the outer table border and the inner vertical grid lines, and align all cell content centered, respectively. The alternative to <code>no-vgrid</code> is <code>no-hgrid</code> to remove the horizontal grid lines instead. Both are combined in the <code>no-grid</code> class that removes all inner grid lines.
+		</p>
+		
+		<p>
+			All table content can be centered with the <code>center</code> class applied to the table. Individual cells can be aligned differently by applying the <code>left</code>, <code>center</code> and <code>right</code> classes to each <code>&lt;th&gt;</code> or <code>&lt;td&gt;</code> element (shown in the second-last row).
+		</p>
+		
+		<table class="no-border no-vgrid center">
+			<tr>
+				<th>Column 1</th>
+				<th>Column 2</th>
+				<th>Column 3</th>
+				<th>Column 4</th>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+				<td>Data 4</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+				<td>Data 4</td>
+			</tr>
+			<tr>
+				<td class="left">Data 1</td>
+				<td>Data 2<br>Second line</td>
+				<td>Data 3</td>
+				<td class="right">Data 4</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+				<td>Data 4</td>
+			</tr>
+		</table>
+
+		<p>
+			Tables can be made more compact with the <code>compact</code> CSS class. This reduces the cell padding and removes the inner grid lines.
+		</p>
+		
+		<table class="compact">
+			<tr>
+				<th>Column 1</th>
+				<th>Column 2</th>
+				<th>Column 3</th>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+		</table>
+
+		<p>
+			The <code>no-outer-padding</code> class removes the outer cell padding towards the border of the table, but leaves the inner cell padding between adjacent cells intact. This is most useful in combination with <code>no-border</code> (as shown here) and without any cell background colours. It aligns the table content exactly with the surrounding text.
+		</p>
+		
+		<table class="no-outer-padding no-border">
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+			<tr>
+				<td>Data 1</td>
+				<td>Data 2</td>
+				<td>Data 3</td>
+			</tr>
+		</table>
+
+		<h2>Loading indicator</h2>
+
+		<p>
+			<i class="loading small"></i> Small
+		</p>
+
+		<p>
+			<i class="loading medium"></i> Medium
+		</p>
+
+		<p>
+			<i class="loading"></i> (Default)
+		</p>
+
+		<p>
+			<i class="loading large"></i> Large
+		</p>
+
+		<div style="background: #f6f6f6; padding: 20px;">
+			<div class="icon-label">
+				<i class="loading"></i>
+				Loading, please wait...
+			</div>
+		</div>
+
+		<div style="background: #555; color: white; padding: 20px;">
+			<div class="icon-label">
+				<i class="loading inverted"></i>
+				Loading, please wait...
+			</div>
+		</div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+</body>
+</html>

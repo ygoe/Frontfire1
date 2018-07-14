@@ -1,0 +1,46 @@
+// Define some more helper functions as jQuery plugins. Similar functions already exist in
+// jQuery and these complement the set.
+
+// A variant of $.each that uses $(this) as the called function's context instead of this.
+$.fn.each$ = function (fn) {
+	return this.each(function (index, element) {
+		return fn.call($(this), index, element);
+	});
+};
+
+// Determines whether the value is set (i. e. not undefined or null).
+$.isSet = value => typeof value !== "undefined" && value !== null;
+
+// Determines whether the value is boolean.
+$.isBoolean = value => typeof value === "boolean";
+
+// Determines whether the value is a number.
+$.isNumber = value => typeof value === "number";
+
+// Determines whether the value is a string.
+$.isString = value => typeof value === "string";
+
+// Determines whether the value is an even number.
+$.isEven = value => $.isNumber(value) && value % 2 === 0;
+
+// Determines whether the value is an odd number.
+$.isOdd = value => $.isNumber(value) && value % 2 === 1;
+
+// Determines whether the client operating system is Android.
+$.isAndroid = () => !!navigator.userAgent.match(/Android/);
+
+// Determines whether the client operating system is iOS.
+$.isIos = () => !!navigator.platform.match(/iPhone|iPad|iPod/);
+
+// Determines whether the client operating system is Linux (not Android).
+$.isLinux = () => !!navigator.platform.match(/Linux/) && !$.isAndroid();
+
+// Determines whether the client operating system is macOS.
+$.isMac = () => !!navigator.platform.match(/Mac/);
+
+// Determines whether the client operating system is Windows.
+$.isWindows = () => !!navigator.platform.match(/Win/);
+
+if ($.isAndroid()) {
+	$("html").addClass("simple-dimmer");
+}

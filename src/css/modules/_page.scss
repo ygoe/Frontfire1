@@ -1,0 +1,29 @@
+@import "../settings";
+
+html.center
+{
+	overflow-y: scroll;
+	.page-width
+	{
+		margin: 0 auto;
+		padding: 0;
+	}
+	@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
+	{
+		overflow-y: inherit;
+		.page-width
+		{
+			margin: 0;
+			padding: 0 $smallPageWidthPadding;
+		}
+	}
+}
+
+.page-width
+{
+	max-width: $pageWidth;
+	@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
+	{
+		max-width: none;
+	}
+}

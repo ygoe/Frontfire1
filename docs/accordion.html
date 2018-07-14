@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Accordion - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Accordion</h1>
+		
+		<p>
+			An accordion contains multiple sections that can be expanded and collapsed separately.
+			This can often be seen with FAQ-style content where the user is only interested in one or few sections and not the entire page.
+		</p>
+		
+		<h2>Default options</h2>
+		
+		<p>
+			To create an accordion control, define a <code>&lt;div class="accordion"&gt;</code> element that contains the individual sections.
+			Each section is a <code>&lt;div&gt;</code> element that has two children.
+			First, the section header as content of a <code>&lt;div&gt;</code> element.
+			Second, the actual section content in another <code>&lt;div&gt;</code> element.
+			Initially, all sections are collapsed.
+		</p>
+		
+		<p><samp>
+			&lt;div class="accordion"&gt;<br>
+			    &lt;div&gt;<br>
+			        &lt;div&gt;Item 1&lt;/div&gt;<br>
+			        &lt;div&gt;<br>
+			            &lt;p&gt;<br>
+			                Section 1 content<br>
+			            &lt;/p&gt;<br>
+			        &lt;/div&gt;<br>
+			    &lt;/div&gt;<br>
+			    &lt;div&gt;<br>
+			        &lt;div&gt;Item 2&lt;/div&gt;<br>
+			        &lt;div&gt;<br>
+			            &lt;p&gt;<br>
+			                Section 2 content<br>
+			            &lt;/p&gt;<br>
+			        &lt;/div&gt;<br>
+			    &lt;/div&gt;<br>
+			    ...<br>
+			&lt;/div&gt;
+		</samp></p>
+		
+		<p>
+			Sections can be expanded and collapsed by code. To expand or collapse a specific section, use code like this:
+		</p>
+		
+		<p><samp>
+			$("#accordion1").accordion.expand(indexOrItem);<br>
+			$("#accordion1").accordion.collapse(indexOrItem);
+		</samp></p>
+		
+		<p>
+			<code>indexOrItem</code> can be the zero-based index of the section or the section element itself.
+		</p>
+		
+		<p>
+			To expand or collapse all sections, leave out the parameter for the <code>expand()</code> or <code>collapse()</code> function.
+		</p>
+
+		<p>
+			<button type="button" id="expandAll1">Expand all</button>
+			<button type="button" id="collapseAll1">Collapse all</button>
+		</p>
+
+		<div id="accordion1" class="accordion">
+			<div>
+				<div>Item 1</div>
+				<div>
+					<p>
+						Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula. Praesent imperdiet sed turpis vitae vehicula. Morbi pretium, nisi eget laoreet finibus, metus ante dapibus nunc, ac consectetur erat est tincidunt turpis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nulla vitae urna tempor, dictum tortor id, accumsan tortor. Ut tortor est, finibus nec porttitor a, consectetur et orci. Proin fringilla lacus lorem, quis pellentesque libero fermentum sit amet. Maecenas vel dolor ultricies, sagittis risus vitae, tincidunt magna. Praesent quis congue felis. Morbi varius sapien risus, sed lobortis velit tincidunt ac.
+					</p>
+				</div>
+			</div>
+			<div>
+				<div>Item 2</div>
+				<div>
+					<p>
+						Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque. Phasellus eu nunc tempus, hendrerit diam vel, porta mauris. Donec sit amet turpis ut sapien dapibus sodales. Nulla in elit ut enim malesuada elementum non quis dui. Donec luctus tincidunt elit nec convallis. Morbi lorem nunc, sollicitudin ac blandit ut, pharetra sed dolor.
+					</p>
+				</div>
+			</div>
+			<div>
+				<div>Item 3</div>
+				<div>
+					<p>
+						Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna. Nullam faucibus nisl id convallis euismod. Phasellus massa massa, rhoncus in iaculis ac, blandit a velit. Suspendisse nec justo et enim lobortis porttitor. Nunc eget dui interdum, tristique neque lobortis, fringilla dui. Vestibulum sodales non metus a vehicula. Pellentesque sit amet ornare mauris.
+					</p>
+				</div>
+			</div>
+			<div>
+				<div>Item 4</div>
+				<div>
+					<p>
+						Quisque porta nibh justo, iaculis rhoncus mi malesuada nec. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque. Nulla sed tempus diam, in semper odio. Sed malesuada volutpat neque vitae dignissim. Praesent sit amet sem porttitor, convallis ex varius, vulputate diam. Vivamus a enim ac velit mattis cursus. Maecenas vestibulum tincidunt eros in vulputate. Pellentesque egestas massa mauris, ac vestibulum orci pulvinar ut. Donec porttitor congue odio, auctor efficitur magna lobortis ut. Sed efficitur sollicitudin leo in lacinia.
+					</p>
+				</div>
+			</div>
+		</div>
+		
+		<h2>Exclusive mode</h2>
+
+		<p>
+			When the <code>exclusive</code> option is set to true, only a single section can be expanded at any time.
+			It is still possible that all sections are collapsed, though.
+			It is easiest to set the option as <code>data-opt-exclusive</code> HTML attribute with the accordion container element.
+		</p>
+		
+		<div class="accordion" data-opt-exclusive="true">
+			<div>
+				<div>Item 1</div>
+				<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+			</div>
+			<div>
+				<div>Item 2</div>
+				<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+			</div>
+			<div>
+				<div>Item 3</div>
+				<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+			</div>
+			<div>
+				<div>Item 4</div>
+				<div><p>Quisque porta nibh justo, iaculis rhoncus mi malesuada nec. Sed commodo lacus vel neque pulvinar ultrices. Nulla finibus ut augue et pellentesque.</p></div>
+			</div>
+		</div>
+
+		<h2>Different state icons</h2>
+		
+		<p>
+			The expanded state can be indicated with different icon sets.
+			These icon sets are specified as CSS class with the accordion element.
+			The class names are shown in the following sub-headers.
+		</p>
+
+		<div style="width: 47%; margin-right: 6%; float: left; margin-bottom: 1em;">
+			<h3>plusminus</h3>
+
+			<div class="accordion plusminus">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="width: 47%; float: left; margin-bottom: 1em;">
+			<h3>plusminus-right</h3>
+
+			<div class="accordion plusminus-right">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<div style="width: 47%; margin-right: 6%; float: left; margin-bottom: 1em;">
+			<h3>sidearrows</h3>
+
+			<div class="accordion sidearrows">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="width: 47%; float: left; margin-bottom: 1em;">
+			<h3>sidearrows-right</h3>
+
+			<div class="accordion sidearrows-right">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<div style="width: 47%; margin-right: 6%; float: left; margin-bottom: 1em;">
+			<h3>updownarrows</h3>
+
+			<div class="accordion updownarrows">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="width: 47%; float: left; margin-bottom: 1em;">
+			<h3>updownarrows-right</h3>
+
+			<div class="accordion updownarrows-right">
+				<div>
+					<div>Item 1</div>
+					<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+				</div>
+				<div>
+					<div>Item 2</div>
+					<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+				</div>
+				<div>
+					<div>Item 3</div>
+					<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+				</div>
+			</div>
+		</div>
+
+		<div style="clear: left;"></div>
+
+		<h2>Link support</h2>
+		
+		<p>
+			If a section element has an <code>id</code> HTML attribute, the URL hash is set to the value of the expanded section until it is collapsed.
+			When reloading the page with such a hash name set, the corresponding accordion section is automatically expanded and scrolled to at load time.
+		</p>
+
+		<div class="accordion" data-opt-exclusive="true">
+			<div id="linkitem1">
+				<div>Item 1</div>
+				<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+			</div>
+			<div id="linkitem2">
+				<div>Item 2</div>
+				<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+			</div>
+			<div id="linkitem3">
+				<div>Item 3</div>
+				<div><p>Ut placerat pharetra augue eget ultrices. Sed lobortis metus sapien, quis sollicitudin neque ultrices non. Ut nec metus aliquet, lacinia libero a, malesuada urna.</p></div>
+			</div>
+		</div>
+		
+		<p style="background: #f8f8f8; color: #a0a0a0; padding: 45vh 0; text-align: center;">
+			<em>This space is intentionally left blank to demonstrate the linking feature.</em>
+		</p>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#expandAll1").click(function () { $("#accordion1").accordion.expand(); });
+		$("#collapseAll1").click(function () { $("#accordion1").accordion.collapse(); });
+	</script>
+</body>
+</html>

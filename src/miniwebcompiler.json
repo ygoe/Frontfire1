@@ -1,0 +1,11 @@
+{
+  "projectName": "Frontfire",
+  "files": [
+    {
+      "name": "css/frontfire.scss"
+    },
+    {
+      "name": "js/frontfire.js"
+    }
+  ]
+}

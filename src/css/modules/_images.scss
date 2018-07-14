@@ -1,0 +1,273 @@
+@import "../settings";
+
+img.full-width
+{
+	display: block;
+	margin: 0 auto;
+	width: 100%;
+	max-height: 100vh;
+}
+
+img.center
+{
+	display: block;
+	margin: 0 auto;
+	max-width: 100%;
+	max-height: 100vh;
+}
+
+img.shadow
+{
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+img.white-margin
+{
+	background: white;
+	padding: 10px;
+}
+
+img.circle
+{
+	border-radius: 100%;
+}
+
+@mixin img-left-right
+{
+	max-width: calc(50% - 1.5em);
+	max-height: 100vh;
+	margin: 0.4em 0 1em 0;
+}
+@mixin too-narrow
+{
+	float: none;
+	display: block;
+	max-width: 100%;
+	&.narrow-left
+	{
+		margin-left: 0;
+	}
+	&.narrow-right
+	{
+		margin-left: auto;
+	}
+	&.narrow-center
+	{
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+@mixin too-narrow-left
+{
+	@include too-narrow;
+	margin-right: 0;
+}
+@mixin too-narrow-right
+{
+	@include too-narrow;
+	margin-left: 0;
+}
+
+img.left
+{
+	@include img-left-right;
+	clear: left;
+	float: left;
+	margin-right: 1.5em;
+
+	@media (max-width: $viewportWidthPhone)
+	{
+		&.require-minitab { @include too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		&.require-tablet { @include too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		&.require-desktop { @include too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		&.require-wide { @include too-narrow-left; }
+	}
+}
+
+img.right
+{
+	@include img-left-right;
+	clear: right;
+	float: right;
+	margin-left: 1.5em;
+
+	@media (max-width: $viewportWidthPhone)
+	{
+		&.require-minitab { @include too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		&.require-tablet { @include too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		&.require-desktop { @include too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		&.require-wide { @include too-narrow-right; }
+	}
+}
+
+div.image-full-width
+{
+	clear: both;
+	font-size: 0.85em;
+	line-height: 130%;
+	text-align: center;
+	padding: 0 2em;
+	color: $imageSubtitleColor;
+	
+	img
+	{
+		display: block;
+		margin: 0 -2em 0.5em;
+		width: calc(100% + 4em);
+		max-height: 100vh;
+	}
+}
+
+div.image-center
+{
+	clear: both;
+	font-size: 0.85em;
+	line-height: 130%;
+	text-align: center;
+	padding: 0 2em;
+	color: $imageSubtitleColor;
+	
+	img
+	{
+		display: block;
+		margin: 0 auto 0.5em;
+		max-width: 100%;
+		max-height: 100vh;
+	}
+}
+
+@mixin div-img-left-right
+{
+	margin: 0.4em 0 1em 0;
+	max-width: calc(50% - 1.5em);
+	font-size: 0.85em;
+	line-height: 130%;
+	color: $imageSubtitleColor;
+
+	img
+	{
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		max-height: 100vh;
+		margin-bottom: 0.5em;
+	}
+}
+@mixin div-too-narrow
+{
+	float: none;
+	max-width: 100%;
+	img
+	{
+		width: inherit;
+	}
+	&.narrow-left
+	{
+		text-align: left;
+		img
+		{
+			margin-left: 0;
+		}
+	}
+	&.narrow-right
+	{
+		text-align: right;
+		img
+		{
+			margin-left: auto;
+		}
+	}
+	&.narrow-center
+	{
+		text-align: center;
+		img
+		{
+			margin-left: auto;
+			margin-right: auto;
+		}
+	}
+}
+@mixin div-too-narrow-left
+{
+	@include div-too-narrow;
+	margin-right: 0;
+}
+@mixin div-too-narrow-right
+{
+	@include div-too-narrow;
+	margin-left: 0;
+	img
+	{
+		margin-left: auto;
+	}
+}
+
+div.image-left
+{
+	@include div-img-left-right;
+	clear: left;
+	float: left;
+	margin-right: 1.5em;
+	text-align: left;
+	
+	@media (max-width: $viewportWidthPhone)
+	{
+		&.require-minitab { @include div-too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		&.require-tablet { @include div-too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		&.require-desktop { @include div-too-narrow-left; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		&.require-wide { @include div-too-narrow-left; }
+	}
+}
+
+div.image-right
+{
+	@include div-img-left-right;
+	clear: right;
+	float: right;
+	margin-left: 1.5em;
+	text-align: right;
+
+	@media (max-width: $viewportWidthPhone)
+	{
+		&.require-minitab { @include div-too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		&.require-tablet { @include div-too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		&.require-desktop { @include div-too-narrow-right; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		&.require-wide { @include div-too-narrow-right; }
+	}
+}

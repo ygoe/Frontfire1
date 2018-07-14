@@ -1,0 +1,32 @@
+@import "../settings";
+
+.ff-resizable-handle
+{
+	&.box
+	{
+		border: 1px solid silver;
+		background: white;
+		width: 7px;
+		height: 7px;
+		z-index: 900;
+		position: relative;
+		&::after
+		{
+			display: block;
+			content: '';
+			position: absolute;
+			top: -5px;
+			right: -5px;
+			bottom: -5px;
+			left: -5px;
+		}
+		&:hover::after
+		{
+			background: rgba(0, 0, 0, 0.05);
+		}
+	}
+}
+.hide-handles .ff-resizable-handle.box
+{
+	display: none;
+}

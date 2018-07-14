@@ -1,0 +1,92 @@
+@import "../settings";
+
+.ff-tab-headers
+{
+	display: flex;
+	width: 100%;
+
+	a
+	{
+		color: black;
+		text-decoration: none;
+		border-top: 1px solid $tabsBorderColor;
+		border-left: 1px solid $tabsBorderColor;
+		border-right: 1px solid $tabsBorderColor;
+		margin-right: -1px;
+		padding: 2px 10px;
+
+		&:focus
+		{
+			outline-offset: -3px;
+		}
+		&:last-child
+		{
+			margin-right: 0;
+		}
+		&.active
+		{
+			margin-top: -1px;
+			padding-top: 3px;
+			background: $tabsActiveHeaderBackground;
+			z-index: 10;
+		}
+		&:not(.active)
+		{
+			border-bottom: solid 1px $tabsBorderColor;
+			background: $tabsInactiveHeaderBackground;
+			box-shadow: 0 -5px 3px -5px rgba(0, 0, 0, 0.2) inset;
+			&:hover
+			{
+				background: $tabsInactiveHeaderHoverBackground;
+			}
+			&:active
+			{
+				background: $tabsInactiveHeaderPressedBackground;
+			}
+		}
+	}
+	&::after
+	{
+		content: '';
+		flex-grow: 1;
+		border-bottom: 1px solid $tabsBorderColor;
+	}
+}
+
+.ff-tab-pages
+{
+	border-left: 1px solid $tabsBorderColor;
+	border-right: 1px solid $tabsBorderColor;
+	border-bottom: 1px solid $tabsBorderColor;
+	padding: 10px;
+	background: $tabsPageBackground;
+
+	div
+	{
+		display: none;
+		&.active
+		{
+			display: block;
+		}
+	}
+}
+
+.tabs.same-height .ff-tab-pages
+{
+	display: -ms-grid;
+	display: grid;
+
+	div
+	{
+		display: block;
+		visibility: hidden;
+		-ms-grid-row: 1;
+		grid-row: 1;
+		-ms-grid-column: 1;
+		grid-column: 1;
+		&.active
+		{
+			visibility: visible;
+		}
+	}
+}

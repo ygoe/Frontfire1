@@ -1,0 +1,194 @@
+@import "../settings";
+@import "../compatibility";
+
+.menu
+{
+	@include user-select(none);
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	background: $menuBackground;
+	color: $menuColor;
+
+	&:not(.right):not(.both)::after
+	{
+		content: '';
+		flex-grow: 1;
+	}
+	&.right::before
+	{
+		content: '';
+		flex-grow: 1;
+	}
+	&.vertical
+	{
+		flex-direction: column;
+		width: inherit;
+	}
+
+	li
+	{
+		&.open a
+		{
+			background: $menuOpenBackground;
+			color: $menuOpenColor;
+			transition: background 0s, color 0s;
+		}
+		a
+		{
+			display: block;
+			position: relative;
+			height: 100%;
+			padding: 6px 10px;
+			text-decoration: none;
+			color: inherit;
+			transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+			&:hover,
+			&:focus
+			{
+				background: $menuHoverBackground;
+				color: $menuHoverColor;
+				transition: background 0s, color 0s;
+				outline: none;
+			}
+		}
+		a:active,
+		&.active a,
+		&.active a:hover
+		{
+			background: $menuActiveBackground;
+			color: $menuActiveColor;
+			transition: background 0s, color 0s;
+		}
+		&.text
+		{
+			padding: 6px 10px;
+		}
+		&.stretch
+		{
+			flex-grow: 1;
+		}
+		&[disabled] a,
+		&[disabled] a:hover,
+		&[disabled] a:focus,
+		&[disabled] a:active
+		{
+			background: $menuBackground;
+			opacity: 0.4;
+			pointer-events: none;
+		}
+
+		ul
+		{
+			display: none;
+		}
+	}
+}
+
+%submenu-indicator
+{
+	display: block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	pointer-events: none;
+	color: inherit;
+	text-align: center;
+}
+.menu.submenu-arrow li.ff-has-submenu a::after
+{
+	@extend %submenu-indicator;
+	content: '\25BC';
+	font-size: 5px;
+	line-height: 6px;
+}
+.menu.submenu-dots li.ff-has-submenu a::after
+{
+	@extend %submenu-indicator;
+	content: '\2026';
+	line-height: 1.1em;
+}
+.menu.vertical,
+.menu.vertical
+{
+	&.submenu-arrow,
+	&.submenu-dots
+	{
+		li.ff-has-submenu a::after
+		{
+			right: 1px;
+			left: auto;
+		}
+	}
+	&.submenu-arrow li.ff-has-submenu a::after
+	{
+		top: 42%;
+		content: '\25B6';
+		font-size: 6px;
+	}
+	&.submenu-dots li.ff-has-submenu a::after
+	{
+		top: 22%;
+		content: '\205D';
+	}
+}
+
+.ff-submenu
+{
+	@include user-select(none);
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	background: $menuBackground;
+	color: $menuColor;
+
+	li
+	{
+		a
+		{
+			display: block;
+			padding: 6px 10px;
+			text-decoration: none;
+			color: inherit;
+			transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+			&:hover,
+			&:focus
+			{
+				background: $menuHoverBackground;
+				color: $menuHoverColor;
+				transition: background 0s, color 0s;
+				outline: none;
+			}
+		}
+		a:active,
+		&.active a,
+		&.active a:hover
+		{
+			background: $menuActiveBackground;
+			color: $menuActiveColor;
+			transition: background 0s, color 0s;
+		}
+		&.text
+		{
+			padding: 6px 10px;
+		}
+		&.separator
+		{
+			margin: 3px 10px;
+			border-top: 1px solid $menuHoverBackground;
+		}
+		&[disabled] a,
+		&[disabled] a:hover,
+		&[disabled] a:focus,
+		&[disabled] a:active
+		{
+			background: $menuBackground;
+			opacity: 0.4;
+			pointer-events: none;
+		}
+	}
+}

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dropdown - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Dropdown</h1>
+		
+		<p>
+			Dropdowns can serve different purposes. They can be used to show additional information about something, or to provide more detailed configuration options or a selection to choose from. Frontfire provides an easy way to open a dropdown anywhere.
+		</p>
+		
+		<p>
+			The contents of the dropdown is defined in an HTML element and can contain anything you like. The element needs the <code>dropdown</code> CSS class which applies basic dropdown styles and makes the element invisible at first. The additional <code>bordered</code> class can be used to draw a border around the dropdown element.
+		</p>
+		
+		<p>
+			To open a dropdown at an element, call the <code>dropdown</code> jQuery extension function on the element to trigger the dropdown. The function takes two arguments: The target, of which the rectangle will be used for determining the position, and options. The options are optional and can alternatively be specified as <code>data-opt</code> HTML attributes with the dropdown HTML element. The following options are supported:
+		</p>
+		
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>placement</code></td>
+				<td>String</td>
+				<td>The placement of the dropdown relative to the target element. Values: combinations of one or two out of: top, bottom, left, right, center. Order matters, center always comes last.</td>
+				<td>bottom-left</td>
+			</tr>
+			<tr>
+				<td><code>autoClose</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the dropdown is closed when clicking anywhere outside of it.</td>
+				<td>true</td>
+			</tr>
+		</table>
+		
+		<p>
+			To open a dropdown, use code like this:
+		</p>
+		
+		<p><samp>
+			$("#button1").click(function (event) {<br>
+			    $("#dropdown1").dropdown(this, options);<br>
+			});
+		</samp></p>
+
+		<p>
+			To specify the options on the trigger element instead of the dropdown element, use code like this:
+		</p>
+		
+		<p><samp>
+			$(".open-dropdown1").click(function (event) {<br>
+			    $("#dropdown1").dropdown(this, { placement: $(this).data("dropdown-placement") });<br>
+			});
+		</samp></p>
+
+		<p>
+			Here are a number of trigger buttons that open the same dropdown in different directions.
+		</p>
+
+		<p>
+			<button class="open-dropdown1" data-dropdown-placement="bottom-left">Open bottom-left</button>
+			<button class="open-dropdown1" data-dropdown-placement="bottom-right">Open bottom-right</button>
+			<button class="open-dropdown1" data-dropdown-placement="top-left">Open top-left</button>
+			<button class="open-dropdown1" data-dropdown-placement="top-right">Open top-right</button>
+		</p>
+
+		<p>
+			<button class="open-dropdown1" data-dropdown-placement="left-top">Open left-top</button>
+			<button class="open-dropdown1" data-dropdown-placement="left-bottom">Open left-bottom</button>
+			<button class="open-dropdown1" data-dropdown-placement="right-top">Open right-top</button>
+			<button class="open-dropdown1" data-dropdown-placement="right-bottom">Open right-bottom</button>
+		</p>
+
+		<p>
+			<button class="open-dropdown1" data-dropdown-placement="bottom-center">Open bottom-center</button>
+			<button class="open-dropdown1" data-dropdown-placement="top-center">Open top-center</button>
+			<button class="open-dropdown1" data-dropdown-placement="left-center">Open left-center</button>
+			<button class="open-dropdown1" data-dropdown-placement="right-center">Open right-center</button>
+		</p>
+
+		<p>
+			The following example shows how a dropdown behaves when opened for a trigger in a scrolling area.
+			Scroll down to see the button.
+		</p>
+
+		<div style="height: 150px; overflow-y: scroll; border: 1px solid gray; padding: 10px;">
+			<p class="filler-text">
+				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi in augue bibendum, efficitur nunc vel, placerat massa. Duis enim dui, ultrices eu felis cursus, lacinia fermentum erat. Mauris id ipsum mi. Duis nec vulputate sem, vel egestas justo. Maecenas suscipit tristique lectus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Ut sollicitudin ex laoreet mi tempus, id mollis dolor scelerisque. Mauris iaculis tristique ligula, eget efficitur sapien iaculis sed. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum ac hendrerit dui. Nullam quis dui ut massa mollis gravida. Duis pellentesque, libero quis facilisis volutpat, odio erat tempor nisl, at tincidunt risus diam ut urna.
+			</p>
+
+			<button class="open-dropdown1" data-dropdown-placement="bottom-left">Open dropdown</button>
+
+			<p class="filler-text">
+				Aenean iaculis lectus ac finibus venenatis. Nullam auctor libero eu viverra sagittis. Phasellus tempus erat nec arcu mollis interdum. Aenean feugiat tellus quis venenatis malesuada. Vestibulum ac hendrerit dui. Nullam quis dui ut massa mollis gravida. Duis pellentesque, libero quis facilisis volutpat, odio erat tempor nisl, at tincidunt risus diam ut urna. Curabitur a nisi eu ipsum posuere malesuada. Nunc malesuada purus ante, eget dictum orci mattis vel. Aliquam quis efficitur dolor. Sed auctor non velit eget congue.
+			</p>
+		</div>
+
+		<p>
+			This dropdown closes automatically when clicking outside, and it has a link inside.
+		</p>
+
+		<p>
+			<button class="open-dropdown2">Open dropdown</button>
+		</p>
+
+		<p>
+			This dropdown does not automatically close. Use the provided close link.
+		</p>
+
+		<p>
+			<button class="open-dropdown3">Open dropdown</button>
+		</p>
+		
+		<p>
+			The dropdown can be closed by code. This is done through a plugin extension function with a syntax similar to other jQuery functions.
+		</p>
+		
+		<p><samp>
+			$("#dropdown1").dropdown.close(); 
+		</samp></p>
+
+		<h2>Automatic placement</h2>
+		
+		<p>
+			If the specified placement is empty, then the dropdown is placed like bottom-left or top-left, depending on where is enough space to show the dropdown.
+		</p>
+		
+		<p>
+			If the specified placement is “right”, then the dropdown is placed like bottom-right or top-right, depending on where is enough space to show the dropdown.
+		</p>
+		
+		<p class="filler-text">
+			Pellentesque efficitur dapibus ante interdum elementum. Fusce scelerisque finibus lectus nec fermentum. Integer finibus, purus at maximus luctus, sapien nulla varius urna, id pulvinar ligula arcu nec tortor. Aenean vitae ornare arcu. Donec viverra id urna in iaculis. Nulla vestibulum sed mauris ut scelerisque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus sem tortor, hendrerit at velit non, accumsan ultricies felis. Aenean molestie ligula justo, nec efficitur lorem luctus ut. Quisque porta, nulla id placerat pretium, orci augue luctus dui, ac finibus urna diam vel lectus. Pellentesque ornare aliquet risus, eu feugiat tortor mollis ac. Integer tempus blandit dui sed rutrum.
+		</p>
+
+		<div id="dropdown1" class="dropdown bordered" style="width: 300px;">
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean accumsan euismod felis, et sodales justo convallis vel. Donec placerat augue non neque mollis, a tristique libero venenatis. Etiam eget ultricies tortor, quis bibendum erat. Vivamus eget leo pharetra, rutrum dolor nec, eleifend est. Integer ac leo a augue consectetur cursus. Sed a varius ex. Morbi vitae posuere tellus. Nullam bibendum.
+		</div>
+		<div id="dropdown2" class="dropdown" style="width: 200px;">
+			Demo text Demo text Demo text Demo text
+			<a href="javascript:alert('Link clicked')">Show message</a>
+		</div>
+		<div id="dropdown3" class="dropdown" style="width: 200px;" data-opt-placement="right-top" data-opt-auto-close="false">
+			Third dropdown
+			<a id="closeLink3" href="javascript:void(0)">Close</a>
+		</div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$(".open-dropdown1").click(function (event) {
+			$("#dropdown1").dropdown(this, { placement: $(this).data("dropdown-placement") });
+		});
+		$(".open-dropdown2").click(function (event) {
+			$("#dropdown2").dropdown(this, { placement: $(this).data("dropdown-placement") });
+		});
+
+		$(".open-dropdown3").click(function (event) {
+			$("#dropdown3").dropdown(this);
+		});
+		$("#closeLink3").click(function () {
+			$("#dropdown3").dropdown.close();
+		});
+	</script>
+</body>
+</html>
