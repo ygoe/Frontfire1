@@ -21,9 +21,17 @@ html.center
 
 .page-width
 {
-	max-width: $pageWidth;
-	@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
+	@if $pageWidth > 0
 	{
-		max-width: none;
+		max-width: $pageWidth;
+		@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
+		{
+			max-width: none;
+		}
+	}
+	@if $pageWidth == 0
+	{
+		padding-left: $smallPageWidthPadding;
+		padding-right: $smallPageWidthPadding;
 	}
 }

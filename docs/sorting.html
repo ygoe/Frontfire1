@@ -90,7 +90,7 @@
 			Sortable list items:
 		</p>
 		
-		<ul class="sortable">
+		<ul class="sortable" id="sortableList">
 			<li>Item 1</li>
 			<li>Item 2</li>
 			<li>Item 3</li>
@@ -100,6 +100,10 @@
 			<li>Item 7</li>
 			<li>Item 8</li>
 		</ul>
+		
+		<p>
+			<button type="button" id="addItem">Add item</button>
+		</p>
 		
 		<p>
 			Sortable table body rows:
@@ -290,6 +294,11 @@
 				(event.after ? "after \"" + $(event.after).text() + "\"" : "at start"));
 			if ($("#sortable1Checkbox").prop("checked"))
 				event.preventDefault();
+		});
+		
+		$("#addItem").click(function () {
+			var item = $("<li>New item</li>").appendTo($("#sortableList"));
+			$("#sortableList").sortable.addChild(item);
 		});
 	</script>
 </body>

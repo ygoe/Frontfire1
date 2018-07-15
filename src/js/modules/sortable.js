@@ -39,6 +39,7 @@ function sortable(options) {
 		if ($elem.hasClass(sortableClass)) return;   // Already done
 		$elem.addClass(sortableClass);
 		var opt = initOptions("sortable", sortableDefaults, $elem, {}, options);
+		opt._prepareChild = prepareChild;
 
 		// Remove text nodes between children which cause layout issues when dragging
 		$elem.contents().filter(function () {
@@ -51,7 +52,9 @@ function sortable(options) {
 		var crossStart = isVertical ? "left" : "top";
 		var crossEnd = isVertical ? "right" : "bottom";
 
-		$elem.children().each(function () {
+		$elem.children().each(prepareChild);
+		
+		function prepareChild() {
 			var child = $(this);
 			var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren;
 			var stack = opt.stack;
@@ -236,7 +239,7 @@ function sortable(options) {
 					rowElements = [];
 				}
 			}
-		});
+		}
 
 		// Returns an absolute point with "left" and "top" coordinates for the current orientation.
 		function createPoint(flow, cross) {
@@ -279,5 +282,13 @@ function sortable(options) {
 	}
 }
 
-registerPlugin("sortable", sortable);
+function addChild(child) {
+	var sortable = $(this);
+	var opt = loadOptions("sortable", sortable);
+	opt._prepareChild.call(child);
+}
+
+registerPlugin("sortable", sortable, {
+	addChild: addChild
+});
 $.fn.sortable.defaults = sortableDefaults;

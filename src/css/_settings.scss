@@ -1,9 +1,11 @@
+// ========== Viewport break points ==========
+
 $viewportWidthPhone: 540px;
 $viewportWidthMinitab: 760px;
 $viewportWidthTablet: 900px;
 $viewportWidthDesktop: 1200px;
 
-$pageWidth: 900px;
+$pageWidth: 900px;   // Set to 0px for full-width with horizontal padding
 $smallPageWidthPadding: 15px;
 
 // ========== Animations ==========
