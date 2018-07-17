@@ -126,7 +126,7 @@ div.image-full-width
 	text-align: center;
 	padding: 0 2em;
 	color: $imageSubtitleColor;
-	
+
 	img
 	{
 		display: block;
@@ -144,7 +144,7 @@ div.image-center
 	text-align: center;
 	padding: 0 2em;
 	color: $imageSubtitleColor;
-	
+
 	img
 	{
 		display: block;
@@ -227,7 +227,7 @@ div.image-left
 	float: left;
 	margin-right: 1.5em;
 	text-align: left;
-	
+
 	@media (max-width: $viewportWidthPhone)
 	{
 		&.require-minitab { @include div-too-narrow-left; }

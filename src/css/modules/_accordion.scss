@@ -27,7 +27,7 @@
 		background: $accordionHeaderPressedBackground;
 		transition: background 0s;
 	}
-	
+
 	.expanded > &
 	{
 		background: $accordionExpandedHeaderBackground;
@@ -179,7 +179,7 @@
 	transform: scaleY(0);
 	transform-origin: 0% 0%;
 	opacity: 0;
-	
+
 	.expanded > &
 	{
 		transform: scaleY(1);
