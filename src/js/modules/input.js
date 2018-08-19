@@ -68,6 +68,7 @@ function spinner() {
 			if (min !== undefined && value < parseFloat(min)) value = min;
 			while (max !== undefined && value > parseFloat(max)) value -= step;
 			input.val(value);
+			input.change();
 		});
 		decButton.repeatButton();
 		var incButton = $("<button type='button'/>").appendTo(wrapper).text("+");
@@ -83,6 +84,7 @@ function spinner() {
 			if (min !== undefined && value < parseFloat(min)) value = min;
 			while (max !== undefined && value > parseFloat(max)) value -= step;
 			input.val(value);
+			input.change();
 		});
 		incButton.repeatButton();
 		bindInputButtonsDisabled(input, buttons);
