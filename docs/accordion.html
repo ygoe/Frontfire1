@@ -291,6 +291,23 @@
 			</div>
 		</div>
 		
+		<p>
+			If there are fixed elements at the top of the page, scrolling to an item will leave it hidden behind the fixed element.
+			In this case, the <code>scrollOffsetElement</code> option can be set to an element (selector) whose height will be considered when scrolling. The <code>scrollOffset</code> option can be set to a fixed height offset to consider. Both offsets are added.
+			It is easiest to set the options as <code>data-opt-scroll-offset-element</code> and <code>data-opt-scroll-offset</code> HTML attributes with the accordion container element.
+		</p>
+		
+		<div class="accordion" data-opt-exclusive="true" data-opt-scroll-offset="50">
+			<div id="linkitem1o">
+				<div>Item 1 with scroll offset</div>
+				<div><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam feugiat vehicula ante, quis ultrices metus ultricies sit amet. Maecenas ornare nunc a est imperdiet, in pulvinar odio porttitor. Ut et velit ante. Suspendisse ut sem auctor, interdum nulla a, pellentesque augue. Maecenas velit quam, ultrices sed blandit eget, pharetra a ligula.</p></div>
+			</div>
+			<div id="linkitem2o">
+				<div>Item 2 with scroll offset</div>
+				<div><p>Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras non neque nunc. Aliquam maximus nisi eu nunc tincidunt scelerisque.</p></div>
+			</div>
+		</div>
+		
 		<p style="background: #f8f8f8; color: #a0a0a0; padding: 45vh 0; text-align: center;">
 			<em>This space is intentionally left blank to demonstrate the linking feature.</em>
 		</p>

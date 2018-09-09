@@ -6,7 +6,11 @@ var accordionClass = "ff-accordion";
 // Defines default options for the accordion plugin.
 var accordionDefaults = {
 	// Exclusive mode allows only one item to be expanded at a time. Default: false.
-	exclusive: false
+	exclusive: false,
+	// Offset to consider when scrolling to an item, when there are fixed elements at the top. Default: 0.
+	scrollOffset: 0,
+	// Element whose height to consider when scrolling to an item. Both offsets are added. Default: null.
+	scrollOffsetElement: null
 };
 
 // Converts all div elements in each selected element into accordion pages.
@@ -51,7 +55,11 @@ function accordion(options) {
 				item.addClass("expanded");
 				content.css("height", "auto");
 				$(function() {
-					$("html,body").animate({ scrollTop: item.offset().top });
+					let offset = opt.scrollOffset || 0;
+					if (opt.scrollOffsetElement) {
+						offset += $(opt.scrollOffsetElement).height();
+					}
+					$("html,body").animate({ scrollTop: item.offset().top - offset });
 				});
 			}
 			else {
