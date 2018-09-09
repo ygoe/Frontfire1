@@ -137,6 +137,9 @@ function expand(indexOrItem) {
 		}
 
 		var content = item.children("div.ff-accordion-content").first();
+		if (content[0].clientHeight) {
+			return;   // Already expanded
+		}
 		content.css("height", content[0].scrollHeight);   // animate to desired height
 		function onTransitionEnd(event) {
 			if (event.originalEvent.propertyName == "height") {
