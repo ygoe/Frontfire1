@@ -17,7 +17,7 @@ This framework builds upon [jQuery](https://jquery.com) and was tested with vers
 Building
 --------
 
-Frontfire is written in modern JavaScript and SASS. The distribution files are converted to browser-compatible JavaScript and standard CSS with a set of public tools (CSS: sassc, csso; JavaScript: rollup, babel, uglifyjs) bundled in the Mini Web Compiler application for Windows.
+Frontfire is written in modern JavaScript and SASS. The distribution files are converted to browser-compatible JavaScript and standard CSS with a set of public tools (CSS: sassc, csso; JavaScript: rollup, babel, uglifyjs) bundled in the [Mini Web Compiler](https://github.com/ygoe/MiniWebCompiler) application for Windows.
 
 To customise the styles with the provided SASS variables, you can either build your own version of Frontfire and use the build output files statically, or just include all SASS source files into your web project and build the CSS file right there.
 
