@@ -425,23 +425,30 @@ html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimm
 .group:after {
   clear: both; }
 
+.print-only {
+  display: none; }
+  @media (print) {
+    .print-only {
+      display: inherit; } }
+
+@media (print) {
+  .not-print {
+    display: none; } }
+
 html.center {
   overflow-y: scroll; }
   html.center .page-width {
-    margin: 0 auto;
-    padding: 0; }
+    margin-left: auto;
+    margin-right: auto; }
   @media (max-width: 930px) {
     html.center {
-      overflow-y: inherit; }
-      html.center .page-width {
-        margin: 0;
-        padding: 0 15px; } }
+      overflow-y: inherit; } }
 
 .page-width {
   max-width: 900px; }
   @media (max-width: 930px) {
     .page-width {
-      max-width: none; } }
+      max-width: calc(100% - 30px); } }
 
 html,
 body,
@@ -469,14 +476,14 @@ h1 {
   margin: 28px 0 24px; }
 
 h2 {
-  font-size: 22px;
-  line-height: 31px;
+  font-size: 21px;
+  line-height: 29px;
   font-weight: 600;
   margin: 24px 0 1rem; }
 
 h3 {
-  font-size: 18px;
-  line-height: 25px;
+  font-size: 17px;
+  line-height: 24px;
   font-weight: 600;
   margin: 20px 0 1rem; }
 
@@ -566,6 +573,13 @@ table.no-outer-padding td:first-child {
 table.no-outer-padding th:last-child,
 table.no-outer-padding td:last-child {
   padding-right: 0; }
+
+table.no-padding th,
+table.no-padding td {
+  padding: 0; }
+
+table.full-width {
+  width: 100%; }
 
 table.center th,
 table.center td {
@@ -1102,6 +1116,9 @@ form {
     margin-bottom: 8px; }
   form h2, form h3, form h4, form h5, form h6 {
     margin-bottom: 0; }
+
+.form-trap {
+  display: none !important; }
 
 .form-row .label:not(:first-child) {
   margin-top: 1em; }

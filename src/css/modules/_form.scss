@@ -9,6 +9,12 @@ form
 	h2, h3, h4, h5, h6 { margin-bottom: 0; }
 }
 
+// A class to hide form fields that no user should fill out and bots love
+.form-trap
+{
+	display: none !important;
+}
+
 .form-row .label:not(:first-child)   // IE compat default, overridden in feature query
 {
 	margin-top: 1em;

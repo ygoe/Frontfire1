@@ -44,6 +44,7 @@ html:not(.simple-dimmer)
 	}
 }
 
+// Adds a float break before and after the group
 .group:before,
 .group:after
 {
@@ -53,6 +54,22 @@ html:not(.simple-dimmer)
 .group:after
 {
 	clear: both;
+}
+
+.print-only
+{
+	display: none;
+	@media (print)
+	{
+		display: inherit;
+	}
+}
+.not-print
+{
+	@media (print)
+	{
+		display: none;
+	}
 }
 
 @import "modules/page";

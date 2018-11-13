@@ -1,37 +1,37 @@
 @import "../settings";
 
-html.center
+@if $pageWidth > 0
 {
-	overflow-y: scroll;
-	.page-width
+	html.center
 	{
-		margin: 0 auto;
-		padding: 0;
-	}
-	@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
-	{
-		overflow-y: inherit;
+		// Force scrollbar to maintain consistent centering on short and long pages
+		overflow-y: scroll;
+
 		.page-width
 		{
-			margin: 0;
-			padding: 0 $smallPageWidthPadding;
+			margin-left: auto;
+			margin-right: auto;
+		}
+
+		@media (max-width: $pageWidth + 2 * $pageWidthPadding)
+		{
+			overflow-y: inherit;
+		}
+	}
+
+	.page-width
+	{
+		max-width: $pageWidth;
+		@media (max-width: $pageWidth + 2 * $pageWidthPadding)
+		{
+			max-width: calc(100% - #{2 * $pageWidthPadding});
 		}
 	}
 }
-
-.page-width
+@if $pageWidth == 0
 {
-	@if $pageWidth > 0
+	.page-width
 	{
-		max-width: $pageWidth;
-		@media (max-width: $pageWidth + 2 * $smallPageWidthPadding)
-		{
-			max-width: none;
-		}
-	}
-	@if $pageWidth == 0
-	{
-		padding-left: $smallPageWidthPadding;
-		padding-right: $smallPageWidthPadding;
+		max-width: calc(100% - #{2 * $pageWidthPadding});
 	}
 }

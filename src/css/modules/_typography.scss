@@ -38,15 +38,15 @@ h1
 }
 h2
 {
-	font-size: round($defaultFontSize * 1.6);
-	line-height: round($defaultFontSize * 1.6 * $defaultLineHeight);
+	font-size: round($defaultFontSize * 1.5);
+	line-height: round($defaultFontSize * 1.5 * $defaultLineHeight);
 	font-weight: $headingWeight;
 	margin: 24px 0 1rem;
 }
 h3
 {
-	font-size: round($defaultFontSize * 1.3);
-	line-height: round($defaultFontSize * 1.3 * $defaultLineHeight);
+	font-size: round($defaultFontSize * 1.2);
+	line-height: round($defaultFontSize * 1.2 * $defaultLineHeight);
 	font-weight: $headingWeight;
 	margin: 20px 0 1rem;
 }
@@ -197,6 +197,20 @@ table.no-outer-padding
 	{
 		padding-right: 0;
 	}
+}
+
+table.no-padding
+{
+	th,
+	td
+	{
+		padding: 0;
+	}
+}
+
+table.full-width
+{
+	width: 100%;
 }
 
 table.center
