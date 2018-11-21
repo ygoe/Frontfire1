@@ -8,7 +8,7 @@
 .ff-dropdown-container
 {
 	position: absolute;
-	z-index: 500;
+	z-index: 1500;   // above modal
 	box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 	background: white;
 	color: black;

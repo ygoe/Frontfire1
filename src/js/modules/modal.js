@@ -93,6 +93,9 @@ function closeModal() {
 		closeButton.remove();
 	if (opt.dimBackground)
 		undimBackground();
+
+	let event = $.Event("close");
+	modal.trigger(event);
 	return this;
 }
 

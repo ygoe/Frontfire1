@@ -67,7 +67,8 @@ h6
 
 // ========== Paragraphs ==========
 
-p
+p,
+div.p
 {
 	margin: 1em 0;
 }
@@ -187,12 +188,10 @@ table.no-grid
 
 table.no-outer-padding
 {
-	th:first-child,
 	td:first-child
 	{
 		padding-left: 0;
 	}
-	th:last-child,
 	td:last-child
 	{
 		padding-right: 0;

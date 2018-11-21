@@ -34,6 +34,9 @@ function createDropdown(target, options) {
 	if (dropdown.hasClass("bordered")) {
 		container.addClass("bordered");
 	}
+	if ($(document.body).hasClass("ff-dimmed")) {
+		container.addClass("no-dim");
+	}
 	dropdown.detach().appendTo(container);
 
 	var viewportWidth = $(window).width();
@@ -115,13 +118,15 @@ function createDropdown(target, options) {
 		var event = $.Event("dropdownclose");
 		dropdown.trigger(event);
 		if (!event.isDefaultPrevented()) {
-			dropdown.dropdown.close();
+			dropdown.dropdown.close(true);
 		}
 	}
 }
 
 // Closes the selected dropdown.
-function closeDropdown() {
+//
+// closeEventTriggered: For internal use.
+function closeDropdown(closeEventTriggered) {
 	var dropdown = this.first();
 	if (dropdown.length === 0) return this;   // Nothing to do
 	var container = dropdown.parent();
@@ -134,6 +139,10 @@ function closeDropdown() {
 		dropdown.detach().appendTo("body");
 		container.remove();
 	});
+	if (!closeEventTriggered) {
+		var event = $.Event("dropdownclose");
+		dropdown.trigger(event);
+	}
 	return this;
 }
 

@@ -131,6 +131,15 @@
 		<p>
 			Separator items are added as simple menu items with no CSS class and a single dash (<code>-</code>) as content.
 		</p>
+		
+		<p>
+			If the menu should not start a page navigation, its <code>&lt;a href&gt;</code> attribute can be set to <code>#</code>.
+			It will be replaced with a true no-op with minimal status bar cluttering while hovering the link.
+		</p>
+		
+		<p>
+			Clicked items on a submenu will close the submenu, unless the link element has the <code>stay-open</code> class.
+		</p>
 
 		<ul class="menu both submenu-arrow">
 			<li><a href="#">Page 1</a></li>

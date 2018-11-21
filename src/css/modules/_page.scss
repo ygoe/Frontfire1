@@ -2,6 +2,15 @@
 
 @if $pageWidth > 0
 {
+	.page-width
+	{
+		max-width: $pageWidth;
+		@media (max-width: $pageWidth + 2 * $pageWidthPadding)
+		{
+			max-width: calc(100% - #{2 * $pageWidthPadding});
+		}
+	}
+
 	html.center
 	{
 		// Force scrollbar to maintain consistent centering on short and long pages
@@ -18,20 +27,12 @@
 			overflow-y: inherit;
 		}
 	}
-
-	.page-width
-	{
-		max-width: $pageWidth;
-		@media (max-width: $pageWidth + 2 * $pageWidthPadding)
-		{
-			max-width: calc(100% - #{2 * $pageWidthPadding});
-		}
-	}
 }
 @if $pageWidth == 0
 {
 	.page-width
 	{
+		margin-left: $pageWidthPadding;
 		max-width: calc(100% - #{2 * $pageWidthPadding});
 	}
 }

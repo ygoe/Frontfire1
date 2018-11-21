@@ -435,6 +435,12 @@ html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimm
   .not-print {
     display: none; } }
 
+.page-width {
+  max-width: 900px; }
+  @media (max-width: 930px) {
+    .page-width {
+      max-width: calc(100% - 30px); } }
+
 html.center {
   overflow-y: scroll; }
   html.center .page-width {
@@ -443,12 +449,6 @@ html.center {
   @media (max-width: 930px) {
     html.center {
       overflow-y: inherit; } }
-
-.page-width {
-  max-width: 900px; }
-  @media (max-width: 930px) {
-    .page-width {
-      max-width: calc(100% - 30px); } }
 
 html,
 body,
@@ -499,7 +499,8 @@ h6 {
   font-weight: 600;
   margin: 1rem 0; }
 
-p {
+p,
+div.p {
   margin: 1em 0; }
 
 p.left-align {
@@ -566,11 +567,9 @@ table.no-grid td {
   border-top: none;
   border-bottom: none; }
 
-table.no-outer-padding th:first-child,
 table.no-outer-padding td:first-child {
   padding-left: 0; }
 
-table.no-outer-padding th:last-child,
 table.no-outer-padding td:last-child {
   padding-right: 0; }
 
@@ -1337,29 +1336,21 @@ a.button {
     background: #e4e4e4;
     color: #808080;
     cursor: default; }
-  button.default:not(:disabled), button[type=submit]:not(:disabled), input[type=button].default:not(:disabled), input[type=button][type=submit]:not(:disabled), input[type=color].default:not(:disabled), input[type=color][type=submit]:not(:disabled), input[type=image].default:not(:disabled), input[type=image][type=submit]:not(:disabled), input[type=reset].default:not(:disabled), input[type=reset][type=submit]:not(:disabled), input[type=submit].default:not(:disabled), input[type=submit][type=submit]:not(:disabled),
+  button.default:not(:disabled), input[type=button].default:not(:disabled), input[type=color].default:not(:disabled), input[type=image].default:not(:disabled), input[type=reset].default:not(:disabled), input[type=submit].default:not(:disabled),
   div.buttons a.default:not(:disabled),
-  div.buttons a[type=submit]:not(:disabled),
-  a.button.default:not(:disabled),
-  a.button[type=submit]:not(:disabled) {
+  a.button.default:not(:disabled) {
     background: #2755dd;
     color: #ffffff; }
-    button.default:not(:disabled):hover, button.default:not(:disabled):focus, button[type=submit]:not(:disabled):hover, button[type=submit]:not(:disabled):focus, input[type=button].default:not(:disabled):hover, input[type=button].default:not(:disabled):focus, input[type=button][type=submit]:not(:disabled):hover, input[type=button][type=submit]:not(:disabled):focus, input[type=color].default:not(:disabled):hover, input[type=color].default:not(:disabled):focus, input[type=color][type=submit]:not(:disabled):hover, input[type=color][type=submit]:not(:disabled):focus, input[type=image].default:not(:disabled):hover, input[type=image].default:not(:disabled):focus, input[type=image][type=submit]:not(:disabled):hover, input[type=image][type=submit]:not(:disabled):focus, input[type=reset].default:not(:disabled):hover, input[type=reset].default:not(:disabled):focus, input[type=reset][type=submit]:not(:disabled):hover, input[type=reset][type=submit]:not(:disabled):focus, input[type=submit].default:not(:disabled):hover, input[type=submit].default:not(:disabled):focus, input[type=submit][type=submit]:not(:disabled):hover, input[type=submit][type=submit]:not(:disabled):focus,
+    button.default:not(:disabled):hover, button.default:not(:disabled):focus, input[type=button].default:not(:disabled):hover, input[type=button].default:not(:disabled):focus, input[type=color].default:not(:disabled):hover, input[type=color].default:not(:disabled):focus, input[type=image].default:not(:disabled):hover, input[type=image].default:not(:disabled):focus, input[type=reset].default:not(:disabled):hover, input[type=reset].default:not(:disabled):focus, input[type=submit].default:not(:disabled):hover, input[type=submit].default:not(:disabled):focus,
     div.buttons a.default:not(:disabled):hover,
     div.buttons a.default:not(:disabled):focus,
-    div.buttons a[type=submit]:not(:disabled):hover,
-    div.buttons a[type=submit]:not(:disabled):focus,
     a.button.default:not(:disabled):hover,
-    a.button.default:not(:disabled):focus,
-    a.button[type=submit]:not(:disabled):hover,
-    a.button[type=submit]:not(:disabled):focus {
+    a.button.default:not(:disabled):focus {
       background: #2148bc;
       transition: background 0s; }
-    button.default:not(:disabled):active, button[type=submit]:not(:disabled):active, input[type=button].default:not(:disabled):active, input[type=button][type=submit]:not(:disabled):active, input[type=color].default:not(:disabled):active, input[type=color][type=submit]:not(:disabled):active, input[type=image].default:not(:disabled):active, input[type=image][type=submit]:not(:disabled):active, input[type=reset].default:not(:disabled):active, input[type=reset][type=submit]:not(:disabled):active, input[type=submit].default:not(:disabled):active, input[type=submit][type=submit]:not(:disabled):active,
+    button.default:not(:disabled):active, input[type=button].default:not(:disabled):active, input[type=color].default:not(:disabled):active, input[type=image].default:not(:disabled):active, input[type=reset].default:not(:disabled):active, input[type=submit].default:not(:disabled):active,
     div.buttons a.default:not(:disabled):active,
-    div.buttons a[type=submit]:not(:disabled):active,
-    a.button.default:not(:disabled):active,
-    a.button[type=submit]:not(:disabled):active {
+    a.button.default:not(:disabled):active {
       background: #193790;
       transition: background 0s;
       color: #ffffff; }
@@ -1701,7 +1692,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
 
 .ff-dropdown-container {
   position: absolute;
-  z-index: 500;
+  z-index: 1500;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   background: white;
   color: black; }

@@ -35,7 +35,17 @@ function menu() {
 					this.addClass("separator");
 				}
 			});
+			
+			// Close submenu when clicking on one of its items
+			submenu.find("li > a:not(.stay-open)").each$(function () {
+				this.click(function () {
+					submenu.dropdown.close();
+				});
+			});
 		});
+		
+		// Replace # href with a true no-op
+		menu.find("li > a[href='#']").attr("href", "javascript:");
 	});
 }
 

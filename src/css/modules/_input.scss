@@ -243,8 +243,7 @@ a.button
 		cursor: default;
 	}
 
-	&.default:not(:disabled),
-	&[type=submit]:not(:disabled)
+	&.default:not(:disabled)
 	{
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
