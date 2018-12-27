@@ -68,27 +68,32 @@ h6
 // ========== Paragraphs ==========
 
 p,
-div.p
+div.p,
+table.p
 {
 	margin: 1em 0;
 }
 
-p.left-align
+p.left-align,
+div.left-align
 {
 	text-align: left;
 }
 
-p.right-align
+p.right-align,
+div.right-align
 {
 	text-align: right;
 }
 
-p.center
+p.center,
+div.center
 {
 	text-align: center;
 }
 
-p.justify
+p.justify,
+div.justify
 {
 	text-align: justify;
 }
@@ -271,6 +276,16 @@ kbd
 .nowrap
 {
 	white-space: nowrap;
+}
+
+span.vertical
+{
+	-ms-writing-mode: tb-rl; 
+	-webkit-writing-mode: vertical-rl;
+	-moz-writing-mode: vertical-rl;
+	-ms-writing-mode: vertical-rl;
+	writing-mode: vertical-rl;
+	transform: rotate(180deg);
 }
 
 // ========== Loading indicator ==========

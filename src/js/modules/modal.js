@@ -6,6 +6,8 @@ var modalEventNamespace = ".ff-modal";
 var modalClass = "ff-modal-container";
 var modalCloseButtonClass = "ff-modal-close-button";
 
+var modalLevel = 0;
+
 // Defines default options for the modal plugin.
 var modalDefaults = {
 	// Indicates whether the modal is closed when clicking anywhere outside of it or pressing Esc.
@@ -24,18 +26,21 @@ function modal(options) {
 	var modal = this.first();
 	if (modal.length === 0) return this;   // Nothing to do
 	if (modal.parent().hasClass(modalClass)) return this;   // Already open
+	modalLevel++;
 	var opt = initOptions("modal", modalDefaults, modal, {}, options);
-	if (opt.dimBackground)
+	opt.level = modalLevel;
+	if (opt.dimBackground && modalLevel === 1)
 		dimBackground();
 
 	var container = $("<div/>").addClass(modalClass).appendTo("body");
-	modal.detach().appendTo(container);
+	modal.appendTo(container);
 	modal.find(":focusable").first().focus().blur();
 
-	preventScrolling();
+	if (modalLevel === 1)
+		preventScrolling();
 
 	// Prevent moving the focus out of the modal
-	$(document).on("focusin" + modalEventNamespace, function (event) {
+	$(document).on("focusin" + modalEventNamespace + "-" + opt.level, function (event) {
 		if ($(event.target).parents().filter(modal).length === 0) {
 			// The focused element's ancestors do not include the modal, so the focus went out
 			// of the modal. Bring it back.
@@ -49,10 +54,12 @@ function modal(options) {
 	var closeButton;
 	if (opt.cancellable) {
 		// Close on pressing the Escape key or clicking outside the modal
-		$(document).on("keydown" + modalEventNamespace, function (event) {
+		$(document).on("keydown" + modalEventNamespace + "-" + opt.level, function (event) {
 			if (event.keyCode === 27) {   // Escape
-				event.preventDefault();
-				modal.modal.close();
+				if (modalLevel === opt.level) {   // There might be another modal on top
+					event.preventDefault();
+					modal.modal.close();
+				}
 			}
 		});
 		container.click(function (event) {
@@ -81,17 +88,19 @@ function closeModal() {
 	if (modal.length === 0) return this;   // Nothing to do
 	var container = modal.parent();
 	if (!container.hasClass(modalClass)) return this;   // Modal is not open
+	modalLevel--;
 	var opt = loadOptions("modal", modal);
 	var closeButton = modal.find("." + modalCloseButtonClass).first();
 
-	preventScrolling(false);
-	$(document).off("focusin" + modalEventNamespace);
-	$(document).off("keydown" + modalEventNamespace);
-	modal.detach().appendTo("body");
+	if (!modalLevel)
+		preventScrolling(false);
+	$(document).off("focusin" + modalEventNamespace + "-" + opt.level);
+	$(document).off("keydown" + modalEventNamespace + "-" + opt.level);
+	modal.appendTo("body");
 	container.remove();
 	if (closeButton)
 		closeButton.remove();
-	if (opt.dimBackground)
+	if (opt.dimBackground && !modalLevel)
 		undimBackground();
 
 	let event = $.Event("close");

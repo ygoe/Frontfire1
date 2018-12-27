@@ -51,6 +51,24 @@
 				<td>Indicates whether the dropdown is closed when clicking anywhere outside of it.</td>
 				<td>true</td>
 			</tr>
+			<tr>
+				<td><code>closeOnResize</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the dropdown is closed when the window is resized.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>closeOnHide</code></td>
+				<td>Boolean</td>
+				<td>Indicates whether the dropdown is closed when the document is hidden.</td>
+				<td>true</td>
+			</tr>
+			<tr>
+				<td><code>maxHeight</code></td>
+				<td>Number</td>
+				<td>The maximum height of the dropdown, in pixels.</td>
+				<td>0 (no limit)</td>
+			</tr>
 		</table>
 		
 		<p>
@@ -149,6 +167,16 @@
 			If the specified placement is “right”, then the dropdown is placed like bottom-right or top-right, depending on where is enough space to show the dropdown.
 		</p>
 		
+		<h2>Scrolling</h2>
+		
+		<p>
+			If there is not enough vertical space on the side where the dropdown is opened, then the dropdown contents is scrollable. The height of the dropdown can also be limited, which may lead to a scrollable content.
+		</p>
+		
+		<p>
+			<button class="open-dropdown4">Open smaller dropdown</button>
+		</p>
+		
 		<p class="filler-text">
 			Pellentesque efficitur dapibus ante interdum elementum. Fusce scelerisque finibus lectus nec fermentum. Integer finibus, purus at maximus luctus, sapien nulla varius urna, id pulvinar ligula arcu nec tortor. Aenean vitae ornare arcu. Donec viverra id urna in iaculis. Nulla vestibulum sed mauris ut scelerisque. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Interdum et malesuada fames ac ante ipsum primis in faucibus. Phasellus sem tortor, hendrerit at velit non, accumsan ultricies felis. Aenean molestie ligula justo, nec efficitur lorem luctus ut. Quisque porta, nulla id placerat pretium, orci augue luctus dui, ac finibus urna diam vel lectus. Pellentesque ornare aliquet risus, eu feugiat tortor mollis ac. Integer tempus blandit dui sed rutrum.
 		</p>
@@ -160,9 +188,14 @@
 			Demo text Demo text Demo text Demo text
 			<a href="javascript:alert('Link clicked')">Show message</a>
 		</div>
-		<div id="dropdown3" class="dropdown" style="width: 200px;" data-opt-placement="right-top" data-opt-auto-close="false">
+		<div id="dropdown3" class="dropdown" style="width: 200px;" data-opt-placement="right-top" data-opt-auto-close="false" data-opt-close-on-resize="false" data-opt-close-on-hide="false">
 			Third dropdown
 			<a id="closeLink3" href="javascript:void(0)">Close</a>
+		</div>
+		<div id="dropdown4" class="dropdown" style="width: 200px;" data-opt-max-height="200">
+			Fourth dropdown with limited height. The content will scroll.
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean accumsan euismod felis, et sodales justo convallis vel. Donec placerat augue non neque mollis, a tristique libero venenatis. Etiam eget ultricies tortor, quis bibendum erat. Vivamus eget leo pharetra, rutrum dolor nec, eleifend est. Integer ac leo a augue consectetur cursus. Sed a varius ex. Morbi vitae posuere tellus. Nullam bibendum.
+			Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean accumsan euismod felis, et sodales justo convallis vel. Donec placerat augue non neque mollis, a tristique libero venenatis. Etiam eget ultricies tortor, quis bibendum erat. Vivamus eget leo pharetra, rutrum dolor nec, eleifend est. Integer ac leo a augue consectetur cursus. Sed a varius ex. Morbi vitae posuere tellus. Nullam bibendum.
 		</div>
 	</main>
 
@@ -189,6 +222,10 @@
 		});
 		$("#closeLink3").click(function () {
 			$("#dropdown3").dropdown.close();
+		});
+
+		$(".open-dropdown4").click(function (event) {
+			$("#dropdown4").dropdown(this);
 		});
 	</script>
 </body>

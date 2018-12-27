@@ -209,6 +209,7 @@ input[type=number]
 
 #{$buttonInputs},
 div.buttons a,
+span.buttons a,
 a.button
 {
 	display: inline-block;
@@ -219,6 +220,7 @@ a.button
 	color: $buttonColor;
 	padding: 5px 9px;   // textbox padding + 1 for the missing border
 	min-width: 75px;
+	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)
 	cursor: pointer;
 	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, border $animationDuration $animationFunction;
 
@@ -299,6 +301,11 @@ a.button
 			color: $buttonTransparentPressedColor;
 		}
 	}
+	&.transparent:disabled
+	{
+		background: $buttonTransparentBackground;
+		color: $buttonDisabledColor;
+	}
 
 	.ff-input-wrapper &,
 	&.narrow
@@ -314,10 +321,14 @@ a.button
 	}
 }
 
-div.buttons
+div.buttons,
+span.buttons
 {
-	button,
-	a
+	line-height: round(($defaultFontSize + 2 * 8) * $defaultLineHeight);
+
+	> button,
+	> a,
+	> .menu.inline
 	{
 		margin-right: 10px;
 		&:last-child

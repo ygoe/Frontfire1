@@ -112,6 +112,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
+	// Variable tests
+
 	// Determines whether the value is set (i. e. not undefined or null).
 	$.isSet = function (value) {
 		return typeof value !== "undefined" && value !== null;
@@ -142,6 +144,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return $.isNumber(value) && value % 2 === 1;
 	};
 
+	// Operating system tests
+
 	// Determines whether the client operating system is Android.
 	$.isAndroid = function () {
 		return !!navigator.userAgent.match(/Android/);
@@ -170,6 +174,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	if ($.isAndroid()) {
 		$("html").addClass("simple-dimmer");
 	}
+
+	// Browser tests
+	// Source: https://stackoverflow.com/a/9851769
+
+	// Determines whether the browser has a Blink engine.
+	$.isBlink = function () {
+		return ($.isChrome() || $.isOpera()) && !!window.CSS;
+	};
+
+	// Determines whether the browser is Chrome.
+	$.isChrome = function () {
+		return !!window.chrome && !!window.chrome.webstore;
+	};
+
+	// Determines whether the browser is Edge.
+	$.isEdge = function () {
+		return !$.isInternetExplorer() && !!window.StyleMedia;
+	};
+
+	// Determines whether the browser is Firefox.
+	$.isFirefox = function () {
+		return typeof InstallTrigger !== 'undefined';
+	};
+
+	// Determines whether the browser is Internet Explorer.
+	$.isInternetExplorer = function () {
+		return (/*@cc_on!@*/!!document.documentMode
+		);
+	};
+
+	// Determines whether the browser is Opera.
+	$.isOpera = function () {
+		return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+	};
+
+	// Determines whether the browser is Safari.
+	$.isSafari = function () {
+		return (/constructor/i.test(window.HTMLElement) || function (p) {
+				return p.toString() === "[object SafariRemoteNotification]";
+			}(!window['safari'] || typeof safari !== 'undefined' && safari.pushNotification)
+		);
+	};
 
 	/*! jQuery UI - v1.12.1 - 2017-12-25
  * http://jqueryui.com
@@ -245,6 +291,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 
 	// Registers a jQuery plugin.
+	//
+	// name: The name of the plugin.
+	// create: The plugin create function.
+	// obj: An object containing additional operation functions.
 	function registerPlugin(name, create, obj) {
 		// Define a new property for each jQuery object in which the plugin is accessible.
 		// This property getter is called whenever the plugin or one of its additional functions is called.
@@ -265,6 +315,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		});
 	}
+
+	// Determines the options to use for a plugin.
+	//
+	// name: The plugin name.
+	// defaults: The plugin's default options. Only properties defined in here are considered for data attributes.
+	// elem: The element to find data attributes in. Options are stored here, too.
+	// converters: An object that specifies a conversion function for each special data attribute.
+	// params: The options specified to the plugin function.
 	function initOptions(name, defaults, elem, converters, params) {
 		params = params || {};
 
@@ -305,6 +363,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		return opts;
 	}
+
+	// Loads plugin options for additional plugin functions.
+	//
+	// name: The plugin name.
+	// elem: The element to find data attributes in. Options are stored here, too.
 	function loadOptions(name, elem) {
 		return $(elem).data("ff-" + name + "-options") || {};
 	}
@@ -330,6 +393,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Installs a jQuery hook if it isn't installed yet. Existing hooks are chained to the new hook.
+	//
 	// hooks: The hooks collection, like $.attrHooks or $.propHooks
 	// name: The name of the hooked entry
 	// id: The internal ID with which an already installed hook can be recognised
@@ -419,6 +483,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Prevents scrolling the document.
+	//
 	// state: Enable or disable the scrolling prevention.
 	function preventScrolling(state) {
 		var $document = $(document),
@@ -1046,6 +1111,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Gets the active item in a carousel.
+	//
 	// indexOrItem: Sets the active item in each selected carousel, either by index or the element.
 	function activeItem(indexOrItem) {
 		// Getter
@@ -1326,8 +1392,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	})();
 
 	// Gets the offset and dimensions of the first selected element.
-	$.fn.rect = function () {
-		var offset = this.offset();
+	//
+	// relative: true to return the position relative to the offset parent, false for page position.
+	$.fn.rect = function (relative) {
+		var offset = relative ? this.position() : this.offset();
 		var width = this.outerWidth();
 		var height = this.outerHeight();
 		return {
@@ -1341,6 +1409,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	// Determines whether the selected element is visible.
+	//
 	// value: Sets the visible state of the selected elements.
 	$.fn.visible = function (value) {
 		// Setter
@@ -1356,6 +1425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	// Determines whether the selected element is disabled.
+	//
 	// value: Sets the disabled state of the selected elements and the associated label(s).
 	$.fn.disabled = function (value) {
 		// Setter
@@ -1390,6 +1460,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.parents("label").enable();
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").enable();
+
+			// Find previous .label sibling up on the .form-row level
+			var refNode = this;
+			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+				refNode = refNode.parent();
+			}var label = refNode.prev();
+			if (label.hasClass("label")) label.enable();
 		});
 	};
 
@@ -1412,6 +1489,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.parents("label").disable();
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").disable();
+
+			// Find previous .label sibling up on the .form-row level
+			var refNode = this;
+			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+				refNode = refNode.parent();
+			}var label = refNode.prev();
+			if (label.hasClass("label")) label.disable();
 		});
 	};
 
@@ -1475,6 +1559,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	// Adds a pointer event handler to the selected elements, with mouse and touch fallbacks as supported.
+	//
 	// type: The event type ("down", "move", "up", "cancel"). Multiple types can be space-delimited.
 	// handler: The event handler function.
 	// capture: Specifies the capture option. If true, DOM addEventListener ist used instead of jQuery.
@@ -1630,12 +1715,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var opt = initOptions("draggable", draggableDefaults, $elem, {}, options);
 
 			var handle = opt.handle ? $elem.find(opt.handle) : $elem;
+			opt.handleElem = handle;
 
 			// Allow Pointer API to work properly in Edge
+			opt.originalTouchAction = handle.css("touch-action");
 			if (opt.axis === "x") handle.css("touch-action", "pan-y pinch-zoom");else if (opt.axis === "y") handle.css("touch-action", "pan-x pinch-zoom");else handle.css("touch-action", "pinch-zoom");
 
+			opt.eventRemovers = [];
 			var eventRemovers = [];
-			handle.pointer("down", function (event) {
+			opt.eventRemovers.push(handle.pointer("down", function (event) {
 				if (event.button === 0) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
@@ -1647,13 +1735,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					eventRemovers.push($(window).pointer("move", onMove, true));
 					eventRemovers.push($(window).pointer("up cancel", onEnd, true));
 				}
-			});
+			}));
 
 			if (opt.cancel) {
-				$elem.find(opt.cancel).pointer("down", function (event) {
+				opt.eventRemovers.push($elem.find(opt.cancel).pointer("down", function (event) {
 					event.preventDefault();
 					event.stopImmediatePropagation();
-				});
+				}));
 			}
 
 			function onMove(event) {
@@ -1753,7 +1841,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					opt.dragClass && $elem.removeClass(opt.dragClass);
 
 					eventRemovers.forEach(function (eventRemover) {
-						eventRemover();
+						return eventRemover();
 					});
 					eventRemovers = [];
 
@@ -1773,7 +1861,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	}
 
-	registerPlugin("draggable", draggable);
+	// Removes the draggable features from the elements.
+	function remove() {
+		return this.each(function () {
+			var elem = this;
+			var $elem = $(elem);
+			if (!$elem.hasClass(draggableClass)) return;
+			$elem.removeClass(draggableClass);
+			var opt = loadOptions("draggable", $elem);
+			opt.handleElem.css("touch-action", opt.originalTouchAction);
+			opt.eventRemovers.forEach(function (eventRemover) {
+				return eventRemover();
+			});
+		});
+	}
+
+	registerPlugin("draggable", draggable, {
+		remove: remove
+	});
 	$.fn.draggable.defaults = draggableDefaults;
 
 	var dropdownContainerClass = "ff-dropdown-container";
@@ -1784,7 +1889,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		placement: undefined,
 
 		// Indicates whether the dropdown is closed when clicking anywhere outside of it. Default: true.
-		autoClose: true
+		autoClose: true,
+
+		// Indicates whether the dropdown is closed when the window is resized. Default: true.
+		closeOnResize: true,
+
+		// Indicates whether the dropdown is closed when the document is hidden. Default: true.
+		closeOnHide: true,
+
+		// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
+		maxHeight: 0
 	};
 
 	// Opens a dropdown with the selected element and places it at the specified target element.
@@ -1804,6 +1918,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 		var optPlacement = opt.placement;
 
+		// Measure before adding the dropdown to the document (which may add a scrollbar, virtually)
+		var $window = $(window);
+		var viewportWidth = $window.width() - 1;
+		var viewportHeight = $window.height() - 1;
+		var scrollTop = $window.scrollTop();
+		var scrollLeft = $window.scrollLeft();
+		var targetRect = $(target).rect();
+		var isReducedHeight = false;
+		var isRightAligned = false;
+		var isHorizontallyCentered = false;
+
 		var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
 		if (dropdown.hasClass("bordered")) {
 			container.addClass("bordered");
@@ -1811,13 +1936,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if ($(document.body).hasClass("ff-dimmed")) {
 			container.addClass("no-dim");
 		}
-		dropdown.detach().appendTo(container);
+		dropdown.appendTo(container);
 
-		var viewportWidth = $(window).width();
-		var viewportHeight = $(window).height();
+		// Now measure the container with its contents
 		var dropdownWidth = container.outerWidth();
 		var dropdownHeight = container.outerHeight();
-		var targetRect = $(target).rect();
+
+		// Limit height if specified, has effect on placement
+		if (opt.maxHeight && opt.maxHeight < dropdownHeight) {
+			dropdownHeight = opt.maxHeight;
+			container.outerHeight(dropdownHeight);
+			isReducedHeight = true;
+		}
 
 		// Place at bottom side, align left, by default
 		var top = targetRect.bottom,
@@ -1833,6 +1963,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		} else if (optPlacement.startsWith("left")) {
 			left = targetRect.left - dropdownWidth;
 			direction = "left";
+			isRightAligned = true;
 		} else if (optPlacement.startsWith("right")) {
 			left = targetRect.right;
 			direction = "right";
@@ -1842,6 +1973,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			left = targetRect.left;
 		} else if (optPlacement.endsWith("right")) {
 			left = targetRect.right - dropdownWidth;
+			isRightAligned = true;
 		} else if (optPlacement.endsWith("top")) {
 			top = targetRect.top;
 		} else if (optPlacement.endsWith("bottom")) {
@@ -1850,6 +1982,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		if (optPlacement === "top-center" || optPlacement === "bottom-center") {
 			left = (targetRect.left + targetRect.right) / 2 - dropdownWidth / 2;
+			isHorizontallyCentered = true;
 		} else if (optPlacement === "left-center" || optPlacement === "right-center") {
 			top = (targetRect.top + targetRect.bottom) / 2 - dropdownHeight / 2;
 		}
@@ -1857,9 +1990,55 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (autoPlacement && left + dropdownWidth > viewportWidth) {
 			left = viewportWidth - dropdownWidth;
 		}
-		if (autoPlacement && top + dropdownHeight > viewportHeight + $(window).scrollTop()) {
-			top = targetRect.top - dropdownHeight;
-			direction = "top";
+		if (autoPlacement && top + dropdownHeight > viewportHeight + scrollTop) {
+			var topSpace = targetRect.top - scrollTop;
+			var bottomSpace = viewportHeight + scrollTop - targetRect.bottom;
+			if (topSpace > bottomSpace) {
+				top = targetRect.top - dropdownHeight;
+				direction = "top";
+			}
+		}
+
+		var availableHeight = void 0;
+		if (direction === "top") {
+			availableHeight = targetRect.top - scrollTop;
+		} else if (direction === "bottom") {
+			availableHeight = viewportHeight + scrollTop - targetRect.bottom;
+		} else {
+			availableHeight = viewportHeight;
+		}
+		if (dropdownHeight > availableHeight) {
+			dropdownHeight = availableHeight;
+			container.outerHeight(dropdownHeight);
+			isReducedHeight = true;
+			if (direction === "top") top = targetRect.top - dropdownHeight;
+		}
+
+		if (direction === "left" || direction === "right") {
+			if (top + dropdownHeight > viewportHeight + scrollTop) {
+				top = viewportHeight + scrollTop - dropdownHeight;
+			} else if (top < scrollTop) {
+				top = scrollTop;
+			}
+		} else if (direction === "top" || direction === "bottom") {
+			if (left + dropdownWidth > viewportWidth + scrollLeft) {
+				left = viewportWidth + scrollLeft - dropdownWidth;
+			} else if (left < scrollLeft) {
+				left = scrollLeft;
+			}
+		}
+
+		if (isReducedHeight) {
+			var scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
+			if (scrollbarWidth > 0) {
+				dropdownWidth += scrollbarWidth;
+				container.outerWidth(dropdownWidth);
+				if (isRightAligned) {
+					left -= scrollbarWidth;
+				} else if (isHorizontallyCentered) {
+					left -= scrollbarWidth / 2;
+				}
+			}
 		}
 
 		container.offset({ top: top, left: left }).addClass("animate-" + direction);
@@ -1878,6 +2057,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				event.stopImmediatePropagation();
 			});
 		}
+
+		if (opt.closeOnResize === undefined || opt.closeOnResize) {
+			$window.on("resize.dropdown", tryClose);
+		}
+
+		if (opt.closeOnHide === undefined || opt.closeOnHide) {
+			$(document).on("visibilitychange.dropdown", function () {
+				if (document.hidden) tryClose();
+			});
+		}
 		return this;
 
 		function tryClose() {
@@ -1887,6 +2076,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				dropdown.dropdown.close(true);
 			}
 		}
+	}
+
+	// Determines whether the dropdown is currently open.
+	//
+	function isDropdownOpen() {
+		var dropdown = this.first();
+		if (dropdown.length === 0) return this; // Nothing to do
+		var container = dropdown.parent();
+		return container.hasClass(dropdownContainerClass);
 	}
 
 	// Closes the selected dropdown.
@@ -1902,17 +2100,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		$(document).off("click.dropdown-close");
 		container.removeClass("open").addClass("closed");
 		container.on("transitionend", function () {
-			dropdown.detach().appendTo("body");
+			dropdown.appendTo("body");
 			container.remove();
 		});
 		if (!closeEventTriggered) {
 			var event = $.Event("dropdownclose");
 			dropdown.trigger(event);
 		}
+		$(window).off("resize.dropdown");
+		$(document).off("visibilitychange.dropdown");
 		return this;
 	}
 
 	registerPlugin("dropdown", createDropdown, {
+		isOpen: isDropdownOpen,
 		close: closeDropdown
 	});
 	$.fn.dropdown.defaults = dropdownDefaults;
@@ -2271,6 +2472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var submenu = item.children("ul").first();
 				if (submenu.hasClass("ff-submenu")) return; // Already done
 				submenu.addClass("ff-submenu dropdown");
+				if (item.closest("nav").length > 0) submenu.addClass("nav");
 
 				// Open submenu on click
 				item.children("a").first().click(function (event) {
@@ -2349,8 +2551,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var dimmingClass = "ff-dimming";
 	var dimmedClass = "ff-dimmed";
 
+	var dimCount = 0;
+
 	// Dims the entire document by adding an overlay.
 	function dimBackground(noinput) {
+		dimCount++;
 		if ($("body > div." + backgroundDimmerClass + ":not(.closing)").length !== 0) return; // Already there
 		$("body").addClass(dimmingClass).addClass(dimmedClass);
 		var backgroundLayer = $("<div/>").addClass(backgroundDimmerClass).appendTo("body");
@@ -2364,6 +2569,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function undimBackground() {
 		var backgroundLayer = $("body > div." + backgroundDimmerClass);
 		if (backgroundLayer.length === 0) return; // Not there
+		dimCount--;
+		if (dimCount > 0) return false; // Not the last one, keep it dimmed
 		var $body = $("body");
 		$body.removeClass(dimmedClass);
 		backgroundLayer.addClass("closing").css("opacity", "0");
@@ -2374,11 +2581,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 			backgroundLayer.remove();
 		});
+		return true;
 	}
 
 	var modalEventNamespace = ".ff-modal";
 	var modalClass = "ff-modal-container";
 	var modalCloseButtonClass = "ff-modal-close-button";
+
+	var modalLevel = 0;
 
 	// Defines default options for the modal plugin.
 	var modalDefaults = {
@@ -2398,17 +2608,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var modal = this.first();
 		if (modal.length === 0) return this; // Nothing to do
 		if (modal.parent().hasClass(modalClass)) return this; // Already open
+		modalLevel++;
 		var opt = initOptions("modal", modalDefaults, modal, {}, options);
-		if (opt.dimBackground) dimBackground();
+		opt.level = modalLevel;
+		if (opt.dimBackground && modalLevel === 1) dimBackground();
 
 		var container = $("<div/>").addClass(modalClass).appendTo("body");
-		modal.detach().appendTo(container);
+		modal.appendTo(container);
 		modal.find(":focusable").first().focus().blur();
 
-		preventScrolling();
+		if (modalLevel === 1) preventScrolling();
 
 		// Prevent moving the focus out of the modal
-		$(document).on("focusin" + modalEventNamespace, function (event) {
+		$(document).on("focusin" + modalEventNamespace + "-" + opt.level, function (event) {
 			if ($(event.target).parents().filter(modal).length === 0) {
 				// The focused element's ancestors do not include the modal, so the focus went out
 				// of the modal. Bring it back.
@@ -2422,11 +2634,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var closeButton;
 		if (opt.cancellable) {
 			// Close on pressing the Escape key or clicking outside the modal
-			$(document).on("keydown" + modalEventNamespace, function (event) {
+			$(document).on("keydown" + modalEventNamespace + "-" + opt.level, function (event) {
 				if (event.keyCode === 27) {
 					// Escape
-					event.preventDefault();
-					modal.modal.close();
+					if (modalLevel === opt.level) {
+						// There might be another modal on top
+						event.preventDefault();
+						modal.modal.close();
+					}
 				}
 			});
 			container.click(function (event) {
@@ -2454,16 +2669,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (modal.length === 0) return this; // Nothing to do
 		var container = modal.parent();
 		if (!container.hasClass(modalClass)) return this; // Modal is not open
+		modalLevel--;
 		var opt = loadOptions("modal", modal);
 		var closeButton = modal.find("." + modalCloseButtonClass).first();
 
-		preventScrolling(false);
-		$(document).off("focusin" + modalEventNamespace);
-		$(document).off("keydown" + modalEventNamespace);
-		modal.detach().appendTo("body");
+		if (!modalLevel) preventScrolling(false);
+		$(document).off("focusin" + modalEventNamespace + "-" + opt.level);
+		$(document).off("keydown" + modalEventNamespace + "-" + opt.level);
+		modal.appendTo("body");
 		container.remove();
 		if (closeButton) closeButton.remove();
-		if (opt.dimBackground) undimBackground();
+		if (opt.dimBackground && !modalLevel) undimBackground();
 
 		var event = $.Event("close");
 		modal.trigger(event);
@@ -2624,6 +2840,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// The resizing handles to use. Can be "all" or a combination of "n,ne,e,se,s,sw,w,nw". Default: All.
 		handles: undefined,
 
+		// The width of the default handles. Default: 10.
+		handleWidth: 10,
+
 		// Constrains the resizing inside the specified element or the "parent" of the resized element. Default: None.
 		containment: undefined,
 
@@ -2640,7 +2859,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		maxWidth: undefined,
 
 		// The maximum height to keep during resizing. Default: None.
-		maxHeight: undefined
+		maxHeight: undefined,
+
+		// Indicates whether the window should scroll to keep the resized edge visible. Default: false.
+		scroll: false
 	};
 
 	// Makes each selected element resizable.
@@ -2659,7 +2881,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if ($.isNumeric(aspectRatio)) aspectRatio = parseFloat(aspectRatio);
 			if (aspectRatio === 0 || !isFinite(aspectRatio) || !$.isNumber(aspectRatio)) aspectRatio = undefined;
 
-			if ($elem.css("position") === "static") $elem.css("position", "relative");
+			if ($elem.css("position") === "static") {
+				opt.wasPositionStatic = true;
+				$elem.css("position", "relative");
+			}
 
 			var optHandles = opt.handles;
 			if (optHandles === undefined) optHandles = "all";
@@ -2683,19 +2908,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (optHandles.indexOf("sw") !== -1) addHandle({ bottom: -9, left: -9 }, neCursor, false, true, true, false); // Bottom left corner
 				if (optHandles.indexOf("nw") !== -1) addHandle({ top: -9, left: -9 }, nwCursor, false, true, true, true); // Top left corner
 			} else {
-				if (optHandles.indexOf("n") !== -1) addHandle({ left: 5, right: 5, top: -5, height: 10 }, vCursor, true, true); // Top edge
-				if (optHandles.indexOf("e") !== -1) addHandle({ top: 5, bottom: 5, right: -5, width: 10 }, hCursor, false, false); // Right edge
-				if (optHandles.indexOf("s") !== -1) addHandle({ left: 5, right: 5, bottom: -5, height: 10 }, vCursor, true, false); // Bottom edge
-				if (optHandles.indexOf("w") !== -1) addHandle({ top: 5, bottom: 5, left: -5, width: 10 }, hCursor, false, true); // Left edge
+				var w = opt.handleWidth;
+				if (optHandles.indexOf("n") !== -1) addHandle({ left: w / 2, right: w / 2, top: -w / 2, height: w }, vCursor, true, true); // Top edge
+				if (optHandles.indexOf("e") !== -1) addHandle({ top: w / 2, bottom: w / 2, right: -w / 2, width: w }, hCursor, false, false); // Right edge
+				if (optHandles.indexOf("s") !== -1) addHandle({ left: w / 2, right: w / 2, bottom: -w / 2, height: w }, vCursor, true, false); // Bottom edge
+				if (optHandles.indexOf("w") !== -1) addHandle({ top: w / 2, bottom: w / 2, left: -w / 2, width: w }, hCursor, false, true); // Left edge
 
-				if (optHandles.indexOf("ne") !== -1) addHandle({ right: -5, top: -5, width: 10, height: 10 }, neCursor, false, false, true, true); // Top right corner
-				if (optHandles.indexOf("se") !== -1) addHandle({ right: -5, bottom: -5, width: 10, height: 10 }, nwCursor, false, false, true, false); // Bottom right corner
-				if (optHandles.indexOf("sw") !== -1) addHandle({ left: -5, bottom: -5, width: 10, height: 10 }, neCursor, false, true, true, false); // Bottom left corner
-				if (optHandles.indexOf("nw") !== -1) addHandle({ left: -5, top: -5, width: 10, height: 10 }, nwCursor, false, true, true, true); // Top left corner
+				if (optHandles.indexOf("ne") !== -1) addHandle({ right: -w / 2, top: -w / 2, width: w, height: w }, neCursor, false, false, true, true); // Top right corner
+				if (optHandles.indexOf("se") !== -1) addHandle({ right: -w / 2, bottom: -w / 2, width: w, height: w }, nwCursor, false, false, true, false); // Bottom right corner
+				if (optHandles.indexOf("sw") !== -1) addHandle({ left: -w / 2, bottom: -w / 2, width: w, height: w }, neCursor, false, true, true, false); // Bottom left corner
+				if (optHandles.indexOf("nw") !== -1) addHandle({ left: -w / 2, top: -w / 2, width: w, height: w }, nwCursor, false, true, true, true); // Top left corner
 			}
 
 			installDisabledchangeHook();
-			$elem.on("disabledchange", function () {
+			$elem.on("disabledchange.resizable", function () {
 				handleElements.visible(!$elem.disabled());
 			});
 
@@ -2703,18 +2929,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var handle = $("<div/>").addClass("ff-resizable-handle " + opt.handleAddClass).css(style).css("position", "absolute").css("cursor", cursor);
 				$elem.append(handle);
 				handleElements = handleElements.add(handle);
-				handle.draggable();
+				handle.draggable({ scroll: opt.scroll });
 				handle.on("draggablestart", function (event) {
-					htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-					document.documentElement.style.setProperty("cursor", cursor, "important");
+					event.stopPropagation(); // Don't trigger for the resized (parent) element
+					var event2 = $.Event("resizablestart");
+					event2.vertical = vertical;
+					event2.negative = negative;
+					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
+					$elem.trigger(event2);
+					if (!event2.isDefaultPrevented()) {
+						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
+						document.documentElement.style.setProperty("cursor", cursor, "important");
+					} else {
+						event.preventDefault();
+					}
 				});
 				handle.on("draggablemove", function (event) {
+					event.stopPropagation(); // Don't trigger for the resized (parent) element
 					event.preventDefault(); // The handles already move with the element, don't touch their position
 					resize(handle, event.newPoint, vertical, negative);
 					if (vertical2 !== undefined) resize(handle, event.newPoint, vertical2, negative2);
 				});
 				handle.on("draggableend", function (event) {
+					event.stopPropagation(); // Don't trigger for the resized (parent) element
 					document.documentElement.style.setProperty("cursor", htmlCursor);
+					var event2 = $.Event("resizableend");
+					event2.vertical = vertical;
+					event2.negative = negative;
+					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
+					$elem.trigger(event2);
 				});
 				return handle;
 			}
@@ -2774,13 +3017,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				$elem["outer" + extent](newLength);
-				if (negative) $elem.offset(newElemOffset);
+				var event2 = $.Event("resizing");
+				event2.vertical = vertical;
+				event2.negative = negative;
+				event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
+				event2.newLength = newLength;
+				event2.newPosition = newElemOffset[side];
+				$elem.trigger(event2);
+				if (!event2.isDefaultPrevented()) {
+					$elem["outer" + extent](event2.newLength);
+					newElemOffset[side] = event2.newPosition;
+					if (negative) $elem.offset(newElemOffset);
+				}
 			}
 		});
 	}
 
-	registerPlugin("resizable", resizable);
+	// Removes the resizing features from the elements.
+	function remove$1() {
+		return this.each(function () {
+			var elem = this;
+			var $elem = $(elem);
+			if (!$elem.hasClass(resizableClass)) return;
+			$elem.removeClass(resizableClass);
+			var opt = loadOptions("resizable", $elem);
+			if (opt.wasPositionStatic) $elem.css("position", "static");
+			$elem.find(".ff-resizable-handle").remove();
+			$elem.off("disabledchange.resizable");
+		});
+	}
+
+	registerPlugin("resizable", resizable, {
+		remove: remove$1
+	});
 	$.fn.resizable.defaults = resizableDefaults;
 
 	var rangeClass = "ff-range";
@@ -3237,12 +3506,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Gets the current slider value.
+	//
 	// value: Sets the slider value.
 	function sliderValue(value) {
 		return this.slider.multivalue(0, value);
 	}
 
 	// Gets the current value of the specified slider handle.
+	//
 	// value: Sets the value of the specified slider handle.
 	function sliderMultiValue(index, value) {
 		// Getter
@@ -3351,9 +3622,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					var rect = child.rect();
 
+					// Fix the size of table row cells while dragging
+					if (child[0].nodeName === "TR") {
+						var table = child.closest("table").find("tr").first().children("td, th").each$(function () {
+							this.data("width-before-drag", this[0].style.width || "");
+							this.css("width", this.outerWidth());
+						});
+						child.children("td, th").each$(function () {
+							this.css("width", this.outerWidth());
+						});
+						child.css("min-width", child.outerWidth() + 1);
+					}
+
 					// Create the placeholder element that will take the place of the dragged element
-					placeholder = $("<" + this.nodeName + "/>").addClass(sortablePlaceholderClass) // TODO: Also add all classes of child
-					.text("\xa0").css({ width: rect.width, height: rect.height });
+					placeholder = $("<" + child[0].nodeName + "/>").addClass(child[0].className).addClass(sortablePlaceholderClass).text("\xa0").css({ width: rect.width, height: rect.height });
+					if (child[0].nodeName === "TR") {
+						var colCount = child.children("td, th").map(function (td) {
+							return $(td).attr("colspan") || 1;
+						}).get() // Convert jQuery array to Array
+						.reduce(function (a, b) {
+							return a + b;
+						});
+						placeholder.append($("<td/>").attr("colspan", colCount));
+					}
 
 					// Insert the placeholder where the dragged element is, and take that out of the layout flow
 					child.after(placeholder);
@@ -3426,6 +3717,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					placeholder.replaceWith(child);
 					placeholder = undefined;
 					betweenChildren = undefined;
+
+					// Reset the size of table row cells
+					if (child[0].nodeName === "TR") {
+						var table = child.closest("table").find("tr").first().children("td, th").each$(function () {
+							this.css("width", this.data("width-before-drag"));
+							this.data("width-before-drag", null);
+						});
+						child.children("td, th").each$(function () {
+							this.css("width", "");
+						});
+						child.css("width", "");
+					}
 
 					var event2 = $.Event("sortableend");
 					event2.after = placeholderAfterElement;
@@ -3604,6 +3907,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Gets the active page in a tab container.
+	//
 	// indexOrPage: Sets the active page in each selected tab container, either by index or the page.
 	function activeTab(indexOrPage) {
 		// Getter

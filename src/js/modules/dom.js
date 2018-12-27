@@ -1,8 +1,10 @@
 ﻿import { minmax, round, forceReflow, bindInputButtonsDisabled, scrollIntoView, preventScrolling, stackElements } from "../util";
 
 // Gets the offset and dimensions of the first selected element.
-$.fn.rect = function () {
-	var offset = this.offset();
+//
+// relative: true to return the position relative to the offset parent, false for page position.
+$.fn.rect = function (relative) {
+	var offset = relative ? this.position() : this.offset();
 	var width = this.outerWidth();
 	var height = this.outerHeight();
 	return {
@@ -16,6 +18,7 @@ $.fn.rect = function () {
 };
 
 // Determines whether the selected element is visible.
+//
 // value: Sets the visible state of the selected elements.
 $.fn.visible = function (value) {
 	// Setter
@@ -34,6 +37,7 @@ $.fn.visible = function (value) {
 };
 
 // Determines whether the selected element is disabled.
+//
 // value: Sets the disabled state of the selected elements and the associated label(s).
 $.fn.disabled = function (value) {
 	// Setter
@@ -73,6 +77,14 @@ $.fn.enable = function () {
 		var id = this.attr("id");
 		if (id)
 			$("label[for='" + id + "']").enable();
+		
+		// Find previous .label sibling up on the .form-row level
+		let refNode = this;
+		while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
+			refNode = refNode.parent();
+		let label = refNode.prev();
+		if (label.hasClass("label"))
+			label.enable();
 	});
 };
 
@@ -97,6 +109,14 @@ $.fn.disable = function () {
 		var id = this.attr("id");
 		if (id)
 			$("label[for='" + id + "']").disable();
+		
+		// Find previous .label sibling up on the .form-row level
+		let refNode = this;
+		while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
+			refNode = refNode.parent();
+		let label = refNode.prev();
+		if (label.hasClass("label"))
+			label.disable();
 	});
 };
 
@@ -163,6 +183,7 @@ $.fontExists = function (font) {
 };
 
 // Adds a pointer event handler to the selected elements, with mouse and touch fallbacks as supported.
+//
 // type: The event type ("down", "move", "up", "cancel"). Multiple types can be space-delimited.
 // handler: The event handler function.
 // capture: Specifies the capture option. If true, DOM addEventListener ist used instead of jQuery.

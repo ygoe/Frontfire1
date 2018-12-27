@@ -1,9 +1,9 @@
 // Registers a jQuery plugin.
+//
 // name: The name of the plugin.
 // create: The plugin create function.
 // obj: An object containing additional operation functions.
-export { registerPlugin };
-function registerPlugin(name, create, obj) {
+export function registerPlugin(name, create, obj) {
 	// Define a new property for each jQuery object in which the plugin is accessible.
 	// This property getter is called whenever the plugin or one of its additional functions is called.
 	Object.defineProperty($.fn, name, {
@@ -25,13 +25,13 @@ function registerPlugin(name, create, obj) {
 }
 
 // Determines the options to use for a plugin.
+//
 // name: The plugin name.
 // defaults: The plugin's default options. Only properties defined in here are considered for data attributes.
 // elem: The element to find data attributes in. Options are stored here, too.
 // converters: An object that specifies a conversion function for each special data attribute.
 // params: The options specified to the plugin function.
-export { initOptions };
-function initOptions(name, defaults, elem, converters, params) {
+export function initOptions(name, defaults, elem, converters, params) {
 	params = params || {};
 
 	// Start with the defaults
@@ -75,9 +75,9 @@ function initOptions(name, defaults, elem, converters, params) {
 }
 
 // Loads plugin options for additional plugin functions.
+//
 // name: The plugin name.
 // elem: The element to find data attributes in. Options are stored here, too.
-export { loadOptions };
-function loadOptions(name, elem) {
+export function loadOptions(name, elem) {
 	return $(elem).data("ff-" + name + "-options") || {};
 }

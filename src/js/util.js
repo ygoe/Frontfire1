@@ -19,6 +19,7 @@ export function forceReflow() {
 }
 
 // Installs a jQuery hook if it isn't installed yet. Existing hooks are chained to the new hook.
+//
 // hooks: The hooks collection, like $.attrHooks or $.propHooks
 // name: The name of the hooked entry
 // id: The internal ID with which an already installed hook can be recognised
@@ -114,6 +115,7 @@ export function scrollIntoView(rect) {
 }
 
 // Prevents scrolling the document.
+//
 // state: Enable or disable the scrolling prevention.
 export function preventScrolling(state) {
 	var $document = $(document), $html = $("html");

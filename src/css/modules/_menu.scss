@@ -28,6 +28,10 @@
 		flex-direction: column;
 		width: inherit;
 	}
+	&.inline
+	{
+		width: inherit;
+	}
 
 	li
 	{
@@ -143,8 +147,8 @@
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
-	background: $menuBackground;
-	color: $menuColor;
+	background: $submenuBackground;
+	color: $submenuColor;
 
 	li
 	{
@@ -158,8 +162,8 @@
 			&:hover,
 			&:focus
 			{
-				background: $menuHoverBackground;
-				color: $menuHoverColor;
+				background: $submenuHoverBackground;
+				color: $submenuHoverColor;
 				transition: background 0s, color 0s;
 				outline: none;
 			}
@@ -168,8 +172,8 @@
 		&.active a,
 		&.active a:hover
 		{
-			background: $menuActiveBackground;
-			color: $menuActiveColor;
+			background: $submenuActiveBackground;
+			color: $submenuActiveColor;
 			transition: background 0s, color 0s;
 		}
 		&.text
@@ -179,16 +183,91 @@
 		&.separator
 		{
 			margin: 3px 10px;
-			border-top: 1px solid $menuHoverBackground;
+			border-top: 1px solid $submenuHoverBackground;
 		}
 		&[disabled] a,
 		&[disabled] a:hover,
 		&[disabled] a:focus,
 		&[disabled] a:active
 		{
-			background: $menuBackground;
+			background: $submenuBackground;
 			opacity: 0.4;
 			pointer-events: none;
+		}
+	}
+}
+
+nav .menu
+{
+	background: $navMenuBackground;
+	color: $navMenuColor;
+
+	li
+	{
+		&.open a
+		{
+			background: $navMenuOpenBackground;
+			color: $navMenuOpenColor;
+		}
+		a
+		{
+			&:hover,
+			&:focus
+			{
+				background: $navMenuHoverBackground;
+				color: $navMenuHoverColor;
+			}
+		}
+		a:active,
+		&.active a,
+		&.active a:hover
+		{
+			background: $navMenuActiveBackground;
+			color: $navMenuActiveColor;
+		}
+		&[disabled] a,
+		&[disabled] a:hover,
+		&[disabled] a:focus,
+		&[disabled] a:active
+		{
+			background: $navMenuBackground;
+		}
+	}
+}
+
+.ff-submenu.nav
+{
+	background: $navSubmenuBackground;
+	color: $navSubmenuColor;
+
+	li
+	{
+		a
+		{
+			&:hover,
+			&:focus
+			{
+				background: $navSubmenuHoverBackground;
+				color: $navSubmenuHoverColor;
+			}
+		}
+		a:active,
+		&.active a,
+		&.active a:hover
+		{
+			background: $navSubmenuActiveBackground;
+			color: $navSubmenuActiveColor;
+		}
+		&.separator
+		{
+			border-top: 1px solid $navSubmenuHoverBackground;
+		}
+		&[disabled] a,
+		&[disabled] a:hover,
+		&[disabled] a:focus,
+		&[disabled] a:active
+		{
+			background: $navSubmenuBackground;
 		}
 	}
 }

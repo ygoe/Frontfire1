@@ -9,7 +9,16 @@ var dropdownDefaults = {
 	placement: undefined,
 
 	// Indicates whether the dropdown is closed when clicking anywhere outside of it. Default: true.
-	autoClose: true
+	autoClose: true,
+	
+	// Indicates whether the dropdown is closed when the window is resized. Default: true.
+	closeOnResize: true,
+	
+	// Indicates whether the dropdown is closed when the document is hidden. Default: true.
+	closeOnHide: true,
+	
+	// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
+	maxHeight: 0
 };
 
 // Opens a dropdown with the selected element and places it at the specified target element.
@@ -30,6 +39,17 @@ function createDropdown(target, options) {
 	}
 	var optPlacement = opt.placement;
 
+	// Measure before adding the dropdown to the document (which may add a scrollbar, virtually)
+	var $window = $(window);
+	var viewportWidth = $window.width() - 1;
+	var viewportHeight = $window.height() - 1;
+	var scrollTop = $window.scrollTop();
+	var scrollLeft = $window.scrollLeft();
+	var targetRect = $(target).rect();
+	var isReducedHeight = false;
+	var isRightAligned = false;
+	var isHorizontallyCentered = false;
+
 	var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
 	if (dropdown.hasClass("bordered")) {
 		container.addClass("bordered");
@@ -37,13 +57,18 @@ function createDropdown(target, options) {
 	if ($(document.body).hasClass("ff-dimmed")) {
 		container.addClass("no-dim");
 	}
-	dropdown.detach().appendTo(container);
+	dropdown.appendTo(container);
 
-	var viewportWidth = $(window).width();
-	var viewportHeight = $(window).height();
+	// Now measure the container with its contents
 	var dropdownWidth = container.outerWidth();
 	var dropdownHeight = container.outerHeight();
-	var targetRect = $(target).rect();
+
+	// Limit height if specified, has effect on placement
+	if (opt.maxHeight && opt.maxHeight < dropdownHeight) {
+		dropdownHeight = opt.maxHeight;
+		container.outerHeight(dropdownHeight);
+		isReducedHeight = true;
+	}
 
 	// Place at bottom side, align left, by default
 	var top = targetRect.bottom,
@@ -61,6 +86,7 @@ function createDropdown(target, options) {
 	else if (optPlacement.startsWith("left")) {
 		left = targetRect.left - dropdownWidth;
 		direction = "left";
+		isRightAligned = true;
 	}
 	else if (optPlacement.startsWith("right")) {
 		left = targetRect.right;
@@ -72,6 +98,7 @@ function createDropdown(target, options) {
 	}
 	else if (optPlacement.endsWith("right")) {
 		left = targetRect.right - dropdownWidth;
+		isRightAligned = true;
 	}
 	else if (optPlacement.endsWith("top")) {
 		top = targetRect.top;
@@ -82,6 +109,7 @@ function createDropdown(target, options) {
 
 	if (optPlacement === "top-center" || optPlacement === "bottom-center") {
 		left = (targetRect.left + targetRect.right) / 2 - dropdownWidth / 2;
+		isHorizontallyCentered = true;
 	}
 	else if (optPlacement === "left-center" || optPlacement === "right-center") {
 		top = (targetRect.top + targetRect.bottom) / 2 - dropdownHeight / 2;
@@ -90,9 +118,62 @@ function createDropdown(target, options) {
 	if (autoPlacement && left + dropdownWidth > viewportWidth) {
 		left = viewportWidth - dropdownWidth;
 	}
-	if (autoPlacement && top + dropdownHeight > viewportHeight + $(window).scrollTop()) {
-		top = targetRect.top - dropdownHeight;
-		direction = "top";
+	if (autoPlacement && top + dropdownHeight > viewportHeight + scrollTop) {
+		let topSpace = targetRect.top - scrollTop;
+		let bottomSpace = viewportHeight + scrollTop - targetRect.bottom;
+		if (topSpace > bottomSpace) {
+			top = targetRect.top - dropdownHeight;
+			direction = "top";
+		}
+	}
+	
+	let availableHeight;
+	if (direction === "top") {
+		availableHeight = targetRect.top - scrollTop;
+	}
+	else if (direction === "bottom") {
+		availableHeight = viewportHeight + scrollTop - targetRect.bottom;
+	}
+	else {
+		availableHeight = viewportHeight;
+	}
+	if (dropdownHeight > availableHeight) {
+		dropdownHeight = availableHeight;
+		container.outerHeight(dropdownHeight);
+		isReducedHeight = true;
+		if (direction === "top")
+			top = targetRect.top - dropdownHeight;
+	}
+
+	if (direction === "left" || direction === "right") {
+		if (top + dropdownHeight > viewportHeight + scrollTop) {
+			top = viewportHeight + scrollTop - dropdownHeight;
+		}
+		else if (top < scrollTop) {
+			top = scrollTop;
+		}
+	}
+	else if (direction === "top" || direction === "bottom") {
+		if (left + dropdownWidth > viewportWidth + scrollLeft) {
+			left = viewportWidth + scrollLeft - dropdownWidth;
+		}
+		else if (left < scrollLeft) {
+			left = scrollLeft;
+		}
+	}
+	
+	if (isReducedHeight) {
+		let scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
+		if (scrollbarWidth > 0) {
+			dropdownWidth += scrollbarWidth;
+			container.outerWidth(dropdownWidth);
+			if (isRightAligned) {
+				left -= scrollbarWidth;
+			}
+			else if (isHorizontallyCentered) {
+				left -= scrollbarWidth / 2;
+			}
+		}
 	}
 
 	container.offset({ top: top, left: left })
@@ -112,6 +193,17 @@ function createDropdown(target, options) {
 			event.stopImmediatePropagation();
 		});
 	}
+	
+	if (opt.closeOnResize === undefined || opt.closeOnResize) {
+		$window.on("resize.dropdown", tryClose);
+	}
+	
+	if (opt.closeOnHide === undefined || opt.closeOnHide) {
+		$(document).on("visibilitychange.dropdown", function () {
+			if (document.hidden)
+				tryClose();
+		});
+	}
 	return this;
 
 	function tryClose() {
@@ -121,6 +213,15 @@ function createDropdown(target, options) {
 			dropdown.dropdown.close(true);
 		}
 	}
+}
+
+// Determines whether the dropdown is currently open.
+//
+function isDropdownOpen() {
+	var dropdown = this.first();
+	if (dropdown.length === 0) return this;   // Nothing to do
+	var container = dropdown.parent();
+	return container.hasClass(dropdownContainerClass);
 }
 
 // Closes the selected dropdown.
@@ -136,17 +237,20 @@ function closeDropdown(closeEventTriggered) {
 	$(document).off("click.dropdown-close");
 	container.removeClass("open").addClass("closed");
 	container.on("transitionend", function () {
-		dropdown.detach().appendTo("body");
+		dropdown.appendTo("body");
 		container.remove();
 	});
 	if (!closeEventTriggered) {
 		var event = $.Event("dropdownclose");
 		dropdown.trigger(event);
 	}
+	$(window).off("resize.dropdown");
+	$(document).off("visibilitychange.dropdown");
 	return this;
 }
 
 registerPlugin("dropdown", createDropdown, {
+	isOpen: isDropdownOpen,
 	close: closeDropdown
 });
 $.fn.dropdown.defaults = dropdownDefaults;

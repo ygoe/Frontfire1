@@ -45,8 +45,10 @@ function draggable(options) {
 		var opt = initOptions("draggable", draggableDefaults, $elem, {}, options);
 
 		var handle = opt.handle ? $elem.find(opt.handle) : $elem;
+		opt.handleElem = handle;
 
 		// Allow Pointer API to work properly in Edge
+		opt.originalTouchAction = handle.css("touch-action");
 		if (opt.axis === "x")
 			handle.css("touch-action", "pan-y pinch-zoom");
 		else if (opt.axis === "y")
@@ -54,8 +56,9 @@ function draggable(options) {
 		else
 			handle.css("touch-action", "pinch-zoom");
 
+		opt.eventRemovers = [];
 		var eventRemovers = [];
-		handle.pointer("down", function (event) {
+		opt.eventRemovers.push(handle.pointer("down", function (event) {
 			if (event.button === 0) {
 				event.preventDefault();
 				event.stopImmediatePropagation();
@@ -67,13 +70,13 @@ function draggable(options) {
 				eventRemovers.push($(window).pointer("move", onMove, true));
 				eventRemovers.push($(window).pointer("up cancel", onEnd, true));
 			}
-		});
+		}));
 
 		if (opt.cancel) {
-			$elem.find(opt.cancel).pointer("down", function (event) {
+			opt.eventRemovers.push($elem.find(opt.cancel).pointer("down", function (event) {
 				event.preventDefault();
 				event.stopImmediatePropagation();
-			});
+			}));
 		}
 
 		function onMove(event) {
@@ -171,7 +174,7 @@ function draggable(options) {
 				pointerId = undefined;
 				opt.dragClass && $elem.removeClass(opt.dragClass);
 
-				eventRemovers.forEach(function (eventRemover) { eventRemover(); });
+				eventRemovers.forEach(eventRemover => eventRemover());
 				eventRemovers = [];
 
 				if (wasDragging) {
@@ -190,5 +193,20 @@ function draggable(options) {
 	});
 }
 
-registerPlugin("draggable", draggable);
+// Removes the draggable features from the elements.
+function remove() {
+	return this.each(function () {
+		var elem = this;
+		var $elem = $(elem);
+		if (!$elem.hasClass(draggableClass)) return;
+		$elem.removeClass(draggableClass);
+		var opt = loadOptions("draggable", $elem);
+		opt.handleElem.css("touch-action", opt.originalTouchAction);
+		opt.eventRemovers.forEach(eventRemover => eventRemover());
+	});
+}
+
+registerPlugin("draggable", draggable, {
+	remove: remove
+});
 $.fn.draggable.defaults = draggableDefaults;

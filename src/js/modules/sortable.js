@@ -85,13 +85,33 @@ function sortable(options) {
 				if (initialChildAfterElement.length === 0)
 					initialChildAfterElement = null;
 
-				var rect = child.rect();
+				let rect = child.rect();
 
+				// Fix the size of table row cells while dragging
+				if (child[0].nodeName === "TR") {
+					let table = child.closest("table").find("tr").first().children("td, th").each$(function () {
+						this.data("width-before-drag", this[0].style.width || "");
+						this.css("width", this.outerWidth());
+					});
+					child.children("td, th").each$(function () {
+						this.css("width", this.outerWidth());
+					});
+					child.css("min-width", child.outerWidth() + 1);
+				}
+				
 				// Create the placeholder element that will take the place of the dragged element
-				placeholder = $("<" + this.nodeName + "/>")
-					.addClass(sortablePlaceholderClass)   // TODO: Also add all classes of child
+				placeholder = $("<" + child[0].nodeName + "/>")
+					.addClass(child[0].className)
+					.addClass(sortablePlaceholderClass)
 					.text("\xa0")
 					.css({ width: rect.width, height: rect.height });
+				if (child[0].nodeName === "TR") {
+					let colCount = child.children("td, th")
+						.map(td => $(td).attr("colspan") || 1)
+						.get()   // Convert jQuery array to Array
+						.reduce((a, b) => a + b);
+					placeholder.append($("<td/>").attr("colspan", colCount));
+				}
 
 				// Insert the placeholder where the dragged element is, and take that out of the layout flow
 				child.after(placeholder);
@@ -169,6 +189,18 @@ function sortable(options) {
 				placeholder.replaceWith(child);
 				placeholder = undefined;
 				betweenChildren = undefined;
+
+				// Reset the size of table row cells
+				if (child[0].nodeName === "TR") {
+					let table = child.closest("table").find("tr").first().children("td, th").each$(function () {
+						this.css("width", this.data("width-before-drag"));
+						this.data("width-before-drag", null);
+					});
+					child.children("td, th").each$(function () {
+						this.css("width", "");
+					});
+					child.css("width", "");
+				}
 
 				let event2 = $.Event("sortableend");
 				event2.after = placeholderAfterElement;

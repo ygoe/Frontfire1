@@ -8,6 +8,8 @@ $.fn.each$ = function (fn) {
 	});
 };
 
+// Variable tests
+
 // Determines whether the value is set (i. e. not undefined or null).
 $.isSet = value => typeof value !== "undefined" && value !== null;
 
@@ -25,6 +27,8 @@ $.isEven = value => $.isNumber(value) && value % 2 === 0;
 
 // Determines whether the value is an odd number.
 $.isOdd = value => $.isNumber(value) && value % 2 === 1;
+
+// Operating system tests
 
 // Determines whether the client operating system is Android.
 $.isAndroid = () => !!navigator.userAgent.match(/Android/);
@@ -44,3 +48,27 @@ $.isWindows = () => !!navigator.platform.match(/Win/);
 if ($.isAndroid()) {
 	$("html").addClass("simple-dimmer");
 }
+
+// Browser tests
+// Source: https://stackoverflow.com/a/9851769
+
+// Determines whether the browser has a Blink engine.
+$.isBlink = () => ($.isChrome() || $.isOpera()) && !!window.CSS;
+
+// Determines whether the browser is Chrome.
+$.isChrome = () => !!window.chrome && !!window.chrome.webstore;
+
+// Determines whether the browser is Edge.
+$.isEdge = () => !$.isInternetExplorer() && !!window.StyleMedia;
+
+// Determines whether the browser is Firefox.
+$.isFirefox = () => typeof InstallTrigger !== 'undefined';
+
+// Determines whether the browser is Internet Explorer.
+$.isInternetExplorer = () => /*@cc_on!@*/false || !!document.documentMode;
+
+// Determines whether the browser is Opera.
+$.isOpera = () => (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+
+// Determines whether the browser is Safari.
+$.isSafari = () => /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));

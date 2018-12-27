@@ -123,6 +123,12 @@
 		<div id="container3" class="container grid">
 			<div id="resizableGridARCont" class="resizable">Resize me with grid snapping</div>
 		</div>
+
+		<h2>Resizable with callback</h2>
+
+		<div id="container4" class="container">
+			<div id="resizableCb" class="resizable">Resize with callback</div>
+		</div>
 	</main>
 
 	<footer>
@@ -162,6 +168,26 @@
 		$("#resizableGridAR").resizable({ grid: [20, 20], aspectRatio: true });
 
 		$("#resizableGridARCont").resizable({ containment: "#container3", grid: [20, 20], aspectRatio: true, minWidth: 60, minHeight: 60, maxWidth: 300, maxHeight: 200 });
+
+		$("#resizableCb").resizable({ containment: "#container4", scroll: true });
+		$("#resizableCb").on("resizablestart", function (event) {
+			if (event.edge === "top") {
+				event.preventDefault();
+			}
+			else {
+				$("#resizableCb").addClass("resizing");
+			}
+		});
+		$("#resizableCb").on("resizing", function (event) {
+			if (!event.vertical && !event.negative) {
+				if (event.newLength < 120)
+					event.newLength = 120;
+				event.newLength = Math.round(event.newLength / 20) * 20;
+			}
+		});
+		$("#resizableCb").on("resizableend", function (event) {
+			$("#resizableCb").removeClass("resizing");
+		});
 	</script>
 </body>
 </html>

@@ -468,12 +468,14 @@ function slider(options) {
 }
 
 // Gets the current slider value.
+//
 // value: Sets the slider value.
 function sliderValue(value) {
 	return this.slider.multivalue(0, value);
 }
 
 // Gets the current value of the specified slider handle.
+//
 // value: Sets the value of the specified slider handle.
 function sliderMultiValue(index, value) {
 	// Getter

@@ -50,6 +50,7 @@ function tabs() {
 }
 
 // Gets the active page in a tab container.
+//
 // indexOrPage: Sets the active page in each selected tab container, either by index or the page.
 function activeTab(indexOrPage) {
 	// Getter

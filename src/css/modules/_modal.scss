@@ -9,12 +9,8 @@
 	background: white;
 	padding: 25px;
 	color: black;
-	max-width: 700px;
-
-	@media (max-width: $viewportWidthTablet)
-	{
-		max-width: 80%;
-	}
+	max-width: 80%;
+	max-height: calc(100% - 30px);
 	@media (max-width: $viewportWidthPhone)
 	{
 		max-width: 100%;
@@ -34,7 +30,7 @@
 	justify-content: center;
 	align-items: center;
 	position: fixed;
-	z-index: 1100;
+	z-index: 2000;
 	top: 0;
 	right: 0;
 	bottom: 0;

@@ -500,19 +500,24 @@ h6 {
   margin: 1rem 0; }
 
 p,
-div.p {
+div.p,
+table.p {
   margin: 1em 0; }
 
-p.left-align {
+p.left-align,
+div.left-align {
   text-align: left; }
 
-p.right-align {
+p.right-align,
+div.right-align {
   text-align: right; }
 
-p.center {
+p.center,
+div.center {
   text-align: center; }
 
-p.justify {
+p.justify,
+div.justify {
   text-align: justify; }
 
 a {
@@ -619,6 +624,14 @@ kbd {
 
 .nowrap {
   white-space: nowrap; }
+
+span.vertical {
+  -ms-writing-mode: tb-rl;
+  -webkit-writing-mode: vertical-rl;
+  -moz-writing-mode: vertical-rl;
+  -ms-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg); }
 
 i.loading {
   display: inline-block;
@@ -1166,25 +1179,25 @@ form {
     .form-row.require-minitab {
       grid-template-columns: 100% !important;
       grid-auto-flow: row; }
-      .form-row.require-minitab .label:not(:first-child) {
+      .form-row.require-minitab > .label:not(:first-child) {
         margin-top: 1em; } }
   @media (max-width: 760px) {
     .form-row.require-tablet {
       grid-template-columns: 100% !important;
       grid-auto-flow: row; }
-      .form-row.require-tablet .label:not(:first-child) {
+      .form-row.require-tablet > .label:not(:first-child) {
         margin-top: 1em; } }
   @media (max-width: 900px) {
     .form-row.require-desktop {
       grid-template-columns: 100% !important;
       grid-auto-flow: row; }
-      .form-row.require-desktop .label:not(:first-child) {
+      .form-row.require-desktop > .label:not(:first-child) {
         margin-top: 1em; } }
   @media (max-width: 1200px) {
     .form-row.require-wide {
       grid-template-columns: 100% !important;
       grid-auto-flow: row; }
-      .form-row.require-wide .label:not(:first-child) {
+      .form-row.require-wide > .label:not(:first-child) {
         margin-top: 1em; } } }
 
 label {
@@ -1305,6 +1318,7 @@ input[type=number] {
 
 button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit],
 div.buttons a,
+span.buttons a,
 a.button {
   display: inline-block;
   text-align: center;
@@ -1314,11 +1328,14 @@ a.button {
   color: #000000;
   padding: 5px 9px;
   min-width: 75px;
+  line-height: 20px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border 0.2s ease; }
   button:hover:not(:disabled), button:focus:not(:disabled), input[type=button]:hover:not(:disabled), input[type=button]:focus:not(:disabled), input[type=color]:hover:not(:disabled), input[type=color]:focus:not(:disabled), input[type=image]:hover:not(:disabled), input[type=image]:focus:not(:disabled), input[type=reset]:hover:not(:disabled), input[type=reset]:focus:not(:disabled), input[type=submit]:hover:not(:disabled), input[type=submit]:focus:not(:disabled),
   div.buttons a:hover:not(:disabled),
   div.buttons a:focus:not(:disabled),
+  span.buttons a:hover:not(:disabled),
+  span.buttons a:focus:not(:disabled),
   a.button:hover:not(:disabled),
   a.button:focus:not(:disabled) {
     background: #c7c7c7;
@@ -1326,73 +1343,95 @@ a.button {
     outline: none; }
   button:active:not(:disabled), input[type=button]:active:not(:disabled), input[type=color]:active:not(:disabled), input[type=image]:active:not(:disabled), input[type=reset]:active:not(:disabled), input[type=submit]:active:not(:disabled),
   div.buttons a:active:not(:disabled),
+  span.buttons a:active:not(:disabled),
   a.button:active:not(:disabled) {
     background: #adadad;
     transition: background 0s;
     color: #000000; }
   button:disabled, input[type=button]:disabled, input[type=color]:disabled, input[type=image]:disabled, input[type=reset]:disabled, input[type=submit]:disabled,
   div.buttons a:disabled,
+  span.buttons a:disabled,
   a.button:disabled {
     background: #e4e4e4;
     color: #808080;
     cursor: default; }
   button.default:not(:disabled), input[type=button].default:not(:disabled), input[type=color].default:not(:disabled), input[type=image].default:not(:disabled), input[type=reset].default:not(:disabled), input[type=submit].default:not(:disabled),
   div.buttons a.default:not(:disabled),
+  span.buttons a.default:not(:disabled),
   a.button.default:not(:disabled) {
     background: #2755dd;
     color: #ffffff; }
     button.default:not(:disabled):hover, button.default:not(:disabled):focus, input[type=button].default:not(:disabled):hover, input[type=button].default:not(:disabled):focus, input[type=color].default:not(:disabled):hover, input[type=color].default:not(:disabled):focus, input[type=image].default:not(:disabled):hover, input[type=image].default:not(:disabled):focus, input[type=reset].default:not(:disabled):hover, input[type=reset].default:not(:disabled):focus, input[type=submit].default:not(:disabled):hover, input[type=submit].default:not(:disabled):focus,
     div.buttons a.default:not(:disabled):hover,
     div.buttons a.default:not(:disabled):focus,
+    span.buttons a.default:not(:disabled):hover,
+    span.buttons a.default:not(:disabled):focus,
     a.button.default:not(:disabled):hover,
     a.button.default:not(:disabled):focus {
       background: #2148bc;
       transition: background 0s; }
     button.default:not(:disabled):active, input[type=button].default:not(:disabled):active, input[type=color].default:not(:disabled):active, input[type=image].default:not(:disabled):active, input[type=reset].default:not(:disabled):active, input[type=submit].default:not(:disabled):active,
     div.buttons a.default:not(:disabled):active,
+    span.buttons a.default:not(:disabled):active,
     a.button.default:not(:disabled):active {
       background: #193790;
       transition: background 0s;
       color: #ffffff; }
   button.caution:not(:disabled), input[type=button].caution:not(:disabled), input[type=color].caution:not(:disabled), input[type=image].caution:not(:disabled), input[type=reset].caution:not(:disabled), input[type=submit].caution:not(:disabled),
   div.buttons a.caution:not(:disabled),
+  span.buttons a.caution:not(:disabled),
   a.button.caution:not(:disabled) {
     background: #c44818;
     color: #ffffff; }
     button.caution:not(:disabled):hover, button.caution:not(:disabled):focus, input[type=button].caution:not(:disabled):hover, input[type=button].caution:not(:disabled):focus, input[type=color].caution:not(:disabled):hover, input[type=color].caution:not(:disabled):focus, input[type=image].caution:not(:disabled):hover, input[type=image].caution:not(:disabled):focus, input[type=reset].caution:not(:disabled):hover, input[type=reset].caution:not(:disabled):focus, input[type=submit].caution:not(:disabled):hover, input[type=submit].caution:not(:disabled):focus,
     div.buttons a.caution:not(:disabled):hover,
     div.buttons a.caution:not(:disabled):focus,
+    span.buttons a.caution:not(:disabled):hover,
+    span.buttons a.caution:not(:disabled):focus,
     a.button.caution:not(:disabled):hover,
     a.button.caution:not(:disabled):focus {
       background: #b04116;
       transition: background 0s; }
     button.caution:not(:disabled):active, input[type=button].caution:not(:disabled):active, input[type=color].caution:not(:disabled):active, input[type=image].caution:not(:disabled):active, input[type=reset].caution:not(:disabled):active, input[type=submit].caution:not(:disabled):active,
     div.buttons a.caution:not(:disabled):active,
+    span.buttons a.caution:not(:disabled):active,
     a.button.caution:not(:disabled):active {
       background: #893211;
       transition: background 0s;
       color: #ffffff; }
   button.transparent:not(:disabled), input[type=button].transparent:not(:disabled), input[type=color].transparent:not(:disabled), input[type=image].transparent:not(:disabled), input[type=reset].transparent:not(:disabled), input[type=submit].transparent:not(:disabled),
   div.buttons a.transparent:not(:disabled),
+  span.buttons a.transparent:not(:disabled),
   a.button.transparent:not(:disabled) {
     background: transparent;
     color: #2755dd; }
     button.transparent:not(:disabled):hover, button.transparent:not(:disabled):focus, input[type=button].transparent:not(:disabled):hover, input[type=button].transparent:not(:disabled):focus, input[type=color].transparent:not(:disabled):hover, input[type=color].transparent:not(:disabled):focus, input[type=image].transparent:not(:disabled):hover, input[type=image].transparent:not(:disabled):focus, input[type=reset].transparent:not(:disabled):hover, input[type=reset].transparent:not(:disabled):focus, input[type=submit].transparent:not(:disabled):hover, input[type=submit].transparent:not(:disabled):focus,
     div.buttons a.transparent:not(:disabled):hover,
     div.buttons a.transparent:not(:disabled):focus,
+    span.buttons a.transparent:not(:disabled):hover,
+    span.buttons a.transparent:not(:disabled):focus,
     a.button.transparent:not(:disabled):hover,
     a.button.transparent:not(:disabled):focus {
       background: rgba(0, 0, 0, 0.07);
       transition: background 0s; }
     button.transparent:not(:disabled):active, input[type=button].transparent:not(:disabled):active, input[type=color].transparent:not(:disabled):active, input[type=image].transparent:not(:disabled):active, input[type=reset].transparent:not(:disabled):active, input[type=submit].transparent:not(:disabled):active,
     div.buttons a.transparent:not(:disabled):active,
+    span.buttons a.transparent:not(:disabled):active,
     a.button.transparent:not(:disabled):active {
       background: #adadad;
       transition: background 0s;
       color: #000000; }
+  button.transparent:disabled, input[type=button].transparent:disabled, input[type=color].transparent:disabled, input[type=image].transparent:disabled, input[type=reset].transparent:disabled, input[type=submit].transparent:disabled,
+  div.buttons a.transparent:disabled,
+  span.buttons a.transparent:disabled,
+  a.button.transparent:disabled {
+    background: transparent;
+    color: #808080; }
   .ff-input-wrapper button, button.narrow, .ff-input-wrapper input[type=button], input[type=button].narrow, .ff-input-wrapper input[type=color], input[type=color].narrow, .ff-input-wrapper input[type=image], input[type=image].narrow, .ff-input-wrapper input[type=reset], input[type=reset].narrow, .ff-input-wrapper input[type=submit], input[type=submit].narrow, .ff-input-wrapper
   div.buttons a,
   div.buttons a.narrow, .ff-input-wrapper
+  span.buttons a,
+  span.buttons a.narrow, .ff-input-wrapper
   a.button,
   a.button.narrow {
     min-width: 30px;
@@ -1400,18 +1439,30 @@ a.button {
     padding-right: 4px; }
   button:not(.narrow) i:empty, input[type=button]:not(.narrow) i:empty, input[type=color]:not(.narrow) i:empty, input[type=image]:not(.narrow) i:empty, input[type=reset]:not(.narrow) i:empty, input[type=submit]:not(.narrow) i:empty,
   div.buttons a:not(.narrow) i:empty,
+  span.buttons a:not(.narrow) i:empty,
   a.button:not(.narrow) i:empty {
     margin-right: 3px; }
 
-div.buttons button,
-div.buttons a {
-  margin-right: 10px; }
-  div.buttons button:last-child,
-  div.buttons a:last-child {
-    margin-right: 0; }
-
-form div.buttons {
-  padding-top: 20px; }
+div.buttons,
+span.buttons {
+  line-height: 42px; }
+  div.buttons > button,
+  div.buttons > a,
+  div.buttons > .menu.inline,
+  span.buttons > button,
+  span.buttons > a,
+  span.buttons > .menu.inline {
+    margin-right: 10px; }
+    div.buttons > button:last-child,
+    div.buttons > a:last-child,
+    div.buttons > .menu.inline:last-child,
+    span.buttons > button:last-child,
+    span.buttons > a:last-child,
+    span.buttons > .menu.inline:last-child {
+      margin-right: 0; }
+  form div.buttons, form
+  span.buttons {
+    padding-top: 20px; }
 
 .ff-input-wrapper button + button,
 div.buttons.narrow button + button {
@@ -1585,10 +1636,8 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   background: white;
   padding: 25px;
   color: black;
-  max-width: 700px; }
-  @media (max-width: 900px) {
-    .modal {
-      max-width: 80%; } }
+  max-width: 80%;
+  max-height: calc(100% - 30px); }
   @media (max-width: 540px) {
     .modal {
       max-width: 100%;
@@ -1602,7 +1651,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   justify-content: center;
   align-items: center;
   position: fixed;
-  z-index: 1100;
+  z-index: 2000;
   top: 0;
   right: 0;
   bottom: 0;
@@ -1692,10 +1741,11 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
 
 .ff-dropdown-container {
   position: absolute;
-  z-index: 1500;
+  z-index: 3000;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
   background: white;
-  color: black; }
+  color: black;
+  overflow-y: auto; }
   .ff-dropdown-container .dropdown {
     display: block; }
   .ff-dropdown-container.bordered {
@@ -1735,8 +1785,8 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  background: #505050;
-  color: #ffffff; }
+  background: #d8d8d8;
+  color: #000000; }
   .menu:not(.right):not(.both)::after {
     content: '';
     flex-grow: 1; }
@@ -1746,9 +1796,11 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   .menu.vertical {
     flex-direction: column;
     width: inherit; }
+  .menu.inline {
+    width: inherit; }
   .menu li.open a {
-    background: #606060;
-    color: #ffffff;
+    background: #c7c7c7;
+    color: #000000;
     transition: background 0s, color 0s; }
   .menu li a {
     display: block;
@@ -1759,15 +1811,15 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
     color: inherit;
     transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
     .menu li a:hover, .menu li a:focus {
-      background: #686868;
-      color: #ffffff;
+      background: #c7c7c7;
+      color: #000000;
       transition: background 0s, color 0s;
       outline: none; }
   .menu li a:active,
   .menu li.active a,
   .menu li.active a:hover {
-    background: #808080;
-    color: #ffffff;
+    background: #adadad;
+    color: #000000;
     transition: background 0s, color 0s; }
   .menu li.text {
     padding: 6px 10px; }
@@ -1777,7 +1829,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   .menu li[disabled] a:hover,
   .menu li[disabled] a:focus,
   .menu li[disabled] a:active {
-    background: #505050;
+    background: #d8d8d8;
     opacity: 0.4;
     pointer-events: none; }
   .menu li ul {
@@ -1827,8 +1879,8 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  background: #505050;
-  color: #ffffff; }
+  background: #f4f4f4;
+  color: #000000; }
   .ff-submenu li a {
     display: block;
     padding: 6px 10px;
@@ -1836,28 +1888,67 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
     color: inherit;
     transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
     .ff-submenu li a:hover, .ff-submenu li a:focus {
-      background: #686868;
-      color: #ffffff;
+      background: #e0e0e0;
+      color: #000000;
       transition: background 0s, color 0s;
       outline: none; }
   .ff-submenu li a:active,
   .ff-submenu li.active a,
   .ff-submenu li.active a:hover {
-    background: #808080;
-    color: #ffffff;
+    background: #adadad;
+    color: #000000;
     transition: background 0s, color 0s; }
   .ff-submenu li.text {
     padding: 6px 10px; }
   .ff-submenu li.separator {
     margin: 3px 10px;
-    border-top: 1px solid #686868; }
+    border-top: 1px solid #e0e0e0; }
   .ff-submenu li[disabled] a,
   .ff-submenu li[disabled] a:hover,
   .ff-submenu li[disabled] a:focus,
   .ff-submenu li[disabled] a:active {
-    background: #505050;
+    background: #f4f4f4;
     opacity: 0.4;
     pointer-events: none; }
+
+nav .menu {
+  background: #505050;
+  color: #ffffff; }
+  nav .menu li.open a {
+    background: #606060;
+    color: #ffffff; }
+  nav .menu li a:hover, nav .menu li a:focus {
+    background: #686868;
+    color: #ffffff; }
+  nav .menu li a:active,
+  nav .menu li.active a,
+  nav .menu li.active a:hover {
+    background: #808080;
+    color: #ffffff; }
+  nav .menu li[disabled] a,
+  nav .menu li[disabled] a:hover,
+  nav .menu li[disabled] a:focus,
+  nav .menu li[disabled] a:active {
+    background: #505050; }
+
+.ff-submenu.nav {
+  background: #505050;
+  color: #ffffff; }
+  .ff-submenu.nav li a:hover, .ff-submenu.nav li a:focus {
+    background: #686868;
+    color: #ffffff; }
+  .ff-submenu.nav li a:active,
+  .ff-submenu.nav li.active a,
+  .ff-submenu.nav li.active a:hover {
+    background: #808080;
+    color: #ffffff; }
+  .ff-submenu.nav li.separator {
+    border-top: 1px solid #686868; }
+  .ff-submenu.nav li[disabled] a,
+  .ff-submenu.nav li[disabled] a:hover,
+  .ff-submenu.nav li[disabled] a:focus,
+  .ff-submenu.nav li[disabled] a:active {
+    background: #505050; }
 
 .ff-resizable-handle.box {
   border: 1px solid silver;
@@ -2077,7 +2168,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
 .off-canvas {
   visibility: hidden;
   position: fixed;
-  z-index: 1200;
+  z-index: 3000;
   top: 0;
   height: 100vh;
   padding: 10px;

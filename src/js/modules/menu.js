@@ -12,6 +12,8 @@ function menu() {
 			var submenu = item.children("ul").first();
 			if (submenu.hasClass("ff-submenu")) return;   // Already done
 			submenu.addClass("ff-submenu dropdown");
+			if (item.closest("nav").length > 0)
+				submenu.addClass("nav");
 
 			// Open submenu on click
 			item.children("a").first().click(function (event) {

@@ -420,6 +420,7 @@ function carousel(options) {
 }
 
 // Gets the active item in a carousel.
+//
 // indexOrItem: Sets the active item in each selected carousel, either by index or the element.
 function activeItem(indexOrItem) {
 	// Getter

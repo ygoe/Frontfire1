@@ -58,39 +58,6 @@ $successLinkHoverColor: $linkHoverColor;
 
 $imageSubtitleColor: #666666;
 
-// ========== Layout ==========
-
-// Tabs
-
-$tabsBorderColor: #d8d8d8;
-$tabsActiveHeaderBackground: transparent;
-$tabsInactiveHeaderBackground: #f4f4f4;
-$tabsInactiveHeaderHoverBackground: #fafafa;
-$tabsInactiveHeaderPressedBackground: darken($tabsInactiveHeaderBackground, 15%);
-$tabsPageBackground: transparent;
-
-// Accordion
-
-$accordionHeaderBackground: #d8d8d8;
-$accordionHeaderHoverBackground: darken($accordionHeaderBackground, 8%);
-$accordionHeaderPressedBackground: darken($accordionHeaderBackground, 20%);
-$accordionHeaderColor: #000000;
-$accordionExpandedHeaderBackground: #f0f0f0;
-$accordionExpandedHeaderHoverBackground: darken($accordionExpandedHeaderBackground, 5%);
-$accordionExpandedHeaderPressedBackground: darken($accordionExpandedHeaderBackground, 15%);
-$accordionExpandedHeaderColor: #000000;
-
-// Menu
-
-$menuBackground: #505050;
-$menuColor: #ffffff;
-$menuHoverBackground: #686868;
-$menuHoverColor: #ffffff;
-$menuActiveBackground: #808080;
-$menuActiveColor: #ffffff;
-$menuOpenBackground: #606060;
-$menuOpenColor: #ffffff;
-
 // ========== Form ==========
 
 $disabledLabelColor: #a0a0a0;
@@ -139,6 +106,66 @@ $checkboxPressedBackground: #d8d8d8;
 
 $textInputs: "input:not([type]), input[type^=date], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], textarea, select";
 $buttonInputs: "button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit]";
+
+// ========== Layout ==========
+
+// Tabs
+
+$tabsBorderColor: #d8d8d8;
+$tabsActiveHeaderBackground: transparent;
+$tabsInactiveHeaderBackground: #f4f4f4;
+$tabsInactiveHeaderHoverBackground: #fafafa;
+$tabsInactiveHeaderPressedBackground: darken($tabsInactiveHeaderBackground, 15%);
+$tabsPageBackground: transparent;
+
+// Accordion
+
+$accordionHeaderBackground: #d8d8d8;
+$accordionHeaderHoverBackground: darken($accordionHeaderBackground, 8%);
+$accordionHeaderPressedBackground: darken($accordionHeaderBackground, 20%);
+$accordionHeaderColor: #000000;
+$accordionExpandedHeaderBackground: #f0f0f0;
+$accordionExpandedHeaderHoverBackground: darken($accordionExpandedHeaderBackground, 5%);
+$accordionExpandedHeaderPressedBackground: darken($accordionExpandedHeaderBackground, 15%);
+$accordionExpandedHeaderColor: #000000;
+
+// Menu
+
+$menuBackground: $buttonBackground;
+$menuColor: $buttonColor;
+$menuHoverBackground: $buttonHoverBackground;
+$menuHoverColor: $buttonColor;
+$menuActiveBackground: $buttonPressedBackground;
+$menuActiveColor: $buttonColor;
+$menuOpenBackground: $buttonHoverBackground;
+$menuOpenColor: $buttonColor;
+
+$submenuBackground: $inputLabelBackground;
+$submenuColor: $menuColor;
+$submenuHoverBackground: darken($submenuBackground, 8%);
+$submenuHoverColor: $submenuColor;
+$submenuActiveBackground: $buttonPressedBackground;
+$submenuActiveColor: $submenuColor;
+$submenuOpenBackground: $submenuHoverBackground;
+$submenuOpenColor: $submenuHoverColor;
+
+$navMenuBackground: #505050;
+$navMenuColor: #ffffff;
+$navMenuHoverBackground: #686868;
+$navMenuHoverColor: #ffffff;
+$navMenuActiveBackground: #808080;
+$navMenuActiveColor: #ffffff;
+$navMenuOpenBackground: #606060;
+$navMenuOpenColor: #ffffff;
+
+$navSubmenuBackground: $navMenuBackground;
+$navSubmenuColor: $navMenuColor;
+$navSubmenuHoverBackground: $navMenuHoverBackground;
+$navSubmenuHoverColor: $navMenuHoverColor;
+$navSubmenuActiveBackground: $navMenuActiveBackground;
+$navSubmenuActiveColor: $navMenuActiveColor;
+$navSubmenuOpenBackground: $navMenuOpenBackground;
+$navSubmenuOpenColor: $navMenuOpenColor;
 
 // ========== Slider ==========
 

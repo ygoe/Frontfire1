@@ -88,7 +88,7 @@ form
 		grid-template-columns: 100% !important;
 		grid-auto-flow: row;
 
-		.label:not(:first-child)
+		> .label:not(:first-child)
 		{
 			margin-top: 1em;
 		}
