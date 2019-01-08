@@ -27,11 +27,18 @@ $defaultLineHeight: 1.4;
 
 $headingWeight: 600;   // Semibold is better for Segoe UI; effectively 700 on Android
 
+$darkBackground: #303030;
+$darkTextColor: #f0f0f0;
+
 $linkColor: #2755dd;
 $linkHoverColor: darken($linkColor, 25%);
+$darkLinkColor: #91acff;
+$darkLinkHoverColor: lighten($darkLinkColor, 20%);
 
 $tableGridColor: #d8d8d8;
 $tableHeaderBackground: #f4f4f4;
+$darkTableGridColor: #585858;
+$darkTableHeaderBackground: #303030;
 
 $criticalBackground: #a11331;
 $criticalColor: #ffffff;
@@ -40,7 +47,7 @@ $criticalLinkHoverColor: lighten($criticalLinkColor, 25%);
 $errorBackground: #c44818;
 $errorColor: #ffffff;
 $errorLinkColor: #afc3ff;
-$errorLinkHoverColor: lighten($criticalLinkColor, 25%);
+$errorLinkHoverColor: lighten($errorLinkColor, 25%);
 $warningBackground: #f3d661;
 $warningColor: #000000;
 $warningLinkColor: $linkColor;
@@ -61,9 +68,12 @@ $imageSubtitleColor: #666666;
 // ========== Form ==========
 
 $disabledLabelColor: #a0a0a0;
+$darkDisabledLabelColor: #a0a0a0;
 
 $validationErrorText: #ff0000;
 $validationErrorBackground: #ffdddd;
+$darkValidationErrorText: #ff0000;
+$darkValidationErrorBackground: #ffdddd;
 
 $textboxBorder: #cccccc;
 $textboxFocusBorder: #999999;
@@ -72,6 +82,13 @@ $textboxBackground: #ffffff;
 $textboxColor: #000000;
 $textboxDisabledColor: #a0a0a0;
 $inputLabelBackground: #f4f4f4;
+$darkTextboxBorder: #707070;
+$darkTextboxFocusBorder: #999999;
+$darkTextboxDisabledBorder: #505050;
+$darkTextboxBackground: $darkBackground;
+$darkTextboxColor: $darkTextColor;
+$darkTextboxDisabledColor: #808080;
+$darkInputLabelBackground: lighten($darkBackground, 10%);
 
 $buttonBackground: #d8d8d8;
 $buttonHoverBackground: darken($buttonBackground, 8%);
@@ -80,29 +97,54 @@ $buttonDisabledBackground: lighten($buttonBackground, 30%);
 $buttonColor: #000000;
 $buttonPressedColor: #000000;
 $buttonDisabledColor: #808080;
+$darkButtonBackground: #606060;
+$darkButtonHoverBackground: lighten($darkButtonBackground, 12%);
+$darkButtonPressedBackground: lighten($darkButtonBackground, 25%);
+$darkButtonDisabledBackground: darken($darkButtonBackground, 35%);
+$darkButtonColor: $darkTextColor;
+$darkButtonPressedColor: $darkTextColor;
+$darkButtonDisabledColor: #a0a0a0;
 
 $buttonDefaultBackground: #2755dd;
 $buttonDefaultHoverBackground: darken($buttonDefaultBackground, 15%);
 $buttonDefaultPressedBackground: darken($buttonDefaultBackground, 35%);
 $buttonDefaultColor: #ffffff;
 $buttonDefaultPressedColor: #ffffff;
+$darkButtonDefaultBackground: $buttonDefaultBackground;
+$darkButtonDefaultHoverBackground: darken($darkButtonDefaultBackground, 15%);
+$darkButtonDefaultPressedBackground: darken($darkButtonDefaultBackground, 35%);
+$darkButtonDefaultColor: #ffffff;
+$darkButtonDefaultPressedColor: #ffffff;
 
 $buttonCautionBackground: $errorBackground;
 $buttonCautionHoverBackground: darken($buttonCautionBackground, 10%);
 $buttonCautionPressedBackground: darken($buttonCautionBackground, 30%);
 $buttonCautionColor: #ffffff;
 $buttonCautionPressedColor: #ffffff;
+$darkButtonCautionBackground: $errorBackground;
+$darkButtonCautionHoverBackground: darken($darkButtonCautionBackground, 10%);
+$darkButtonCautionPressedBackground: darken($darkButtonCautionBackground, 30%);
+$darkButtonCautionColor: #ffffff;
+$darkButtonCautionPressedColor: #ffffff;
 
 $buttonTransparentBackground: transparent;
 $buttonTransparentHoverBackground: rgba(0, 0, 0, 0.07);
 $buttonTransparentPressedBackground: $buttonPressedBackground;
 $buttonTransparentColor: $linkColor;
 $buttonTransparentPressedColor: $buttonPressedColor;
+$darkButtonTransparentBackground: transparent;
+$darkButtonTransparentHoverBackground: rgba(0, 0, 0, 0.07);
+$darkButtonTransparentPressedBackground: $darkButtonPressedBackground;
+$darkButtonTransparentColor: $darkLinkColor;
+$darkButtonTransparentPressedColor: $darkButtonPressedColor;
 
 $buttonGroupSeparatorColor: $buttonHoverBackground;
 $buttonGroupDisabledSeparatorColor: lighten($buttonBackground, 7%);
+$darkButtonGroupSeparatorColor: $darkButtonHoverBackground;
+$darkButtonGroupDisabledSeparatorColor: darken($darkButtonBackground, 10%);
 
-$checkboxPressedBackground: #d8d8d8;
+$checkboxPressedBackground: $buttonBackground;
+$darkCheckboxPressedBackground: $darkButtonBackground;
 
 $textInputs: "input:not([type]), input[type^=date], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], textarea, select";
 $buttonInputs: "button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit]";
@@ -187,3 +229,11 @@ $sliderDisabledBackground: #eeeeee;
 $sliderDisabledHandleBackground: #aaaaaa;
 $sliderDisabledSmallTickColor: #dddddd;
 $sliderDisabledLargeTickColor: #bbbbbb;
+
+// ========== Progress bar ==========
+
+$progressColor: #808080;
+$progressNoBorderBackground: #f4f4f4;
+$progressErrorColor: #c44818;
+$progressWarningColor: #dfb511;
+$progressSuccessColor: #6ec418;

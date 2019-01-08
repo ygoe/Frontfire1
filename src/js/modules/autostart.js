@@ -10,12 +10,15 @@ $.fn.frontfire = function (prefix) {
 	// TODO: dropdown
 	this.find(prefix + "input[type=number]").spinner();
 	this.find(prefix + "input[type=color]").colorPicker();
+	// type=color has serious restrictions on acceptable values, ff-color is a workaround
+	this.find(prefix + "input[type=ff-color]").colorPicker();
 	this.find(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
 	this.find(prefix + "input[type=checkbox].three-state").threeState();
 	this.find(prefix + "textarea.auto-height").autoHeight();
 	this.find(prefix + ".menu").menu();
 	this.find(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();
 	// TODO: modal
+	this.find(prefix + ".progressbar").progressbar();
 	this.find(prefix + ".slider").slider();
 	this.find(prefix + ".sortable").sortable();
 	this.find(prefix + ".tabs").tabs();

@@ -10,6 +10,9 @@ var dimCount = 0;
 export function dimBackground(noinput) {
 	dimCount++;
 	if ($("body > div." + backgroundDimmerClass + ":not(.closing)").length !== 0) return;   // Already there
+	var existingBackgroundLayer = $("body > div." + backgroundDimmerClass);
+	if (existingBackgroundLayer.length === 0)
+		$("body").trigger("dim");
 	$("body").addClass(dimmingClass).addClass(dimmedClass);
 	var backgroundLayer = $("<div/>")
 		.addClass(backgroundDimmerClass)
@@ -33,6 +36,7 @@ export function undimBackground() {
 		if (!$body.hasClass(dimmedClass)) {
 			// No other layer appeared in the meantime
 			$body.removeClass(dimmingClass);
+			$("body").trigger("undim");
 		}
 		backgroundLayer.remove();
 	});

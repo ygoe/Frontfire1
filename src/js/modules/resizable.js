@@ -14,7 +14,7 @@ var resizableDefaults = {
 	// The width of the default handles. Default: 10.
 	handleWidth: 10,
 
-	// Constrains the resizing inside the specified element or the "parent" of the resized element. Default: None.
+	// Constrains the resizing inside the specified element or the "parent" of the resized element or the "viewport". Default: None.
 	containment: undefined,
 
 	// The grid to snap the resized element to during resizing, as [x, y] in pixels. Default: [1, 1].
@@ -46,6 +46,7 @@ function resizable(options) {
 		var htmlCursor;
 		var handleElements = $();
 		var opt = initOptions("resizable", resizableDefaults, $elem, {}, options);
+		let $window = $(window);
 
 		var aspectRatio = opt.aspectRatio;
 		if (aspectRatio === true || aspectRatio === "true") aspectRatio = $elem.outerWidth() / $elem.outerHeight();
@@ -196,13 +197,27 @@ function resizable(options) {
 			if (negative) newElemOffset[side] -= delta;
 
 			if (opt.containment) {
-				let cont;
-				if (opt.containment === "parent")
+				let cont, contRect;
+				if (opt.containment === "parent") {
 					cont = $elem.parent();
-				else
+				}
+				else if (opt.containment === "viewport") {
+					let scrollTop = $window.scrollTop();
+					let scrollLeft = $window.scrollLeft();
+					contRect = {
+						top: 0 + scrollTop,
+						left: 0 + scrollLeft,
+						height: $window.height(),
+						width: $window.width()
+					};
+				}
+				else {
 					cont = $(opt.containment);
-				if (cont.length !== 0) {
-					let contRect = cont.rect();
+				}
+				if (cont && cont.length > 0) {
+					contRect = cont.rect();
+				}
+				if (contRect) {
 					if (negative) {
 						while (newElemOffset[side] < contRect[side]) {
 							newElemOffset[side] += step;

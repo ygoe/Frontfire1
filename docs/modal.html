@@ -94,6 +94,51 @@
 		<p><samp>
 			$("#modal1").modal.close(); 
 		</samp></p>
+		
+		<h2>Standard message boxes</h2>
+		
+		<p>
+			A convenient function to show standard message box modals exists. It accepts the content (either as plain text, HTML markup or a jQuery object), the buttons and a result handler that is called when the message box is closed.
+		</p>
+		
+		<p><samp>
+			$.modal({<br>
+			    text: "Message box content",<br>
+			    buttons: [<br>
+			        { text: "Yes", icon: "fas fa-check", className: "default", result: "yes" },<br>
+			        { icon: "fas fa-cross", className: "narrow", result: "no" },<br>
+			        { text: "Cancel", className: "transparent", result: false }<br>
+			    ],<br>
+			    resultHandler: function (result) {<br>
+			        // ...<br>
+			    });
+		</samp></p>
+		
+		<p>
+			The message text can be specified in the <code>text</code>, <code>html</code> or <code>content</code> properties of the specified options.
+		</p>
+		
+		<p>
+			Each button entry can contain the properties <code>text</code> (button text), <code>icon</code> (&lt;i&gt; element CSS class), <code>className</code> (button's CSS class) and <code>result</code>. Instead of an array, buttons can also be a string that easily defines standard buttons: "OK", "OK cancel", "YES no", "yes NO". The first button with the <code>default</code> CSS class is focused initially.
+		</p>
+		
+		<p>
+			The <code>resultHandler</code> function is called when the modal is closed. If a button was pressed, its result value is passed to the function; otherwise nothing.
+		</p>
+		
+		<p>
+			Besides that, the options are passed on to the modal plugin call so that the modal itself can be configured as well in the same options object. The second example below makes the modal non-cancellable.
+		</p>
+		
+		<p>
+			<button type="button" id="std1">Standard message box</button>
+			<span id="std1Result" style="margin-left: 10px;"></span>
+		</p>
+
+		<p>
+			<button type="button" id="std2">Message box with HTML and custom buttons</button>
+			<span id="std2Result" style="margin-left: 10px;"></span>
+		</p>
 
 		<p style="background: #f8f8f8; color: #a0a0a0; padding: 45vh 0; text-align: center;">
 			<em>This space is intentionally left blank to demonstrate the page scroll lock while a modal is open.</em>
@@ -143,6 +188,33 @@
 		$("#modal1 button.cancel").click(function () {
 			$("#result").text("Cancelled");
 			$("#modal1").modal.close();
+		});
+		
+		$("#std1").click(function () {
+			let options = {
+				text: "This is the message text.",
+				buttons: "yes NO",
+				resultHandler: function (result) {
+					$("#std1Result").text("Result: " + JSON.stringify(result));
+				}
+			};
+			$.modal(options);
+		});
+		
+		$("#std2").click(function () {
+			let options = {
+				html: "<b>Title</b><p>The message can also contain <em>HTML markup</em>.</p>",
+				buttons: [
+					{ text: "Button 1", icon: "fas fa-folder", className: "default", result: "1" },
+					{ icon: "fas fa-plus", className: "narrow", result: "2" },
+					{ text: "Cancel", className: "transparent", result: false }
+				],
+				resultHandler: function (result) {
+					$("#std2Result").text("Result: " + JSON.stringify(result));
+				},
+				cancellable: false
+			};
+			$.modal(options);
 		});
 	</script>
 </body>

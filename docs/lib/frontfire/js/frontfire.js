@@ -1160,6 +1160,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (!(this instanceof Color)) return new Color(value);
 
 			if (typeof value === "string") {
+				if (value === "") {
+					this.format = "CSS";
+					this.r = this.g = this.b = this.a = 0;
+					return;
+				}
+
 				this.format = value.match(/^rgba?\(/) ? "CSS" : "HTML";
 
 				// Add "#" prefix if missing and the data is otherwise looking good (3/6/8 hex digits)
@@ -1342,6 +1348,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		};
 
 		// TODO: Add functions to (de)saturate the color (similar to lighten and darken?)
+
+		// Returns a color with a changed alpha value between 0 (transparent) and 1 (opaque).
+		Color_prototype.alpha = function (alpha) {
+			return processColor(this, true, function () {
+				this.a = keep1(alpha);
+			});
+		};
 
 		// Returns the grayscale color by perceived brightness.
 		Color_prototype.gray = function () {
@@ -1685,7 +1698,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Constrains the drag movement along the "x" or "y" axis. Default: None.
 		axis: undefined,
 
-		// Constrains the drag movement inside the specified element or the "parent" of the dragged element. Default: None.
+		// Constrains the drag movement inside the specified element or the "parent" of the dragged element or the "viewport". Default: None.
 		containment: undefined,
 
 		// The elements among which the dragged element will be pulled in the front. Default: None.
@@ -1713,6 +1726,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			$elem.addClass(draggableClass);
 			var dragging, draggingCancelled, dragPoint, elemRect, minDragDistance, pointerId, htmlCursor;
 			var opt = initOptions("draggable", draggableDefaults, $elem, {}, options);
+			var $window = $(window);
 
 			var handle = opt.handle ? $elem.find(opt.handle) : $elem;
 			opt.handleElem = handle;
@@ -1732,8 +1746,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					dragPoint = { left: event.pageX, top: event.pageY };
 					pointerId = event.pointerId;
 					minDragDistance = event.pointerType === "touch" ? 8 : 4;
-					eventRemovers.push($(window).pointer("move", onMove, true));
-					eventRemovers.push($(window).pointer("up cancel", onEnd, true));
+					eventRemovers.push($window.pointer("move", onMove, true));
+					eventRemovers.push($window.pointer("up cancel", onEnd, true));
 				}
 			}));
 
@@ -1796,10 +1810,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						newPoint.left = elemRect.left;
 					}
 					if (opt.containment) {
-						var cont = void 0;
-						if (opt.containment === "parent") cont = $elem.parent();else cont = $(opt.containment);
-						if (cont.length !== 0) {
-							var contRect = cont.rect();
+						var cont = void 0,
+						    contRect = void 0;
+						if (opt.containment === "parent") {
+							cont = $elem.parent();
+						} else if (opt.containment === "viewport") {
+							var scrollTop = $window.scrollTop();
+							var scrollLeft = $window.scrollLeft();
+							contRect = {
+								top: 0 + scrollTop,
+								left: 0 + scrollLeft,
+								bottom: $window.height() + scrollTop,
+								right: $window.width() + scrollLeft
+							};
+						} else {
+							cont = $(opt.containment);
+						}
+						if (cont && cont.length > 0) {
+							contRect = cont.rect();
+						}
+						if (contRect) {
 							var stepX = opt.grid ? opt.grid[0] : 1;
 							var stepY = opt.grid ? opt.grid[1] : 1;
 							while (newPoint.left < contRect.left) {
@@ -2167,7 +2197,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
-			input.replaceWith(wrapper).appendTo(wrapper); // TODO: replaceWith removes the input. Choose an option that uses detach() instead
+			input.before(wrapper).appendTo(wrapper);
 			input.attr("autocomplete", "off");
 
 			// Add control buttons
@@ -2180,12 +2210,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var min = input.attr("min");
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? parseFloat(min) : 0;
-				var step = parseFloat(input.attr("step") || 1);
-				value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase; // Set to next-smaller valid step
-				if (min !== undefined && value < parseFloat(min)) value = min;
-				while (max !== undefined && value > parseFloat(max)) {
-					value -= step;
-				}input.val(value);
+				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+				if (match) {
+					var factor = parseFloat(match[1]) || 10;
+					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
+				} else {
+					var step = parseFloat(input.attr("step")) || 1;
+					value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase; // Set to next-smaller valid step
+					if (min !== undefined && value < parseFloat(min)) value = min;
+					while (max !== undefined && value > parseFloat(max)) {
+						value -= step;
+					}
+				}
+				input.val(value);
 				input.change();
 			});
 			decButton.repeatButton();
@@ -2197,12 +2234,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var min = input.attr("min");
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? parseFloat(min) : 0;
-				var step = parseFloat(input.attr("step") || 1);
-				value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase; // Set to next-greater valid step
-				if (min !== undefined && value < parseFloat(min)) value = min;
-				while (max !== undefined && value > parseFloat(max)) {
-					value -= step;
-				}input.val(value);
+				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+				if (match) {
+					var factor = parseFloat(match[1]) || 10;
+					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
+				} else {
+					var step = parseFloat(input.attr("step")) || 1;
+					value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase; // Set to next-greater valid step
+					if (min !== undefined && value < parseFloat(min)) value = min;
+					while (max !== undefined && value > parseFloat(max)) {
+						value -= step;
+					}
+				}
+				input.val(value);
 				input.change();
 			});
 			incButton.repeatButton();
@@ -2219,10 +2263,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
 			var lastColor;
 
+			input.attr("type", "text").attr("autocomplete", "off");
+
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
-			input.replaceWith(wrapper).appendTo(wrapper); // TODO: replaceWith removes the input. Choose an option that uses detach() instead
-			input.attr("type", "text").attr("autocomplete", "off");
+			input.before(wrapper).appendTo(wrapper);
 
 			// Create picker dropdown
 			var dropdown = $("<div/>").addClass("dropdown bordered ff-colorpicker");
@@ -2358,7 +2403,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			bindInputButtonsDisabled(input, buttons);
 
 			function setColor(color, toInput) {
-				if (toInput) input.val(color);
+				if (toInput && input.val() != color) input.val(color).change();
 				colorBox.css("background", color);
 				colorBox.css("color", Color(color).text());
 			}
@@ -2424,7 +2469,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// the wrapper as well. The textarea is set to fill the container, and the shadow
 			// element provides the size for the wrapper.
 			var wrapper = $("<div/>").addClass(textareaWrapperClass).attr("style", textarea.attr("style"));
-			textarea.replaceWith(wrapper).appendTo(wrapper); // TODO: replaceWith removes the input. Choose an option that uses detach() instead
+			textarea.before(wrapper).appendTo(wrapper);
 			var shadowContent = $("<div/>").appendTo(wrapper);
 
 			var outerHeightOffset = textarea.outerHeight() - textarea.height();
@@ -2557,6 +2602,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function dimBackground(noinput) {
 		dimCount++;
 		if ($("body > div." + backgroundDimmerClass + ":not(.closing)").length !== 0) return; // Already there
+		var existingBackgroundLayer = $("body > div." + backgroundDimmerClass);
+		if (existingBackgroundLayer.length === 0) $("body").trigger("dim");
 		$("body").addClass(dimmingClass).addClass(dimmedClass);
 		var backgroundLayer = $("<div/>").addClass(backgroundDimmerClass).appendTo("body");
 		noinput && backgroundLayer.addClass("noinput");
@@ -2578,6 +2625,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (!$body.hasClass(dimmedClass)) {
 				// No other layer appeared in the meantime
 				$body.removeClass(dimmingClass);
+				$("body").trigger("undim");
 			}
 			backgroundLayer.remove();
 		});
@@ -2690,6 +2738,68 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		close: closeModal
 	});
 	$.fn.modal.defaults = modalDefaults;
+
+	// Shows a standard message box modal with content and buttons.
+	//
+	// options.content: (jQuery) The message content to display.
+	// options.html: (String) The message HTML content to display.
+	// options.text: (String) The message text to display.
+	// options.buttons: (Array) The buttons to display in the modal.
+	// options.buttons[].text: (String) The button text.
+	// options.buttons[].icon: (String) The CSS class of an <i> element displayed before the text.
+	// options.buttons[].className: (String) Additional CSS classes for the button.
+	// options.buttons[].result: The result value of the button.
+	// options.resultHandler: (Function) The modal response handler. It is passed the button handler's return value, or false if cancelled.
+	$.modal = function (options) {
+		var modal = $("<div/>").addClass("modal");
+		var content = $("<div/>").appendTo(modal);
+		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text);
+
+		var buttons = options.buttons;
+		if (typeof buttons === "string") {
+			switch (buttons) {
+				case "OK":
+					buttons = [{ text: "OK", className: "default", result: true }];
+					break;
+				case "OK cancel":
+					buttons = [{ text: "OK", className: "default", result: true }, { text: "Cancel", className: "transparent", result: false }];
+					break;
+				case "YES no":
+					buttons = [{ text: "Yes", className: "default", result: true }, { text: "No", result: false }];
+					break;
+				case "yes NO":
+					buttons = [{ text: "Yes", result: true }, { text: "No", className: "default", result: false }];
+					break;
+				default:
+					buttons = [];
+					break;
+			}
+		}
+
+		var buttonsElement = void 0;
+		var buttonPressed = false;
+		if (buttons && buttons.length > 0) {
+			buttonsElement = $("<div/>").addClass("buttons").appendTo(modal);
+			buttons.forEach(function (button) {
+				var buttonElement = $("<button/>").addClass(button.className).appendTo(buttonsElement);
+				if (button.icon) buttonElement.append($("<i/>").addClass(button.icon));
+				if (button.icon && button.text) buttonElement.append(" ");
+				if (button.text) buttonElement.append(button.text);
+				buttonElement.click(function (event) {
+					buttonPressed = true;
+					modal.modal.close();
+					if (options.resultHandler) options.resultHandler(button.result);
+				});
+			});
+		}
+		modal.modal(options);
+		if (buttonsElement) buttonsElement.find("button.default").first().focus();
+		if (options.resultHandler) {
+			modal.on("close", function () {
+				if (!buttonPressed) options.resultHandler();
+			});
+		}
+	};
 
 	var offCanvasEventNamespace = ".ff-off-canvas";
 	var offCanvasClass = "ff-off-canvas";
@@ -2830,6 +2940,124 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.offCanvas.defaults = offCanvasDefaults;
 
+	var progressbarClass = "ff-progressbar";
+
+	// Defines default options for the progressbar plugin.
+	var progressbarDefaults = {
+		// The minimum value of the progress bar. Default: 0.
+		min: 0,
+
+		// The maximum value of the progress bar. Default: 100.
+		max: 100,
+
+		// The current progress value. Default: 0.
+		value: 0,
+
+		// The string to display before the value in the progress bar. Default: "".
+		valuePrefix: "",
+
+		// The string to display after the value in the progress bar. Default: "".
+		valueSuffix: ""
+	};
+
+	// Shows a progressbar on the element.
+	function progressbar(options) {
+		return this.each(function () {
+			var $elem = $(this);
+			if ($elem.hasClass(progressbarClass)) return; // Already done
+			$elem.addClass(progressbarClass);
+			var opt = initOptions("progressbar", progressbarDefaults, $elem, {}, options);
+			opt._setValue = setValue;
+
+			var bar = $("<div/>").addClass("ff-bar").appendTo($elem);
+			var number = $("<span/>").appendTo(bar);
+			setValue(opt.value);
+
+			// Sets a progress bar value and triggers the change event.
+			function setValue(value) {
+				value = minmax(value, opt.min, opt.max);
+				var relWidth = (value - opt.min) / (opt.max - opt.min);
+				bar.css("width", relWidth * 100 + "%");
+				number.text(opt.valuePrefix + value + opt.valueSuffix);
+				number.toggleClass("outside", number.width() + 8 > relWidth * $elem.width());
+
+				if (value !== opt.value) {
+					opt.value = value;
+					$elem.trigger("valuechange");
+				}
+			}
+		});
+	}
+
+	// Gets the current progress bar value.
+	//
+	// value: Sets the progress value.
+	function progressbarValue(value) {
+		// Getter
+		if (value === undefined) {
+			var progressbar = this.first();
+			if (progressbar.length === 0) return; // Nothing to do
+			var opt = loadOptions("progressbar", progressbar);
+			return opt.value;
+		}
+
+		// Setter
+		return this.each(function () {
+			var progressbar = $(this);
+			var opt = loadOptions("progressbar", progressbar);
+			opt._setValue(value);
+		});
+	}
+
+	// Gets the value prefix.
+	//
+	// prefix: Sets the value prefix.
+	function valuePrefix(prefix) {
+		// Getter
+		if (prefix === undefined) {
+			var progressbar = this.first();
+			if (progressbar.length === 0) return; // Nothing to do
+			var opt = loadOptions("progressbar", progressbar);
+			return opt.valuePrefix;
+		}
+
+		// Setter
+		return this.each(function () {
+			var progressbar = $(this);
+			var opt = loadOptions("progressbar", progressbar);
+			opt.valuePrefix = prefix;
+			opt._setValue(opt.value);
+		});
+	}
+
+	// Gets the value suffix.
+	//
+	// suffix: Sets the value suffix.
+	function valueSuffix(suffix) {
+		// Getter
+		if (suffix === undefined) {
+			var progressbar = this.first();
+			if (progressbar.length === 0) return; // Nothing to do
+			var opt = loadOptions("progressbar", progressbar);
+			return opt.valueSuffix;
+		}
+
+		// Setter
+		return this.each(function () {
+			var progressbar = $(this);
+			var opt = loadOptions("progressbar", progressbar);
+			opt.valueSuffix = suffix;
+			opt._setValue(opt.value);
+		});
+	}
+
+	registerPlugin("progressbar", progressbar, {
+		value: progressbarValue,
+		valuePrefix: valuePrefix,
+		valueSuffix: valueSuffix
+	});
+	$.fn.progressbar.defaults = progressbarDefaults;
+
 	var resizableClass = "ff-resizable";
 
 	// Defines default options for the resizable plugin.
@@ -2843,7 +3071,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// The width of the default handles. Default: 10.
 		handleWidth: 10,
 
-		// Constrains the resizing inside the specified element or the "parent" of the resized element. Default: None.
+		// Constrains the resizing inside the specified element or the "parent" of the resized element or the "viewport". Default: None.
 		containment: undefined,
 
 		// The grid to snap the resized element to during resizing, as [x, y] in pixels. Default: [1, 1].
@@ -2875,6 +3103,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var htmlCursor;
 			var handleElements = $();
 			var opt = initOptions("resizable", resizableDefaults, $elem, {}, options);
+			var $window = $(window);
 
 			var aspectRatio = opt.aspectRatio;
 			if (aspectRatio === true || aspectRatio === "true") aspectRatio = $elem.outerWidth() / $elem.outerHeight();
@@ -2998,10 +3227,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (negative) newElemOffset[side] -= delta;
 
 				if (opt.containment) {
-					var cont = void 0;
-					if (opt.containment === "parent") cont = $elem.parent();else cont = $(opt.containment);
-					if (cont.length !== 0) {
-						var contRect = cont.rect();
+					var cont = void 0,
+					    contRect = void 0;
+					if (opt.containment === "parent") {
+						cont = $elem.parent();
+					} else if (opt.containment === "viewport") {
+						var scrollTop = $window.scrollTop();
+						var scrollLeft = $window.scrollLeft();
+						contRect = {
+							top: 0 + scrollTop,
+							left: 0 + scrollLeft,
+							height: $window.height(),
+							width: $window.width()
+						};
+					} else {
+						cont = $(opt.containment);
+					}
+					if (cont && cont.length > 0) {
+						contRect = cont.rect();
+					}
+					if (contRect) {
 						if (negative) {
 							while (newElemOffset[side] < contRect[side]) {
 								newElemOffset[side] += step;
@@ -3051,6 +3296,84 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		remove: remove$1
 	});
 	$.fn.resizable.defaults = resizableDefaults;
+
+	var selectableClass = "ff-selectable";
+
+	// Defines default options for the selectable plugin.
+	var selectableDefaults = {
+		// Indicates whether multiple items can be selected. Default: false.
+		multi: false,
+
+		// Indicates whether a single click toggles the selection of an item. Default: false.
+		toggle: false
+	};
+
+	// Makes the child elements in each selected element selectable.
+	function selectable(options) {
+		return this.each(function () {
+			var elem = this;
+			var $elem = $(elem);
+			if ($elem.hasClass(selectableClass)) return; // Already done
+			$elem.addClass(selectableClass);
+			var opt = initOptions("selectable", selectableDefaults, $elem, {}, options);
+			opt._prepareChild = prepareChild;
+
+			$elem.children().each(prepareChild);
+
+			function prepareChild() {
+				var child = $(this);
+				child.click(function (event) {
+					event.preventDefault();
+					event.stopPropagation();
+					var ctrlKey = !!event.originalEvent.ctrlKey;
+					if (!opt.multi) ctrlKey = false;
+					if (opt.toggle) ctrlKey = true;
+					var changed = false;
+					if (ctrlKey) {
+						child.toggleClass("selected");
+						changed = true;
+					} else {
+						if (!child.hasClass("selected")) {
+							$elem.children().removeClass("selected");
+							child.addClass("selected");
+							changed = true;
+						}
+					}
+					if (changed) {
+						$elem.trigger("selectionchange");
+					}
+				});
+			}
+		});
+	}
+
+	// Notifies the selectable plugin about a new child that needs to be initialized.
+	function addChild(child) {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._prepareChild.call(child);
+	}
+
+	// Notifies the selectable plugin about a removed child that may affect the selection.
+	function removeChild(child) {
+		var selectable = $(this);
+		if (child.hasClass("selected")) {
+			selectable.trigger("selectionchange");
+		}
+	}
+
+	// Returns the currently selected elements.
+	function getSelection() {
+		var selectable = $(this);
+		return selectable.children(".selected");
+	}
+
+	registerPlugin("selectable", selectable, {
+		addChild: addChild,
+		removeChild: removeChild,
+		getSelection: getSelection
+	});
+	$.fn.selectable.defaults = selectableDefaults;
 
 	var rangeClass = "ff-range";
 	var ticksClass = "ff-ticks";
@@ -3541,7 +3864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var sortableClass = "ff-sortable";
 	var sortablePlaceholderClass = "ff-sortable-placeholder";
 
-	// Defines default options for the draggable plugin.
+	// Defines default options for the sortable plugin.
 	var sortableDefaults = {
 		// The element(s) that can start a drag operation. Default: The element to drag.
 		handle: undefined,
@@ -3593,7 +3916,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function prepareChild() {
 				var child = $(this);
-				var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren;
+				var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren, initialChildIndex;
 				var stack = opt.stack;
 				if (stack === true) stack = $elem.children();
 
@@ -3619,6 +3942,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					// Remember where the element was before it was dragged, so it can be moved back there
 					initialChildAfterElement = child.prev();
 					if (initialChildAfterElement.length === 0) initialChildAfterElement = null;
+					initialChildIndex = child.index();
 
 					var rect = child.rect();
 
@@ -3731,6 +4055,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 
 					var event2 = $.Event("sortableend");
+					event2.initialIndex = initialChildIndex;
+					event2.newIndex = child.index();
 					event2.after = placeholderAfterElement;
 					child.trigger(event2);
 					if (event2.isDefaultPrevented()) {
@@ -3843,14 +4169,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	}
 
-	function addChild(child) {
+	// Notifies the sortable plugin about a new child that needs to be initialized.
+	function addChild$1(child) {
 		var sortable = $(this);
 		var opt = loadOptions("sortable", sortable);
 		opt._prepareChild.call(child);
 	}
 
 	registerPlugin("sortable", sortable, {
-		addChild: addChild
+		addChild: addChild$1
 	});
 	$.fn.sortable.defaults = sortableDefaults;
 
@@ -3956,12 +4283,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// TODO: dropdown
 		this.find(prefix + "input[type=number]").spinner();
 		this.find(prefix + "input[type=color]").colorPicker();
+		// type=color has serious restrictions on acceptable values, ff-color is a workaround
+		this.find(prefix + "input[type=ff-color]").colorPicker();
 		this.find(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
 		this.find(prefix + "input[type=checkbox].three-state").threeState();
 		this.find(prefix + "textarea.auto-height").autoHeight();
 		this.find(prefix + ".menu").menu();
 		this.find(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();
 		// TODO: modal
+		this.find(prefix + ".progressbar").progressbar();
 		this.find(prefix + ".slider").slider();
 		this.find(prefix + ".sortable").sortable();
 		this.find(prefix + ".tabs").tabs();

@@ -12,6 +12,12 @@
 			return new Color(value);
 
 		if (typeof value === "string") {
+			if (value === "") {
+				this.format = "CSS";
+				this.r = this.g = this.b = this.a = 0;
+				return;
+			}
+			
 			this.format = value.match(/^rgba?\(/) ? "CSS" : "HTML";
 
 			// Add "#" prefix if missing and the data is otherwise looking good (3/6/8 hex digits)
@@ -223,6 +229,13 @@
 	};
 
 	// TODO: Add functions to (de)saturate the color (similar to lighten and darken?)
+
+	// Returns a color with a changed alpha value between 0 (transparent) and 1 (opaque).
+	Color_prototype.alpha = function (alpha) {
+		return processColor(this, true, function () {
+			this.a = keep1(alpha);
+		});
+	};
 
 	// Returns the grayscale color by perceived brightness.
 	Color_prototype.gray = function () {

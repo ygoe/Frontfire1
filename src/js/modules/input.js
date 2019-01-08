@@ -50,7 +50,7 @@ function spinner() {
 
 		// Put a wrapper between the input and its parent
 		var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
-		input.replaceWith(wrapper).appendTo(wrapper);   // TODO: replaceWith removes the input. Choose an option that uses detach() instead
+		input.before(wrapper).appendTo(wrapper);
 		input.attr("autocomplete", "off");
 
 		// Add control buttons
@@ -63,10 +63,18 @@ function spinner() {
 			var min = input.attr("min");
 			var max = input.attr("max");
 			var stepBase = min !== undefined ? parseFloat(min) : 0;
-			var step = parseFloat(input.attr("step") || 1);
-			value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
-			if (min !== undefined && value < parseFloat(min)) value = min;
-			while (max !== undefined && value > parseFloat(max)) value -= step;
+			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+			if (match) {
+				let factor = parseFloat(match[1]) || 10;
+				if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max))
+					value /= factor;
+			}
+			else {
+				var step = parseFloat(input.attr("step")) || 1;
+				value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
+				if (min !== undefined && value < parseFloat(min)) value = min;
+				while (max !== undefined && value > parseFloat(max)) value -= step;
+			}
 			input.val(value);
 			input.change();
 		});
@@ -79,10 +87,18 @@ function spinner() {
 			var min = input.attr("min");
 			var max = input.attr("max");
 			var stepBase = min !== undefined ? parseFloat(min) : 0;
-			var step = parseFloat(input.attr("step") || 1);
-			value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase;   // Set to next-greater valid step
-			if (min !== undefined && value < parseFloat(min)) value = min;
-			while (max !== undefined && value > parseFloat(max)) value -= step;
+			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+			if (match) {
+				let factor = parseFloat(match[1]) || 10;
+				if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max))
+					value *= factor;
+			}
+			else {
+				var step = parseFloat(input.attr("step")) || 1;
+				value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase;   // Set to next-greater valid step
+				if (min !== undefined && value < parseFloat(min)) value = min;
+				while (max !== undefined && value > parseFloat(max)) value -= step;
+			}
 			input.val(value);
 			input.change();
 		});
@@ -100,10 +116,11 @@ function colorPicker() {
 		if (input.parent().hasClass(inputWrapperClass)) return;   // Already done
 		var lastColor;
 
+		input.attr("type", "text").attr("autocomplete", "off");
+
 		// Put a wrapper between the input and its parent
 		var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
-		input.replaceWith(wrapper).appendTo(wrapper);   // TODO: replaceWith removes the input. Choose an option that uses detach() instead
-		input.attr("type", "text").attr("autocomplete", "off");
+		input.before(wrapper).appendTo(wrapper);
 
 		// Create picker dropdown
 		var dropdown = $("<div/>").addClass("dropdown bordered ff-colorpicker");
@@ -228,7 +245,8 @@ function colorPicker() {
 		bindInputButtonsDisabled(input, buttons);
 
 		function setColor(color, toInput) {
-			if (toInput) input.val(color);
+			if (toInput && input.val() != color)
+				input.val(color).change();
 			colorBox.css("background", color);
 			colorBox.css("color", Color(color).text());
 		}
@@ -295,7 +313,7 @@ function autoHeight(minRows, maxRows, extraRows) {
 		// the wrapper as well. The textarea is set to fill the container, and the shadow
 		// element provides the size for the wrapper.
 		var wrapper = $("<div/>").addClass(textareaWrapperClass).attr("style", textarea.attr("style"));
-		textarea.replaceWith(wrapper).appendTo(wrapper);   // TODO: replaceWith removes the input. Choose an option that uses detach() instead
+		textarea.before(wrapper).appendTo(wrapper);
 		var shadowContent = $("<div/>").appendTo(wrapper);
 
 		var outerHeightOffset = textarea.outerHeight() - textarea.height();

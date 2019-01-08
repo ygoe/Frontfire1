@@ -397,7 +397,7 @@ html.reset-all-cursors * {
   cursor: inherit !important; }
 
 html:not(.simple-dimmer) > body.ff-dimming > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim) {
-  transition: filter 0.4s ease-out; }
+  transition: filter 0.25s ease-out; }
 
 html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim) {
   filter: blur(2px) grayscale(0.5); }
@@ -409,7 +409,7 @@ html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimm
   right: 0;
   bottom: 0;
   left: 0;
-  background: rgba(64, 64, 64, 0.5);
+  background: rgba(64, 64, 64, 0.25);
   -webkit-tap-highlight-color: transparent;
   opacity: 0;
   transition: opacity 0.4s ease-out;
@@ -449,6 +449,10 @@ html.center {
   @media (max-width: 930px) {
     html.center {
       overflow-y: inherit; } }
+
+.dark {
+  background: #303030;
+  color: #f0f0f0; }
 
 html,
 body,
@@ -525,17 +529,29 @@ a {
   text-decoration: none; }
   a:hover {
     color: #1d40a6; }
+  .dark a {
+    color: #91acff;
+    text-decoration: none; }
+    .dark a:hover {
+      color: #a7bdff; }
 
 table {
   border: 1px solid #d8d8d8;
   border-collapse: collapse; }
+  .dark table {
+    border-color: #585858; }
   table th,
   table td {
     border: 1px solid #d8d8d8;
     padding: 3px 6px; }
+    .dark table th, .dark
+    table td {
+      border-color: #585858; }
   table th {
     background: #f4f4f4;
     text-align: left; }
+    .dark table th {
+      background: #303030; }
   table.compact th,
   table.compact td {
     border: none;
@@ -608,10 +624,14 @@ hr {
   border-top: 1px solid #d8d8d8; }
   hr.wide {
     margin: 2rem 0; }
+  .dark hr {
+    border-top-color: #585858; }
 
 code {
   background: #eeeeee;
   padding: 0 2px; }
+  .dark code {
+    background: #484848; }
 
 kbd {
   display: inline-block;
@@ -1172,6 +1192,8 @@ form {
     margin-top: 0px; }
   .form-row .label[disabled] {
     color: #a0a0a0; }
+    .dark .form-row .label[disabled] {
+      color: #a0a0a0; }
   .form-row label {
     justify-self: start;
     align-self: center; }
@@ -1208,9 +1230,13 @@ label {
   transition: color 0.2s ease; }
   label[disabled] {
     color: #a0a0a0; }
+    .dark label[disabled] {
+      color: #a0a0a0; }
 
 .field-validation-error {
   color: #ff0000; }
+  .dark .field-validation-error {
+    color: #ff0000; }
 
 input:not([type]), input[type^=date], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], textarea, select {
   border: 1px solid #cccccc;
@@ -1220,14 +1246,26 @@ input:not([type]), input[type^=date], input[type=email], input[type=month], inpu
   padding: 4px 8px;
   box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
   transition: border 0.2s ease, color 0.2s ease; }
+  .dark input:not([type]), .dark input[type^=date], .dark input[type=email], .dark input[type=month], .dark input[type=number], .dark input[type=password], .dark input[type=search], .dark input[type=tel], .dark input[type=text], .dark input[type=time], .dark input[type=url], .dark input[type=week], .dark textarea, .dark select {
+    border-color: #707070;
+    background: #303030;
+    color: #f0f0f0;
+    box-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px inset; }
   input:not([type]):hover:not(:disabled), input:not([type]):focus:not(:disabled), input[type^=date]:hover:not(:disabled), input[type^=date]:focus:not(:disabled), input[type=email]:hover:not(:disabled), input[type=email]:focus:not(:disabled), input[type=month]:hover:not(:disabled), input[type=month]:focus:not(:disabled), input[type=number]:hover:not(:disabled), input[type=number]:focus:not(:disabled), input[type=password]:hover:not(:disabled), input[type=password]:focus:not(:disabled), input[type=search]:hover:not(:disabled), input[type=search]:focus:not(:disabled), input[type=tel]:hover:not(:disabled), input[type=tel]:focus:not(:disabled), input[type=text]:hover:not(:disabled), input[type=text]:focus:not(:disabled), input[type=time]:hover:not(:disabled), input[type=time]:focus:not(:disabled), input[type=url]:hover:not(:disabled), input[type=url]:focus:not(:disabled), input[type=week]:hover:not(:disabled), input[type=week]:focus:not(:disabled), textarea:hover:not(:disabled), textarea:focus:not(:disabled), select:hover:not(:disabled), select:focus:not(:disabled) {
     border-color: #999999;
     outline: none; }
+    .dark input:not([type]):hover:not(:disabled), .dark input:not([type]):focus:not(:disabled), .dark input[type^=date]:hover:not(:disabled), .dark input[type^=date]:focus:not(:disabled), .dark input[type=email]:hover:not(:disabled), .dark input[type=email]:focus:not(:disabled), .dark input[type=month]:hover:not(:disabled), .dark input[type=month]:focus:not(:disabled), .dark input[type=number]:hover:not(:disabled), .dark input[type=number]:focus:not(:disabled), .dark input[type=password]:hover:not(:disabled), .dark input[type=password]:focus:not(:disabled), .dark input[type=search]:hover:not(:disabled), .dark input[type=search]:focus:not(:disabled), .dark input[type=tel]:hover:not(:disabled), .dark input[type=tel]:focus:not(:disabled), .dark input[type=text]:hover:not(:disabled), .dark input[type=text]:focus:not(:disabled), .dark input[type=time]:hover:not(:disabled), .dark input[type=time]:focus:not(:disabled), .dark input[type=url]:hover:not(:disabled), .dark input[type=url]:focus:not(:disabled), .dark input[type=week]:hover:not(:disabled), .dark input[type=week]:focus:not(:disabled), .dark textarea:hover:not(:disabled), .dark textarea:focus:not(:disabled), .dark select:hover:not(:disabled), .dark select:focus:not(:disabled) {
+      border-color: #999999; }
     input:not([type]):hover:not(:disabled).input-validation-error, input:not([type]):focus:not(:disabled).input-validation-error, input[type^=date]:hover:not(:disabled).input-validation-error, input[type^=date]:focus:not(:disabled).input-validation-error, input[type=email]:hover:not(:disabled).input-validation-error, input[type=email]:focus:not(:disabled).input-validation-error, input[type=month]:hover:not(:disabled).input-validation-error, input[type=month]:focus:not(:disabled).input-validation-error, input[type=number]:hover:not(:disabled).input-validation-error, input[type=number]:focus:not(:disabled).input-validation-error, input[type=password]:hover:not(:disabled).input-validation-error, input[type=password]:focus:not(:disabled).input-validation-error, input[type=search]:hover:not(:disabled).input-validation-error, input[type=search]:focus:not(:disabled).input-validation-error, input[type=tel]:hover:not(:disabled).input-validation-error, input[type=tel]:focus:not(:disabled).input-validation-error, input[type=text]:hover:not(:disabled).input-validation-error, input[type=text]:focus:not(:disabled).input-validation-error, input[type=time]:hover:not(:disabled).input-validation-error, input[type=time]:focus:not(:disabled).input-validation-error, input[type=url]:hover:not(:disabled).input-validation-error, input[type=url]:focus:not(:disabled).input-validation-error, input[type=week]:hover:not(:disabled).input-validation-error, input[type=week]:focus:not(:disabled).input-validation-error, textarea:hover:not(:disabled).input-validation-error, textarea:focus:not(:disabled).input-validation-error, select:hover:not(:disabled).input-validation-error, select:focus:not(:disabled).input-validation-error {
       border-color: #cc4d4d; }
+      .dark input:not([type]):hover:not(:disabled).input-validation-error, .dark input:not([type]):focus:not(:disabled).input-validation-error, .dark input[type^=date]:hover:not(:disabled).input-validation-error, .dark input[type^=date]:focus:not(:disabled).input-validation-error, .dark input[type=email]:hover:not(:disabled).input-validation-error, .dark input[type=email]:focus:not(:disabled).input-validation-error, .dark input[type=month]:hover:not(:disabled).input-validation-error, .dark input[type=month]:focus:not(:disabled).input-validation-error, .dark input[type=number]:hover:not(:disabled).input-validation-error, .dark input[type=number]:focus:not(:disabled).input-validation-error, .dark input[type=password]:hover:not(:disabled).input-validation-error, .dark input[type=password]:focus:not(:disabled).input-validation-error, .dark input[type=search]:hover:not(:disabled).input-validation-error, .dark input[type=search]:focus:not(:disabled).input-validation-error, .dark input[type=tel]:hover:not(:disabled).input-validation-error, .dark input[type=tel]:focus:not(:disabled).input-validation-error, .dark input[type=text]:hover:not(:disabled).input-validation-error, .dark input[type=text]:focus:not(:disabled).input-validation-error, .dark input[type=time]:hover:not(:disabled).input-validation-error, .dark input[type=time]:focus:not(:disabled).input-validation-error, .dark input[type=url]:hover:not(:disabled).input-validation-error, .dark input[type=url]:focus:not(:disabled).input-validation-error, .dark input[type=week]:hover:not(:disabled).input-validation-error, .dark input[type=week]:focus:not(:disabled).input-validation-error, .dark textarea:hover:not(:disabled).input-validation-error, .dark textarea:focus:not(:disabled).input-validation-error, .dark select:hover:not(:disabled).input-validation-error, .dark select:focus:not(:disabled).input-validation-error {
+        border-color: #cc4d4d; }
   input:not([type]):disabled, input[type^=date]:disabled, input[type=email]:disabled, input[type=month]:disabled, input[type=number]:disabled, input[type=password]:disabled, input[type=search]:disabled, input[type=tel]:disabled, input[type=text]:disabled, input[type=time]:disabled, input[type=url]:disabled, input[type=week]:disabled, textarea:disabled, select:disabled {
     border-color: #e4e4e4;
     color: #a0a0a0; }
+    .dark input:not([type]):disabled, .dark input[type^=date]:disabled, .dark input[type=email]:disabled, .dark input[type=month]:disabled, .dark input[type=number]:disabled, .dark input[type=password]:disabled, .dark input[type=search]:disabled, .dark input[type=tel]:disabled, .dark input[type=text]:disabled, .dark input[type=time]:disabled, .dark input[type=url]:disabled, .dark input[type=week]:disabled, .dark textarea:disabled, .dark select:disabled {
+      border-color: #505050;
+      color: #808080; }
   input:not([type]):-ms-input-placeholder, input[type^=date]:-ms-input-placeholder, input[type=email]:-ms-input-placeholder, input[type=month]:-ms-input-placeholder, input[type=number]:-ms-input-placeholder, input[type=password]:-ms-input-placeholder, input[type=search]:-ms-input-placeholder, input[type=tel]:-ms-input-placeholder, input[type=text]:-ms-input-placeholder, input[type=time]:-ms-input-placeholder, input[type=url]:-ms-input-placeholder, input[type=week]:-ms-input-placeholder, textarea:-ms-input-placeholder, select:-ms-input-placeholder {
     font-style: italic;
     opacity: 0.33; }
@@ -1240,6 +1278,9 @@ input:not([type]), input[type^=date], input[type=email], input[type=month], inpu
   input:not([type]).input-validation-error, input[type^=date].input-validation-error, input[type=email].input-validation-error, input[type=month].input-validation-error, input[type=number].input-validation-error, input[type=password].input-validation-error, input[type=search].input-validation-error, input[type=tel].input-validation-error, input[type=text].input-validation-error, input[type=time].input-validation-error, input[type=url].input-validation-error, input[type=week].input-validation-error, textarea.input-validation-error, select.input-validation-error {
     border-color: #ff0000;
     background-color: #ffdddd; }
+    .dark input:not([type]).input-validation-error, .dark input[type^=date].input-validation-error, .dark input[type=email].input-validation-error, .dark input[type=month].input-validation-error, .dark input[type=number].input-validation-error, .dark input[type=password].input-validation-error, .dark input[type=search].input-validation-error, .dark input[type=tel].input-validation-error, .dark input[type=text].input-validation-error, .dark input[type=time].input-validation-error, .dark input[type=url].input-validation-error, .dark input[type=week].input-validation-error, .dark textarea.input-validation-error, .dark select.input-validation-error {
+      border-color: #ff0000;
+      background-color: #ffdddd; }
   input:not([type]).no-border, input[type^=date].no-border, input[type=email].no-border, input[type=month].no-border, input[type=number].no-border, input[type=password].no-border, input[type=search].no-border, input[type=tel].no-border, input[type=text].no-border, input[type=time].no-border, input[type=url].no-border, input[type=week].no-border, textarea.no-border, select.no-border {
     border: none;
     box-shadow: none;
@@ -1295,8 +1336,18 @@ input[type=number] {
       border-left: 1px solid #cccccc; }
     .segmented-input > .label:last-child {
       border-right: 1px solid #cccccc; }
+    .dark .segmented-input > .label {
+      border-top-color: #707070;
+      border-bottom-color: #707070;
+      background: #454545; }
+      .dark .segmented-input > .label:first-child {
+        border-left-color: #707070; }
+      .dark .segmented-input > .label:last-child {
+        border-right-color: #707070; }
   .segmented-input[disabled] > .label {
     border-color: #e4e4e4; }
+    .dark .segmented-input[disabled] > .label {
+      border-color: #505050; }
   .segmented-input.icon-left > i:empty, .segmented-input.icon-right > i:empty {
     z-index: 10;
     width: 25px;
@@ -1331,6 +1382,12 @@ a.button {
   line-height: 20px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border 0.2s ease; }
+  .dark button, .dark input[type=button], .dark input[type=color], .dark input[type=image], .dark input[type=reset], .dark input[type=submit], .dark
+  div.buttons a, .dark
+  span.buttons a, .dark
+  a.button {
+    background: #606060;
+    color: #f0f0f0; }
   button:hover:not(:disabled), button:focus:not(:disabled), input[type=button]:hover:not(:disabled), input[type=button]:focus:not(:disabled), input[type=color]:hover:not(:disabled), input[type=color]:focus:not(:disabled), input[type=image]:hover:not(:disabled), input[type=image]:focus:not(:disabled), input[type=reset]:hover:not(:disabled), input[type=reset]:focus:not(:disabled), input[type=submit]:hover:not(:disabled), input[type=submit]:focus:not(:disabled),
   div.buttons a:hover:not(:disabled),
   div.buttons a:focus:not(:disabled),
@@ -1341,6 +1398,14 @@ a.button {
     background: #c7c7c7;
     transition: background 0s;
     outline: none; }
+    .dark button:hover:not(:disabled), .dark button:focus:not(:disabled), .dark input[type=button]:hover:not(:disabled), .dark input[type=button]:focus:not(:disabled), .dark input[type=color]:hover:not(:disabled), .dark input[type=color]:focus:not(:disabled), .dark input[type=image]:hover:not(:disabled), .dark input[type=image]:focus:not(:disabled), .dark input[type=reset]:hover:not(:disabled), .dark input[type=reset]:focus:not(:disabled), .dark input[type=submit]:hover:not(:disabled), .dark input[type=submit]:focus:not(:disabled), .dark
+    div.buttons a:hover:not(:disabled), .dark
+    div.buttons a:focus:not(:disabled), .dark
+    span.buttons a:hover:not(:disabled), .dark
+    span.buttons a:focus:not(:disabled), .dark
+    a.button:hover:not(:disabled), .dark
+    a.button:focus:not(:disabled) {
+      background: #737373; }
   button:active:not(:disabled), input[type=button]:active:not(:disabled), input[type=color]:active:not(:disabled), input[type=image]:active:not(:disabled), input[type=reset]:active:not(:disabled), input[type=submit]:active:not(:disabled),
   div.buttons a:active:not(:disabled),
   span.buttons a:active:not(:disabled),
@@ -1348,6 +1413,12 @@ a.button {
     background: #adadad;
     transition: background 0s;
     color: #000000; }
+    .dark button:active:not(:disabled), .dark input[type=button]:active:not(:disabled), .dark input[type=color]:active:not(:disabled), .dark input[type=image]:active:not(:disabled), .dark input[type=reset]:active:not(:disabled), .dark input[type=submit]:active:not(:disabled), .dark
+    div.buttons a:active:not(:disabled), .dark
+    span.buttons a:active:not(:disabled), .dark
+    a.button:active:not(:disabled) {
+      background: #888888;
+      color: #f0f0f0; }
   button:disabled, input[type=button]:disabled, input[type=color]:disabled, input[type=image]:disabled, input[type=reset]:disabled, input[type=submit]:disabled,
   div.buttons a:disabled,
   span.buttons a:disabled,
@@ -1355,12 +1426,24 @@ a.button {
     background: #e4e4e4;
     color: #808080;
     cursor: default; }
+    .dark button:disabled, .dark input[type=button]:disabled, .dark input[type=color]:disabled, .dark input[type=image]:disabled, .dark input[type=reset]:disabled, .dark input[type=submit]:disabled, .dark
+    div.buttons a:disabled, .dark
+    span.buttons a:disabled, .dark
+    a.button:disabled {
+      background: #3e3e3e;
+      color: #a0a0a0; }
   button.default:not(:disabled), input[type=button].default:not(:disabled), input[type=color].default:not(:disabled), input[type=image].default:not(:disabled), input[type=reset].default:not(:disabled), input[type=submit].default:not(:disabled),
   div.buttons a.default:not(:disabled),
   span.buttons a.default:not(:disabled),
   a.button.default:not(:disabled) {
     background: #2755dd;
     color: #ffffff; }
+    .dark button.default:not(:disabled), .dark input[type=button].default:not(:disabled), .dark input[type=color].default:not(:disabled), .dark input[type=image].default:not(:disabled), .dark input[type=reset].default:not(:disabled), .dark input[type=submit].default:not(:disabled), .dark
+    div.buttons a.default:not(:disabled), .dark
+    span.buttons a.default:not(:disabled), .dark
+    a.button.default:not(:disabled) {
+      background: #2755dd;
+      color: #ffffff; }
     button.default:not(:disabled):hover, button.default:not(:disabled):focus, input[type=button].default:not(:disabled):hover, input[type=button].default:not(:disabled):focus, input[type=color].default:not(:disabled):hover, input[type=color].default:not(:disabled):focus, input[type=image].default:not(:disabled):hover, input[type=image].default:not(:disabled):focus, input[type=reset].default:not(:disabled):hover, input[type=reset].default:not(:disabled):focus, input[type=submit].default:not(:disabled):hover, input[type=submit].default:not(:disabled):focus,
     div.buttons a.default:not(:disabled):hover,
     div.buttons a.default:not(:disabled):focus,
@@ -1370,6 +1453,14 @@ a.button {
     a.button.default:not(:disabled):focus {
       background: #2148bc;
       transition: background 0s; }
+      .dark button.default:not(:disabled):hover, .dark button.default:not(:disabled):focus, .dark input[type=button].default:not(:disabled):hover, .dark input[type=button].default:not(:disabled):focus, .dark input[type=color].default:not(:disabled):hover, .dark input[type=color].default:not(:disabled):focus, .dark input[type=image].default:not(:disabled):hover, .dark input[type=image].default:not(:disabled):focus, .dark input[type=reset].default:not(:disabled):hover, .dark input[type=reset].default:not(:disabled):focus, .dark input[type=submit].default:not(:disabled):hover, .dark input[type=submit].default:not(:disabled):focus, .dark
+      div.buttons a.default:not(:disabled):hover, .dark
+      div.buttons a.default:not(:disabled):focus, .dark
+      span.buttons a.default:not(:disabled):hover, .dark
+      span.buttons a.default:not(:disabled):focus, .dark
+      a.button.default:not(:disabled):hover, .dark
+      a.button.default:not(:disabled):focus {
+        background: #2148bc; }
     button.default:not(:disabled):active, input[type=button].default:not(:disabled):active, input[type=color].default:not(:disabled):active, input[type=image].default:not(:disabled):active, input[type=reset].default:not(:disabled):active, input[type=submit].default:not(:disabled):active,
     div.buttons a.default:not(:disabled):active,
     span.buttons a.default:not(:disabled):active,
@@ -1377,12 +1468,24 @@ a.button {
       background: #193790;
       transition: background 0s;
       color: #ffffff; }
+      .dark button.default:not(:disabled):active, .dark input[type=button].default:not(:disabled):active, .dark input[type=color].default:not(:disabled):active, .dark input[type=image].default:not(:disabled):active, .dark input[type=reset].default:not(:disabled):active, .dark input[type=submit].default:not(:disabled):active, .dark
+      div.buttons a.default:not(:disabled):active, .dark
+      span.buttons a.default:not(:disabled):active, .dark
+      a.button.default:not(:disabled):active {
+        background: #193790;
+        color: #ffffff; }
   button.caution:not(:disabled), input[type=button].caution:not(:disabled), input[type=color].caution:not(:disabled), input[type=image].caution:not(:disabled), input[type=reset].caution:not(:disabled), input[type=submit].caution:not(:disabled),
   div.buttons a.caution:not(:disabled),
   span.buttons a.caution:not(:disabled),
   a.button.caution:not(:disabled) {
     background: #c44818;
     color: #ffffff; }
+    .dark button.caution:not(:disabled), .dark input[type=button].caution:not(:disabled), .dark input[type=color].caution:not(:disabled), .dark input[type=image].caution:not(:disabled), .dark input[type=reset].caution:not(:disabled), .dark input[type=submit].caution:not(:disabled), .dark
+    div.buttons a.caution:not(:disabled), .dark
+    span.buttons a.caution:not(:disabled), .dark
+    a.button.caution:not(:disabled) {
+      background: #c44818;
+      color: #ffffff; }
     button.caution:not(:disabled):hover, button.caution:not(:disabled):focus, input[type=button].caution:not(:disabled):hover, input[type=button].caution:not(:disabled):focus, input[type=color].caution:not(:disabled):hover, input[type=color].caution:not(:disabled):focus, input[type=image].caution:not(:disabled):hover, input[type=image].caution:not(:disabled):focus, input[type=reset].caution:not(:disabled):hover, input[type=reset].caution:not(:disabled):focus, input[type=submit].caution:not(:disabled):hover, input[type=submit].caution:not(:disabled):focus,
     div.buttons a.caution:not(:disabled):hover,
     div.buttons a.caution:not(:disabled):focus,
@@ -1392,6 +1495,14 @@ a.button {
     a.button.caution:not(:disabled):focus {
       background: #b04116;
       transition: background 0s; }
+      .dark button.caution:not(:disabled):hover, .dark button.caution:not(:disabled):focus, .dark input[type=button].caution:not(:disabled):hover, .dark input[type=button].caution:not(:disabled):focus, .dark input[type=color].caution:not(:disabled):hover, .dark input[type=color].caution:not(:disabled):focus, .dark input[type=image].caution:not(:disabled):hover, .dark input[type=image].caution:not(:disabled):focus, .dark input[type=reset].caution:not(:disabled):hover, .dark input[type=reset].caution:not(:disabled):focus, .dark input[type=submit].caution:not(:disabled):hover, .dark input[type=submit].caution:not(:disabled):focus, .dark
+      div.buttons a.caution:not(:disabled):hover, .dark
+      div.buttons a.caution:not(:disabled):focus, .dark
+      span.buttons a.caution:not(:disabled):hover, .dark
+      span.buttons a.caution:not(:disabled):focus, .dark
+      a.button.caution:not(:disabled):hover, .dark
+      a.button.caution:not(:disabled):focus {
+        background: #b04116; }
     button.caution:not(:disabled):active, input[type=button].caution:not(:disabled):active, input[type=color].caution:not(:disabled):active, input[type=image].caution:not(:disabled):active, input[type=reset].caution:not(:disabled):active, input[type=submit].caution:not(:disabled):active,
     div.buttons a.caution:not(:disabled):active,
     span.buttons a.caution:not(:disabled):active,
@@ -1399,12 +1510,24 @@ a.button {
       background: #893211;
       transition: background 0s;
       color: #ffffff; }
+      .dark button.caution:not(:disabled):active, .dark input[type=button].caution:not(:disabled):active, .dark input[type=color].caution:not(:disabled):active, .dark input[type=image].caution:not(:disabled):active, .dark input[type=reset].caution:not(:disabled):active, .dark input[type=submit].caution:not(:disabled):active, .dark
+      div.buttons a.caution:not(:disabled):active, .dark
+      span.buttons a.caution:not(:disabled):active, .dark
+      a.button.caution:not(:disabled):active {
+        background: #893211;
+        color: #ffffff; }
   button.transparent:not(:disabled), input[type=button].transparent:not(:disabled), input[type=color].transparent:not(:disabled), input[type=image].transparent:not(:disabled), input[type=reset].transparent:not(:disabled), input[type=submit].transparent:not(:disabled),
   div.buttons a.transparent:not(:disabled),
   span.buttons a.transparent:not(:disabled),
   a.button.transparent:not(:disabled) {
     background: transparent;
     color: #2755dd; }
+    .dark button.transparent:not(:disabled), .dark input[type=button].transparent:not(:disabled), .dark input[type=color].transparent:not(:disabled), .dark input[type=image].transparent:not(:disabled), .dark input[type=reset].transparent:not(:disabled), .dark input[type=submit].transparent:not(:disabled), .dark
+    div.buttons a.transparent:not(:disabled), .dark
+    span.buttons a.transparent:not(:disabled), .dark
+    a.button.transparent:not(:disabled) {
+      background: transparent;
+      color: #91acff; }
     button.transparent:not(:disabled):hover, button.transparent:not(:disabled):focus, input[type=button].transparent:not(:disabled):hover, input[type=button].transparent:not(:disabled):focus, input[type=color].transparent:not(:disabled):hover, input[type=color].transparent:not(:disabled):focus, input[type=image].transparent:not(:disabled):hover, input[type=image].transparent:not(:disabled):focus, input[type=reset].transparent:not(:disabled):hover, input[type=reset].transparent:not(:disabled):focus, input[type=submit].transparent:not(:disabled):hover, input[type=submit].transparent:not(:disabled):focus,
     div.buttons a.transparent:not(:disabled):hover,
     div.buttons a.transparent:not(:disabled):focus,
@@ -1414,6 +1537,14 @@ a.button {
     a.button.transparent:not(:disabled):focus {
       background: rgba(0, 0, 0, 0.07);
       transition: background 0s; }
+      .dark button.transparent:not(:disabled):hover, .dark button.transparent:not(:disabled):focus, .dark input[type=button].transparent:not(:disabled):hover, .dark input[type=button].transparent:not(:disabled):focus, .dark input[type=color].transparent:not(:disabled):hover, .dark input[type=color].transparent:not(:disabled):focus, .dark input[type=image].transparent:not(:disabled):hover, .dark input[type=image].transparent:not(:disabled):focus, .dark input[type=reset].transparent:not(:disabled):hover, .dark input[type=reset].transparent:not(:disabled):focus, .dark input[type=submit].transparent:not(:disabled):hover, .dark input[type=submit].transparent:not(:disabled):focus, .dark
+      div.buttons a.transparent:not(:disabled):hover, .dark
+      div.buttons a.transparent:not(:disabled):focus, .dark
+      span.buttons a.transparent:not(:disabled):hover, .dark
+      span.buttons a.transparent:not(:disabled):focus, .dark
+      a.button.transparent:not(:disabled):hover, .dark
+      a.button.transparent:not(:disabled):focus {
+        background: rgba(0, 0, 0, 0.07); }
     button.transparent:not(:disabled):active, input[type=button].transparent:not(:disabled):active, input[type=color].transparent:not(:disabled):active, input[type=image].transparent:not(:disabled):active, input[type=reset].transparent:not(:disabled):active, input[type=submit].transparent:not(:disabled):active,
     div.buttons a.transparent:not(:disabled):active,
     span.buttons a.transparent:not(:disabled):active,
@@ -1421,12 +1552,24 @@ a.button {
       background: #adadad;
       transition: background 0s;
       color: #000000; }
+      .dark button.transparent:not(:disabled):active, .dark input[type=button].transparent:not(:disabled):active, .dark input[type=color].transparent:not(:disabled):active, .dark input[type=image].transparent:not(:disabled):active, .dark input[type=reset].transparent:not(:disabled):active, .dark input[type=submit].transparent:not(:disabled):active, .dark
+      div.buttons a.transparent:not(:disabled):active, .dark
+      span.buttons a.transparent:not(:disabled):active, .dark
+      a.button.transparent:not(:disabled):active {
+        background: #888888;
+        color: #f0f0f0; }
   button.transparent:disabled, input[type=button].transparent:disabled, input[type=color].transparent:disabled, input[type=image].transparent:disabled, input[type=reset].transparent:disabled, input[type=submit].transparent:disabled,
   div.buttons a.transparent:disabled,
   span.buttons a.transparent:disabled,
   a.button.transparent:disabled {
     background: transparent;
     color: #808080; }
+    .dark button.transparent:disabled, .dark input[type=button].transparent:disabled, .dark input[type=color].transparent:disabled, .dark input[type=image].transparent:disabled, .dark input[type=reset].transparent:disabled, .dark input[type=submit].transparent:disabled, .dark
+    div.buttons a.transparent:disabled, .dark
+    span.buttons a.transparent:disabled, .dark
+    a.button.transparent:disabled {
+      background: transparent;
+      color: #a0a0a0; }
   .ff-input-wrapper button, button.narrow, .ff-input-wrapper input[type=button], input[type=button].narrow, .ff-input-wrapper input[type=color], input[type=color].narrow, .ff-input-wrapper input[type=image], input[type=image].narrow, .ff-input-wrapper input[type=reset], input[type=reset].narrow, .ff-input-wrapper input[type=submit], input[type=submit].narrow, .ff-input-wrapper
   div.buttons a,
   div.buttons a.narrow, .ff-input-wrapper
@@ -1468,9 +1611,15 @@ span.buttons {
 div.buttons.narrow button + button {
   margin-left: 0px;
   border-left: 1px solid #c7c7c7; }
+  .dark .ff-input-wrapper button + button, .dark
+  div.buttons.narrow button + button {
+    border-left-color: #737373; }
   .ff-input-wrapper button + button:disabled,
   div.buttons.narrow button + button:disabled {
     border-left-color: #dbdbdb; }
+    .dark .ff-input-wrapper button + button:disabled, .dark
+    div.buttons.narrow button + button:disabled {
+      border-left-color: #565656; }
 
 input[type=color] {
   height: 30px;
@@ -1527,9 +1676,16 @@ input[type=radio].ff-checkbox {
     box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
     position: relative;
     transition: border 0.2s ease, background 0.2s ease; }
+    .dark input[type=checkbox].ff-checkbox + span, .dark
+    input[type=radio].ff-checkbox + span {
+      border-color: #707070;
+      background: #303030; }
   input[type=checkbox].ff-checkbox:disabled + span,
   input[type=radio].ff-checkbox:disabled + span {
     border-color: #e4e4e4; }
+    .dark input[type=checkbox].ff-checkbox:disabled + span, .dark
+    input[type=radio].ff-checkbox:disabled + span {
+      border-color: #505050; }
   input[type=checkbox].ff-checkbox:hover:not(:disabled) + span,
   input[type=checkbox].ff-checkbox:focus:not(:disabled) + span,
   label:hover input[type=checkbox].ff-checkbox:not(:disabled) + span,
@@ -1539,6 +1695,14 @@ input[type=radio].ff-checkbox {
   input[type=radio].ff-checkbox:not(:disabled) + span {
     border-color: #999999;
     outline: none; }
+    .dark input[type=checkbox].ff-checkbox:hover:not(:disabled) + span, .dark
+    input[type=checkbox].ff-checkbox:focus:not(:disabled) + span, .dark
+    label:hover input[type=checkbox].ff-checkbox:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox:hover:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox:focus:not(:disabled) + span, .dark
+    label:hover
+    input[type=radio].ff-checkbox:not(:disabled) + span {
+      border-color: #999999; }
   input[type=checkbox].ff-checkbox.input-validation-error:hover:not(:disabled) + span,
   input[type=checkbox].ff-checkbox.input-validation-error:focus:not(:disabled) + span,
   label:hover input[type=checkbox].ff-checkbox.input-validation-error:not(:disabled) + span,
@@ -1547,6 +1711,14 @@ input[type=radio].ff-checkbox {
   label:hover
   input[type=radio].ff-checkbox.input-validation-error:not(:disabled) + span {
     border-color: #cc4d4d; }
+    .dark input[type=checkbox].ff-checkbox.input-validation-error:hover:not(:disabled) + span, .dark
+    input[type=checkbox].ff-checkbox.input-validation-error:focus:not(:disabled) + span, .dark
+    label:hover input[type=checkbox].ff-checkbox.input-validation-error:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox.input-validation-error:hover:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox.input-validation-error:focus:not(:disabled) + span, .dark
+    label:hover
+    input[type=radio].ff-checkbox.input-validation-error:not(:disabled) + span {
+      border-color: #cc4d4d; }
   input[type=checkbox].ff-checkbox:active:not(:disabled) + span,
   label:active input[type=checkbox].ff-checkbox:not(:disabled) + span,
   input[type=radio].ff-checkbox:active:not(:disabled) + span,
@@ -1555,6 +1727,13 @@ input[type=radio].ff-checkbox {
     border-color: #999999;
     background-color: #d8d8d8;
     transition: background 0s; }
+    .dark input[type=checkbox].ff-checkbox:active:not(:disabled) + span, .dark
+    label:active input[type=checkbox].ff-checkbox:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox:active:not(:disabled) + span, .dark
+    label:active
+    input[type=radio].ff-checkbox:not(:disabled) + span {
+      border-color: #999999;
+      background-color: #606060; }
   input[type=checkbox].ff-checkbox.input-validation-error:active:not(:disabled) + span,
   label:active input[type=checkbox].ff-checkbox.input-validation-error:not(:disabled) + span,
   input[type=radio].ff-checkbox.input-validation-error:active:not(:disabled) + span,
@@ -1562,6 +1741,13 @@ input[type=radio].ff-checkbox {
   input[type=radio].ff-checkbox.input-validation-error:not(:disabled) + span {
     border-color: #cc4d4d;
     background-color: #ecdbdb; }
+    .dark input[type=checkbox].ff-checkbox.input-validation-error:active:not(:disabled) + span, .dark
+    label:active input[type=checkbox].ff-checkbox.input-validation-error:not(:disabled) + span, .dark
+    input[type=radio].ff-checkbox.input-validation-error:active:not(:disabled) + span, .dark
+    label:active
+    input[type=radio].ff-checkbox.input-validation-error:not(:disabled) + span {
+      border-color: #cc4d4d;
+      background-color: #b09f9f; }
   input[type=checkbox].ff-checkbox:checked + span::before,
   input[type=radio].ff-checkbox:checked + span::before {
     content: '';
@@ -1574,6 +1760,9 @@ input[type=radio].ff-checkbox {
     background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==") no-repeat 50% 50%;
     opacity: 1;
     transition: opacity 0.2s ease; }
+    .dark input[type=checkbox].ff-checkbox:checked + span::before, .dark
+    input[type=radio].ff-checkbox:checked + span::before {
+      background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==") no-repeat 50% 50%; }
   input[type=checkbox].ff-checkbox:checked:disabled + span::before,
   input[type=radio].ff-checkbox:checked:disabled + span::before {
     opacity: 0.5; }
@@ -1595,6 +1784,10 @@ input[type=radio].ff-checkbox {
   input[type=radio].ff-checkbox.input-validation-error + span {
     border-color: #ff0000;
     background-color: #ffdddd; }
+    .dark input[type=checkbox].ff-checkbox.input-validation-error + span, .dark
+    input[type=radio].ff-checkbox.input-validation-error + span {
+      border-color: #ff0000;
+      background-color: #ffdddd; }
   label input[type=checkbox].ff-checkbox + span, label
   input[type=radio].ff-checkbox + span {
     margin-right: 4px; }
@@ -2299,5 +2492,68 @@ nav .menu {
   .expanded > .ff-accordion-content {
     transform: scaleY(1);
     opacity: 1; }
+
+.progressbar {
+  border: 1px solid #cccccc;
+  border-radius: 0;
+  background: #ffffff;
+  color: #000000;
+  padding: 1px;
+  cursor: default; }
+  .dark .progressbar {
+    border-color: #707070;
+    background: #303030;
+    color: #f0f0f0; }
+  .progressbar.inline {
+    display: inline-block;
+    vertical-align: bottom; }
+    .buttons .progressbar.inline {
+      margin-bottom: 6px; }
+  .progressbar .ff-bar {
+    background: #808080;
+    height: 16px;
+    position: relative;
+    color: white;
+    line-height: 16px;
+    font-size: 12px;
+    font-weight: bold;
+    transition: width 0.2s ease; }
+    .progressbar .ff-bar > span {
+      position: absolute;
+      right: 4px;
+      white-space: nowrap; }
+      .progressbar .ff-bar > span.outside {
+        right: inherit;
+        left: 100%;
+        left: calc(100% + 4px);
+        color: black; }
+  .progressbar.no-border {
+    border: none;
+    padding: 0;
+    background: #f4f4f4; }
+  .progressbar.success .ff-bar {
+    background: #6ec418; }
+  .progressbar.warning .ff-bar {
+    background: #dfb511; }
+  .progressbar.error .ff-bar {
+    background: #c44818; }
+  .progressbar.tiny .ff-bar {
+    height: 5px;
+    line-height: 5px; }
+    .progressbar.tiny .ff-bar > span {
+      display: none; }
+  .progressbar.small .ff-bar {
+    height: 9px;
+    line-height: 9px;
+    font-size: 8px; }
+  .progressbar.button .ff-bar {
+    height: 26px;
+    line-height: 26px; }
+  .progressbar.large .ff-bar {
+    height: 32px;
+    line-height: 32px; }
+  .progressbar.big .ff-bar {
+    height: 60px;
+    line-height: 60px; }
 
 /*# sourceMappingURL=frontfire.css.map */

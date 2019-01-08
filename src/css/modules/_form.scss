@@ -75,6 +75,10 @@ form
 	.form-row .label[disabled]
 	{
 		color: $disabledLabelColor;
+		.dark &
+		{
+			color: $darkDisabledLabelColor;
+		}
 	}
 	.form-row label   // to contain a checkbox or radiobox
 	{

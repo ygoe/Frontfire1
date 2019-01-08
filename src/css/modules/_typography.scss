@@ -2,6 +2,12 @@
 
 $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 
+.dark
+{
+	background: $darkBackground;
+	color: $darkTextColor;
+}
+
 // ========== Fonts ==========
 
 html,
@@ -108,6 +114,15 @@ a
 	{
 		color: $linkHoverColor;
 	}
+	.dark &
+	{
+		color: $darkLinkColor;
+		text-decoration: none;
+		&:hover
+		{
+			color: $darkLinkHoverColor;
+		}
+	}
 }
 
 // ========== Tables ==========
@@ -116,17 +131,29 @@ table
 {
 	border: 1px solid $tableGridColor;
 	border-collapse: collapse;
+	.dark &
+	{
+		border-color: $darkTableGridColor;
+	}
 
 	th,
 	td
 	{
 		border: 1px solid $tableGridColor;
 		padding: 3px 6px;
+		.dark &
+		{
+			border-color: $darkTableGridColor;
+		}
 	}
 	th
 	{
 		background: $tableHeaderBackground;
 		text-align: left;
+		.dark &
+		{
+			background: $darkTableHeaderBackground;
+		}
 	}
 
 	&.compact
@@ -254,12 +281,20 @@ hr
 	{
 		margin: 2rem 0;
 	}
+	.dark &
+	{
+		border-top-color: $darkTableGridColor;
+	}
 }
 
 code
 {
 	background: #eeeeee;
 	padding: 0 2px;
+	.dark &
+	{
+		background: #484848;
+	}
 }
 
 kbd

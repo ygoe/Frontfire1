@@ -1,0 +1,97 @@
+@import "../settings";
+
+.progressbar
+{
+	border: 1px solid $textboxBorder;
+	border-radius: 0;
+	background: $textboxBackground;
+	color: $textboxColor;
+	padding: 1px;
+	cursor: default;
+	.dark &
+	{
+		border-color: $darkTextboxBorder;
+		background: $darkTextboxBackground;
+		color: $darkTextboxColor;
+	}
+	&.inline
+	{
+		display: inline-block;
+		vertical-align: bottom;
+		.buttons &
+		{
+			// line-height is set to 42px, so we need to compensate this for bottom alignment
+			margin-bottom: 6px;
+		}
+	}
+	
+	.ff-bar
+	{
+		background: $progressColor;
+		height: 16px;
+		position: relative;
+		color: white;
+		line-height: 16px;
+		font-size: 12px;
+		font-weight: bold;
+		transition: width $animationDuration $animationFunction;
+		
+		> span
+		{
+			position: absolute;
+			right: 4px;
+			white-space: nowrap;
+			
+			&.outside
+			{
+				right: inherit;
+				left: 100%;
+				left: calc(100% + 4px);
+				color: black;
+			}
+		}
+	}
+	
+	&.no-border
+	{
+		border: none;
+		padding: 0;
+		background: $progressNoBorderBackground;
+	}
+
+	// Order of increasing severity to let that override the lower classes if multiple are applied
+	&.success .ff-bar { background: $progressSuccessColor; }
+	&.warning .ff-bar { background: $progressWarningColor; }
+	&.error .ff-bar { background: $progressErrorColor; }
+	
+	&.tiny .ff-bar
+	{
+		height: 5px;
+		line-height: 5px;
+		> span
+		{
+			display: none;
+		}
+	}
+	&.small .ff-bar
+	{
+		height: 9px;
+		line-height: 9px;
+		font-size: 8px;
+	}
+	&.button .ff-bar
+	{
+		height: 26px;
+		line-height: 26px;
+	}
+	&.large .ff-bar
+	{
+		height: 32px;
+		line-height: 32px;
+	}
+	&.big .ff-bar
+	{
+		height: 60px;
+		line-height: 60px;
+	}
+}

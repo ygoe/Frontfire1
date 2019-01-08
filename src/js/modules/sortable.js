@@ -4,7 +4,7 @@ import { minmax, round, forceReflow, bindInputButtonsDisabled, scrollIntoView, p
 var sortableClass = "ff-sortable";
 var sortablePlaceholderClass = "ff-sortable-placeholder";
 
-// Defines default options for the draggable plugin.
+// Defines default options for the sortable plugin.
 var sortableDefaults = {
 	// The element(s) that can start a drag operation. Default: The element to drag.
 	handle: undefined,
@@ -56,7 +56,7 @@ function sortable(options) {
 		
 		function prepareChild() {
 			var child = $(this);
-			var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren;
+			var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren, initialChildIndex;
 			var stack = opt.stack;
 			if (stack === true)
 				stack = $elem.children();
@@ -84,6 +84,7 @@ function sortable(options) {
 				initialChildAfterElement = child.prev();
 				if (initialChildAfterElement.length === 0)
 					initialChildAfterElement = null;
+				initialChildIndex = child.index();
 
 				let rect = child.rect();
 
@@ -203,6 +204,8 @@ function sortable(options) {
 				}
 
 				let event2 = $.Event("sortableend");
+				event2.initialIndex = initialChildIndex;
+				event2.newIndex = child.index();
 				event2.after = placeholderAfterElement;
 				child.trigger(event2);
 				if (event2.isDefaultPrevented()) {
@@ -314,6 +317,7 @@ function sortable(options) {
 	}
 }
 
+// Notifies the sortable plugin about a new child that needs to be initialized.
 function addChild(child) {
 	var sortable = $(this);
 	var opt = loadOptions("sortable", sortable);

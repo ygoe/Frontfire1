@@ -9,13 +9,21 @@ label
 	transition: color $animationDuration $animationFunction;
 	&[disabled]
 	{
-		color: $textboxDisabledColor;
+		color: $disabledLabelColor;
+		.dark &
+		{
+			color: $darkDisabledLabelColor;
+		}
 	}
 }
 
 .field-validation-error
 {
 	color: $validationErrorText;
+	.dark &
+	{
+		color: $darkValidationErrorText;
+	}
 }
 
 // ========== Text fields ==========
@@ -29,21 +37,41 @@ label
 	padding: 4px 8px;
 	box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
 	transition: border $animationDuration $animationFunction, color $animationDuration $animationFunction;
+	.dark &
+	{
+		border-color: $darkTextboxBorder;
+		background: $darkTextboxBackground;
+		color: $darkTextboxColor;
+		box-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px inset;
+	}
 
 	&:hover:not(:disabled), &:focus:not(:disabled)
 	{
 		border-color: $textboxFocusBorder;
 		// Remove Chrome default style
 		outline: none;
+		.dark &
+		{
+			border-color: $darkTextboxFocusBorder;
+		}
 		&.input-validation-error
 		{
 			border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+			.dark &
+			{
+				border-color: mix($darkTextboxFocusBorder, $darkValidationErrorText, 50%);
+			}
 		}
 	}
 	&:disabled
 	{
 		border-color: $textboxDisabledBorder;
 		color: $textboxDisabledColor;
+		.dark &
+		{
+			border-color: $darkTextboxDisabledBorder;
+			color: $darkTextboxDisabledColor;
+		}
 	}
 
 	// For IE, must be separate from ::placeholder (cannot use @extend)
@@ -68,6 +96,11 @@ label
 	{
 		border-color: $validationErrorText;
 		background-color: $validationErrorBackground;
+		.dark &
+		{
+			border-color: $darkValidationErrorText;
+			background-color: $darkValidationErrorBackground;
+		}
 	}
 
 	&.no-border
@@ -158,10 +191,22 @@ input[type=number]
 		transition: border $animationDuration $animationFunction, background $animationDuration $animationFunction, color $animationDuration $animationFunction;
 		&:first-child { border-left: 1px solid $textboxBorder; }
 		&:last-child { border-right: 1px solid $textboxBorder; }
+		.dark &
+		{
+			border-top-color: $darkTextboxBorder;
+			border-bottom-color: $darkTextboxBorder;
+			background: $darkInputLabelBackground;
+			&:first-child { border-left-color: $darkTextboxBorder; }
+			&:last-child { border-right-color: $darkTextboxBorder; }
+		}
 	}
 	&[disabled] > .label
 	{
 		border-color: $textboxDisabledBorder;
+		.dark &
+		{
+			border-color: $darkTextboxDisabledBorder;
+		}
 	}
 
 	%textbox-icon
@@ -223,6 +268,11 @@ a.button
 	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)
 	cursor: pointer;
 	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, border $animationDuration $animationFunction;
+	.dark &
+	{
+		background: $darkButtonBackground;
+		color: $darkButtonColor;
+	}
 
 	&:hover:not(:disabled),
 	&:focus:not(:disabled)
@@ -231,36 +281,64 @@ a.button
 		transition: background 0s;
 		// Remove Chrome default style
 		outline: none;
+		.dark &
+		{
+			background: $darkButtonHoverBackground;
+		}
 	}
 	&:active:not(:disabled)
 	{
 		background: $buttonPressedBackground;
 		transition: background 0s;
 		color: $buttonPressedColor;
+		.dark &
+		{
+			background: $darkButtonPressedBackground;
+			color: $darkButtonPressedColor;
+		}
 	}
 	&:disabled
 	{
 		background: $buttonDisabledBackground;
 		color: $buttonDisabledColor;
 		cursor: default;
+		.dark &
+		{
+			background: $darkButtonDisabledBackground;
+			color: $darkButtonDisabledColor;
+		}
 	}
 
 	&.default:not(:disabled)
 	{
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
+		.dark &
+		{
+			background: $darkButtonDefaultBackground;
+			color: $darkButtonDefaultColor;
+		}
 
 		&:hover,
 		&:focus
 		{
 			background: $buttonDefaultHoverBackground;
 			transition: background 0s;
+			.dark &
+			{
+				background: $darkButtonDefaultHoverBackground;
+			}
 		}
 		&:active
 		{
 			background: $buttonDefaultPressedBackground;
 			transition: background 0s;
 			color: $buttonDefaultPressedColor;
+			.dark &
+			{
+				background: $darkButtonDefaultPressedBackground;
+				color: $darkButtonDefaultPressedColor;
+			}
 		}
 	}
 
@@ -268,18 +346,32 @@ a.button
 	{
 		background: $buttonCautionBackground;
 		color: $buttonCautionColor;
+		.dark &
+		{
+			background: $darkButtonCautionBackground;
+			color: $darkButtonCautionColor;
+		}
 
 		&:hover,
 		&:focus
 		{
 			background: $buttonCautionHoverBackground;
 			transition: background 0s;
+			.dark &
+			{
+				background: $darkButtonCautionHoverBackground;
+			}
 		}
 		&:active
 		{
 			background: $buttonCautionPressedBackground;
 			transition: background 0s;
 			color: $buttonCautionPressedColor;
+			.dark &
+			{
+				background: $darkButtonCautionPressedBackground;
+				color: $darkButtonCautionPressedColor;
+			}
 		}
 	}
 
@@ -287,24 +379,43 @@ a.button
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonTransparentColor;
+		.dark &
+		{
+			background: $darkButtonTransparentBackground;
+			color: $darkButtonTransparentColor;
+		}
 
 		&:hover,
 		&:focus
 		{
 			background: $buttonTransparentHoverBackground;
 			transition: background 0s;
+			.dark &
+			{
+				background: $darkButtonTransparentHoverBackground;
+			}
 		}
 		&:active
 		{
 			background: $buttonTransparentPressedBackground;
 			transition: background 0s;
 			color: $buttonTransparentPressedColor;
+			.dark &
+			{
+				background: $darkButtonTransparentPressedBackground;
+				color: $darkButtonTransparentPressedColor;
+			}
 		}
 	}
 	&.transparent:disabled
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonDisabledColor;
+		.dark &
+		{
+			background: $darkButtonTransparentBackground;
+			color: $darkButtonDisabledColor;
+		}
 	}
 
 	.ff-input-wrapper &,
@@ -351,10 +462,18 @@ div.buttons.narrow
 		{
 			margin-left: 0px;
 			border-left: 1px solid $buttonGroupSeparatorColor;
+			.dark &
+			{
+				border-left-color: $darkButtonGroupSeparatorColor;
+			}
 
 			&:disabled
 			{
 				border-left-color: $buttonGroupDisabledSeparatorColor;
+				.dark &
+				{
+					border-left-color: $darkButtonGroupDisabledSeparatorColor;
+				}
 			}
 		}
 	}
@@ -447,10 +566,19 @@ input[type=radio].ff-checkbox
 		box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
 		position: relative;
 		transition: border $animationDuration $animationFunction, background $animationDuration $animationFunction;
+		.dark &
+		{
+			border-color: $darkTextboxBorder;
+			background: $darkTextboxBackground;
+		}
 	}
 	&:disabled + span
 	{
 		border-color: $textboxDisabledBorder;
+		.dark &
+		{
+			border-color: $darkTextboxDisabledBorder;
+		}
 	}
 	&:hover:not(:disabled) + span,
 	&:focus:not(:disabled) + span,
@@ -458,12 +586,20 @@ input[type=radio].ff-checkbox
 	{
 		border-color: $textboxFocusBorder;
 		outline: none;
+		.dark &
+		{
+			border-color: $darkTextboxFocusBorder;
+		}
 	}
 	&.input-validation-error:hover:not(:disabled) + span,
 	&.input-validation-error:focus:not(:disabled) + span,
 	label:hover &.input-validation-error:not(:disabled) + span
 	{
 		border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+		.dark &
+		{
+			border-color: mix($darkTextboxFocusBorder, $darkValidationErrorText, 50%);
+		}
 	}
 	&:active:not(:disabled) + span,
 	label:active &:not(:disabled) + span
@@ -471,12 +607,22 @@ input[type=radio].ff-checkbox
 		border-color: $textboxFocusBorder;
 		background-color: $checkboxPressedBackground;
 		transition: background 0s;
+		.dark &
+		{
+			border-color: $darkTextboxFocusBorder;
+			background-color: $darkCheckboxPressedBackground;
+		}
 	}
 	&.input-validation-error:active:not(:disabled) + span,
 	label:active &.input-validation-error:not(:disabled) + span
 	{
 		border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
 		background-color: mix($checkboxPressedBackground, $validationErrorBackground, 50%);
+		.dark &
+		{
+			border-color: mix($darkTextboxFocusBorder, $darkValidationErrorText, 50%);
+			background-color: mix($darkCheckboxPressedBackground, $darkValidationErrorBackground, 50%);
+		}
 	}
 	&:checked + span::before
 	{
@@ -492,6 +638,11 @@ input[type=radio].ff-checkbox
 		background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==') no-repeat 50% 50%;
 		opacity: 1;
 		transition: opacity $animationDuration $animationFunction;
+		.dark &
+		{
+			// Same with white stroke
+			background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==') no-repeat 50% 50%;
+		}
 	}
 	&:checked:disabled + span::before
 	{
@@ -517,6 +668,11 @@ input[type=radio].ff-checkbox
 	{
 		border-color: $validationErrorText;
 		background-color: $validationErrorBackground;
+		.dark &
+		{
+			border-color: $darkValidationErrorText;
+			background-color: $darkValidationErrorBackground;
+		}
 	}
 
 	label & + span

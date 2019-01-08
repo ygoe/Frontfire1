@@ -15,7 +15,7 @@ var draggableDefaults = {
 	// Constrains the drag movement along the "x" or "y" axis. Default: None.
 	axis: undefined,
 
-	// Constrains the drag movement inside the specified element or the "parent" of the dragged element. Default: None.
+	// Constrains the drag movement inside the specified element or the "parent" of the dragged element or the "viewport". Default: None.
 	containment: undefined,
 
 	// The elements among which the dragged element will be pulled in the front. Default: None.
@@ -43,6 +43,7 @@ function draggable(options) {
 		$elem.addClass(draggableClass);
 		var dragging, draggingCancelled, dragPoint, elemRect, minDragDistance, pointerId, htmlCursor;
 		var opt = initOptions("draggable", draggableDefaults, $elem, {}, options);
+		let $window = $(window);
 
 		var handle = opt.handle ? $elem.find(opt.handle) : $elem;
 		opt.handleElem = handle;
@@ -67,8 +68,8 @@ function draggable(options) {
 				dragPoint = { left: event.pageX, top: event.pageY };
 				pointerId = event.pointerId;
 				minDragDistance = event.pointerType === "touch" ? 8 : 4;
-				eventRemovers.push($(window).pointer("move", onMove, true));
-				eventRemovers.push($(window).pointer("up cancel", onEnd, true));
+				eventRemovers.push($window.pointer("move", onMove, true));
+				eventRemovers.push($window.pointer("up cancel", onEnd, true));
 			}
 		}));
 
@@ -132,13 +133,27 @@ function draggable(options) {
 					newPoint.left = elemRect.left;
 				}
 				if (opt.containment) {
-					let cont;
-					if (opt.containment === "parent")
+					let cont, contRect;
+					if (opt.containment === "parent") {
 						cont = $elem.parent();
-					else
+					}
+					else if (opt.containment === "viewport") {
+						let scrollTop = $window.scrollTop();
+						let scrollLeft = $window.scrollLeft();
+						contRect = {
+							top: 0 + scrollTop,
+							left: 0 + scrollLeft,
+							bottom: $window.height() + scrollTop,
+							right: $window.width() + scrollLeft
+						};
+					}
+					else {
 						cont = $(opt.containment);
-					if (cont.length !== 0) {
-						let contRect = cont.rect();
+					}
+					if (cont && cont.length > 0) {
+						contRect = cont.rect();
+					}
+					if (contRect) {
 						let stepX = opt.grid ? opt.grid[0] : 1;
 						let stepY = opt.grid ? opt.grid[1] : 1;
 						while (newPoint.left < contRect.left) newPoint.left += stepX;

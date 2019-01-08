@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Progress bar - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<style>
+		</style>
+
+		<h1>Progress bar</h1>
+		
+		<p>
+			Progress bars show the progression of a task or other visualised values between a minimum and a maximum.
+			The HTML element &lt;progress&gt; is too limited and thus isn't used here.
+		</p>
+		
+		<h2>Configuration</h2>
+		
+		<p>
+			As with many other Frontfire controls, options can be specified with the JavaScript function that enables the control from an HTML element.
+			If this isn’t accessible because you’re using the built-in autostart feature, or a markup declaration is preferred over code, all options can also be specified with <code>data-opt-...</code> HTML attributes individually or with a <code>data-opt</code> attribute for all options.
+			The option names for <code>data</code> attributes must be converted from camelCase to dash-case just like CSS properties are between JavaScript and CSS syntax. (Example: <code>valuePrefix</code> and <code>value-prefix</code>)
+		</p>
+
+		<table class="no-border no-vgrid" style="width: 100%;">
+			<tr>
+				<th>Option</th>
+				<th>Type</th>
+				<th>Description</th>
+				<th>Default</th>
+			</tr>
+			<tr>
+				<td><code>value</code></td>
+				<td>Number</td>
+				<td>The initial progress value.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>min</code></td>
+				<td>Number</td>
+				<td>The lower end of the progress bar.</td>
+				<td>0</td>
+			</tr>
+			<tr>
+				<td><code>max</code></td>
+				<td>Number</td>
+				<td>The upper end of the progress bar.</td>
+				<td>100</td>
+			</tr>
+			<tr>
+				<td><code>valuePrefix</code></td>
+				<td>String</td>
+				<td>The string to display before the value in the progress bar.</td>
+				<td>""</td>
+			</tr>
+			<tr>
+				<td><code>valueSuffix</code></td>
+				<td>String</td>
+				<td>The string to display after the value in the progress bar.</td>
+				<td>""</td>
+			</tr>
+		</table>
+
+		<h2>Basic progress bar</h2>
+
+		<div id="progress1" class="progressbar" data-opt-value="25" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<p>
+			<button id="getValueButton">Get value</button>
+			<input id="setValueInput" type="number" style="width: 150px;">
+			Prefix: <input id="prefixInput" type="text" style="width: 150px;">
+			Suffix: <input id="suffixInput" type="text" style="width: 150px;">
+			<button id="setValueButton">Set value</button>
+		</p>
+		
+		<p><samp>
+			var value = $("#progress1").progressbar.value();<br>
+			var prefix = $("#progress1").progressbar.valuePrefix();<br>
+			$("#progress1").progressbar.value(value);<br>
+			$("#progress1").progressbar.valuePrefix(prefix);
+		</samp></p>
+
+		<p>
+			The value is shown as-is. If the minimum is not 0 or the maximum is not 100, the value does not represent a percentage. This can be suffixed with a total value to show absolute numbers, for example, of items processed.
+		</p>
+		
+		<div class="progressbar" data-opt="{ min: 100, max: 200, value: 120 }" style="margin: 20px 0;"></div>
+
+		<div class="progressbar" data-opt="{ max: 20, value: 17, valueSuffix: ' of 20 files' }" style="margin: 20px 0;"></div>
+
+		<h2>Styles</h2>
+		
+		<p>
+			Styles are set by adding one of the following CSS classes to the progress bar element.
+		</p>
+
+		<h3>error</h3>
+		
+		<p>
+			The <code>error</code> style overrides the <code>warning</code> and <code>success</code> styles.
+		</p>
+
+		<div class="progressbar error" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>warning</h3>
+
+		<p>
+			The <code>warning</code> style overrides the <code>success</code> style.
+		</p>
+
+		<div class="progressbar warning" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>success</h3>
+
+		<div class="progressbar success" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>no-border</h3>
+		
+		<p>
+			The <code>no-border</code> style can be combined with the other styles above.
+		</p>
+
+		<div class="progressbar no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar no-border success" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h2>Sizes</h2>
+
+		<p>
+			Sizes are set by adding one of the following CSS classes to the progress bar element.
+		</p>
+
+		<h3>tiny</h3>
+
+		<p>
+			The tiny size never shows a value in its bar.
+		</p>
+		
+		<div class="progressbar tiny" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar tiny no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>small</h3>
+
+		<div class="progressbar small" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar small no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>(normal)</h3>
+
+		<div class="progressbar" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>button</h3>
+		
+		<p>
+			The special size <code>button</code> has the height of a regular <code>&lt;button&gt;</code> element. The CSS class <code>inline</code> can be used to place the progress bar in a line with other content.
+		</p>
+
+		<div class="buttons">
+			<button type="button" class="default">Save</button>
+			<button type="button">Upload</button>
+			<div class="progressbar inline button" data-opt-value="40" data-opt-value-suffix="%" style="width: 200px;"></div>
+		</div>
+
+		<h3>large</h3>
+
+		<div class="progressbar large" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar large no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+
+		<h3>big</h3>
+
+		<div class="progressbar big" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+		<div class="progressbar big no-border" data-opt-value="40" data-opt-value-suffix="%" style="margin: 20px 0;"></div>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+
+	<script>
+		$("#getValueButton").click(function () {
+			$("#setValueInput").val($("#progress1").progressbar.value());
+			$("#prefixInput").val($("#progress1").progressbar.valuePrefix());
+			$("#suffixInput").val($("#progress1").progressbar.valueSuffix());
+		})
+		$("#setValueButton").click(function () {
+			$("#progress1").progressbar.value($("#setValueInput").val());
+			$("#progress1").progressbar.valuePrefix($("#prefixInput").val());
+			$("#progress1").progressbar.valueSuffix($("#suffixInput").val());
+		})
+	</script>
+</body>
+</html>

@@ -18,7 +18,7 @@ html:not(.simple-dimmer)
 {
 	& > body.ff-dimming > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim)
 	{
-		transition: filter 0.4s ease-out;
+		transition: filter 0.25s ease-out;
 	}
 	& > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim)
 	{
@@ -33,7 +33,7 @@ html:not(.simple-dimmer)
 	right: 0;
 	bottom: 0;
 	left: 0;
-	background: rgba(64, 64, 64, 0.5);
+	background: rgba(64, 64, 64, 0.25);
 	-webkit-tap-highlight-color: transparent;
 	opacity: 0;
 	transition: opacity 0.4s ease-out;
@@ -87,3 +87,4 @@ html:not(.simple-dimmer)
 @import "modules/carousel";
 @import "modules/offcanvas";
 @import "modules/accordion";
+@import "modules/progressbar";
