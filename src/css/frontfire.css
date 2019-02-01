@@ -1911,22 +1911,22 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   border-bottom: 1px solid #d8d8d8;
   padding: 10px;
   background: transparent; }
-  .ff-tab-pages div {
+  .ff-tab-pages > div {
     display: none; }
-    .ff-tab-pages div.active {
+    .ff-tab-pages > div.active {
       display: block; }
 
 .tabs.same-height .ff-tab-pages {
   display: -ms-grid;
   display: grid; }
-  .tabs.same-height .ff-tab-pages div {
+  .tabs.same-height .ff-tab-pages > div {
     display: block;
     visibility: hidden;
     -ms-grid-row: 1;
     grid-row: 1;
     -ms-grid-column: 1;
     grid-column: 1; }
-    .tabs.same-height .ff-tab-pages div.active {
+    .tabs.same-height .ff-tab-pages > div.active {
       visibility: visible; }
 
 .dropdown {

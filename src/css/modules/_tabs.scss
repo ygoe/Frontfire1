@@ -61,7 +61,7 @@
 	padding: 10px;
 	background: $tabsPageBackground;
 
-	div
+	> div
 	{
 		display: none;
 		&.active
@@ -76,7 +76,7 @@
 	display: -ms-grid;
 	display: grid;
 
-	div
+	> div
 	{
 		display: block;
 		visibility: hidden;
