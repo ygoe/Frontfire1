@@ -1874,6 +1874,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
 
 .ff-tab-headers {
   display: flex;
+  flex-wrap: wrap;
   width: 100%; }
   .ff-tab-headers a {
     color: black;

@@ -129,6 +129,56 @@
 			    $("#tab2").tabs.activeTab($("#tab1").tabs.activeTab().index());<br>
 			});
 		</samp></p>
+
+		<h2>Adding, renaming and removing tabs</h2>
+
+		<p>
+			Tabs can be added and removed by code.
+		</p>
+		
+		<div id="dynamicTabs" class="tabs">
+			<div title="Tab 1">
+				Content of page 1
+			</div>
+			<div title="Tab 2">
+				Content of page 2
+			</div>
+			<div title="Tab 3">
+				Content of page 3
+			</div>
+		</div>
+
+		<p>
+			<input id="tabTitleInput" type="text" style="width: 250px;">
+			<button id="addTabButton">Add tab</button>
+			<button id="setTitleButton">Set active tab title</button>
+			<button id="removeTabButton">Remove active tab</button>
+		</p>
+		
+		<p><samp>
+			// Add<br>
+			let page = $("&lt;div/&gt;")<br>
+			    .attr("title", "New tab title")<br>
+			    .text("New tab content")<br>
+			    .appendTo($("#tabs"));<br>
+			$("#tabs").tabs.addTab(page);<br>
+			// Rename<br>
+			$("#tabs").tabs.title($("#tabs").tabs.activeTab(), "Changed title");<br>
+			// Remove<br>
+			$("#tabs").tabs.removeTab($("#tabs").tabs.activeTab());
+		</samp></p>
+
+		<h2>Reordering tabs</h2>
+
+		<p>
+			The order of the tabs can be changed by code.
+		</p>
+		
+		<p><samp>
+			$("#tabs").tabs.moveTab($("#tabs").tabs.activeTab(), 0);<br>
+			$("#tabs").tabs.moveTab(0, 2);
+		</samp></p>
+
 	</main>
 
 	<footer>
@@ -149,6 +199,20 @@
 		});
 		syncTarget.on("activeTabChange", function () {
 			syncSource.tabs.activeTab(syncTarget.tabs.activeTab().index());
+		});
+		
+		$("#addTabButton").click(function () {
+			let page = $("<div/>")
+				.attr("title", $("#tabTitleInput").val())
+				.text("New tab content")
+				.appendTo($("#dynamicTabs"));
+			$("#dynamicTabs").tabs.addTab(page);
+		});
+		$("#setTitleButton").click(function () {
+			$("#dynamicTabs").tabs.title($("#dynamicTabs").tabs.activeTab(), $("#tabTitleInput").val());
+		});
+		$("#removeTabButton").click(function () {
+			$("#dynamicTabs").tabs.removeTab($("#dynamicTabs").tabs.activeTab());
 		});
 	</script>
 </body>
