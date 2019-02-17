@@ -71,11 +71,13 @@ function spinner() {
 			}
 			else {
 				var step = parseFloat(input.attr("step")) || 1;
-				value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
+				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
+				value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
 				if (min !== undefined && value < parseFloat(min)) value = min;
 				while (max !== undefined && value > parseFloat(max)) value -= step;
 			}
-			input.val(value);
+			let valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
+			input.val(valueStr);
 			input.change();
 		});
 		decButton.repeatButton();
@@ -95,11 +97,13 @@ function spinner() {
 			}
 			else {
 				var step = parseFloat(input.attr("step")) || 1;
-				value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase;   // Set to next-greater valid step
+				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
+				value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase;   // Set to next-greater valid step
 				if (min !== undefined && value < parseFloat(min)) value = min;
 				while (max !== undefined && value > parseFloat(max)) value -= step;
 			}
-			input.val(value);
+			let valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
+			input.val(valueStr);
 			input.change();
 		});
 		incButton.repeatButton();

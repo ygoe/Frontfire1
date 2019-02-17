@@ -1,6 +1,7 @@
 @import "../settings";
 
-img.full-width
+img.full-width,
+svg.full-width
 {
 	display: block;
 	margin: 0 auto;
@@ -8,7 +9,8 @@ img.full-width
 	max-height: 100vh;
 }
 
-img.center
+img.center,
+svg.center
 {
 	display: block;
 	margin: 0 auto;
@@ -16,18 +18,21 @@ img.center
 	max-height: 100vh;
 }
 
-img.shadow
+img.shadow,
+svg.shadow
 {
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
-img.white-margin
+img.white-margin,
+svg.white-margin
 {
 	background: white;
 	padding: 10px;
 }
 
-img.circle
+img.circle,
+svg.circle
 {
 	border-radius: 100%;
 }
@@ -68,7 +73,8 @@ img.circle
 	margin-left: 0;
 }
 
-img.left
+img.left,
+svg.left
 {
 	@include img-left-right;
 	clear: left;
@@ -93,7 +99,8 @@ img.left
 	}
 }
 
-img.right
+img.right,
+svg.right
 {
 	@include img-left-right;
 	clear: right;
@@ -127,7 +134,8 @@ div.image-full-width
 	padding: 0 2em;
 	color: $imageSubtitleColor;
 
-	img
+	img,
+	svg
 	{
 		display: block;
 		margin: 0 -2em 0.5em;
@@ -145,7 +153,8 @@ div.image-center
 	padding: 0 2em;
 	color: $imageSubtitleColor;
 
-	img
+	img,
+	svg
 	{
 		display: block;
 		margin: 0 auto 0.5em;
@@ -162,7 +171,8 @@ div.image-center
 	line-height: 130%;
 	color: $imageSubtitleColor;
 
-	img
+	img,
+	svg
 	{
 		display: block;
 		width: 100%;
@@ -175,14 +185,16 @@ div.image-center
 {
 	float: none;
 	max-width: 100%;
-	img
+	img,
+	svg
 	{
 		width: inherit;
 	}
 	&.narrow-left
 	{
 		text-align: left;
-		img
+		img,
+		svg
 		{
 			margin-left: 0;
 		}
@@ -190,7 +202,8 @@ div.image-center
 	&.narrow-right
 	{
 		text-align: right;
-		img
+		img,
+		svg
 		{
 			margin-left: auto;
 		}
@@ -198,7 +211,8 @@ div.image-center
 	&.narrow-center
 	{
 		text-align: center;
-		img
+		img,
+		svg
 		{
 			margin-left: auto;
 			margin-right: auto;
@@ -214,7 +228,8 @@ div.image-center
 {
 	@include div-too-narrow;
 	margin-left: 0;
-	img
+	img,
+	svg
 	{
 		margin-left: auto;
 	}

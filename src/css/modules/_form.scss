@@ -56,6 +56,10 @@ form
 	{
 		grid-gap: 1em;
 		grid-auto-flow: row;
+		&.narrow
+		{
+			grid-gap: 0px;
+		}
 	}
 
 	.form-row.no-validation

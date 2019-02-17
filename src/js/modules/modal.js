@@ -124,7 +124,16 @@ $.fn.modal.defaults = modalDefaults;
 // options.buttons[].className: (String) Additional CSS classes for the button.
 // options.buttons[].result: The result value of the button.
 // options.resultHandler: (Function) The modal response handler. It is passed the button handler's return value, or false if cancelled.
+//
+// If a string is passed as first argument, it is displayed as text with an OK button.
 $.modal = function (options) {
+	if (typeof options === "string") {
+		options = {
+			text: options,
+			buttons: "OK"
+		};
+	}
+	
 	let modal = $("<div/>")
 		.addClass("modal");
 	let content = $("<div/>")

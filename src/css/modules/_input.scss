@@ -273,6 +273,11 @@ a.button
 		background: $darkButtonBackground;
 		color: $darkButtonColor;
 	}
+	.larger &,
+	&.larger
+	{
+		padding: 7px 12px;
+	}
 
 	&:hover:not(:disabled),
 	&:focus:not(:disabled)
@@ -553,6 +558,7 @@ input[type=radio].ff-checkbox
 	// Don't hide it or it won't be focusable anymore.
 	width: 18px;
 	margin-right: -18px;
+	opacity: 0.01;
 	&:focus { outline: none; }
 
 	+ span
@@ -561,15 +567,15 @@ input[type=radio].ff-checkbox
 		margin: 3px 0 -3px;
 		border: 1px solid $textboxBorder;
 		border-radius: 0;
-		background: $textboxBackground;
+		background-color: $textboxBackground;
 		padding: 8px;
 		box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
 		position: relative;
-		transition: border $animationDuration $animationFunction, background $animationDuration $animationFunction;
+		transition: border $animationDuration $animationFunction, background-color $animationDuration $animationFunction;
 		.dark &
 		{
 			border-color: $darkTextboxBorder;
-			background: $darkTextboxBackground;
+			background-color: $darkTextboxBackground;
 		}
 	}
 	&:disabled + span
@@ -606,7 +612,7 @@ input[type=radio].ff-checkbox
 	{
 		border-color: $textboxFocusBorder;
 		background-color: $checkboxPressedBackground;
-		transition: background 0s;
+		transition: background-color 0s;
 		.dark &
 		{
 			border-color: $darkTextboxFocusBorder;
@@ -635,13 +641,15 @@ input[type=radio].ff-checkbox
 		bottom: 0;
 		// IE 11 needs base64 encoding; plain utf8 or URI encoding won't show the image
 		// <svg width="12" height="12" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="black" stroke-width="2.2" points="1,5 5,9 11,3"/></svg>
-		background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==') no-repeat 50% 50%;
+		background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0iYmxhY2siIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==');
+		background-repeat: no-repeat;
+		background-position: 50% 50%;
 		opacity: 1;
 		transition: opacity $animationDuration $animationFunction;
 		.dark &
 		{
 			// Same with white stroke
-			background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==') no-repeat 50% 50%;
+			background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBvbHlsaW5lIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi4yIiBwb2ludHM9IjEsNSA1LDkgMTEsMyIvPjwvc3ZnPg==');
 		}
 	}
 	&:checked:disabled + span::before
@@ -657,12 +665,12 @@ input[type=radio].ff-checkbox
 		left: 4px;
 		right: 4px;
 		bottom: 4px;
-		background: black;
-		transition: background $animationDuration $animationFunction;
+		background-color: black;
+		transition: background-color $animationDuration $animationFunction;
 	}
 	&:indeterminate:disabled + span::before
 	{
-		background: gray;
+		background-color: gray;
 	}
 	&.input-validation-error + span
 	{
@@ -700,12 +708,18 @@ input[type=radio].ff-checkbox
 		bottom: 4px;
 		left: 4px;
 		right: 4px;
-		background: black;
+		background-color: black;
+		background-image: none;
 		border-radius: 100%;
+		.dark &
+		{
+			background-color: white;
+			background-image: none;
+		}
 	}
 	&:checked:disabled + span::before
 	{
-		background: gray;
+		background-color: gray;
 	}
 	&:indeterminate + span::before
 	{

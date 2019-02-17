@@ -104,6 +104,12 @@ div.justify
 	text-align: justify;
 }
 
+.larger
+{
+	font-size: round($defaultFontSize * 1.3) !important;
+	line-height: round($defaultFontSize * 1.3 * $defaultLineHeight) !important;
+}
+
 // ========== Links ==========
 
 a

@@ -44,6 +44,7 @@
 			this.b = data[2];
 			this.a = data[3] / 255;
 			// If this is wrong, the named color probably doesn't exist, but we can't detect it
+			return;
 		}
 
 		if (typeof value === "number") {

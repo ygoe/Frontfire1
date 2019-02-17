@@ -1192,6 +1192,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				this.b = data[2];
 				this.a = data[3] / 255;
 				// If this is wrong, the named color probably doesn't exist, but we can't detect it
+				return;
 			}
 
 			if (typeof value === "number") {
@@ -2216,13 +2217,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
 				} else {
 					var step = parseFloat(input.attr("step")) || 1;
-					value = (Math.ceil((value - stepBase) / step) - 1) * step + stepBase; // Set to next-smaller valid step
+					var corr = step / 1000; // Correct JavaScript's imprecise numbers
+					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase; // Set to next-smaller valid step
 					if (min !== undefined && value < parseFloat(min)) value = min;
 					while (max !== undefined && value > parseFloat(max)) {
 						value -= step;
 					}
 				}
-				input.val(value);
+				var valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
+				input.val(valueStr);
 				input.change();
 			});
 			decButton.repeatButton();
@@ -2240,13 +2243,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
 				} else {
 					var step = parseFloat(input.attr("step")) || 1;
-					value = (Math.floor((value - stepBase) / step) + 1) * step + stepBase; // Set to next-greater valid step
+					var corr = step / 1000; // Correct JavaScript's imprecise numbers
+					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase; // Set to next-greater valid step
 					if (min !== undefined && value < parseFloat(min)) value = min;
 					while (max !== undefined && value > parseFloat(max)) {
 						value -= step;
 					}
 				}
-				input.val(value);
+				var valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
+				input.val(valueStr);
 				input.change();
 			});
 			incButton.repeatButton();
@@ -2750,7 +2755,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// options.buttons[].className: (String) Additional CSS classes for the button.
 	// options.buttons[].result: The result value of the button.
 	// options.resultHandler: (Function) The modal response handler. It is passed the button handler's return value, or false if cancelled.
+	//
+	// If a string is passed as first argument, it is displayed as text with an OK button.
 	$.modal = function (options) {
+		if (typeof options === "string") {
+			options = {
+				text: options,
+				buttons: "OK"
+			};
+		}
+
 		var modal = $("<div/>").addClass("modal");
 		var content = $("<div/>").appendTo(modal);
 		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text);
