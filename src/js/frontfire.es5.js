@@ -2773,7 +2773,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		var modal = $("<div/>").addClass("modal");
-		var content = $("<div/>").appendTo(modal);
+		var content = $("<div/>").css("overflow", "auto").css("max-height", "calc(100vh - 80px - 5em)") // padding of modal, height of buttons
+		.appendTo(modal);
 		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text);
 
 		var buttons = options.buttons;

@@ -140,6 +140,8 @@ $.modal = function (options) {
 	let modal = $("<div/>")
 		.addClass("modal");
 	let content = $("<div/>")
+		.css("overflow", "auto")
+		.css("max-height", "calc(100vh - 80px - 5em)")   // padding of modal, height of buttons
 		.appendTo(modal);
 	if (options.content)
 		content.append(options.content)

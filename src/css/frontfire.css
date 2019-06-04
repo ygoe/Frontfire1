@@ -469,6 +469,7 @@ code,
 tt,
 pre,
 samp,
+input.monospace,
 textarea.monospace {
   font-family: Consolas, monospace;
   font-size: 13px; }
@@ -2084,6 +2085,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   text-align: center;
   font-size: 19px;
   line-height: 19px;
+  text-decoration: none;
   transition: background 0.2s, color 0.2s; }
   .ff-modal-close-button::after {
     display: block;
@@ -2091,6 +2093,7 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   .ff-modal-close-button:hover {
     background: #e81123;
     color: white;
+    text-decoration: none;
     transition: background 0s, color 0s; }
 
 .ff-tab-headers {
