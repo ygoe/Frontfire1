@@ -1,6 +1,7 @@
-import { bindInputButtonsDisabled } from "./util";
+import { bindInputButtonsDisabled, forceReflow } from "./util";
 
 $.bindInputButtonsDisabled = bindInputButtonsDisabled;
+$.forceReflow = forceReflow;
 
 // Define some more helper functions as jQuery plugins. Similar functions already exist in
 // jQuery and these complement the set.

@@ -18,7 +18,10 @@ var dropdownDefaults = {
 	closeOnHide: true,
 	
 	// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
-	maxHeight: 0
+	maxHeight: 0,
+
+	// Indicates whether the dropdown has fixed position instead of absolute. Default: false.
+	fixed: false
 };
 
 // Opens a dropdown with the selected element and places it at the specified target element.
@@ -51,6 +54,9 @@ function createDropdown(target, options) {
 	var isHorizontallyCentered = false;
 
 	var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
+	if (opt.fixed) {
+		container.css("position", "fixed");
+	}
 	if (dropdown.hasClass("bordered")) {
 		container.addClass("bordered");
 	}

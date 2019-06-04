@@ -257,6 +257,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	$.bindInputButtonsDisabled = bindInputButtonsDisabled;
+	$.forceReflow = forceReflow;
 
 	// Define some more helper functions as jQuery plugins. Similar functions already exist in
 	// jQuery and these complement the set.
@@ -1931,7 +1932,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		closeOnHide: true,
 
 		// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
-		maxHeight: 0
+		maxHeight: 0,
+
+		// Indicates whether the dropdown has fixed position instead of absolute. Default: false.
+		fixed: false
 	};
 
 	// Opens a dropdown with the selected element and places it at the specified target element.
@@ -1963,6 +1967,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var isHorizontallyCentered = false;
 
 		var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
+		if (opt.fixed) {
+			container.css("position", "fixed");
+		}
 		if (dropdown.hasClass("bordered")) {
 			container.addClass("bordered");
 		}
