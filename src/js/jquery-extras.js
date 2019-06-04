@@ -1,3 +1,7 @@
+import { bindInputButtonsDisabled } from "./util";
+
+$.bindInputButtonsDisabled = bindInputButtonsDisabled;
+
 // Define some more helper functions as jQuery plugins. Similar functions already exist in
 // jQuery and these complement the set.
 

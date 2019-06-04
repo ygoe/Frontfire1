@@ -141,7 +141,7 @@ input[type=number]
 
 .ff-input-wrapper
 {
-	display: inline-flex !important;
+	display: inline-flex;
 	input
 	{
 		min-width: 0;
@@ -263,6 +263,7 @@ a.button
 	border-radius: 0;
 	background: $buttonBackground;
 	color: $buttonColor;
+	text-decoration: none !important;
 	padding: 5px 9px;   // textbox padding + 1 for the missing border
 	min-width: 75px;
 	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)

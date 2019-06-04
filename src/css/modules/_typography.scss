@@ -318,6 +318,38 @@ kbd
 {
 	white-space: nowrap;
 }
+.nowrap-require-minitab
+{
+	white-space: nowrap;
+	@media (max-width: $viewportWidthPhone)
+	{
+		white-space: inherit;
+	}
+}
+.nowrap-require-tablet
+{
+	white-space: nowrap;
+	@media (max-width: $viewportWidthMinitab)
+	{
+		white-space: inherit;
+	}
+}
+.nowrap-require-desktop
+{
+	white-space: nowrap;
+	@media (max-width: $viewportWidthTablet)
+	{
+		white-space: inherit;
+	}
+}
+.nowrap-require-wide
+{
+	white-space: nowrap;
+	@media (max-width: $viewportWidthDesktop)
+	{
+		white-space: inherit;
+	}
+}
 
 span.vertical
 {

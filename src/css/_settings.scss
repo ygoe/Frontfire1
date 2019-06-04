@@ -40,6 +40,8 @@ $tableHeaderBackground: #f4f4f4;
 $darkTableGridColor: #585858;
 $darkTableHeaderBackground: #303030;
 
+// ========== Messages ==========
+
 $criticalBackground: #a11331;
 $criticalColor: #ffffff;
 $criticalLinkColor: #afc3ff;
@@ -60,6 +62,27 @@ $successBackground: #c8f39d;
 $successColor: #000000;
 $successLinkColor: $linkColor;
 $successLinkHoverColor: $linkHoverColor;
+
+$darkCriticalBackground: $criticalBackground;
+$darkCriticalColor: $criticalColor;
+$darkCriticalLinkColor: $criticalLinkColor;
+$darkCriticalLinkHoverColor: $criticalLinkHoverColor;
+$darkErrorBackground: $errorBackground;
+$darkErrorColor: $errorColor;
+$darkErrorLinkColor: $errorLinkColor;
+$darkErrorLinkHoverColor: $errorLinkHoverColor;
+$darkWarningBackground: #9e800c;
+$darkWarningColor: #ffffff;
+$darkWarningLinkColor: $darkLinkColor;
+$darkWarningLinkHoverColor: $darkLinkHoverColor;
+$darkInformationBackground: #1571a9;
+$darkInformationColor: #ffffff;
+$darkInformationLinkColor: $darkLinkColor;
+$darkInformationLinkHoverColor: $darkLinkHoverColor;
+$darkSuccessBackground: #4b8610;
+$darkSuccessColor: #ffffff;
+$darkSuccessLinkColor: $darkLinkColor;
+$darkSuccessLinkHoverColor: $darkLinkHoverColor;
 
 // ========== Images ==========
 

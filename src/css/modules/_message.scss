@@ -27,7 +27,7 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		{
 			display: block;
 			float: left;
-			margin-top: 3px;
+			line-height: $_defaultLineHeight;
 			margin-left: -26px;
 			width: 20px;
 			text-align: center;
@@ -35,7 +35,8 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 	}
 }
 
-.critical
+p.critical,
+div.critical
 {
 	@extend %message;
 	background: $criticalBackground;
@@ -46,8 +47,20 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		color: $criticalLinkColor;
 		&:hover { color: $criticalLinkHoverColor; }
 	}
+
+	.dark &
+	{
+		background: $darkCriticalBackground;
+		color: $darkCriticalColor;
+		a
+		{
+			color: $darkCriticalLinkColor;
+			&:hover { color: $darkCriticalLinkHoverColor; }
+		}
+	}
 }
-.error
+p.error,
+div.error
 {
 	@extend %message;
 	background: $errorBackground;
@@ -58,8 +71,20 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		color: $errorLinkColor;
 		&:hover { color: $errorLinkHoverColor; }
 	}
+
+	.dark &
+	{
+		background: $darkErrorBackground;
+		color: $darkErrorColor;
+		a
+		{
+			color: $darkErrorLinkColor;
+			&:hover { color: $darkErrorLinkHoverColor; }
+		}
+	}
 }
-.warning
+p.warning,
+div.warning
 {
 	@extend %message;
 	background: $warningBackground;
@@ -70,8 +95,20 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		color: $warningLinkColor;
 		&:hover { color: $warningLinkHoverColor; }
 	}
+
+	.dark &
+	{
+		background: $darkWarningBackground;
+		color: $darkWarningColor;
+		a
+		{
+			color: $darkWarningLinkColor;
+			&:hover { color: $darkWarningLinkHoverColor; }
+		}
+	}
 }
-.information
+p.information,
+div.information
 {
 	@extend %message;
 	background: $informationBackground;
@@ -82,8 +119,20 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		color: $informationLinkColor;
 		&:hover { color: $informationLinkHoverColor; }
 	}
+
+	.dark &
+	{
+		background: $darkInformationBackground;
+		color: $darkInformationColor;
+		a
+		{
+			color: $darkInformationLinkColor;
+			&:hover { color: $darkInformationLinkHoverColor; }
+		}
+	}
 }
-.success
+p.success,
+div.success
 {
 	@extend %message;
 	background: $successBackground;
@@ -94,6 +143,31 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 		color: $successLinkColor;
 		&:hover { color: $successLinkHoverColor; }
 	}
+
+	.dark &
+	{
+		background: $darkSuccessBackground;
+		color: $darkSuccessColor;
+		a
+		{
+			color: $darkSuccessLinkColor;
+			&:hover { color: $darkSuccessLinkHoverColor; }
+		}
+	}
+}
+p.message,
+div.message
+{
+	@extend %message;
+
+	&.transparent
+	{
+		padding: 0;
+		&.icon
+		{
+			padding-left: 26px;
+		}
+	}
 }
 
 .ff-message-close-button
@@ -103,12 +177,13 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 	top: 0;
 	right: 0;
 	width: 25px;
-	height: 32px;
+	height: $_defaultLineHeight + 12px;   // line height + message's vertical padding
+	padding-top: 4px;   // message's top padding - 2px to compensate the lower x form
 	color: inherit !important;
+	text-decoration: none !important;
 	opacity: 0.6;
 	text-align: center;
 	font-size: 19px;
-	line-height: 28px;
 	transition: opacity 0.2s;
 
 	&::after

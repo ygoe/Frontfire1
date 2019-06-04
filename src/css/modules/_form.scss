@@ -24,7 +24,7 @@ form
 	#{selector-nest($textInputs, "> &")},
 	.ff-input-wrapper
 	{
-		display: block;
+		//display: block;   // Breaks spinner inputs, maybe IE compat isn't possible anymore?
 		width: 100%;
 	}
 }

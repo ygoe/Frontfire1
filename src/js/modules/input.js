@@ -55,56 +55,56 @@ function spinner() {
 
 		// Add control buttons
 		var buttons = [];
-		var decButton = $("<button type='button'/>").appendTo(wrapper).text("\u2212");   // &minus;
+		var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 		buttons.push(decButton);
 		decButton.on("repeatclick", function (event) {
 			if (input.disabled()) return;
 			var value = +input.val();
 			var min = input.attr("min");
 			var max = input.attr("max");
-			var stepBase = min !== undefined ? parseFloat(min) : 0;
+			var stepBase = min !== undefined ? +min : 0;
 			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
 			if (match) {
-				let factor = parseFloat(match[1]) || 10;
+				let factor = +match[1] || 10;
 				if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max))
 					value /= factor;
 			}
 			else {
-				var step = parseFloat(input.attr("step")) || 1;
+				var step = +input.attr("step") || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 				value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
-				if (min !== undefined && value < parseFloat(min)) value = min;
-				while (max !== undefined && value > parseFloat(max)) value -= step;
+				if (min !== undefined && value < +min) value = +min;
+				while (max !== undefined && value > +max) value -= step;
 			}
 			let valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
 			input.val(valueStr);
-			input.change();
+			input.trigger("input").change();
 		});
 		decButton.repeatButton();
-		var incButton = $("<button type='button'/>").appendTo(wrapper).text("+");
+		var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
 		buttons.push(incButton);
 		incButton.on("repeatclick", function (event) {
 			if (input.disabled()) return;
 			var value = +input.val();
 			var min = input.attr("min");
 			var max = input.attr("max");
-			var stepBase = min !== undefined ? parseFloat(min) : 0;
+			var stepBase = min !== undefined ? +min : 0;
 			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
 			if (match) {
-				let factor = parseFloat(match[1]) || 10;
+				let factor = +match[1] || 10;
 				if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max))
 					value *= factor;
 			}
 			else {
-				var step = parseFloat(input.attr("step")) || 1;
+				var step = +input.attr("step") || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 				value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase;   // Set to next-greater valid step
-				if (min !== undefined && value < parseFloat(min)) value = min;
-				while (max !== undefined && value > parseFloat(max)) value -= step;
+				if (min !== undefined && value < +min) value = +min;
+				while (max !== undefined && value > +max) value -= step;
 			}
-			let valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
+			let valueStr = +value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
 			input.val(valueStr);
-			input.change();
+			input.trigger("input").change();
 		});
 		incButton.repeatButton();
 		bindInputButtonsDisabled(input, buttons);
@@ -249,8 +249,9 @@ function colorPicker() {
 		bindInputButtonsDisabled(input, buttons);
 
 		function setColor(color, toInput) {
-			if (toInput && input.val() != color)
-				input.val(color).change();
+			if (toInput && input.val() != color) {
+				input.val(color).trigger("input").change();
+			}
 			colorBox.css("background", color);
 			colorBox.css("color", Color(color).text());
 		}

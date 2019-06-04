@@ -41,13 +41,16 @@ function modal(options) {
 
 	// Prevent moving the focus out of the modal
 	$(document).on("focusin" + modalEventNamespace + "-" + opt.level, function (event) {
-		if ($(event.target).parents().filter(modal).length === 0) {
-			// The focused element's ancestors do not include the modal, so the focus went out
-			// of the modal. Bring it back.
-			modal.find(":focusable").first().focus();
-			event.preventDefault();
-			event.stopImmediatePropagation();
-			return false;
+		if (opt.level === modalLevel) {
+			// This is the top-most modal now, handle the focus event
+			if ($(event.target).parents().filter(modal).length === 0) {
+				// The focused element's ancestors do not include the modal, so the focus went out
+				// of the modal. Bring it back.
+				modal.find(":focusable").first().focus();
+				event.preventDefault();
+				event.stopImmediatePropagation();
+				return false;
+			}
 		}
 	});
 

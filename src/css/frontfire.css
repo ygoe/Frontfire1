@@ -649,6 +649,30 @@ kbd {
 .nowrap {
   white-space: nowrap; }
 
+.nowrap-require-minitab {
+  white-space: nowrap; }
+  @media (max-width: 540px) {
+    .nowrap-require-minitab {
+      white-space: inherit; } }
+
+.nowrap-require-tablet {
+  white-space: nowrap; }
+  @media (max-width: 760px) {
+    .nowrap-require-tablet {
+      white-space: inherit; } }
+
+.nowrap-require-desktop {
+  white-space: nowrap; }
+  @media (max-width: 900px) {
+    .nowrap-require-desktop {
+      white-space: inherit; } }
+
+.nowrap-require-wide {
+  white-space: nowrap; }
+  @media (max-width: 1200px) {
+    .nowrap-require-wide {
+      white-space: inherit; } }
+
 span.vertical {
   -ms-writing-mode: tb-rl;
   -webkit-writing-mode: vertical-rl;
@@ -1144,65 +1168,161 @@ div.image-right {
       div.image-right.require-wide svg {
         margin-left: auto; } }
 
-.critical, .error, .warning, .information, .success {
+p.critical,
+div.critical, p.error,
+div.error, p.warning,
+div.warning, p.information,
+div.information, p.success,
+div.success, p.message,
+div.message {
   padding: 6px 10px;
   position: relative; }
-  .closable.critical, .closable.error, .closable.warning, .closable.information, .closable.success {
+  p.closable.critical,
+  div.closable.critical, p.closable.error,
+  div.closable.error, p.closable.warning,
+  div.closable.warning, p.closable.information,
+  div.closable.information, p.closable.success,
+  div.closable.success, p.closable.message,
+  div.closable.message {
     padding-right: 31px; }
-  .ff-closed.critical, .ff-closed.error, .ff-closed.warning, .ff-closed.information, .ff-closed.success {
+  p.ff-closed.critical,
+  div.ff-closed.critical, p.ff-closed.error,
+  div.ff-closed.error, p.ff-closed.warning,
+  div.ff-closed.warning, p.ff-closed.information,
+  div.ff-closed.information, p.ff-closed.success,
+  div.ff-closed.success, p.ff-closed.message,
+  div.ff-closed.message {
     transform-origin: 50% 0%;
     transition: transform 0.2s ease, opacity 0.2s ease;
     transform: scaleY(0);
     opacity: 0; }
-  .icon.critical, .icon.error, .icon.warning, .icon.information, .icon.success {
+  p.icon.critical,
+  div.icon.critical, p.icon.error,
+  div.icon.error, p.icon.warning,
+  div.icon.warning, p.icon.information,
+  div.icon.information, p.icon.success,
+  div.icon.success, p.icon.message,
+  div.icon.message {
     padding-left: 35px; }
-    .icon.critical i:empty, .icon.error i:empty, .icon.warning i:empty, .icon.information i:empty, .icon.success i:empty {
+    p.icon.critical i:empty, div.icon.critical i:empty, p.icon.error i:empty, div.icon.error i:empty, p.icon.warning i:empty, div.icon.warning i:empty, p.icon.information i:empty, div.icon.information i:empty, p.icon.success i:empty, div.icon.success i:empty, p.icon.message i:empty, div.icon.message i:empty {
       display: block;
       float: left;
-      margin-top: 3px;
+      line-height: 20px;
       margin-left: -26px;
       width: 20px;
       text-align: center; }
 
-.critical {
+p.critical,
+div.critical {
   background: #a11331;
   color: #ffffff; }
-  .critical a {
+  p.critical a,
+  div.critical a {
     color: #afc3ff; }
-    .critical a:hover {
+    p.critical a:hover,
+    div.critical a:hover {
       color: #c3d2ff; }
+  .dark p.critical, .dark
+  div.critical {
+    background: #a11331;
+    color: #ffffff; }
+    .dark p.critical a, .dark
+    div.critical a {
+      color: #afc3ff; }
+      .dark p.critical a:hover, .dark
+      div.critical a:hover {
+        color: #c3d2ff; }
 
-.error {
+p.error,
+div.error {
   background: #c44818;
   color: #ffffff; }
-  .error a {
+  p.error a,
+  div.error a {
     color: #afc3ff; }
-    .error a:hover {
+    p.error a:hover,
+    div.error a:hover {
       color: #c3d2ff; }
+  .dark p.error, .dark
+  div.error {
+    background: #c44818;
+    color: #ffffff; }
+    .dark p.error a, .dark
+    div.error a {
+      color: #afc3ff; }
+      .dark p.error a:hover, .dark
+      div.error a:hover {
+        color: #c3d2ff; }
 
-.warning {
+p.warning,
+div.warning {
   background: #f3d661;
   color: #000000; }
-  .warning a {
+  p.warning a,
+  div.warning a {
     color: #2755dd; }
-    .warning a:hover {
+    p.warning a:hover,
+    div.warning a:hover {
       color: #1d40a6; }
+  .dark p.warning, .dark
+  div.warning {
+    background: #9e800c;
+    color: #ffffff; }
+    .dark p.warning a, .dark
+    div.warning a {
+      color: #91acff; }
+      .dark p.warning a:hover, .dark
+      div.warning a:hover {
+        color: #a7bdff; }
 
-.information {
+p.information,
+div.information {
   background: #b8dff6;
   color: #000000; }
-  .information a {
+  p.information a,
+  div.information a {
     color: #2755dd; }
-    .information a:hover {
+    p.information a:hover,
+    div.information a:hover {
       color: #1d40a6; }
+  .dark p.information, .dark
+  div.information {
+    background: #1571a9;
+    color: #ffffff; }
+    .dark p.information a, .dark
+    div.information a {
+      color: #91acff; }
+      .dark p.information a:hover, .dark
+      div.information a:hover {
+        color: #a7bdff; }
 
-.success {
+p.success,
+div.success {
   background: #c8f39d;
   color: #000000; }
-  .success a {
+  p.success a,
+  div.success a {
     color: #2755dd; }
-    .success a:hover {
+    p.success a:hover,
+    div.success a:hover {
       color: #1d40a6; }
+  .dark p.success, .dark
+  div.success {
+    background: #4b8610;
+    color: #ffffff; }
+    .dark p.success a, .dark
+    div.success a {
+      color: #91acff; }
+      .dark p.success a:hover, .dark
+      div.success a:hover {
+        color: #a7bdff; }
+
+p.message.transparent,
+div.message.transparent {
+  padding: 0; }
+  p.message.transparent.icon,
+  div.message.transparent.icon {
+    padding-left: 26px; }
 
 .ff-message-close-button {
   position: absolute;
@@ -1211,11 +1331,12 @@ div.image-right {
   right: 0;
   width: 25px;
   height: 32px;
+  padding-top: 4px;
   color: inherit !important;
+  text-decoration: none !important;
   opacity: 0.6;
   text-align: center;
   font-size: 19px;
-  line-height: 28px;
   transition: opacity 0.2s; }
   .ff-message-close-button::after {
     display: block;
@@ -1240,7 +1361,6 @@ form {
 
 .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select, .form-row > input:not([type]), .form-row > input[type^=date], .form-row > input[type=email], .form-row > input[type=month], .form-row > input[type=number], .form-row > input[type=password], .form-row > input[type=search], .form-row > input[type=tel], .form-row > input[type=text], .form-row > input[type=time], .form-row > input[type=url], .form-row > input[type=week], .form-row > textarea, .form-row > select,
 .form-row .ff-input-wrapper {
-  display: block;
   width: 100%; }
 
 .form-single-row {
@@ -1390,7 +1510,7 @@ input[type=number] {
       margin: 0; }
 
 .ff-input-wrapper {
-  display: inline-flex !important; }
+  display: inline-flex; }
   .ff-input-wrapper input {
     min-width: 0;
     flex-grow: 1;
@@ -1462,6 +1582,7 @@ a.button {
   border-radius: 0;
   background: #d8d8d8;
   color: #000000;
+  text-decoration: none !important;
   padding: 5px 9px;
   min-width: 75px;
   line-height: 20px;
