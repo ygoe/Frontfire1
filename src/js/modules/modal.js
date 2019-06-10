@@ -144,11 +144,11 @@ $.modal = function (options) {
 		.css("max-height", "calc(100vh - 80px - 5em)")   // padding of modal, height of buttons
 		.appendTo(modal);
 	if (options.content)
-		content.append(options.content)
+		content.append(options.content);
 	else if (options.html)
-		content.html(options.html)
+		content.html(options.html);
 	else if (options.text)
-		content.text(options.text)
+		content.text(options.text).css("white-space", "pre-wrap");
 
 	let buttons = options.buttons;
 	if (typeof buttons === "string") {
