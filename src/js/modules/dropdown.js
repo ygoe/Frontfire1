@@ -28,7 +28,17 @@ var dropdownDefaults = {
 function createDropdown(target, options) {
 	var dropdown = this.first();
 	if (dropdown.length === 0) return this;   // Nothing to do
-	if (dropdown.parent().hasClass(dropdownContainerClass)) return;   // Already open
+	if (dropdown.parent().hasClass(dropdownContainerClass)) {
+		let oldContainer = dropdown.parent();
+		if (oldContainer.hasClass("closed")) {
+			// Already closed but the transition hasn't completed yet. Bring it to an end right now.
+			dropdown.appendTo("body");
+			oldContainer.remove();
+		}
+		else {
+			return;   // Already open
+		}
+	}
 	var opt = initOptions("dropdown", dropdownDefaults, dropdown, {}, options);
 
 	var autoPlacement = false;

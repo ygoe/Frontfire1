@@ -244,7 +244,8 @@ input[type=number]
 		}
 	}
 
-	> input
+	> input,
+	> .ff-selectable-button
 	{
 		width: 100%;
 	}
@@ -254,8 +255,14 @@ input[type=number]
 
 #{$buttonInputs},
 div.buttons a,
+div.buttons a:link,
+div.buttons a:visited,
 span.buttons a,
-a.button
+span.buttons a:link,
+span.buttons a:visited,
+a.button,
+a.button:link,
+a.button:visited
 {
 	display: inline-block;
 	text-align: center;
@@ -280,8 +287,8 @@ a.button
 		padding: 7px 12px;
 	}
 
-	&:hover:not(:disabled),
-	&:focus:not(:disabled)
+	&:hover:not(:disabled):not([disabled]),
+	&:focus:not(:disabled):not([disabled])
 	{
 		background: $buttonHoverBackground;
 		transition: background 0s;
@@ -292,7 +299,7 @@ a.button
 			background: $darkButtonHoverBackground;
 		}
 	}
-	&:active:not(:disabled)
+	&:active:not(:disabled):not([disabled])
 	{
 		background: $buttonPressedBackground;
 		transition: background 0s;
@@ -303,7 +310,8 @@ a.button
 			color: $darkButtonPressedColor;
 		}
 	}
-	&:disabled
+	&:disabled,
+	&[disabled]
 	{
 		background: $buttonDisabledBackground;
 		color: $buttonDisabledColor;
@@ -315,7 +323,7 @@ a.button
 		}
 	}
 
-	&.default:not(:disabled)
+	&.default:not(:disabled):not([disabled])
 	{
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
@@ -348,7 +356,7 @@ a.button
 		}
 	}
 
-	&.caution:not(:disabled)
+	&.caution:not(:disabled):not([disabled])
 	{
 		background: $buttonCautionBackground;
 		color: $buttonCautionColor;
@@ -381,7 +389,7 @@ a.button
 		}
 	}
 
-	&.transparent:not(:disabled)
+	&.transparent:not(:disabled):not([disabled])
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonTransparentColor;
@@ -413,7 +421,8 @@ a.button
 			}
 		}
 	}
-	&.transparent:disabled
+	&.transparent:disabled,
+	&.transparent[disabled]
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonDisabledColor;

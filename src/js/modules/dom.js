@@ -39,14 +39,15 @@ $.fn.visible = function (value) {
 // Determines whether the selected element is disabled.
 //
 // value: Sets the disabled state of the selected elements and the associated label(s).
-$.fn.disabled = function (value) {
+// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+$.fn.disabled = function (value, includeLabel) {
 	// Setter
 	if (value !== undefined) {
 		return this.each(function () {
 			if (value)
-				$(this).disable();
+				$(this).disable(includeLabel);
 			else
-				$(this).enable();
+				$(this).enable(includeLabel);
 		});
 	}
 
@@ -57,7 +58,9 @@ $.fn.disabled = function (value) {
 };
 
 // Enables the selected elements and the associated label(s).
-$.fn.enable = function () {
+//
+// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+$.fn.enable = function (includeLabel) {
 	return this.each$(function () {
 		var supportsDisabledProp = "disabled" in this[0];
 		if (supportsDisabledProp) {
@@ -78,18 +81,22 @@ $.fn.enable = function () {
 		if (id)
 			$("label[for='" + id + "']").enable();
 		
-		// Find previous .label sibling up on the .form-row level
-		let refNode = this;
-		while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
-			refNode = refNode.parent();
-		let label = refNode.prev();
-		if (label.hasClass("label"))
-			label.enable();
+		if (includeLabel !== false) {
+			// Find previous .label sibling up on the .form-row level
+			let refNode = this;
+			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
+				refNode = refNode.parent();
+			let label = refNode.prev();
+			if (label.hasClass("label"))
+				label.enable();
+		}
 	});
 };
 
 // Disables the selected elements and the associated label(s).
-$.fn.disable = function () {
+//
+// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+$.fn.disable = function (includeLabel) {
 	return this.each$(function () {
 		var supportsDisabledProp = "disabled" in this[0];
 		if (supportsDisabledProp) {
@@ -110,23 +117,27 @@ $.fn.disable = function () {
 		if (id)
 			$("label[for='" + id + "']").disable();
 		
-		// Find previous .label sibling up on the .form-row level
-		let refNode = this;
-		while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
-			refNode = refNode.parent();
-		let label = refNode.prev();
-		if (label.hasClass("label"))
-			label.disable();
+		if (includeLabel !== false) {
+			// Find previous .label sibling up on the .form-row level
+			let refNode = this;
+			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
+				refNode = refNode.parent();
+			let label = refNode.prev();
+			if (label.hasClass("label"))
+				label.disable();
+		}
 	});
 };
 
 // Toggles the disabled state of the selected elements and the associated label(s).
-$.fn.toggleDisabled = function () {
+//
+// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+$.fn.toggleDisabled = function (includeLabel) {
 	return this.each$(function () {
 		if (this.disabled())
-			this.enable();
+			this.enable(includeLabel);
 		else
-			this.disable();
+			this.disable(includeLabel);
 	});
 };
 

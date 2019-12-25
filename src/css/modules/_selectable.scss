@@ -1,0 +1,112 @@
+@import "../settings";
+@import "../compatibility";
+
+.ff-selectable,
+.ff-selectable-button
+{
+	@include user-select(none);
+	cursor: default;
+	border: 1px solid $textboxBorder;
+	border-radius: 0;
+	background: $textboxBackground;
+	color: $textboxColor;
+	padding: 1px;
+	box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
+	transition: border $animationDuration $animationFunction, color $animationDuration $animationFunction;
+	.dark &
+	{
+		border-color: $darkTextboxBorder;
+		background: $darkTextboxBackground;
+		color: $darkTextboxColor;
+		box-shadow: rgba(0, 0, 0, 0.4) 0 1px 2px inset;
+	}
+
+	&:hover:not(:disabled), &:focus:not(:disabled)
+	{
+		border-color: $textboxFocusBorder;
+		// Remove Chrome default style
+		outline: none;
+		.dark &
+		{
+			border-color: $darkTextboxFocusBorder;
+		}
+		&.input-validation-error
+		{
+			border-color: mix($textboxFocusBorder, $validationErrorText, 50%);
+			.dark &
+			{
+				border-color: mix($darkTextboxFocusBorder, $darkValidationErrorText, 50%);
+			}
+		}
+	}
+	&:disabled
+	{
+		border-color: $textboxDisabledBorder;
+		color: $textboxDisabledColor;
+		.dark &
+		{
+			border-color: $darkTextboxDisabledBorder;
+			color: $darkTextboxDisabledColor;
+		}
+	}
+
+	&.input-validation-error
+	{
+		border-color: $validationErrorText;
+		background-color: $validationErrorBackground;
+		.dark &
+		{
+			border-color: $darkValidationErrorText;
+			background-color: $darkValidationErrorBackground;
+		}
+	}
+
+	&.no-border
+	{
+		border: none;
+		box-shadow: none;
+		padding: 0px;
+	}
+	&.transparent
+	{
+		background-color: transparent;
+	}
+}
+
+.ff-selectable > *
+{
+	padding: 3px 7px;
+	transition: background $animationDuration $animationFunction;
+	&:hover
+	{
+		background: $selectableHoverBackground;
+		color: $selectableHoverColor;
+		transition: background 0s;
+	}
+	&.selected
+	{
+		background: $selectedBackground;
+		color: $selectedColor;
+		transition: background 0s;
+	}
+	&.ff-sortable-placeholder.selected
+	{
+		background: none;
+	}
+}
+
+.ff-selectable-button
+{
+	padding: 4px 22px 4px 8px;
+	// IE 11 needs base64 encoding; plain utf8 or URI encoding won't show the image
+	// <svg width="18" height="8" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="black" stroke-width="1.2" points="1,1 6,6 11,1"/></svg>
+	background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIxLjIiIHBvaW50cz0iMSwxIDYsNiAxMSwxIi8+PC9zdmc+');
+	background-repeat: no-repeat;
+	background-position: 100% 50%;
+	
+	&.open
+	{
+		// <svg width="18" height="8" xmlns="http://www.w3.org/2000/svg"><polyline fill="none" stroke="black" stroke-width="1.2" points="1,6 6,1 11,6"/></svg>
+		background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIxLjIiIHBvaW50cz0iMSw2IDYsMSAxMSw2Ii8+PC9zdmc+');
+	}
+}

@@ -27,6 +27,8 @@ $.fn.frontfire = function (prefix) {
 	findInclSelf(prefix + ".slider").slider();
 	findInclSelf(prefix + ".sortable").sortable();
 	findInclSelf(prefix + ".tabs").tabs();
+	findInclSelf(prefix + ".selectable").selectable();
+	findInclSelf(prefix + "select").selectable();
 	return this;
 };
 

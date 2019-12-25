@@ -260,3 +260,10 @@ $progressNoBorderBackground: #f4f4f4;
 $progressErrorColor: #c44818;
 $progressWarningColor: #dfb511;
 $progressSuccessColor: #6ec418;
+
+// ========== Selectable ==========
+
+$selectedBackground: rgba(#1db0ff, 0.4);
+$selectedColor: $textboxColor;
+$selectableHoverBackground: rgba(#1db0ff, 0.1);
+$selectableHoverColor: $textboxColor;

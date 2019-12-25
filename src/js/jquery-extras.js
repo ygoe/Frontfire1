@@ -6,10 +6,12 @@ $.forceReflow = forceReflow;
 // Define some more helper functions as jQuery plugins. Similar functions already exist in
 // jQuery and these complement the set.
 
-// A variant of $.each that uses $(this) as the called function's context instead of this.
+// A variant of $.each that uses $(this) as the called function's context instead of this and also
+// the second parameter.
 $.fn.each$ = function (fn) {
 	return this.each(function (index, element) {
-		return fn.call($(this), index, element);
+		element = $(element);
+		return fn.call(element, index, element);
 	});
 };
 

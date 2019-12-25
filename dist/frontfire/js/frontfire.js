@@ -102,13 +102,172 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return Math.log(x) * Math.LOG10E;
 	};
 
+	// Returns the value in the range between min and max.
+	function minmax(value, min, max) {
+		return Math.max(min, Math.min(value, max));
+	}
+
+	// Returns the value rounded to the specified number of decimals.
+	function round(value, decimals) {
+		if (decimals === undefined) decimals = 0;
+		var precision = Math.pow(10, decimals);
+		return Math.round(value * precision) / precision;
+	}
+
+	// Forces a browser layout reflow. This can be used to start CSS transitions on new elements.
+	function forceReflow() {
+		// Try two different methods
+		var body = $("body");
+		body.css("display");
+		body.offset();
+	}
+
+	// Installs a jQuery hook if it isn't installed yet. Existing hooks are chained to the new hook.
+	//
+	// hooks: The hooks collection, like $.attrHooks or $.propHooks
+	// name: The name of the hooked entry
+	// id: The internal ID with which an already installed hook can be recognised
+	// get: The get function (optional)
+	// set: The set function (optional)
+	function installHook(hooks, name, id, _get, _set) {
+		// Explanation: https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
+		var hookInstalled = name in hooks && "ffId" in hooks[name] && hooks[name].ffId === id;
+		if (!hookInstalled) {
+			var prevHook = hooks[name];
+			hooks[name] = {
+				ffId: id,
+				get: function get(a, b, c) {
+					if (_get) {
+						var result = _get(a, b, c);
+						if (result !== null) return result;
+					}
+					if (prevHook && prevHook.get) return prevHook.get(a, b, c);
+					return null;
+				},
+				set: function set(a, b, c) {
+					if (_set) {
+						var result = _set(a, b, c);
+						if (result !== undefined) return result;
+					}
+					if (prevHook && prevHook.set) return prevHook.set(a, b, c);
+				}
+			};
+		}
+	}
+
+	// Installs a hook that triggers the "disabledchange" event for input elements.
+	function installDisabledchangeHook() {
+		installHook($.propHooks, "disabled", "disabledchange", undefined, function (elem, value, name) {
+			if (elem.disabled !== value) {
+				elem.disabled = value; // Set before triggering change event
+				$(elem).trigger("disabledchange");
+			}
+		});
+	}
+
+	// Binds the disabled state of the input element to the associated buttons.
+	function bindInputButtonsDisabled(input, buttons) {
+		// When the input element was disabled or enabled, also update other elements
+		installDisabledchangeHook();
+		var handler = function handler() {
+			if (input.disabled()) {
+				input.disable(); // Disable everything related as well (label etc.)
+				buttons.forEach(function (button) {
+					return button.disable();
+				});
+			} else {
+				input.enable(); // Enable everything related as well (label etc.)
+				buttons.forEach(function (button) {
+					return button.enable();
+				});
+			}
+		};
+		input.on("disabledchange", handler);
+
+		// Setup disabled state initially.
+		// Also enable elements. If they were disabled and the page is reloaded, their state
+		// may be restored halfway. This setup brings everything in the same state.
+		handler();
+	}
+
+	// Scrolls the window so that the rectangle is fully visible.
+	function scrollIntoView(rect) {
+		var cont = $(window);
+		var viewportWidth = cont.width() - 1;
+		var viewportHeight = cont.height() - 1;
+		var scrollTop = cont.scrollTop();
+		var scrollLeft = cont.scrollLeft();
+
+		if (rect.top < scrollTop) {
+			cont.scrollTop(rect.top);
+		}
+		if (rect.bottom > scrollTop + viewportHeight) {
+			cont.scrollTop(scrollTop + (rect.bottom - (scrollTop + viewportHeight)));
+		}
+		if (rect.left < scrollLeft) {
+			cont.scrollLeft(rect.left);
+		}
+		if (rect.right > scrollLeft + viewportWidth) {
+			cont.scrollLeft(scrollLeft + (rect.right - (scrollLeft + viewportWidth)));
+		}
+	}
+
+	// Prevents scrolling the document.
+	//
+	// state: Enable or disable the scrolling prevention.
+	function preventScrolling(state) {
+		var $document = $(document),
+		    $html = $("html");
+		if (state || state === undefined) {
+			var scrollTop = $document.scrollTop();
+			var scrollLeft = $document.scrollLeft();
+			$document.on("scroll.ff-prevent-scrolling", function () {
+				$document.scrollTop(scrollTop);
+				$document.scrollLeft(scrollLeft);
+			});
+			$html.css("touch-action", "none");
+		} else {
+			$document.off("scroll.ff-prevent-scrolling");
+			$html.css("touch-action", "");
+		}
+	}
+
+	// Stacks the selected elements and moved one element to the top.
+	function stackElements(stackedElems, topElem) {
+		// Find all selected stackable elements and sort them by:
+		//   currently dragging, then z-index, then DOM index
+		// and assign their new z-index
+		stackedElems = stackedElems.map(function (index, el) {
+			var zIndex = parseInt($(el).css("z-index"));
+			if (!$.isNumeric(zIndex)) zIndex = stackedElems.length;
+			return { elem: el, dragElem: el === topElem ? 1 : 0, index: index, zIndex: zIndex };
+		}).sort(function (a, b) {
+			if (a.dragElem !== b.dragElem) return a.dragElem - b.dragElem;
+			if (a.zIndex !== b.zIndex) return a.zIndex - b.zIndex;
+			return a.index - b.index;
+		});
+		if (stackedElems.length !== 0) {
+			var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(function (o) {
+				return o.zIndex;
+			}));
+			stackedElems.each(function (index) {
+				$(this.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
+			});
+		}
+	}
+
+	$.bindInputButtonsDisabled = bindInputButtonsDisabled;
+	$.forceReflow = forceReflow;
+
 	// Define some more helper functions as jQuery plugins. Similar functions already exist in
 	// jQuery and these complement the set.
 
-	// A variant of $.each that uses $(this) as the called function's context instead of this.
+	// A variant of $.each that uses $(this) as the called function's context instead of this and also
+	// the second parameter.
 	$.fn.each$ = function (fn) {
 		return this.each(function (index, element) {
-			return fn.call($(this), index, element);
+			element = $(element);
+			return fn.call(element, index, element);
 		});
 	};
 
@@ -370,160 +529,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// elem: The element to find data attributes in. Options are stored here, too.
 	function loadOptions(name, elem) {
 		return $(elem).data("ff-" + name + "-options") || {};
-	}
-
-	// Returns the value in the range between min and max.
-	function minmax(value, min, max) {
-		return Math.max(min, Math.min(value, max));
-	}
-
-	// Returns the value rounded to the specified number of decimals.
-	function round(value, decimals) {
-		if (decimals === undefined) decimals = 0;
-		var precision = Math.pow(10, decimals);
-		return Math.round(value * precision) / precision;
-	}
-
-	// Forces a browser layout reflow. This can be used to start CSS transitions on new elements.
-	function forceReflow() {
-		// Try two different methods
-		var body = $("body");
-		body.css("display");
-		body.offset();
-	}
-
-	// Installs a jQuery hook if it isn't installed yet. Existing hooks are chained to the new hook.
-	//
-	// hooks: The hooks collection, like $.attrHooks or $.propHooks
-	// name: The name of the hooked entry
-	// id: The internal ID with which an already installed hook can be recognised
-	// get: The get function (optional)
-	// set: The set function (optional)
-	function installHook(hooks, name, id, _get, _set) {
-		// Explanation: https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
-		var hookInstalled = name in hooks && "ffId" in hooks[name] && hooks[name].ffId === id;
-		if (!hookInstalled) {
-			var prevHook = hooks[name];
-			hooks[name] = {
-				ffId: id,
-				get: function get(a, b, c) {
-					if (_get) {
-						var result = _get(a, b, c);
-						if (result !== null) return result;
-					}
-					if (prevHook && prevHook.get) return prevHook.get(a, b, c);
-					return null;
-				},
-				set: function set(a, b, c) {
-					if (_set) {
-						var result = _set(a, b, c);
-						if (result !== undefined) return result;
-					}
-					if (prevHook && prevHook.set) return prevHook.set(a, b, c);
-				}
-			};
-		}
-	}
-
-	// Installs a hook that triggers the "disabledchange" event for input elements.
-	function installDisabledchangeHook() {
-		installHook($.propHooks, "disabled", "disabledchange", undefined, function (elem, value, name) {
-			if (elem.disabled !== value) {
-				elem.disabled = value; // Set before triggering change event
-				$(elem).trigger("disabledchange");
-			}
-		});
-	}
-
-	// Binds the disabled state of the input element to the associated buttons.
-	function bindInputButtonsDisabled(input, buttons) {
-		// When the input element was disabled or enabled, also update other elements
-		installDisabledchangeHook();
-		var handler = function handler() {
-			if (input.disabled()) {
-				input.disable(); // Disable everything related as well (label etc.)
-				buttons.forEach(function (button) {
-					return button.disable();
-				});
-			} else {
-				input.enable(); // Enable everything related as well (label etc.)
-				buttons.forEach(function (button) {
-					return button.enable();
-				});
-			}
-		};
-		input.on("disabledchange", handler);
-
-		// Setup disabled state initially.
-		// Also enable elements. If they were disabled and the page is reloaded, their state
-		// may be restored halfway. This setup brings everything in the same state.
-		handler();
-	}
-
-	// Scrolls the window so that the rectangle is fully visible.
-	function scrollIntoView(rect) {
-		var cont = $(window);
-		var viewportWidth = cont.width() - 1;
-		var viewportHeight = cont.height() - 1;
-		var scrollTop = cont.scrollTop();
-		var scrollLeft = cont.scrollLeft();
-
-		if (rect.top < scrollTop) {
-			cont.scrollTop(rect.top);
-		}
-		if (rect.bottom > scrollTop + viewportHeight) {
-			cont.scrollTop(scrollTop + (rect.bottom - (scrollTop + viewportHeight)));
-		}
-		if (rect.left < scrollLeft) {
-			cont.scrollLeft(rect.left);
-		}
-		if (rect.right > scrollLeft + viewportWidth) {
-			cont.scrollLeft(scrollLeft + (rect.right - (scrollLeft + viewportWidth)));
-		}
-	}
-
-	// Prevents scrolling the document.
-	//
-	// state: Enable or disable the scrolling prevention.
-	function preventScrolling(state) {
-		var $document = $(document),
-		    $html = $("html");
-		if (state || state === undefined) {
-			var scrollTop = $document.scrollTop();
-			var scrollLeft = $document.scrollLeft();
-			$document.on("scroll.ff-prevent-scrolling", function () {
-				$document.scrollTop(scrollTop);
-				$document.scrollLeft(scrollLeft);
-			});
-			$html.css("touch-action", "none");
-		} else {
-			$document.off("scroll.ff-prevent-scrolling");
-			$html.css("touch-action", "");
-		}
-	}
-
-	// Stacks the selected elements and moved one element to the top.
-	function stackElements(stackedElems, topElem) {
-		// Find all selected stackable elements and sort them by:
-		//   currently dragging, then z-index, then DOM index
-		// and assign their new z-index
-		stackedElems = stackedElems.map(function (index, el) {
-			var zIndex = parseInt($(el).css("z-index"));
-			if (!$.isNumeric(zIndex)) zIndex = stackedElems.length;
-			return { elem: el, dragElem: el === topElem ? 1 : 0, index: index, zIndex: zIndex };
-		}).sort(function (a, b) {
-			if (a.dragElem !== b.dragElem) return a.dragElem - b.dragElem;
-			if (a.zIndex !== b.zIndex) return a.zIndex - b.zIndex;
-			return a.index - b.index;
-		});
-		if (stackedElems.length !== 0) {
-			var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(function (o) {
-				return o.zIndex;
-			}));
-			stackedElems.each(function (index) {
-				$(this.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
-			});
-		}
 	}
 
 	var accordionClass = "ff-accordion";
@@ -1441,11 +1446,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Determines whether the selected element is disabled.
 	//
 	// value: Sets the disabled state of the selected elements and the associated label(s).
-	$.fn.disabled = function (value) {
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.disabled = function (value, includeLabel) {
 		// Setter
 		if (value !== undefined) {
 			return this.each(function () {
-				if (value) $(this).disable();else $(this).enable();
+				if (value) $(this).disable(includeLabel);else $(this).enable(includeLabel);
 			});
 		}
 
@@ -1456,7 +1462,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	// Enables the selected elements and the associated label(s).
-	$.fn.enable = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.enable = function (includeLabel) {
 		return this.each$(function () {
 			var supportsDisabledProp = "disabled" in this[0];
 			if (supportsDisabledProp) {
@@ -1475,17 +1483,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").enable();
 
-			// Find previous .label sibling up on the .form-row level
-			var refNode = this;
-			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
-				refNode = refNode.parent();
-			}var label = refNode.prev();
-			if (label.hasClass("label")) label.enable();
+			if (includeLabel !== false) {
+				// Find previous .label sibling up on the .form-row level
+				var refNode = this;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+					refNode = refNode.parent();
+				}var label = refNode.prev();
+				if (label.hasClass("label")) label.enable();
+			}
 		});
 	};
 
 	// Disables the selected elements and the associated label(s).
-	$.fn.disable = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.disable = function (includeLabel) {
 		return this.each$(function () {
 			var supportsDisabledProp = "disabled" in this[0];
 			if (supportsDisabledProp) {
@@ -1504,19 +1516,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").disable();
 
-			// Find previous .label sibling up on the .form-row level
-			var refNode = this;
-			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
-				refNode = refNode.parent();
-			}var label = refNode.prev();
-			if (label.hasClass("label")) label.disable();
+			if (includeLabel !== false) {
+				// Find previous .label sibling up on the .form-row level
+				var refNode = this;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+					refNode = refNode.parent();
+				}var label = refNode.prev();
+				if (label.hasClass("label")) label.disable();
+			}
 		});
 	};
 
 	// Toggles the disabled state of the selected elements and the associated label(s).
-	$.fn.toggleDisabled = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.toggleDisabled = function (includeLabel) {
 		return this.each$(function () {
-			if (this.disabled()) this.enable();else this.disable();
+			if (this.disabled()) this.enable(includeLabel);else this.disable(includeLabel);
 		});
 	};
 
@@ -1929,14 +1945,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		closeOnHide: true,
 
 		// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
-		maxHeight: 0
+		maxHeight: 0,
+
+		// Indicates whether the dropdown has fixed position instead of absolute. Default: false.
+		fixed: false
 	};
 
 	// Opens a dropdown with the selected element and places it at the specified target element.
 	function createDropdown(target, options) {
 		var dropdown = this.first();
 		if (dropdown.length === 0) return this; // Nothing to do
-		if (dropdown.parent().hasClass(dropdownContainerClass)) return; // Already open
+		if (dropdown.parent().hasClass(dropdownContainerClass)) {
+			var oldContainer = dropdown.parent();
+			if (oldContainer.hasClass("closed")) {
+				// Already closed but the transition hasn't completed yet. Bring it to an end right now.
+				dropdown.appendTo("body");
+				oldContainer.remove();
+			} else {
+				return; // Already open
+			}
+		}
 		var opt = initOptions("dropdown", dropdownDefaults, dropdown, {}, options);
 
 		var autoPlacement = false;
@@ -1961,6 +1989,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var isHorizontallyCentered = false;
 
 		var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
+		if (opt.fixed) {
+			container.css("position", "fixed");
+		}
 		if (dropdown.hasClass("bordered")) {
 			container.addClass("bordered");
 		}
@@ -2203,56 +2234,58 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Add control buttons
 			var buttons = [];
-			var decButton = $("<button type='button'/>").appendTo(wrapper).text('\u2212'); // &minus;
+			var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text('\u2212'); // &minus;
 			buttons.push(decButton);
 			decButton.on("repeatclick", function (event) {
 				if (input.disabled()) return;
 				var value = +input.val();
 				var min = input.attr("min");
 				var max = input.attr("max");
-				var stepBase = min !== undefined ? parseFloat(min) : 0;
+				var stepBase = min !== undefined ? +min : 0;
 				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
 				if (match) {
-					var factor = parseFloat(match[1]) || 10;
+					var factor = +match[1] || 10;
 					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
 				} else {
-					var step = parseFloat(input.attr("step")) || 1;
+					if (max !== undefined && value > +max) value = +max + 1;
+					var step = +input.attr("step") || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
 					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase; // Set to next-smaller valid step
-					if (min !== undefined && value < parseFloat(min)) value = min;
-					while (max !== undefined && value > parseFloat(max)) {
+					if (min !== undefined && value < +min) value = +min;
+					while (max !== undefined && value > +max) {
 						value -= step;
 					}
 				}
 				var valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
 				input.val(valueStr);
-				input.change();
+				input.trigger("input").change();
 			});
 			decButton.repeatButton();
-			var incButton = $("<button type='button'/>").appendTo(wrapper).text("+");
+			var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
 			buttons.push(incButton);
 			incButton.on("repeatclick", function (event) {
 				if (input.disabled()) return;
 				var value = +input.val();
 				var min = input.attr("min");
 				var max = input.attr("max");
-				var stepBase = min !== undefined ? parseFloat(min) : 0;
+				var stepBase = min !== undefined ? +min : 0;
 				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
 				if (match) {
-					var factor = parseFloat(match[1]) || 10;
+					var factor = +match[1] || 10;
 					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
 				} else {
-					var step = parseFloat(input.attr("step")) || 1;
+					if (max !== undefined && value > +max) value = +max + 1;
+					var step = +input.attr("step") || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
 					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase; // Set to next-greater valid step
-					if (min !== undefined && value < parseFloat(min)) value = min;
-					while (max !== undefined && value > parseFloat(max)) {
+					if (min !== undefined && value < +min) value = +min;
+					while (max !== undefined && value > +max) {
 						value -= step;
 					}
 				}
-				var valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
+				var valueStr = +value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
 				input.val(valueStr);
-				input.change();
+				input.trigger("input").change();
 			});
 			incButton.repeatButton();
 			bindInputButtonsDisabled(input, buttons);
@@ -2408,7 +2441,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			bindInputButtonsDisabled(input, buttons);
 
 			function setColor(color, toInput) {
-				if (toInput && input.val() != color) input.val(color).change();
+				if (toInput && input.val() != color) {
+					input.val(color).trigger("input").change();
+				}
 				colorBox.css("background", color);
 				colorBox.css("color", Color(color).text());
 			}
@@ -2674,13 +2709,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Prevent moving the focus out of the modal
 		$(document).on("focusin" + modalEventNamespace + "-" + opt.level, function (event) {
-			if ($(event.target).parents().filter(modal).length === 0) {
-				// The focused element's ancestors do not include the modal, so the focus went out
-				// of the modal. Bring it back.
-				modal.find(":focusable").first().focus();
-				event.preventDefault();
-				event.stopImmediatePropagation();
-				return false;
+			if (opt.level === modalLevel) {
+				// This is the top-most modal now, handle the focus event
+				if ($(event.target).parents().filter(modal).length === 0) {
+					// The focused element's ancestors do not include the modal, so the focus went out
+					// of the modal. Bring it back.
+					modal.find(":focusable").first().focus();
+					event.preventDefault();
+					event.stopImmediatePropagation();
+					return false;
+				}
 			}
 		});
 
@@ -2766,8 +2804,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		var modal = $("<div/>").addClass("modal");
-		var content = $("<div/>").appendTo(modal);
-		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text);
+		var content = $("<div/>").css("overflow", "auto").css("max-height", "calc(100vh - 80px - 5em)") // padding of modal, height of buttons
+		.appendTo(modal);
+		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text).css("white-space", "pre-wrap");
 
 		var buttons = options.buttons;
 		if (typeof buttons === "string") {
@@ -2807,7 +2846,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 		modal.modal(options);
-		if (buttonsElement) buttonsElement.find("button.default").first().focus();
+		if (buttonsElement) buttonsElement.find("button").first().focus();
 		if (options.resultHandler) {
 			modal.on("close", function () {
 				if (!buttonPressed) options.resultHandler();
@@ -3316,47 +3355,313 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Defines default options for the selectable plugin.
 	var selectableDefaults = {
 		// Indicates whether multiple items can be selected. Default: false.
-		multi: false,
+		multiple: false,
 
 		// Indicates whether a single click toggles the selection of an item. Default: false.
-		toggle: false
+		toggle: false,
+
+		// Indicates whether the selection can be empty (only if multiple or toggle is true). Default: true.
+		allowEmpty: true,
+
+		// The separator for multi-select dropdown lists. Default: ", "
+		separator: ", "
 	};
 
 	// Makes the child elements in each selected element selectable.
 	function selectable(options) {
 		return this.each(function () {
-			var elem = this;
-			var $elem = $(elem);
-			if ($elem.hasClass(selectableClass)) return; // Already done
-			$elem.addClass(selectableClass);
-			var opt = initOptions("selectable", selectableDefaults, $elem, {}, options);
+			var elem = $(this);
+			if (elem.hasClass(selectableClass)) return; // Already done
+			elem.addClass(selectableClass);
+			var opt = initOptions("selectable", selectableDefaults, elem, {}, options);
 			opt._prepareChild = prepareChild;
+			opt._selectAll = selectAll;
+			opt._selectNone = selectNone;
 
-			$elem.children().each(prepareChild);
+			var replaceHtmlSelect = elem[0].nodeName === "SELECT";
+			var useDropdown = elem[0].nodeName === "SELECT" && !elem.attr("size");
+			var htmlSelect = void 0,
+			    button = void 0;
+			var htmlSelectChanging = void 0;
 
+			if (replaceHtmlSelect) {
+				htmlSelect = elem;
+				htmlSelect.hide();
+				opt.multiple |= htmlSelect.attr("multiple") !== undefined;
+				var newSelect = $("<div/>").addClass(selectableClass).insertAfter(htmlSelect);
+				elem = newSelect;
+				updateFromHtmlSelect();
+				if (useDropdown) {
+					button = $("<div/>").addClass("ff-selectable-button").attr("tabindex", 0).insertAfter(htmlSelect);
+					newSelect.addClass("no-border dropdown bordered");
+					updateButton();
+					button.click(function () {
+						button.addClass("open");
+						newSelect.dropdown(button);
+						newSelect.on("dropdownclose", function () {
+							button.removeClass("open");
+						});
+						newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
+					});
+					button.on("keydown", function (event) {
+						//console.log(event);
+						switch (event.originalEvent.keyCode) {
+							case 13: // Enter
+							case 32:
+								// Space
+								event.preventDefault();
+								button.click();
+								break;
+							case 35:
+								// End
+								event.preventDefault();
+								changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 36:
+								// Home
+								event.preventDefault();
+								changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 38:
+								// ArrowUp
+								event.preventDefault();
+								changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 40:
+								// ArrowDown
+								event.preventDefault();
+								changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 65:
+								// KeyA
+								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+									event.preventDefault();
+									selectAll();
+								}
+								break;
+							case 68:
+								// KeyD
+								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+									event.preventDefault();
+									selectNone();
+								}
+								break;
+						}
+					});
+				}
+
+				htmlSelect.change(function () {
+					if (!htmlSelectChanging) {
+						updateFromHtmlSelect();
+						elem.children().each(prepareChild);
+						lastClickedItem = elem.children().first();
+					}
+					if (useDropdown) {
+						updateButton();
+					}
+				});
+			}
+
+			elem.attr("tabindex", 0);
+			elem.children().each(prepareChild);
+			var lastClickedItem = elem.children(".selected").first();
+			if (lastClickedItem.length === 0) lastClickedItem = elem.children().first();
+			var lastSelectedItem;
+
+			elem.on("keydown", function (event) {
+				//console.log(event);
+				switch (event.originalEvent.keyCode) {
+					case 35:
+						// End
+						event.preventDefault();
+						changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 36:
+						// Home
+						event.preventDefault();
+						changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 38:
+						// ArrowUp
+						event.preventDefault();
+						changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 40:
+						// ArrowDown
+						event.preventDefault();
+						changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 65:
+						// KeyA
+						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+							event.preventDefault();
+							selectAll();
+						}
+						break;
+					case 68:
+						// KeyD
+						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+							event.preventDefault();
+							selectNone();
+						}
+						break;
+				}
+			});
+
+			// Sets up event handlers on a selection child (passed as this).
 			function prepareChild() {
 				var child = $(this);
 				child.click(function (event) {
-					event.preventDefault();
-					event.stopPropagation();
+					elem.focus();
 					var ctrlKey = !!event.originalEvent.ctrlKey;
-					if (!opt.multi) ctrlKey = false;
+					var shiftKey = !!event.originalEvent.shiftKey;
+					if (!opt.multiple) ctrlKey = shiftKey = false;
 					if (opt.toggle) ctrlKey = true;
 					var changed = false;
 					if (ctrlKey) {
 						child.toggleClass("selected");
+						if (!opt.allowEmpty && elem.children(".selected").length === 0) {
+							// Empty selection not allowed
+							child.addClass("selected");
+						} else {
+							changed = true;
+						}
+						lastClickedItem = child;
+						lastSelectedItem = child;
+					} else if (shiftKey) {
+						var lastIndex = lastClickedItem.index();
+						var currentIndex = child.index();
+						// Bring indices in a defined order
+						var i1 = Math.min(lastIndex, currentIndex);
+						var i2 = Math.max(lastIndex, currentIndex);
+						// Replace selection with all items between these indices (inclusive)
+						elem.children().removeClass("selected");
+						for (var i = i1; i <= i2; i++) {
+							elem.children().eq(i).addClass("selected");
+						}
 						changed = true;
+						lastSelectedItem = child;
 					} else {
 						if (!child.hasClass("selected")) {
-							$elem.children().removeClass("selected");
+							elem.children().removeClass("selected");
 							child.addClass("selected");
 							changed = true;
 						}
+						lastClickedItem = child;
+						lastSelectedItem = child;
 					}
 					if (changed) {
-						$elem.trigger("selectionchange");
+						elem.trigger("selectionchange");
+					}
+
+					if (replaceHtmlSelect) {
+						updateHtmlSelect();
+						if (useDropdown) {
+							updateButton();
+							if (!(opt.multiple || opt.toggle)) {
+								elem.dropdown.close();
+							}
+						}
 					}
 				});
+				if (useDropdown && opt.multiple && !opt.toggle) {
+					child.on("dblclick", function (event) {
+						var ctrlKey = !!event.originalEvent.ctrlKey;
+						var shiftKey = !!event.originalEvent.shiftKey;
+						if (!ctrlKey && !shiftKey) {
+							elem.dropdown.close();
+						}
+					});
+				}
+			}
+
+			// Updates the HTML select element's selection from the UI elements (selected CSS class).
+			function updateHtmlSelect() {
+				htmlSelectChanging = true;
+				htmlSelect.children("option").each$(function (_, option) {
+					var selected = false;
+					elem.children().each$(function (_, child) {
+						if (child.data("value") === option.prop("value")) {
+							selected = child.hasClass("selected");
+							return false;
+						}
+					});
+					option.prop("selected", selected);
+				});
+				htmlSelect.change();
+				htmlSelectChanging = false;
+			}
+
+			// Recreates the UI list elements from the HTML select options, including their selected
+			// state.
+			function updateFromHtmlSelect() {
+				elem.children().remove();
+				htmlSelect.children("option").each$(function (_, option) {
+					var newOption = $("<div/>").text(option.text()).data("value", option.prop("value")).appendTo(elem);
+					if (option.data("html")) newOption.html(option.data("html"));
+					if (option.prop("selected")) newOption.addClass("selected");
+				});
+			}
+
+			// Updates the dropdown list button's text from the current selection.
+			function updateButton() {
+				var html = "";
+				elem.children(".selected").each$(function (_, child) {
+					if (html) html += opt.separator;
+					html += child.html();
+				});
+				if (html) {
+					button.html("<span>" + html + "</span>");
+				} else {
+					button.html("&nbsp;");
+				}
+			}
+
+			// Moves (and optionally extends) the selected index up or down.
+			function changeSelectedIndex(offset, extend) {
+				var count = elem.children().length;
+				if (count > 0) {
+					var index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
+					if ((offset === -1 || offset === 1) && !lastClickedItem.hasClass("selected")) ;else {
+						index += offset;
+						if (index < 0) index = 0;
+						if (index >= count) index = count - 1;
+					}
+					elem.children().removeClass("selected");
+					if (extend) {
+						var lastIndex = lastClickedItem.index();
+						// Bring indices in a defined order
+						var i1 = Math.min(lastIndex, index);
+						var i2 = Math.max(lastIndex, index);
+						// Replace selection with all items between these indices (inclusive)
+						elem.children().removeClass("selected");
+						for (var i = i1; i <= i2; i++) {
+							elem.children().eq(i).addClass("selected");
+						}
+						lastSelectedItem = elem.children().eq(index);
+					} else {
+						lastClickedItem = elem.children().eq(index);
+						lastClickedItem.addClass("selected");
+						lastSelectedItem = lastClickedItem;
+					}
+					updateHtmlSelect();
+				}
+			}
+
+			// Selects all items, if allowed.
+			function selectAll() {
+				if (opt.multiple || opt.toggle) {
+					elem.children().addClass("selected");
+					updateHtmlSelect();
+				}
+			}
+
+			// Deselects all items, if allowed.
+			function selectNone() {
+				if (opt.allowEmpty) {
+					elem.children().removeClass("selected");
+					updateHtmlSelect();
+				}
 			}
 		});
 	}
@@ -3382,10 +3687,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return selectable.children(".selected");
 	}
 
+	// Selects all items, if allowed.
+	function selectAll() {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._selectAll();
+	}
+
+	// Deselects all items, if allowed.
+	function selectNone() {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._selectNone();
+	}
+
 	registerPlugin("selectable", selectable, {
 		addChild: addChild,
 		removeChild: removeChild,
-		getSelection: getSelection
+		getSelection: getSelection,
+		selectAll: selectAll,
+		selectNone: selectNone
 	});
 	$.fn.selectable.defaults = selectableDefaults;
 
@@ -4402,24 +4723,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	$.fn.frontfire = function (prefix) {
 		if (prefix === undefined) prefix = "";
+		var t = this;
 
-		this.find(prefix + ".accordion").accordion();
-		this.find(prefix + ".carousel").carousel();
+		function findInclSelf(selector) {
+			return t.find(selector).addBack(selector);
+		}
+
+		findInclSelf(prefix + ".accordion").accordion();
+		findInclSelf(prefix + ".carousel").carousel();
 		// TODO: dropdown
-		this.find(prefix + "input[type=number]").spinner();
-		this.find(prefix + "input[type=color]").colorPicker();
+		findInclSelf(prefix + "input[type=number]").spinner();
+		findInclSelf(prefix + "input[type=color]").colorPicker();
 		// type=color has serious restrictions on acceptable values, ff-color is a workaround
-		this.find(prefix + "input[type=ff-color]").colorPicker();
-		this.find(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
-		this.find(prefix + "input[type=checkbox].three-state").threeState();
-		this.find(prefix + "textarea.auto-height").autoHeight();
-		this.find(prefix + ".menu").menu();
-		this.find(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();
+		findInclSelf(prefix + "input[type=ff-color]").colorPicker();
+		findInclSelf(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
+		findInclSelf(prefix + "input[type=checkbox].three-state").threeState();
+		findInclSelf(prefix + "textarea.auto-height").autoHeight();
+		findInclSelf(prefix + ".menu").menu();
+		findInclSelf(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();
 		// TODO: modal
-		this.find(prefix + ".progressbar").progressbar();
-		this.find(prefix + ".slider").slider();
-		this.find(prefix + ".sortable").sortable();
-		this.find(prefix + ".tabs").tabs();
+		findInclSelf(prefix + ".progressbar").progressbar();
+		findInclSelf(prefix + ".slider").slider();
+		findInclSelf(prefix + ".sortable").sortable();
+		findInclSelf(prefix + ".tabs").tabs();
+		findInclSelf(prefix + ".selectable").selectable();
+		findInclSelf(prefix + "select").selectable();
 		return this;
 	};
 

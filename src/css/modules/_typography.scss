@@ -115,20 +115,32 @@ div.justify
 
 a
 {
-	color: $linkColor;
-	text-decoration: none;
-	&:hover
+	&:link,
+	&:visited
 	{
-		color: $linkHoverColor;
-	}
-	.dark &
-	{
-		color: $darkLinkColor;
+		color: $linkColor;
 		text-decoration: none;
 		&:hover
 		{
-			color: $darkLinkHoverColor;
+			color: $linkHoverColor;
 		}
+	}
+	.dark &
+	{
+		&:link,
+		&:visited
+		{
+			color: $darkLinkColor;
+			text-decoration: none;
+			&:hover
+			{
+				color: $darkLinkHoverColor;
+			}
+		}
+	}
+	&[disabled]
+	{
+		color: $disabledLabelColor;
 	}
 }
 
@@ -259,6 +271,14 @@ table.center
 		text-align: center;
 	}
 }
+table.top
+{
+	th,
+	td
+	{
+		vertical-align: top;
+	}
+}
 
 th.left,
 td.left
@@ -274,6 +294,11 @@ th.right,
 td.right
 {
 	text-align: right !important;
+}
+th.top,
+td.top
+{
+	vertical-align: top !important;
 }
 
 // ========== Others ==========

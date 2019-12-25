@@ -70,6 +70,7 @@ function spinner() {
 					value /= factor;
 			}
 			else {
+				if (max !== undefined && value > +max) value = +max + 1;
 				var step = +input.attr("step") || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 				value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
@@ -96,6 +97,7 @@ function spinner() {
 					value *= factor;
 			}
 			else {
+				if (max !== undefined && value > +max) value = +max + 1;
 				var step = +input.attr("step") || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 				value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase;   // Set to next-greater valid step

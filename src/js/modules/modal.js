@@ -208,7 +208,7 @@ $.modal = function (options) {
 	}
 	modal.modal(options);
 	if (buttonsElement)
-		buttonsElement.find("button.default").first().focus();
+		buttonsElement.find("button").first().focus();
 	if (options.resultHandler) {
 		modal.on("close", function () {
 			if (!buttonPressed)

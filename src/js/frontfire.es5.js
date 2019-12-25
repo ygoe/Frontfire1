@@ -262,10 +262,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Define some more helper functions as jQuery plugins. Similar functions already exist in
 	// jQuery and these complement the set.
 
-	// A variant of $.each that uses $(this) as the called function's context instead of this.
+	// A variant of $.each that uses $(this) as the called function's context instead of this and also
+	// the second parameter.
 	$.fn.each$ = function (fn) {
 		return this.each(function (index, element) {
-			return fn.call($(this), index, element);
+			element = $(element);
+			return fn.call(element, index, element);
 		});
 	};
 
@@ -1444,11 +1446,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Determines whether the selected element is disabled.
 	//
 	// value: Sets the disabled state of the selected elements and the associated label(s).
-	$.fn.disabled = function (value) {
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.disabled = function (value, includeLabel) {
 		// Setter
 		if (value !== undefined) {
 			return this.each(function () {
-				if (value) $(this).disable();else $(this).enable();
+				if (value) $(this).disable(includeLabel);else $(this).enable(includeLabel);
 			});
 		}
 
@@ -1459,7 +1462,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	// Enables the selected elements and the associated label(s).
-	$.fn.enable = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.enable = function (includeLabel) {
 		return this.each$(function () {
 			var supportsDisabledProp = "disabled" in this[0];
 			if (supportsDisabledProp) {
@@ -1478,17 +1483,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").enable();
 
-			// Find previous .label sibling up on the .form-row level
-			var refNode = this;
-			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
-				refNode = refNode.parent();
-			}var label = refNode.prev();
-			if (label.hasClass("label")) label.enable();
+			if (includeLabel !== false) {
+				// Find previous .label sibling up on the .form-row level
+				var refNode = this;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+					refNode = refNode.parent();
+				}var label = refNode.prev();
+				if (label.hasClass("label")) label.enable();
+			}
 		});
 	};
 
 	// Disables the selected elements and the associated label(s).
-	$.fn.disable = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.disable = function (includeLabel) {
 		return this.each$(function () {
 			var supportsDisabledProp = "disabled" in this[0];
 			if (supportsDisabledProp) {
@@ -1507,19 +1516,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var id = this.attr("id");
 			if (id) $("label[for='" + id + "']").disable();
 
-			// Find previous .label sibling up on the .form-row level
-			var refNode = this;
-			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
-				refNode = refNode.parent();
-			}var label = refNode.prev();
-			if (label.hasClass("label")) label.disable();
+			if (includeLabel !== false) {
+				// Find previous .label sibling up on the .form-row level
+				var refNode = this;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+					refNode = refNode.parent();
+				}var label = refNode.prev();
+				if (label.hasClass("label")) label.disable();
+			}
 		});
 	};
 
 	// Toggles the disabled state of the selected elements and the associated label(s).
-	$.fn.toggleDisabled = function () {
+	//
+	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
+	$.fn.toggleDisabled = function (includeLabel) {
 		return this.each$(function () {
-			if (this.disabled()) this.enable();else this.disable();
+			if (this.disabled()) this.enable(includeLabel);else this.disable(includeLabel);
 		});
 	};
 
@@ -1942,7 +1955,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function createDropdown(target, options) {
 		var dropdown = this.first();
 		if (dropdown.length === 0) return this; // Nothing to do
-		if (dropdown.parent().hasClass(dropdownContainerClass)) return; // Already open
+		if (dropdown.parent().hasClass(dropdownContainerClass)) {
+			var oldContainer = dropdown.parent();
+			if (oldContainer.hasClass("closed")) {
+				// Already closed but the transition hasn't completed yet. Bring it to an end right now.
+				dropdown.appendTo("body");
+				oldContainer.remove();
+			} else {
+				return; // Already open
+			}
+		}
 		var opt = initOptions("dropdown", dropdownDefaults, dropdown, {}, options);
 
 		var autoPlacement = false;
@@ -2225,6 +2247,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var factor = +match[1] || 10;
 					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
 				} else {
+					if (max !== undefined && value > +max) value = +max + 1;
 					var step = +input.attr("step") || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
 					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase; // Set to next-smaller valid step
@@ -2251,6 +2274,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var factor = +match[1] || 10;
 					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
 				} else {
+					if (max !== undefined && value > +max) value = +max + 1;
 					var step = +input.attr("step") || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
 					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase; // Set to next-greater valid step
@@ -2782,7 +2806,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var modal = $("<div/>").addClass("modal");
 		var content = $("<div/>").css("overflow", "auto").css("max-height", "calc(100vh - 80px - 5em)") // padding of modal, height of buttons
 		.appendTo(modal);
-		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text);
+		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text).css("white-space", "pre-wrap");
 
 		var buttons = options.buttons;
 		if (typeof buttons === "string") {
@@ -2822,7 +2846,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 		modal.modal(options);
-		if (buttonsElement) buttonsElement.find("button.default").first().focus();
+		if (buttonsElement) buttonsElement.find("button").first().focus();
 		if (options.resultHandler) {
 			modal.on("close", function () {
 				if (!buttonPressed) options.resultHandler();
@@ -3331,47 +3355,313 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Defines default options for the selectable plugin.
 	var selectableDefaults = {
 		// Indicates whether multiple items can be selected. Default: false.
-		multi: false,
+		multiple: false,
 
 		// Indicates whether a single click toggles the selection of an item. Default: false.
-		toggle: false
+		toggle: false,
+
+		// Indicates whether the selection can be empty (only if multiple or toggle is true). Default: true.
+		allowEmpty: true,
+
+		// The separator for multi-select dropdown lists. Default: ", "
+		separator: ", "
 	};
 
 	// Makes the child elements in each selected element selectable.
 	function selectable(options) {
 		return this.each(function () {
-			var elem = this;
-			var $elem = $(elem);
-			if ($elem.hasClass(selectableClass)) return; // Already done
-			$elem.addClass(selectableClass);
-			var opt = initOptions("selectable", selectableDefaults, $elem, {}, options);
+			var elem = $(this);
+			if (elem.hasClass(selectableClass)) return; // Already done
+			elem.addClass(selectableClass);
+			var opt = initOptions("selectable", selectableDefaults, elem, {}, options);
 			opt._prepareChild = prepareChild;
+			opt._selectAll = selectAll;
+			opt._selectNone = selectNone;
 
-			$elem.children().each(prepareChild);
+			var replaceHtmlSelect = elem[0].nodeName === "SELECT";
+			var useDropdown = elem[0].nodeName === "SELECT" && !elem.attr("size");
+			var htmlSelect = void 0,
+			    button = void 0;
+			var htmlSelectChanging = void 0;
 
+			if (replaceHtmlSelect) {
+				htmlSelect = elem;
+				htmlSelect.hide();
+				opt.multiple |= htmlSelect.attr("multiple") !== undefined;
+				var newSelect = $("<div/>").addClass(selectableClass).insertAfter(htmlSelect);
+				elem = newSelect;
+				updateFromHtmlSelect();
+				if (useDropdown) {
+					button = $("<div/>").addClass("ff-selectable-button").attr("tabindex", 0).insertAfter(htmlSelect);
+					newSelect.addClass("no-border dropdown bordered");
+					updateButton();
+					button.click(function () {
+						button.addClass("open");
+						newSelect.dropdown(button);
+						newSelect.on("dropdownclose", function () {
+							button.removeClass("open");
+						});
+						newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
+					});
+					button.on("keydown", function (event) {
+						//console.log(event);
+						switch (event.originalEvent.keyCode) {
+							case 13: // Enter
+							case 32:
+								// Space
+								event.preventDefault();
+								button.click();
+								break;
+							case 35:
+								// End
+								event.preventDefault();
+								changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 36:
+								// Home
+								event.preventDefault();
+								changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 38:
+								// ArrowUp
+								event.preventDefault();
+								changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 40:
+								// ArrowDown
+								event.preventDefault();
+								changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
+								break;
+							case 65:
+								// KeyA
+								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+									event.preventDefault();
+									selectAll();
+								}
+								break;
+							case 68:
+								// KeyD
+								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+									event.preventDefault();
+									selectNone();
+								}
+								break;
+						}
+					});
+				}
+
+				htmlSelect.change(function () {
+					if (!htmlSelectChanging) {
+						updateFromHtmlSelect();
+						elem.children().each(prepareChild);
+						lastClickedItem = elem.children().first();
+					}
+					if (useDropdown) {
+						updateButton();
+					}
+				});
+			}
+
+			elem.attr("tabindex", 0);
+			elem.children().each(prepareChild);
+			var lastClickedItem = elem.children(".selected").first();
+			if (lastClickedItem.length === 0) lastClickedItem = elem.children().first();
+			var lastSelectedItem;
+
+			elem.on("keydown", function (event) {
+				//console.log(event);
+				switch (event.originalEvent.keyCode) {
+					case 35:
+						// End
+						event.preventDefault();
+						changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 36:
+						// Home
+						event.preventDefault();
+						changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 38:
+						// ArrowUp
+						event.preventDefault();
+						changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 40:
+						// ArrowDown
+						event.preventDefault();
+						changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
+						break;
+					case 65:
+						// KeyA
+						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+							event.preventDefault();
+							selectAll();
+						}
+						break;
+					case 68:
+						// KeyD
+						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
+							event.preventDefault();
+							selectNone();
+						}
+						break;
+				}
+			});
+
+			// Sets up event handlers on a selection child (passed as this).
 			function prepareChild() {
 				var child = $(this);
 				child.click(function (event) {
-					event.preventDefault();
-					event.stopPropagation();
+					elem.focus();
 					var ctrlKey = !!event.originalEvent.ctrlKey;
-					if (!opt.multi) ctrlKey = false;
+					var shiftKey = !!event.originalEvent.shiftKey;
+					if (!opt.multiple) ctrlKey = shiftKey = false;
 					if (opt.toggle) ctrlKey = true;
 					var changed = false;
 					if (ctrlKey) {
 						child.toggleClass("selected");
+						if (!opt.allowEmpty && elem.children(".selected").length === 0) {
+							// Empty selection not allowed
+							child.addClass("selected");
+						} else {
+							changed = true;
+						}
+						lastClickedItem = child;
+						lastSelectedItem = child;
+					} else if (shiftKey) {
+						var lastIndex = lastClickedItem.index();
+						var currentIndex = child.index();
+						// Bring indices in a defined order
+						var i1 = Math.min(lastIndex, currentIndex);
+						var i2 = Math.max(lastIndex, currentIndex);
+						// Replace selection with all items between these indices (inclusive)
+						elem.children().removeClass("selected");
+						for (var i = i1; i <= i2; i++) {
+							elem.children().eq(i).addClass("selected");
+						}
 						changed = true;
+						lastSelectedItem = child;
 					} else {
 						if (!child.hasClass("selected")) {
-							$elem.children().removeClass("selected");
+							elem.children().removeClass("selected");
 							child.addClass("selected");
 							changed = true;
 						}
+						lastClickedItem = child;
+						lastSelectedItem = child;
 					}
 					if (changed) {
-						$elem.trigger("selectionchange");
+						elem.trigger("selectionchange");
+					}
+
+					if (replaceHtmlSelect) {
+						updateHtmlSelect();
+						if (useDropdown) {
+							updateButton();
+							if (!(opt.multiple || opt.toggle)) {
+								elem.dropdown.close();
+							}
+						}
 					}
 				});
+				if (useDropdown && opt.multiple && !opt.toggle) {
+					child.on("dblclick", function (event) {
+						var ctrlKey = !!event.originalEvent.ctrlKey;
+						var shiftKey = !!event.originalEvent.shiftKey;
+						if (!ctrlKey && !shiftKey) {
+							elem.dropdown.close();
+						}
+					});
+				}
+			}
+
+			// Updates the HTML select element's selection from the UI elements (selected CSS class).
+			function updateHtmlSelect() {
+				htmlSelectChanging = true;
+				htmlSelect.children("option").each$(function (_, option) {
+					var selected = false;
+					elem.children().each$(function (_, child) {
+						if (child.data("value") === option.prop("value")) {
+							selected = child.hasClass("selected");
+							return false;
+						}
+					});
+					option.prop("selected", selected);
+				});
+				htmlSelect.change();
+				htmlSelectChanging = false;
+			}
+
+			// Recreates the UI list elements from the HTML select options, including their selected
+			// state.
+			function updateFromHtmlSelect() {
+				elem.children().remove();
+				htmlSelect.children("option").each$(function (_, option) {
+					var newOption = $("<div/>").text(option.text()).data("value", option.prop("value")).appendTo(elem);
+					if (option.data("html")) newOption.html(option.data("html"));
+					if (option.prop("selected")) newOption.addClass("selected");
+				});
+			}
+
+			// Updates the dropdown list button's text from the current selection.
+			function updateButton() {
+				var html = "";
+				elem.children(".selected").each$(function (_, child) {
+					if (html) html += opt.separator;
+					html += child.html();
+				});
+				if (html) {
+					button.html("<span>" + html + "</span>");
+				} else {
+					button.html("&nbsp;");
+				}
+			}
+
+			// Moves (and optionally extends) the selected index up or down.
+			function changeSelectedIndex(offset, extend) {
+				var count = elem.children().length;
+				if (count > 0) {
+					var index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
+					if ((offset === -1 || offset === 1) && !lastClickedItem.hasClass("selected")) ;else {
+						index += offset;
+						if (index < 0) index = 0;
+						if (index >= count) index = count - 1;
+					}
+					elem.children().removeClass("selected");
+					if (extend) {
+						var lastIndex = lastClickedItem.index();
+						// Bring indices in a defined order
+						var i1 = Math.min(lastIndex, index);
+						var i2 = Math.max(lastIndex, index);
+						// Replace selection with all items between these indices (inclusive)
+						elem.children().removeClass("selected");
+						for (var i = i1; i <= i2; i++) {
+							elem.children().eq(i).addClass("selected");
+						}
+						lastSelectedItem = elem.children().eq(index);
+					} else {
+						lastClickedItem = elem.children().eq(index);
+						lastClickedItem.addClass("selected");
+						lastSelectedItem = lastClickedItem;
+					}
+					updateHtmlSelect();
+				}
+			}
+
+			// Selects all items, if allowed.
+			function selectAll() {
+				if (opt.multiple || opt.toggle) {
+					elem.children().addClass("selected");
+					updateHtmlSelect();
+				}
+			}
+
+			// Deselects all items, if allowed.
+			function selectNone() {
+				if (opt.allowEmpty) {
+					elem.children().removeClass("selected");
+					updateHtmlSelect();
+				}
 			}
 		});
 	}
@@ -3397,10 +3687,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return selectable.children(".selected");
 	}
 
+	// Selects all items, if allowed.
+	function selectAll() {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._selectAll();
+	}
+
+	// Deselects all items, if allowed.
+	function selectNone() {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._selectNone();
+	}
+
 	registerPlugin("selectable", selectable, {
 		addChild: addChild,
 		removeChild: removeChild,
-		getSelection: getSelection
+		getSelection: getSelection,
+		selectAll: selectAll,
+		selectNone: selectNone
 	});
 	$.fn.selectable.defaults = selectableDefaults;
 
@@ -4440,6 +4746,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		findInclSelf(prefix + ".slider").slider();
 		findInclSelf(prefix + ".sortable").sortable();
 		findInclSelf(prefix + ".tabs").tabs();
+		findInclSelf(prefix + ".selectable").selectable();
+		findInclSelf(prefix + "select").selectable();
 		return this;
 	};
 

@@ -4,7 +4,8 @@
 	padding: 20px 0 2px;
 	border-bottom: 1px solid silver;
 }
-header a
+header a:link,
+header a:visited
 {
 	font-size: 1.8em;
 	font-weight: 300;

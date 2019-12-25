@@ -222,6 +222,73 @@
 			<textarea class="auto-height"></textarea>
 		</p>
 		
+		<h2>Selectable</h2>
+		
+		<p>
+			The children of any element can be made selectable by clicking on them. Set the "selectable" CSS class or call the <code>selectable()</code> function on the element. The selected item(s) are highlighted. Multi-selection is supported and handles clicking an item with the <kbd>Ctrl</kbd> or <kbd>Shift</kbd> key pressed.
+		</p>
+		
+		<p>
+			<div class="selectable">
+				<div>First item</div>
+				<div>Second item</div>
+				<div>Third item</div>
+				<div>Fourth item</div>
+				<div>Fifth item</div>
+			</div>
+		</p>
+		
+		<p>
+			A regular HTML <code>&lt;select&gt;</code> element can also be used for this function. All these elements are transformed automatically. It is then replaced by an extended version of the HTML form element that either displays the list or uses a dropdown (depending on the <code>size</code> attribut, as in HTML). The dropdown version has full support for multi-selection.
+		</p>
+
+		<p>
+			A regular <code>&lt;select&gt;</code> element with the <code>size</code> attribut set and multi-selection enabled:
+		</p>
+		
+		<p>
+			<select id="list1" size="5" multiple>
+				<option>First item</option>
+				<option>Second item</option>
+				<option>Third item</option>
+				<option>Fourth item</option>
+				<option>Fifth item</option>
+			</select>
+		</p>
+		
+		<p>
+			<button id="list1-select-all-button">Select all</button>
+			<button id="list1-select-none-button">Select none</button>
+		</p>
+		
+		<p>
+			A regular <code>&lt;select&gt;</code> element without the <code>size</code> attribut set:
+		</p>
+		
+		<p>
+			<select>
+				<option>First item</option>
+				<option>Second item</option>
+				<option>Third item</option>
+				<option>Fourth item</option>
+				<option>Fifth item</option>
+			</select>
+		</p>
+		
+		<p>
+			A regular <code>&lt;select&gt;</code> element without the <code>size</code> attribut set and with multi-selection enabled, empty selection disabled:
+		</p>
+		
+		<p>
+			<select multiple data-opt-allow-empty="false">
+				<option selected>First item</option>
+				<option>Second item</option>
+				<option>Third item</option>
+				<option>Fourth item</option>
+				<option>Fifth item</option>
+			</select>
+		</p>
+		
 		<h2>Color button</h2>
 		
 		<p>
@@ -254,6 +321,14 @@
 		$("input[data-target]").click(function () {
 			let targetClass = $(this).data("target");
 			$("." + targetClass + " input").disabled(this.checked);
+		});
+		
+		$("#list1-select-all-button").click(function () {
+			$("#list1").selectable.selectAll();
+		});
+		
+		$("#list1-select-none-button").click(function () {
+			$("#list1").selectable.selectNone();
 		});
 	</script>
 </body>
