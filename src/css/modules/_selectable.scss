@@ -77,13 +77,13 @@
 {
 	padding: 3px 7px;
 	transition: background $animationDuration $animationFunction;
-	&:hover
+	&:hover:not(.disabled)
 	{
 		background: $selectableHoverBackground;
 		color: $selectableHoverColor;
 		transition: background 0s;
 	}
-	&.selected
+	&.selected:not(.disabled)
 	{
 		background: $selectedBackground;
 		color: $selectedColor;
@@ -92,6 +92,10 @@
 	&.ff-sortable-placeholder.selected
 	{
 		background: none;
+	}
+	&.disabled
+	{
+		color: $textboxDisabledColor;
 	}
 }
 
@@ -103,6 +107,8 @@
 	background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIxLjIiIHBvaW50cz0iMSwxIDYsNiAxMSwxIi8+PC9zdmc+');
 	background-repeat: no-repeat;
 	background-position: 100% 50%;
+	display: inline-block;
+	min-width: 100px;
 	
 	&.open
 	{

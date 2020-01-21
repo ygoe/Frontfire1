@@ -102,7 +102,9 @@ function selectable(options) {
 				if (!htmlSelectChanging) {
 					updateFromHtmlSelect();
 					elem.children().each(prepareChild);
-					lastClickedItem = elem.children().first();
+					lastClickedItem = elem.children(".selected").first();
+					if (lastClickedItem.length === 0)
+						lastClickedItem = elem.children(":not(.disabled)").first();
 				}
 				if (useDropdown) {
 					updateButton();
@@ -114,7 +116,7 @@ function selectable(options) {
 		elem.children().each(prepareChild);
 		var lastClickedItem = elem.children(".selected").first();
 		if (lastClickedItem.length === 0)
-			lastClickedItem = elem.children().first();
+			lastClickedItem = elem.children(":not(.disabled)").first();
 		var lastSelectedItem;
 		
 		elem.on("keydown", function (event) {
@@ -154,6 +156,8 @@ function selectable(options) {
 		// Sets up event handlers on a selection child (passed as this).
 		function prepareChild() {
 			var child = $(this);
+			if (child.hasClass("disabled"))
+				return;
 			child.click(function (event) {
 				elem.focus();
 				let ctrlKey = !!event.originalEvent.ctrlKey;
@@ -171,7 +175,6 @@ function selectable(options) {
 						changed = true;
 					}
 					lastClickedItem = child;
-					lastSelectedItem = child;
 				}
 				else if (shiftKey) {
 					let lastIndex = lastClickedItem.index();
@@ -182,10 +185,11 @@ function selectable(options) {
 					// Replace selection with all items between these indices (inclusive)
 					elem.children().removeClass("selected");
 					for (let i = i1; i <= i2; i++) {
-						elem.children().eq(i).addClass("selected");
+						let c = elem.children().eq(i);
+						if (!c.hasClass("disabled"))
+							c.addClass("selected");
 					}
 					changed = true;
-					lastSelectedItem = child;
 				}
 				else {
 					if (!child.hasClass("selected")) {
@@ -194,8 +198,8 @@ function selectable(options) {
 						changed = true;
 					}
 					lastClickedItem = child;
-					lastSelectedItem = child;
 				}
+				lastSelectedItem = child;
 				if (changed) {
 					elem.trigger("selectionchange");
 				}
@@ -249,8 +253,14 @@ function selectable(options) {
 					.appendTo(elem);
 				if (option.data("html"))
 					newOption.html(option.data("html"))
+				if (option.data("summary"))
+					newOption.data("summary", option.data("summary"))
+				if (option.data("summary-html"))
+					newOption.data("summary-html", option.data("summary-html"))
 				if (option.prop("selected"))
 					newOption.addClass("selected");
+				if (option.prop("disabled"))
+					newOption.addClass("disabled");
 			});
 		}
 
@@ -259,7 +269,14 @@ function selectable(options) {
 			let html = "";
 			elem.children(".selected").each$(function (_, child) {
 				if (html) html += opt.separator;
-				html += child.html();
+				let summaryText = child.data("summary");
+				let summaryHtml = child.data("summary-html");
+				if (summaryHtml)
+					html += summaryHtml;
+				else if (summaryText)
+					html += summaryText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				else
+					html += child.html();
 			});
 			if (html) {
 				button.html("<span>" + html + "</span>");
@@ -271,34 +288,49 @@ function selectable(options) {
 		
 		// Moves (and optionally extends) the selected index up or down.
 		function changeSelectedIndex(offset, extend) {
-			let count = elem.children().length;
-			if (count > 0) {
+			let children = elem.children();
+			let count = children.length;
+			if (count > 0 && offset !== 0) {
 				let index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
-				if ((offset === -1 || offset === 1) && !lastClickedItem.hasClass("selected")) {
-					// Select the lastClickedItem itself first, not one below/above it
+				if (offset === -1 || offset === 1) {
+					if (!lastClickedItem.hasClass("selected")) {
+						// Select the lastClickedItem itself first, not one below/above it
+					}
+					else {
+						// Move selection until an enabled item was found
+						do {
+							index += offset;
+							if (index < 0 || index >= count) return;   // Nothing found
+						}
+						while (children.eq(index).hasClass("disabled"));
+					}
 				}
-				else {
-					index += offset;
-					if (index < 0)
-						index = 0;
-					if (index >= count)
-						index = count - 1;
+				else if (offset < 0) {
+					// Move selection to the first enabled item
+					index = elem.children(":not(.disabled)").first().index();
 				}
-				elem.children().removeClass("selected");
+				else if (offset > 0) {
+					// Move selection to the last enabled item
+					index = elem.children(":not(.disabled)").last().index();
+				}
+				if (index === -1) return;   // Nothing found
+
+				children.removeClass("selected");
 				if (extend) {
 					let lastIndex = lastClickedItem.index();
 					// Bring indices in a defined order
 					let i1 = Math.min(lastIndex, index);
 					let i2 = Math.max(lastIndex, index);
 					// Replace selection with all items between these indices (inclusive)
-					elem.children().removeClass("selected");
 					for (let i = i1; i <= i2; i++) {
-						elem.children().eq(i).addClass("selected");
+						let c = children.eq(i);
+						if (!c.hasClass("disabled"))
+							c.addClass("selected");
 					}
-					lastSelectedItem = elem.children().eq(index);
+					lastSelectedItem = children.eq(index);
 				}
 				else {
-					lastClickedItem = elem.children().eq(index);
+					lastClickedItem = children.eq(index);
 					lastClickedItem.addClass("selected");
 					lastSelectedItem = lastClickedItem;
 				}
@@ -309,7 +341,7 @@ function selectable(options) {
 		// Selects all items, if allowed.
 		function selectAll() {
 			if (opt.multiple || opt.toggle) {
-				elem.children().addClass("selected");
+				elem.children(":not(.disabled)").addClass("selected");
 				updateHtmlSelect();
 			}
 		}

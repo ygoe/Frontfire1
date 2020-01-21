@@ -15,6 +15,18 @@ $.fn.each$ = function (fn) {
 	});
 };
 
+// A variant of $.val that also triggers the change event if the value has actually changed.
+$.fn.valChange = function (value) {
+	let oldValue = this.val();
+	let isEqual = oldValue === value;
+	if (!isEqual && Array.isArray(oldValue) && Array.isArray(value)) {
+		isEqual = oldValue.length === value.length && oldValue.every((v, index) => v === value[index]);
+	}
+	if (!isEqual) {
+		this.val(value).change();
+	}
+};
+
 // Variable tests
 
 // Determines whether the value is set (i. e. not undefined or null).

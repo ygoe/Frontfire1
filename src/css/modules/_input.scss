@@ -468,6 +468,11 @@ span.buttons
 		padding-top: 20px;
 	}
 }
+div.buttons > ul,
+span.buttons > ul
+{
+	line-height: 1px;
+}
 .ff-input-wrapper,
 div.buttons.narrow
 {
