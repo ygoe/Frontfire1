@@ -4,7 +4,7 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 
 .dark
 {
-	background: $darkBackground;
+	background-color: $darkBackground;
 	color: $darkTextColor;
 }
 
@@ -167,11 +167,11 @@ table
 	}
 	th
 	{
-		background: $tableHeaderBackground;
+		background-color: $tableHeaderBackground;
 		text-align: left;
 		.dark &
 		{
-			background: $darkTableHeaderBackground;
+			background-color: $darkTableHeaderBackground;
 		}
 	}
 
@@ -321,11 +321,11 @@ hr
 
 code
 {
-	background: #eeeeee;
+	background-color: #eeeeee;
 	padding: 0 2px;
 	.dark &
 	{
-		background: #484848;
+		background-color: #484848;
 	}
 }
 
@@ -336,7 +336,7 @@ kbd
 	border-color: #ddd #bbb #aaa #ccc;
 	border-radius: 2px;
 	line-height: calc(#{$_defaultLineHeight} - 3px);
-	background: #f6f6f6;
+	background-color: #f6f6f6;
 	padding: 0 2px 1px;
 }
 

@@ -1,7 +1,9 @@
 @import "../settings";
+@import "../compatibility";
 
 .ff-resizable-handle
 {
+	@include user-select(none);
 	&.box
 	{
 		border: 1px solid silver;

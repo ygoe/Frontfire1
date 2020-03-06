@@ -1,5 +1,30 @@
 ﻿import { minmax, round, forceReflow, bindInputButtonsDisabled, scrollIntoView, preventScrolling, stackElements } from "../util";
 
+// Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
+let origToggle = $.fn.toggle;
+$.fn.toggle = function () {
+	let args = arguments;
+	return this.each$(function () {
+		origToggle.apply(this.data("ff-replacement") || this, args);
+	});
+};
+
+let origShow = $.fn.show;
+$.fn.show = function () {
+	let args = arguments;
+	return this.each$(function () {
+		origShow.apply(this.data("ff-replacement") || this, args);
+	});
+};
+
+let origHide = $.fn.hide;
+$.fn.hide = function () {
+	let args = arguments;
+	return this.each$(function () {
+		origHide.apply(this.data("ff-replacement") || this, args);
+	});
+};
+
 // Gets the offset and dimensions of the first selected element.
 //
 // relative: true to return the position relative to the offset parent, false for page position.
@@ -33,7 +58,8 @@ $.fn.visible = function (value) {
 
 	// Getter
 	if (this.length === 0) return;
-	return this.css("display") !== "none";
+	let el = this.data("ff-replacement") || this;
+	return el.css("display") !== "none";
 };
 
 // Determines whether the selected element is disabled.
@@ -67,6 +93,9 @@ $.fn.enable = function (includeLabel) {
 			// Set property so that the hook can trigger the change event.
 			// This automatically removes the HTML attribute as well.
 			this.prop("disabled", false);
+			// Also update replacement elements of Frontfire controls
+			if (this.data("ff-replacement"))
+				this.data("ff-replacement").enable(false);
 		}
 		else if (this.attr("disabled") !== undefined) {
 			// Don't set the property or it will be added where not supported.
@@ -103,6 +132,9 @@ $.fn.disable = function (includeLabel) {
 			// Set property so that the hook can trigger the change event.
 			// This automatically sets the HTML attribute as well.
 			this.prop("disabled", true);
+			// Also update replacement elements of Frontfire controls
+			if (this.data("ff-replacement"))
+				this.data("ff-replacement").disable(false);
 		}
 		else if (this.attr("disabled") === undefined) {
 			// Don't set the property or it will be added where not supported.

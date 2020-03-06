@@ -84,6 +84,7 @@ function createDropdown(target, options) {
 		dropdownHeight = opt.maxHeight;
 		container.outerHeight(dropdownHeight);
 		isReducedHeight = true;
+		dropdownWidth = container.outerWidth();
 	}
 
 	// Place at bottom side, align left, by default
@@ -182,6 +183,9 @@ function createDropdown(target, options) {
 		let scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
 		if (scrollbarWidth > 0) {
 			dropdownWidth += scrollbarWidth;
+			if (dropdownWidth > viewportWidth) {
+				dropdownWidth = viewportWidth;
+			}
 			container.outerWidth(dropdownWidth);
 			if (isRightAligned) {
 				left -= scrollbarWidth;
@@ -189,7 +193,21 @@ function createDropdown(target, options) {
 			else if (isHorizontallyCentered) {
 				left -= scrollbarWidth / 2;
 			}
+
+			if (left + dropdownWidth > viewportWidth + scrollLeft) {
+				left = viewportWidth + scrollLeft - dropdownWidth;
+			}
+			else if (left < scrollLeft) {
+				left = scrollLeft;
+			}
 		}
+	}
+
+	// Scroll to the first selected item in the dropdown (used for selectable)
+	let selectedChild = dropdown.children(".selected").first();
+	if (selectedChild.length > 0) {
+		let selectedTop = selectedChild.position().top;
+		container.scrollTop(selectedTop + selectedChild.height() / 2 - dropdownHeight / 2);
 	}
 
 	container.offset({ top: top, left: left })

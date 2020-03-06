@@ -28,31 +28,40 @@ function selectable(options) {
 		opt._prepareChild = prepareChild;
 		opt._selectAll = selectAll;
 		opt._selectNone = selectNone;
+		opt._selectItem = selectItem;
 
 		let replaceHtmlSelect = elem[0].nodeName === "SELECT";
-		let useDropdown = elem[0].nodeName === "SELECT" && !elem.attr("size");
+		let useDropdown = replaceHtmlSelect && !elem.attr("size");
 		let htmlSelect, button;
 		let htmlSelectChanging;
+		let blurCloseTimeout;
 		
 		if (replaceHtmlSelect) {
 			htmlSelect = elem;
+			let origStyle = elem.attr("style");
 			htmlSelect.hide();
 			opt.multiple |= htmlSelect.attr("multiple") !== undefined;
 			let newSelect = $("<div/>")
 				.addClass(selectableClass)
 				.insertAfter(htmlSelect);
 			elem = newSelect;
+			htmlSelect.data("ff-replacement", newSelect);
 			updateFromHtmlSelect();
 			if (useDropdown) {
 				button = $("<div/>")
 					.addClass("ff-selectable-button")
 					.attr("tabindex", 0)
 					.insertAfter(htmlSelect);
+				button.attr("style", origStyle);
 				newSelect.addClass("no-border dropdown bordered");
+				htmlSelect.data("ff-replacement", button);
 				updateButton();
 				button.click(function () {
+					if (button.disabled()) return;
 					button.addClass("open");
 					newSelect.dropdown(button);
+					if (button.closest(".dark").length > 0)
+						newSelect.parent().addClass("dark");   // Set dropdown container to dark
 					newSelect.on("dropdownclose", function () {
 						button.removeClass("open");
 					});
@@ -60,6 +69,7 @@ function selectable(options) {
 				});
 				button.on("keydown", function (event) {
 					//console.log(event);
+					if (button.disabled()) return;
 					switch (event.originalEvent.keyCode) {
 						case 13:   // Enter
 						case 32:   // Space
@@ -96,6 +106,50 @@ function selectable(options) {
 							break;
 					}
 				});
+
+				// Make the button unfocusable while it is disabled
+				let onDisabledchange = function () {
+					if (button.disabled())
+						button.attr("tabindex", null);
+					else
+						button.attr("tabindex", 0);
+				};
+				button.on("disabledchange", onDisabledchange);
+				onDisabledchange();
+
+				// Close the dropdown when leaving the field with the Tab key
+				// (but not when clicking an item in the dropdown)
+				button.on("blur", function () {
+					if (button.hasClass("open") && !blurCloseTimeout) {
+						blurCloseTimeout = setTimeout(function () {
+							newSelect.dropdown.close();
+							blurCloseTimeout = undefined;
+						}, 50);
+					}
+				});
+				button.on("focus", function () {
+					if (blurCloseTimeout) {
+						// Clicked on an item, focused back; don't close the dropdown
+						clearTimeout(blurCloseTimeout);
+						blurCloseTimeout = undefined;
+					}
+				});
+			}
+
+			// Apply disabled property where appropriate
+			if (htmlSelect.disabled()) {
+				if (useDropdown)
+					button.disable();
+				else
+					newSelect.disable();
+			}
+
+			// Apply nowrap class where appropriate
+			if (htmlSelect.hasClass("wrap")) {
+				if (useDropdown)
+					button.addClass("wrap");
+				else
+					newSelect.addClass("wrap");
 			}
 
 			htmlSelect.change(function () {
@@ -121,6 +175,7 @@ function selectable(options) {
 		
 		elem.on("keydown", function (event) {
 			//console.log(event);
+			if (elem.disabled()) return;
 			switch (event.originalEvent.keyCode) {
 				case 35:   // End
 					event.preventDefault();
@@ -158,8 +213,28 @@ function selectable(options) {
 			var child = $(this);
 			if (child.hasClass("disabled"))
 				return;
-			child.click(function (event) {
-				elem.focus();
+			var isMouseDown = false;
+			child.on("mousedown", function (event) {
+				if (event.originalEvent.button === 0) {
+					isMouseDown = true;
+					setTimeout(() => {
+						if (useDropdown)
+							button.focus();
+						else
+							elem.focus();
+					}, 0);
+				}
+				else {
+					isMouseDown = false;
+				}
+			});
+			child.on("mouseup", function (event) {
+				if (!isMouseDown) return;
+				isMouseDown = false;
+				if (useDropdown)
+					button.focus();
+				else
+					elem.focus();
 				let ctrlKey = !!event.originalEvent.ctrlKey;
 				let shiftKey = !!event.originalEvent.shiftKey;
 				if (!opt.multiple) ctrlKey = shiftKey = false;
@@ -227,15 +302,15 @@ function selectable(options) {
 		
 		// Updates the HTML select element's selection from the UI elements (selected CSS class).
 		function updateHtmlSelect() {
+			let selectedValues = [];
+			elem.children().each$(function (_, child) {
+				if (child.hasClass("selected"))
+					selectedValues.push(child.data("value"));
+			});
+
 			htmlSelectChanging = true;
 			htmlSelect.children("option").each$(function (_, option) {
-				let selected = false;
-				elem.children().each$(function (_, child) {
-					if (child.data("value") === option.prop("value")) {
-						selected = child.hasClass("selected");
-						return false;
-					}
-				});
+				let selected = selectedValues.indexOf(option.prop("value")) !== -1;
 				option.prop("selected", selected);
 			});
 			htmlSelect.change();
@@ -334,7 +409,8 @@ function selectable(options) {
 					lastClickedItem.addClass("selected");
 					lastSelectedItem = lastClickedItem;
 				}
-				updateHtmlSelect();
+				if (replaceHtmlSelect)
+					updateHtmlSelect();
 			}
 		}
 
@@ -342,7 +418,8 @@ function selectable(options) {
 		function selectAll() {
 			if (opt.multiple || opt.toggle) {
 				elem.children(":not(.disabled)").addClass("selected");
-				updateHtmlSelect();
+				if (replaceHtmlSelect)
+					updateHtmlSelect();
 			}
 		}
 
@@ -350,8 +427,18 @@ function selectable(options) {
 		function selectNone() {
 			if (opt.allowEmpty) {
 				elem.children().removeClass("selected");
-				updateHtmlSelect();
+				if (replaceHtmlSelect)
+					updateHtmlSelect();
 			}
+		}
+
+		// Selects a single item.
+		function selectItem(item) {
+			elem.children().removeClass("selected");
+			item.addClass("selected");
+			elem.trigger("selectionchange");
+			if (replaceHtmlSelect)
+				updateHtmlSelect();
 		}
 	});
 }
@@ -361,6 +448,7 @@ function addChild(child) {
 	var selectable = $(this);
 	var opt = loadOptions("selectable", selectable);
 	opt._prepareChild.call(child);
+	// TODO: Need to update HTML select, too?
 }
 
 // Notifies the selectable plugin about a removed child that may affect the selection.
@@ -369,6 +457,7 @@ function removeChild(child) {
 	if (child.hasClass("selected")) {
 		selectable.trigger("selectionchange");
 	}
+	// TODO: Need to update HTML select, too?
 }
 
 // Returns the currently selected elements.
@@ -391,11 +480,19 @@ function selectNone() {
 	opt._selectNone();
 }
 
+// Selects a single item.
+function selectItem(item) {
+	var selectable = $(this);
+	var opt = loadOptions("selectable", selectable);
+	opt._selectItem(item);
+}
+
 registerPlugin("selectable", selectable, {
 	addChild: addChild,
 	removeChild: removeChild,
 	getSelection: getSelection,
 	selectAll: selectAll,
-	selectNone: selectNone
+	selectNone: selectNone,
+	selectItem: selectItem
 });
 $.fn.selectable.defaults = selectableDefaults;

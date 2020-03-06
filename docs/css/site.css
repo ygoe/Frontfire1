@@ -12,7 +12,8 @@ header a:visited
 	color: white;
 	font-variant-ligatures: discretionary-ligatures;
 }
-header a:hover
+header a:link:hover,
+header a:visited:hover
 {
 	color: #d0e0ff;
 }

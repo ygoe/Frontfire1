@@ -61,7 +61,6 @@ function draggable(options) {
 		var eventRemovers = [];
 		opt.eventRemovers.push(handle.pointer("down", function (event) {
 			if (event.button === 0) {
-				event.preventDefault();
 				event.stopImmediatePropagation();
 				if (dragging) return;
 				draggingCancelled = false;

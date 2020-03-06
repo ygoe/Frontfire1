@@ -271,6 +271,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	};
 
+	// A variant of $.val that also triggers the change event if the value has actually changed.
+	$.fn.valChange = function (value) {
+		var oldValue = this.val();
+		var isEqual = oldValue === value;
+		if (!isEqual && Array.isArray(oldValue) && Array.isArray(value)) {
+			isEqual = oldValue.length === value.length && oldValue.every(function (v, index) {
+				return v === value[index];
+			});
+		}
+		if (!isEqual) {
+			this.val(value).change();
+		}
+	};
+
 	// Variable tests
 
 	// Determines whether the value is set (i. e. not undefined or null).
@@ -1410,6 +1424,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	})();
 
+	// Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
+	var origToggle = $.fn.toggle;
+	$.fn.toggle = function () {
+		var args = arguments;
+		return this.each$(function () {
+			origToggle.apply(this.data("ff-replacement") || this, args);
+		});
+	};
+
+	var origShow = $.fn.show;
+	$.fn.show = function () {
+		var args = arguments;
+		return this.each$(function () {
+			origShow.apply(this.data("ff-replacement") || this, args);
+		});
+	};
+
+	var origHide = $.fn.hide;
+	$.fn.hide = function () {
+		var args = arguments;
+		return this.each$(function () {
+			origHide.apply(this.data("ff-replacement") || this, args);
+		});
+	};
+
 	// Gets the offset and dimensions of the first selected element.
 	//
 	// relative: true to return the position relative to the offset parent, false for page position.
@@ -1440,7 +1479,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Getter
 		if (this.length === 0) return;
-		return this.css("display") !== "none";
+		var el = this.data("ff-replacement") || this;
+		return el.css("display") !== "none";
 	};
 
 	// Determines whether the selected element is disabled.
@@ -1471,6 +1511,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// Set property so that the hook can trigger the change event.
 				// This automatically removes the HTML attribute as well.
 				this.prop("disabled", false);
+				// Also update replacement elements of Frontfire controls
+				if (this.data("ff-replacement")) this.data("ff-replacement").enable(false);
 			} else if (this.attr("disabled") !== undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only remove HTML attribute to allow CSS styling other elements than inputs
@@ -1504,6 +1546,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// Set property so that the hook can trigger the change event.
 				// This automatically sets the HTML attribute as well.
 				this.prop("disabled", true);
+				// Also update replacement elements of Frontfire controls
+				if (this.data("ff-replacement")) this.data("ff-replacement").disable(false);
 			} else if (this.attr("disabled") === undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only set HTML attribute to allow CSS styling other elements than inputs
@@ -1756,7 +1800,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var eventRemovers = [];
 			opt.eventRemovers.push(handle.pointer("down", function (event) {
 				if (event.button === 0) {
-					event.preventDefault();
 					event.stopImmediatePropagation();
 					if (dragging) return;
 					draggingCancelled = false;
@@ -2009,6 +2052,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			dropdownHeight = opt.maxHeight;
 			container.outerHeight(dropdownHeight);
 			isReducedHeight = true;
+			dropdownWidth = container.outerWidth();
 		}
 
 		// Place at bottom side, align left, by default
@@ -2094,13 +2138,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
 			if (scrollbarWidth > 0) {
 				dropdownWidth += scrollbarWidth;
+				if (dropdownWidth > viewportWidth) {
+					dropdownWidth = viewportWidth;
+				}
 				container.outerWidth(dropdownWidth);
 				if (isRightAligned) {
 					left -= scrollbarWidth;
 				} else if (isHorizontallyCentered) {
 					left -= scrollbarWidth / 2;
 				}
+
+				if (left + dropdownWidth > viewportWidth + scrollLeft) {
+					left = viewportWidth + scrollLeft - dropdownWidth;
+				} else if (left < scrollLeft) {
+					left = scrollLeft;
+				}
 			}
+		}
+
+		// Scroll to the first selected item in the dropdown (used for selectable)
+		var selectedChild = dropdown.children(".selected").first();
+		if (selectedChild.length > 0) {
+			var selectedTop = selectedChild.position().top;
+			container.scrollTop(selectedTop + selectedChild.height() / 2 - dropdownHeight / 2);
 		}
 
 		container.offset({ top: top, left: left }).addClass("animate-" + direction);
@@ -3377,27 +3437,35 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			opt._prepareChild = prepareChild;
 			opt._selectAll = selectAll;
 			opt._selectNone = selectNone;
+			opt._selectItem = selectItem;
 
 			var replaceHtmlSelect = elem[0].nodeName === "SELECT";
-			var useDropdown = elem[0].nodeName === "SELECT" && !elem.attr("size");
+			var useDropdown = replaceHtmlSelect && !elem.attr("size");
 			var htmlSelect = void 0,
 			    button = void 0;
 			var htmlSelectChanging = void 0;
+			var blurCloseTimeout = void 0;
 
 			if (replaceHtmlSelect) {
 				htmlSelect = elem;
+				var origStyle = elem.attr("style");
 				htmlSelect.hide();
 				opt.multiple |= htmlSelect.attr("multiple") !== undefined;
 				var newSelect = $("<div/>").addClass(selectableClass).insertAfter(htmlSelect);
 				elem = newSelect;
+				htmlSelect.data("ff-replacement", newSelect);
 				updateFromHtmlSelect();
 				if (useDropdown) {
 					button = $("<div/>").addClass("ff-selectable-button").attr("tabindex", 0).insertAfter(htmlSelect);
+					button.attr("style", origStyle);
 					newSelect.addClass("no-border dropdown bordered");
+					htmlSelect.data("ff-replacement", button);
 					updateButton();
 					button.click(function () {
+						if (button.disabled()) return;
 						button.addClass("open");
 						newSelect.dropdown(button);
+						if (button.closest(".dark").length > 0) newSelect.parent().addClass("dark"); // Set dropdown container to dark
 						newSelect.on("dropdownclose", function () {
 							button.removeClass("open");
 						});
@@ -3405,6 +3473,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					});
 					button.on("keydown", function (event) {
 						//console.log(event);
+						if (button.disabled()) return;
 						switch (event.originalEvent.keyCode) {
 							case 13: // Enter
 							case 32:
@@ -3448,13 +3517,49 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								break;
 						}
 					});
+
+					// Make the button unfocusable while it is disabled
+					var onDisabledchange = function onDisabledchange() {
+						if (button.disabled()) button.attr("tabindex", null);else button.attr("tabindex", 0);
+					};
+					button.on("disabledchange", onDisabledchange);
+					onDisabledchange();
+
+					// Close the dropdown when leaving the field with the Tab key
+					// (but not when clicking an item in the dropdown)
+					button.on("blur", function () {
+						if (button.hasClass("open") && !blurCloseTimeout) {
+							blurCloseTimeout = setTimeout(function () {
+								newSelect.dropdown.close();
+								blurCloseTimeout = undefined;
+							}, 50);
+						}
+					});
+					button.on("focus", function () {
+						if (blurCloseTimeout) {
+							// Clicked on an item, focused back; don't close the dropdown
+							clearTimeout(blurCloseTimeout);
+							blurCloseTimeout = undefined;
+						}
+					});
+				}
+
+				// Apply disabled property where appropriate
+				if (htmlSelect.disabled()) {
+					if (useDropdown) button.disable();else newSelect.disable();
+				}
+
+				// Apply nowrap class where appropriate
+				if (htmlSelect.hasClass("wrap")) {
+					if (useDropdown) button.addClass("wrap");else newSelect.addClass("wrap");
 				}
 
 				htmlSelect.change(function () {
 					if (!htmlSelectChanging) {
 						updateFromHtmlSelect();
 						elem.children().each(prepareChild);
-						lastClickedItem = elem.children().first();
+						lastClickedItem = elem.children(".selected").first();
+						if (lastClickedItem.length === 0) lastClickedItem = elem.children(":not(.disabled)").first();
 					}
 					if (useDropdown) {
 						updateButton();
@@ -3465,11 +3570,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			elem.attr("tabindex", 0);
 			elem.children().each(prepareChild);
 			var lastClickedItem = elem.children(".selected").first();
-			if (lastClickedItem.length === 0) lastClickedItem = elem.children().first();
+			if (lastClickedItem.length === 0) lastClickedItem = elem.children(":not(.disabled)").first();
 			var lastSelectedItem;
 
 			elem.on("keydown", function (event) {
 				//console.log(event);
+				if (elem.disabled()) return;
 				switch (event.originalEvent.keyCode) {
 					case 35:
 						// End
@@ -3511,8 +3617,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// Sets up event handlers on a selection child (passed as this).
 			function prepareChild() {
 				var child = $(this);
-				child.click(function (event) {
-					elem.focus();
+				if (child.hasClass("disabled")) return;
+				var isMouseDown = false;
+				child.on("mousedown", function (event) {
+					if (event.originalEvent.button === 0) {
+						isMouseDown = true;
+						setTimeout(function () {
+							if (useDropdown) button.focus();else elem.focus();
+						}, 0);
+					} else {
+						isMouseDown = false;
+					}
+				});
+				child.on("mouseup", function (event) {
+					if (!isMouseDown) return;
+					isMouseDown = false;
+					if (useDropdown) button.focus();else elem.focus();
 					var ctrlKey = !!event.originalEvent.ctrlKey;
 					var shiftKey = !!event.originalEvent.shiftKey;
 					if (!opt.multiple) ctrlKey = shiftKey = false;
@@ -3527,7 +3647,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							changed = true;
 						}
 						lastClickedItem = child;
-						lastSelectedItem = child;
 					} else if (shiftKey) {
 						var lastIndex = lastClickedItem.index();
 						var currentIndex = child.index();
@@ -3537,10 +3656,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						// Replace selection with all items between these indices (inclusive)
 						elem.children().removeClass("selected");
 						for (var i = i1; i <= i2; i++) {
-							elem.children().eq(i).addClass("selected");
+							var c = elem.children().eq(i);
+							if (!c.hasClass("disabled")) c.addClass("selected");
 						}
 						changed = true;
-						lastSelectedItem = child;
 					} else {
 						if (!child.hasClass("selected")) {
 							elem.children().removeClass("selected");
@@ -3548,8 +3667,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							changed = true;
 						}
 						lastClickedItem = child;
-						lastSelectedItem = child;
 					}
+					lastSelectedItem = child;
 					if (changed) {
 						elem.trigger("selectionchange");
 					}
@@ -3577,15 +3696,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Updates the HTML select element's selection from the UI elements (selected CSS class).
 			function updateHtmlSelect() {
+				var selectedValues = [];
+				elem.children().each$(function (_, child) {
+					if (child.hasClass("selected")) selectedValues.push(child.data("value"));
+				});
+
 				htmlSelectChanging = true;
 				htmlSelect.children("option").each$(function (_, option) {
-					var selected = false;
-					elem.children().each$(function (_, child) {
-						if (child.data("value") === option.prop("value")) {
-							selected = child.hasClass("selected");
-							return false;
-						}
-					});
+					var selected = selectedValues.indexOf(option.prop("value")) !== -1;
 					option.prop("selected", selected);
 				});
 				htmlSelect.change();
@@ -3599,7 +3717,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				htmlSelect.children("option").each$(function (_, option) {
 					var newOption = $("<div/>").text(option.text()).data("value", option.prop("value")).appendTo(elem);
 					if (option.data("html")) newOption.html(option.data("html"));
+					if (option.data("summary")) newOption.data("summary", option.data("summary"));
+					if (option.data("summary-html")) newOption.data("summary-html", option.data("summary-html"));
 					if (option.prop("selected")) newOption.addClass("selected");
+					if (option.prop("disabled")) newOption.addClass("disabled");
 				});
 			}
 
@@ -3608,7 +3729,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var html = "";
 				elem.children(".selected").each$(function (_, child) {
 					if (html) html += opt.separator;
-					html += child.html();
+					var summaryText = child.data("summary");
+					var summaryHtml = child.data("summary-html");
+					if (summaryHtml) html += summaryHtml;else if (summaryText) html += summaryText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");else html += child.html();
 				});
 				if (html) {
 					button.html("<span>" + html + "</span>");
@@ -3619,40 +3742,53 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Moves (and optionally extends) the selected index up or down.
 			function changeSelectedIndex(offset, extend) {
-				var count = elem.children().length;
-				if (count > 0) {
+				var children = elem.children();
+				var count = children.length;
+				if (count > 0 && offset !== 0) {
 					var index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
-					if ((offset === -1 || offset === 1) && !lastClickedItem.hasClass("selected")) ;else {
-						index += offset;
-						if (index < 0) index = 0;
-						if (index >= count) index = count - 1;
+					if (offset === -1 || offset === 1) {
+						if (!lastClickedItem.hasClass("selected")) ;else {
+							// Move selection until an enabled item was found
+							do {
+								index += offset;
+								if (index < 0 || index >= count) return; // Nothing found
+							} while (children.eq(index).hasClass("disabled"));
+						}
+					} else if (offset < 0) {
+						// Move selection to the first enabled item
+						index = elem.children(":not(.disabled)").first().index();
+					} else if (offset > 0) {
+						// Move selection to the last enabled item
+						index = elem.children(":not(.disabled)").last().index();
 					}
-					elem.children().removeClass("selected");
+					if (index === -1) return; // Nothing found
+
+					children.removeClass("selected");
 					if (extend) {
 						var lastIndex = lastClickedItem.index();
 						// Bring indices in a defined order
 						var i1 = Math.min(lastIndex, index);
 						var i2 = Math.max(lastIndex, index);
 						// Replace selection with all items between these indices (inclusive)
-						elem.children().removeClass("selected");
 						for (var i = i1; i <= i2; i++) {
-							elem.children().eq(i).addClass("selected");
+							var c = children.eq(i);
+							if (!c.hasClass("disabled")) c.addClass("selected");
 						}
-						lastSelectedItem = elem.children().eq(index);
+						lastSelectedItem = children.eq(index);
 					} else {
-						lastClickedItem = elem.children().eq(index);
+						lastClickedItem = children.eq(index);
 						lastClickedItem.addClass("selected");
 						lastSelectedItem = lastClickedItem;
 					}
-					updateHtmlSelect();
+					if (replaceHtmlSelect) updateHtmlSelect();
 				}
 			}
 
 			// Selects all items, if allowed.
 			function selectAll() {
 				if (opt.multiple || opt.toggle) {
-					elem.children().addClass("selected");
-					updateHtmlSelect();
+					elem.children(":not(.disabled)").addClass("selected");
+					if (replaceHtmlSelect) updateHtmlSelect();
 				}
 			}
 
@@ -3660,8 +3796,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function selectNone() {
 				if (opt.allowEmpty) {
 					elem.children().removeClass("selected");
-					updateHtmlSelect();
+					if (replaceHtmlSelect) updateHtmlSelect();
 				}
+			}
+
+			// Selects a single item.
+			function selectItem(item) {
+				elem.children().removeClass("selected");
+				item.addClass("selected");
+				elem.trigger("selectionchange");
+				if (replaceHtmlSelect) updateHtmlSelect();
 			}
 		});
 	}
@@ -3671,6 +3815,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var selectable = $(this);
 		var opt = loadOptions("selectable", selectable);
 		opt._prepareChild.call(child);
+		// TODO: Need to update HTML select, too?
 	}
 
 	// Notifies the selectable plugin about a removed child that may affect the selection.
@@ -3679,6 +3824,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (child.hasClass("selected")) {
 			selectable.trigger("selectionchange");
 		}
+		// TODO: Need to update HTML select, too?
 	}
 
 	// Returns the currently selected elements.
@@ -3701,12 +3847,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		opt._selectNone();
 	}
 
+	// Selects a single item.
+	function selectItem(item) {
+		var selectable = $(this);
+		var opt = loadOptions("selectable", selectable);
+		opt._selectItem(item);
+	}
+
 	registerPlugin("selectable", selectable, {
 		addChild: addChild,
 		removeChild: removeChild,
 		getSelection: getSelection,
 		selectAll: selectAll,
-		selectNone: selectNone
+		selectNone: selectNone,
+		selectItem: selectItem
 	});
 	$.fn.selectable.defaults = selectableDefaults;
 
