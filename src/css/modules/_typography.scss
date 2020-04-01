@@ -115,6 +115,7 @@ div.justify
 
 a
 {
+	transition: color $animationDuration $animationFunction;
 	&:link,
 	&:visited
 	{
@@ -123,6 +124,7 @@ a
 		&:hover
 		{
 			color: $linkHoverColor;
+			transition: color 0s;
 		}
 	}
 	.dark &
@@ -135,6 +137,7 @@ a
 			&:hover
 			{
 				color: $darkLinkHoverColor;
+				transition: color 0s;
 			}
 		}
 	}

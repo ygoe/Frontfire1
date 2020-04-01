@@ -65,8 +65,12 @@
 			Finally, paragraph content can be justified with the <code>justify</code> CSS class. This only becomes more visible with multiple lines of text in a paragraph. Here you can see that all content lines in the paragraph have the same length, regardless of the actual width of the words in a line, unlike the other paragraphs on this page. This is achieved by evenly distributing the width of all white-space between the words. In very narrow paragraphs and without hyphenation, this can easily lead to highly noticeable inconsistencies in word distance. So use it with care.
 		</p>
 
-		<p>
+		<p class="link-samples">
 			<a href="#">Hyperlinks</a> are defined with the <code>&lt;a&gt;</code> element. They use a blue text colour by default because this is the established UI convention since the beginnings of the web and users can immediately recognise the blue link as clickable and navigatable. The colour and underlining effect can be configured.
+		</p>
+
+		<p>
+			<label><input type="checkbox" id="disable-links"> Disable links</label>
 		</p>
 
 		<p>
@@ -268,5 +272,16 @@
 	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
 	<script src="lib/frontfire/js/frontfire.min.js"></script>
 	<script src="js/site.js"></script>
+
+	<script>
+		$("#disable-links").click(function () {
+			$(".link-samples a").disabled(this.checked)
+				.attr("href", this.checked ? null : "#");
+		});
+		
+		$(".link-samples a").click(function (event) {
+			event.preventDefault();
+		});
+	</script>
 </body>
 </html>
