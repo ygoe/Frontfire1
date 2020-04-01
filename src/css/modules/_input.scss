@@ -255,14 +255,8 @@ input[type=number]
 
 #{$buttonInputs},
 div.buttons a,
-div.buttons a:link,
-div.buttons a:visited,
 span.buttons a,
-span.buttons a:link,
-span.buttons a:visited,
-a.button,
-a.button:link,
-a.button:visited
+a.button
 {
 	display: inline-block;
 	text-align: center;
@@ -270,16 +264,26 @@ a.button:visited
 	border-radius: 0;
 	background: $buttonBackground;
 	color: $buttonColor;
-	text-decoration: none !important;
 	padding: 5px 9px;   // textbox padding + 1 for the missing border
 	min-width: 75px;
 	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)
 	cursor: pointer;
 	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, border $animationDuration $animationFunction;
+	&a:link,
+	&a:visited
+	{
+		color: $buttonColor;
+		text-decoration: none !important;
+	}
 	.dark &
 	{
 		background: $darkButtonBackground;
 		color: $darkButtonColor;
+		&a:link,
+		&a:visited
+		{
+			color: $darkButtonColor;
+		}
 	}
 	.larger &,
 	&.larger
@@ -304,10 +308,20 @@ a.button:visited
 		background: $buttonPressedBackground;
 		transition: background 0s;
 		color: $buttonPressedColor;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonPressedColor;
+		}
 		.dark &
 		{
 			background: $darkButtonPressedBackground;
 			color: $darkButtonPressedColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonPressedColor;
+			}
 		}
 	}
 	&:disabled,
@@ -316,10 +330,20 @@ a.button:visited
 		background: $buttonDisabledBackground;
 		color: $buttonDisabledColor;
 		cursor: default;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonDisabledColor;
+		}
 		.dark &
 		{
 			background: $darkButtonDisabledBackground;
 			color: $darkButtonDisabledColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonDisabledColor;
+			}
 		}
 	}
 
@@ -327,10 +351,20 @@ a.button:visited
 	{
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonDefaultColor;
+		}
 		.dark &
 		{
 			background: $darkButtonDefaultBackground;
 			color: $darkButtonDefaultColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonDefaultColor;
+			}
 		}
 
 		&:hover,
@@ -346,12 +380,22 @@ a.button:visited
 		&:active
 		{
 			background: $buttonDefaultPressedBackground;
-			transition: background 0s;
 			color: $buttonDefaultPressedColor;
+			transition: background 0s;
+			&a:link,
+			&a:visited
+			{
+				color: $buttonDefaultPressedColor;
+			}
 			.dark &
 			{
 				background: $darkButtonDefaultPressedBackground;
 				color: $darkButtonDefaultPressedColor;
+				&a:link,
+				&a:visited
+				{
+					color: $darkButtonDefaultPressedColor;
+				}
 			}
 		}
 	}
@@ -360,10 +404,20 @@ a.button:visited
 	{
 		background: $buttonCautionBackground;
 		color: $buttonCautionColor;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonCautionColor;
+		}
 		.dark &
 		{
 			background: $darkButtonCautionBackground;
 			color: $darkButtonCautionColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonCautionColor;
+			}
 		}
 
 		&:hover,
@@ -379,12 +433,22 @@ a.button:visited
 		&:active
 		{
 			background: $buttonCautionPressedBackground;
-			transition: background 0s;
 			color: $buttonCautionPressedColor;
+			transition: background 0s;
+			&a:link,
+			&a:visited
+			{
+				color: $buttonCautionPressedColor;
+			}
 			.dark &
 			{
 				background: $darkButtonCautionPressedBackground;
 				color: $darkButtonCautionPressedColor;
+				&a:link,
+				&a:visited
+				{
+					color: $darkButtonCautionPressedColor;
+				}
 			}
 		}
 	}
@@ -393,10 +457,20 @@ a.button:visited
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonTransparentColor;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonTransparentColor;
+		}
 		.dark &
 		{
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonTransparentColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonTransparentColor;
+			}
 		}
 
 		&:hover,
@@ -412,12 +486,22 @@ a.button:visited
 		&:active
 		{
 			background: $buttonTransparentPressedBackground;
-			transition: background 0s;
 			color: $buttonTransparentPressedColor;
+			transition: background 0s;
+			&a:link,
+			&a:visited
+			{
+				color: $buttonTransparentPressedColor;
+			}
 			.dark &
 			{
 				background: $darkButtonTransparentPressedBackground;
 				color: $darkButtonTransparentPressedColor;
+				&a:link,
+				&a:visited
+				{
+					color: $darkButtonTransparentPressedColor;
+				}
 			}
 		}
 	}
@@ -426,10 +510,20 @@ a.button:visited
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonDisabledColor;
+		&a:link,
+		&a:visited
+		{
+			color: $buttonDisabledColor;
+		}
 		.dark &
 		{
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonDisabledColor;
+			&a:link,
+			&a:visited
+			{
+				color: $darkButtonDisabledColor;
+			}
 		}
 	}
 

@@ -50,24 +50,30 @@
 	right: 0;
 	width: 25px;
 	height: 25px;
-	color: gray;
 	text-align: center;
 	font-size: 19px;
 	line-height: 19px;
-	text-decoration: none;
 	transition: background 0.2s, color 0.2s;
-
+	&:link,
+	&:visited
+	{
+		color: gray;
+		text-decoration: none;
+	}
 	&::after
 	{
 		display: block;
 		content: '\D7';
 	}
-
 	&:hover
 	{
 		background: #e81123;
-		color: white;
 		text-decoration: none;
 		transition: background 0s, color 0s;
+		&:link,
+		&:visited
+		{
+			color: white;
+		}
 	}
 }
