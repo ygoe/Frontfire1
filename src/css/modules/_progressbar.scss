@@ -59,6 +59,17 @@
 		background: $progressNoBorderBackground;
 	}
 
+	// Revert overridden background and padding of messages
+	&.critical,
+	&.error,
+	&.warning,
+	&.information,
+	&.success
+	{
+		background: $textboxBackground;
+		padding: 1px;
+	}
+
 	// Order of increasing severity to let that override the lower classes if multiple are applied
 	&.success .ff-bar { background: $progressSuccessColor; }
 	&.warning .ff-bar { background: $progressWarningColor; }
