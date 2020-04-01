@@ -5,8 +5,7 @@ var messageCloseButtonClass = "ff-message-close-button";
 
 // Makes each selected message div element closable by adding a close button to it.
 function closableMessage() {
-	return this.each(function () {
-		var message = $(this);
+	return this.each$(function (_, message) {
 		if (message.find("." + messageCloseButtonClass).length !== 0) return;   // Already added
 
 		// Add close button
@@ -23,8 +22,7 @@ function closableMessage() {
 
 // Closes each selected message div and removes it from the document.
 function closeMessage() {
-	return this.each(function () {
-		var message = $(this);
+	return this.each$(function (_, message) {
 		message.addClass("ff-closed");
 		message.on("transitionend", function () {
 			message.remove();

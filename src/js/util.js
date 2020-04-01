@@ -153,8 +153,8 @@ export function stackElements(stackedElems, topElem) {
 		});
 	if (stackedElems.length !== 0) {
 		var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(o => o.zIndex));
-		stackedElems.each(function (index) {
-			$(this.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
+		stackedElems.each(function (index, item) {
+			$(item.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
 		});
 	}
 }

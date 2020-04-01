@@ -2,12 +2,10 @@
 
 // Converts each selected list element into a menu. Submenus are opened for nested lists.
 function menu() {
-	return this.each(function () {
-		var menu = $(this);
+	return this.each$(function (_, menu) {
 		var isVertical = menu.hasClass("vertical");
 		var itemsWithSubmenu = menu.children("li").has("ul");
-		itemsWithSubmenu.each(function () {
-			var item = $(this);
+		itemsWithSubmenu.each$(function (_, item) {
 			item.addClass("ff-has-submenu");
 			var submenu = item.children("ul").first();
 			if (submenu.hasClass("ff-submenu")) return;   // Already done
@@ -31,16 +29,16 @@ function menu() {
 			});
 
 			// Prepare separators
-			submenu.children("li").each$(function () {
-				if (this.text() === "-") {
-					this.text("");
-					this.addClass("separator");
+			submenu.children("li").each$(function (_, obj) {
+				if (obj.text() === "-") {
+					obj.text("");
+					obj.addClass("separator");
 				}
 			});
 			
 			// Close submenu when clicking on one of its items
-			submenu.find("li > a:not(.stay-open)").each$(function () {
-				this.click(function () {
+			submenu.find("li > a:not(.stay-open)").each$(function (_, obj) {
+				obj.click(function () {
 					submenu.dropdown.close();
 				});
 			});

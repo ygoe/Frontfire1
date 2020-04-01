@@ -36,8 +36,7 @@ var draggableDefaults = {
 
 // Makes each selected element draggable.
 function draggable(options) {
-	return this.each(function () {
-		var elem = this;
+	return this.each(function (_, elem) {
 		var $elem = $(elem);
 		if ($elem.hasClass(draggableClass)) return;   // Already done
 		$elem.addClass(draggableClass);
@@ -209,8 +208,7 @@ function draggable(options) {
 
 // Removes the draggable features from the elements.
 function remove() {
-	return this.each(function () {
-		var elem = this;
+	return this.each(function (_, elem) {
 		var $elem = $(elem);
 		if (!$elem.hasClass(draggableClass)) return;
 		$elem.removeClass(draggableClass);

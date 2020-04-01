@@ -45,8 +45,8 @@ var carouselDefaults = {
 
 // Converts each selected element into a carousel.
 function carousel(options) {
-	return this.each(function () {
-		var carousel = $(this);
+	return this.each(function (_, obj) {
+		var carousel = $(obj);
 		if (carousel.find("." + carouselClass).length) return;   // Already done
 		var opt = initOptions("carousel", carouselDefaults, carousel, {}, options);
 
@@ -70,10 +70,10 @@ function carousel(options) {
 		opt.dotsEach = minmax(opt.dotsEach, 0, opt.items);
 
 		// Set up items positioning
-		items.each$(function () {
-			this.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
-			maxItemHeight = Math.max(maxItemHeight, this.outerHeight());
-			this.detach().appendTo(stage);
+		items.each$(function (_, obj) {
+			obj.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
+			maxItemHeight = Math.max(maxItemHeight, obj.outerHeight());
+			obj.detach().appendTo(stage);
 			itemIndex++;
 		});
 		stage.appendTo(carousel);
@@ -254,12 +254,12 @@ function carousel(options) {
 				switch (opt.animation) {
 					case "fade":
 						let z1, z2, z2Opacity;
-						items.each$(function (index) {
-							if (this.css("z-index") == 1)
+						items.each$(function (index, obj) {
+							if (obj.css("z-index") == 1)
 								z1 = index;
-							if (this.css("z-index") == 2) {
+							if (obj.css("z-index") == 2) {
 								z2 = index;
-								z2Opacity = parseFloat(this.css("opacity"));
+								z2Opacity = parseFloat(obj.css("opacity"));
 							}
 						});
 						//console.log("get layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
@@ -274,8 +274,8 @@ function carousel(options) {
 					case "slide-in":
 						let anyZero = false;
 						let firstGtZero = -1;
-						items.each$(function (index) {
-							let left = parseFloat(this.css("left"));
+						items.each$(function (index, obj) {
+							let left = parseFloat(obj.css("left"));
 							pos.push(left);
 							if (left !== pos[0]) allSame = false;
 							if (left === 0) anyZero = true;
@@ -288,8 +288,8 @@ function carousel(options) {
 					case "slide-out":
 						let anyPositive = false;
 						let firstZero = -1;
-						items.each$(function (index) {
-							let left = parseFloat(this.css("left"));
+						items.each$(function (index, obj) {
+							let left = parseFloat(obj.css("left"));
 							pos.push(left);
 							if (left !== pos[0]) allSame = false;
 							if (left >= 0) anyPositive = true;
@@ -316,26 +316,26 @@ function carousel(options) {
 						let fullyVisible = opt.active + Math.trunc(itemOffset);
 						let partiallyVisible = opt.active + Math.trunc(itemOffset) + Math.sign(itemOffset);
 						//console.log(fullyVisible, partiallyVisible);
-						items.each$(function (index) {
+						items.each$(function (index, obj) {
 							if (index === fullyVisible) {
-								this.css("z-index", 1).css("opacity", 1);
+								obj.css("z-index", 1).css("opacity", 1);
 							}
 							else if (index === partiallyVisible) {
-								this.css("z-index", 2).css("opacity", Math.abs(itemOffset) - Math.trunc(Math.abs(itemOffset)));
+								obj.css("z-index", 2).css("opacity", Math.abs(itemOffset) - Math.trunc(Math.abs(itemOffset)));
 							}
 							else {
-								this.css("z-index", 0).css("opacity", 0);
+								obj.css("z-index", 0).css("opacity", 0);
 							}
 						});
 					}
 					else {
 						let z1, z2, z2Opacity;
-						items.each$(function (index) {
-							if (this.css("z-index") == 1)
+						items.each$(function (index, obj) {
+							if (obj.css("z-index") == 1)
 								z1 = index;
-							if (this.css("z-index") == 2) {
+							if (obj.css("z-index") == 2) {
 								z2 = index;
-								z2Opacity = parseFloat(this.css("opacity"));
+								z2Opacity = parseFloat(obj.css("opacity"));
 							}
 						});
 						//console.log("set layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
@@ -352,66 +352,66 @@ function carousel(options) {
 						}
 						else {
 							let currentVisible;
-							items.each$(function (index) {
-								if (this.css("z-index") == 1)
+							items.each$(function (index, obj) {
+								if (obj.css("z-index") == 1)
 									currentVisible = index;
 							});
 							removeTransition();
 							items.eq(opt.active).css("z-index", 1).css("opacity", 1).css("pointer-events", "");
 							forceReflow();
 							if (!opt._isDragging) addTransition();
-							items.each$(function (index) {
+							items.each$(function (index, obj) {
 								if (index === opt.active) {
 								}
 								else if (index === currentVisible) {
-									this.css("z-index", 2).css("opacity", 0).css("pointer-events", "none");
+									obj.css("z-index", 2).css("opacity", 0).css("pointer-events", "none");
 								}
 								else {
-									this.css("z-index", 0).css("opacity", 0).css("pointer-events", "");
+									obj.css("z-index", 0).css("opacity", 0).css("pointer-events", "");
 								}
 							});
 						}
 					}
 
 					let status = "";
-					items.each$(function (index) {
-						status += index + ": z=" + this.css("z-index") + " op=" + this.css("opacity") + (index === opt.active ? " active" : "") + "\n";
+					items.each$(function (index, obj) {
+						status += index + ": z=" + obj.css("z-index") + " op=" + obj.css("opacity") + (index === opt.active ? " active" : "") + "\n";
 					});
 					//console.log(status);
 					break;
 				case "slide-in":
-					items.each$(function (index) {
+					items.each$(function (index, obj) {
 						let left = opt.active + itemOffset <= items.length - 1 ?
 							minmax((index - opt.active - itemOffset) * 100, 0, 100) :
 							(items.length - 1 - opt.active - itemOffset) * 100;
-						this.css("left", left + "%");
-						this.css("z-index", index);
+						obj.css("left", left + "%");
+						obj.css("z-index", index);
 					});
 					break;
 				case "slide-out":
-					items.each$(function (index) {
+					items.each$(function (index, obj) {
 						let left = opt.active + itemOffset >= 0 ?
 							minmax((index - opt.active - itemOffset) * 100, -100, 0) :
 							(-opt.active - itemOffset) * 100;
-						this.css("left", left + "%");
-						this.css("z-index", items.length - 1 - index);
+						obj.css("left", left + "%");
+						obj.css("z-index", items.length - 1 - index);
 					});
 					break;
 				case "slide-fade":
-					items.each$(function (index) {
+					items.each$(function (index, obj) {
 						let percent = (index - opt.active) * 100 / 10;
 						let left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / 10;
-						this.css("left", "calc(" + percent + "% + " + left + "px)");
+						obj.css("left", "calc(" + percent + "% + " + left + "px)");
 						let opacity = 1 - minmax(Math.abs(index - (opt.active + itemOffset)), 0, 1);
-						this.css("opacity", opacity);
+						obj.css("opacity", opacity);
 					});
 					break;
 				case "slide-all":
 				default:
-					items.each$(function (index) {
+					items.each$(function (index, obj) {
 						let percent = (index - opt.active) * opt._itemWidthPercent;
 						let left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / opt.items;
-						this.css("left", "calc(" + percent + "% + " + left + "px)");
+						obj.css("left", "calc(" + percent + "% + " + left + "px)");
 					});
 					break;
 			}
@@ -432,8 +432,8 @@ function activeItem(indexOrItem) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var carousel = $(this);
+	return this.each(function (_, obj) {
+		var carousel = $(obj);
 		var opt = loadOptions("carousel", carousel);
 		if (opt._isDragging) return;   // Ignore request while dragging
 		var items = carousel.find("." + carouselClass).children();

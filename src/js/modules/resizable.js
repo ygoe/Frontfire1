@@ -38,24 +38,22 @@ var resizableDefaults = {
 
 // Makes each selected element resizable.
 function resizable(options) {
-	return this.each(function () {
-		var elem = this;
-		var $elem = $(elem);
-		if ($elem.hasClass(resizableClass)) return;   // Already done
-		$elem.addClass(resizableClass);
+	return this.each$(function (_, elem) {
+		if (elem.hasClass(resizableClass)) return;   // Already done
+		elem.addClass(resizableClass);
 		var htmlCursor;
 		var handleElements = $();
-		var opt = initOptions("resizable", resizableDefaults, $elem, {}, options);
+		var opt = initOptions("resizable", resizableDefaults, elem, {}, options);
 		let $window = $(window);
 
 		var aspectRatio = opt.aspectRatio;
-		if (aspectRatio === true || aspectRatio === "true") aspectRatio = $elem.outerWidth() / $elem.outerHeight();
+		if (aspectRatio === true || aspectRatio === "true") aspectRatio = elem.outerWidth() / elem.outerHeight();
 		if ($.isNumeric(aspectRatio)) aspectRatio = parseFloat(aspectRatio);
 		if (aspectRatio === 0 || !isFinite(aspectRatio) || !$.isNumber(aspectRatio)) aspectRatio = undefined;
 
-		if ($elem.css("position") === "static") {
+		if (elem.css("position") === "static") {
 			opt.wasPositionStatic = true;
-			$elem.css("position", "relative");
+			elem.css("position", "relative");
 		}
 
 		var optHandles = opt.handles;
@@ -113,8 +111,8 @@ function resizable(options) {
 		}
 
 		installDisabledchangeHook();
-		$elem.on("disabledchange.resizable", function () {
-			handleElements.visible(!$elem.disabled());
+		elem.on("disabledchange.resizable", function () {
+			handleElements.visible(!elem.disabled());
 		});
 
 		function addHandle(style, cursor, vertical, negative, vertical2, negative2) {
@@ -123,7 +121,7 @@ function resizable(options) {
 				.css(style)
 				.css("position", "absolute")
 				.css("cursor", cursor);
-			$elem.append(handle);
+			elem.append(handle);
 			handleElements = handleElements.add(handle);
 			handle.draggable({ scroll: opt.scroll });
 			handle.on("draggablestart", function (event) {
@@ -132,7 +130,7 @@ function resizable(options) {
 				event2.vertical = vertical;
 				event2.negative = negative;
 				event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
-				$elem.trigger(event2);
+				elem.trigger(event2);
 				if (!event2.isDefaultPrevented()) {
 					htmlCursor = document.documentElement.style.getPropertyValue("cursor");
 					document.documentElement.style.setProperty("cursor", cursor, "important");
@@ -155,7 +153,7 @@ function resizable(options) {
 				event2.vertical = vertical;
 				event2.negative = negative;
 				event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
-				$elem.trigger(event2);
+				elem.trigger(event2);
 			});
 			return handle;
 		}
@@ -167,23 +165,23 @@ function resizable(options) {
 			var delta = newPoint[side] - handle.offset()[side];
 			if (negative) delta = -delta;
 
-			var newElemOffset = $elem.offset();
+			var newElemOffset = elem.offset();
 			var step = opt.grid ? opt.grid[vertical ? 1 : 0] : 1;
 
 			if (opt.grid) {
-				let gridBase = $elem.parent().offset();
+				let gridBase = elem.parent().offset();
 				if (negative) {
 					delta = newElemOffset[side] - (Math.round(((newElemOffset[side] - delta) - gridBase[side]) / step) * step + gridBase[side]);
 				}
 				else {
-					let length = $elem["outer" + extent]();
+					let length = elem["outer" + extent]();
 					delta = Math.round(((newElemOffset[side] + length + delta) - gridBase[side]) / step) * step + gridBase[side] - (newElemOffset[side] + length);
 				}
 			}
 
-			var newLength = $elem["outer" + extent]() + delta;
+			var newLength = elem["outer" + extent]() + delta;
 
-			let minLength = Math.max($elem["outer" + extent]() - $elem[extentLower](), opt["min" + extent] || 0);
+			let minLength = Math.max(elem["outer" + extent]() - elem[extentLower](), opt["min" + extent] || 0);
 			while (newLength < minLength) {
 				delta += step;
 				newLength += step;
@@ -199,7 +197,7 @@ function resizable(options) {
 			if (opt.containment) {
 				let cont, contRect;
 				if (opt.containment === "parent") {
-					cont = $elem.parent();
+					cont = elem.parent();
 				}
 				else if (opt.containment === "viewport") {
 					let scrollTop = $window.scrollTop();
@@ -240,11 +238,11 @@ function resizable(options) {
 			event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
 			event2.newLength = newLength;
 			event2.newPosition = newElemOffset[side];
-			$elem.trigger(event2);
+			elem.trigger(event2);
 			if (!event2.isDefaultPrevented()) {
-				$elem["outer" + extent](event2.newLength);
+				elem["outer" + extent](event2.newLength);
 				newElemOffset[side] = event2.newPosition;
-				if (negative) $elem.offset(newElemOffset);
+				if (negative) elem.offset(newElemOffset);
 			}
 		}
 	});
@@ -252,16 +250,14 @@ function resizable(options) {
 
 // Removes the resizing features from the elements.
 function remove() {
-	return this.each(function () {
-		var elem = this;
-		var $elem = $(elem);
-		if (!$elem.hasClass(resizableClass)) return;
-		$elem.removeClass(resizableClass);
-		var opt = loadOptions("resizable", $elem);
+	return this.each$(function (_, elem) {
+		if (!elem.hasClass(resizableClass)) return;
+		elem.removeClass(resizableClass);
+		var opt = loadOptions("resizable", elem);
 		if (opt.wasPositionStatic)
-			$elem.css("position", "static");
-		$elem.find(".ff-resizable-handle").remove();
-		$elem.off("disabledchange.resizable");
+			elem.css("position", "static");
+		elem.find(".ff-resizable-handle").remove();
+		elem.off("disabledchange.resizable");
 	});
 }
 

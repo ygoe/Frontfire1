@@ -33,33 +33,31 @@ var sortableDefaults = {
 
 // Makes the child elements in each selected element sortable by drag&drop.
 function sortable(options) {
-	return this.each(function () {
-		var elem = this;
-		var $elem = $(elem);
-		if ($elem.hasClass(sortableClass)) return;   // Already done
-		$elem.addClass(sortableClass);
-		var opt = initOptions("sortable", sortableDefaults, $elem, {}, options);
+	return this.each$(function (_, elem) {
+		if (elem.hasClass(sortableClass)) return;   // Already done
+		elem.addClass(sortableClass);
+		var opt = initOptions("sortable", sortableDefaults, elem, {}, options);
 		opt._prepareChild = prepareChild;
 
 		// Remove text nodes between children which cause layout issues when dragging
-		$elem.contents().filter(function () {
+		elem.contents().filter(function () {
 			return this.nodeType === 3;
 		}).remove();
 
-		var isVertical = isBlockDisplay($elem.firstChild().css("display"));
+		var isVertical = isBlockDisplay(elem.firstChild().css("display"));
 		var flowStart = isVertical ? "top" : "left";
 		var flowEnd = isVertical ? "bottom" : "right";
 		var crossStart = isVertical ? "left" : "top";
 		var crossEnd = isVertical ? "right" : "bottom";
 
-		$elem.children().each(prepareChild);
+		elem.children().each(prepareChild);
 		
 		function prepareChild() {
 			var child = $(this);
 			var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren, initialChildIndex;
 			var stack = opt.stack;
 			if (stack === true)
-				stack = $elem.children();
+				stack = elem.children();
 
 			child.draggable({
 				handle: opt.handle,
@@ -90,12 +88,12 @@ function sortable(options) {
 
 				// Fix the size of table row cells while dragging
 				if (child[0].nodeName === "TR") {
-					let table = child.closest("table").find("tr").first().children("td, th").each$(function () {
-						this.data("width-before-drag", this[0].style.width || "");
-						this.css("width", this.outerWidth());
+					let table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+						obj.data("width-before-drag", obj[0].style.width || "");
+						obj.css("width", obj.outerWidth());
 					});
-					child.children("td, th").each$(function () {
-						this.css("width", this.outerWidth());
+					child.children("td, th").each$(function (_, obj) {
+						obj.css("width", obj.outerWidth());
 					});
 					child.css("min-width", child.outerWidth() + 1);
 				}
@@ -176,7 +174,7 @@ function sortable(options) {
 					}
 					if (!eventCancelled) {
 						if (!newPlaceholderAfterElement)
-							placeholder.detach().insertBefore($elem.firstChild());
+							placeholder.detach().insertBefore(elem.firstChild());
 						else
 							placeholder.detach().insertAfter(newPlaceholderAfterElement);
 						placeholderAfterElement = newPlaceholderAfterElement;
@@ -193,12 +191,12 @@ function sortable(options) {
 
 				// Reset the size of table row cells
 				if (child[0].nodeName === "TR") {
-					let table = child.closest("table").find("tr").first().children("td, th").each$(function () {
-						this.css("width", this.data("width-before-drag"));
-						this.data("width-before-drag", null);
+					let table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+						obj.css("width", obj.data("width-before-drag"));
+						obj.data("width-before-drag", null);
 					});
-					child.children("td, th").each$(function () {
-						this.css("width", "");
+					child.children("td, th").each$(function (_, obj) {
+						obj.css("width", "");
 					});
 					child.css("width", "");
 				}
@@ -210,7 +208,7 @@ function sortable(options) {
 				child.trigger(event2);
 				if (event2.isDefaultPrevented()) {
 					if (!initialChildAfterElement)
-						child.detach().insertBefore($elem.firstChild());
+						child.detach().insertBefore(elem.firstChild());
 					else
 						child.detach().insertAfter(initialChildAfterElement);
 				}
@@ -220,10 +218,10 @@ function sortable(options) {
 			function updateChildren() {
 				betweenChildren = [];
 				var rowElements = [];
-				var rowMin, rowMax, currentPos, elem = null;
-				$elem.children().each(function () {
-					if (this !== child[0]) {
-						var rect = $(this).rect();
+				var rowMin, rowMax, currentPos, childElem = null;
+				elem.children().each(function (_, obj) {
+					if (obj !== child[0]) {
+						var rect = $(obj).rect();
 						if (rect[flowStart] + 0.1 < currentPos) {   // Need to compensate for rounding issues from the 4th decimal in Chrome/Edge/IE
 							// This element is in a new row
 							addRow();
@@ -236,8 +234,8 @@ function sortable(options) {
 						// Remember how far the row has been used
 						currentPos = rect[flowEnd];
 
-						if (this !== placeholder[0]) elem = this;
-						rowElements.push({ elem: elem, rect: rect });
+						if (obj !== placeholder[0]) childElem = obj;
+						rowElements.push({ elem: childElem, rect: rect });
 					}
 				});
 

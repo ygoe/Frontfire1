@@ -10,8 +10,7 @@ var textareaWrapperClass = "ff-textarea-wrapper";
 // Makes each selected button trigger repeated click events while being pressed.
 // The button will not trigger a click event anymore but instead repeatclick events.
 function repeatButton() {
-	return this.each(function () {
-		var button = $(this);
+	return this.each$(function (_, button) {
 		if (button.hasClass(repeatButtonClass)) return;   // Already done
 		button.addClass(repeatButtonClass);
 		var timeout, ms;
@@ -44,8 +43,7 @@ registerPlugin("repeatButton", repeatButton);
 
 // Adds buttons to each selected input[type=number] element to decrement or increment the value.
 function spinner() {
-	return this.each(function () {
-		var input = $(this);
+	return this.each$(function (_, input) {
 		if (input.parent().hasClass(inputWrapperClass)) return;   // Already done
 
 		// Put a wrapper between the input and its parent
@@ -117,8 +115,7 @@ registerPlugin("spinner", spinner);
 
 // Converts each selected input[type=color] element into a text field with color picker button.
 function colorPicker() {
-	return this.each(function () {
-		var input = $(this);
+	return this.each$(function (_, input) {
 		if (input.parent().hasClass(inputWrapperClass)) return;   // Already done
 		var lastColor;
 
@@ -233,10 +230,10 @@ function colorPicker() {
 		pickButton.click(function (event) {
 			var currentColor = input.val();
 			var activeButton;
-			dropdown.find("button").each$(function () {
-				var active = this.data("color") === currentColor;
-				this.toggleClass("active", active);
-				if (active) activeButton = this[0];
+			dropdown.find("button").each$(function (_, obj) {
+				var active = obj.data("color") === currentColor;
+				obj.toggleClass("active", active);
+				if (active) activeButton = obj[0];
 			});
 
 			dropdown.dropdown(pickButton, { placement: "right" });
@@ -264,8 +261,7 @@ registerPlugin("colorPicker", colorPicker);
 
 // Applies the enhanced style on the selected checkbox and radio input elements.
 function styleCheckbox() {
-	return this.each(function () {
-		var input = $(this);
+	return this.each$(function (_, input) {
 		if (input.hasClass(styleCheckboxClass)) return;   // Already done
 		if (!input.is("input[type=checkbox], input[type=radio]")) return;   // Wrong element
 
@@ -281,8 +277,7 @@ registerPlugin("styleCheckbox", styleCheckbox);
 
 // Makes each selected checkbox cycle through indeterminate (third) state on clicking.
 function threeState() {
-	return this.each(function () {
-		var input = $(this);
+	return this.each$(function (_, input) {
 		if (input.hasClass(treeStateClass)) return;   // Already done
 		if (!input.is("input[type=checkbox]")) return;   // Wrong element
 		input.addClass(treeStateClass);
@@ -312,8 +307,7 @@ registerPlugin("threeState", threeState);
 // Makes each selected textarea element automatically adjust its height to its content.
 function autoHeight(minRows, maxRows, extraRows) {
 	minRows = minRows || 3;
-	return this.each(function () {
-		var textarea = $(this);
+	return this.each$(function (_, textarea) {
 		if (textarea.parent().hasClass(textareaWrapperClass)) return;   // Already done
 
 		// Put a wrapper between the textarea and its parent, and host a new shadow element in

@@ -4,24 +4,24 @@
 let origToggle = $.fn.toggle;
 $.fn.toggle = function () {
 	let args = arguments;
-	return this.each$(function () {
-		origToggle.apply(this.data("ff-replacement") || this, args);
+	return this.each$(function (_, obj) {
+		origToggle.apply(obj.data("ff-replacement") || obj, args);
 	});
 };
 
 let origShow = $.fn.show;
 $.fn.show = function () {
 	let args = arguments;
-	return this.each$(function () {
-		origShow.apply(this.data("ff-replacement") || this, args);
+	return this.each$(function (_, obj) {
+		origShow.apply(obj.data("ff-replacement") || obj, args);
 	});
 };
 
 let origHide = $.fn.hide;
 $.fn.hide = function () {
 	let args = arguments;
-	return this.each$(function () {
-		origHide.apply(this.data("ff-replacement") || this, args);
+	return this.each$(function (_, obj) {
+		origHide.apply(obj.data("ff-replacement") || obj, args);
 	});
 };
 
@@ -48,11 +48,11 @@ $.fn.rect = function (relative) {
 $.fn.visible = function (value) {
 	// Setter
 	if (value !== undefined) {
-		return this.each(function () {
+		return this.each(function (_, obj) {
 			if (value)
-				$(this).show();
+				$(obj).show();
 			else
-				$(this).hide();
+				$(obj).hide();
 		});
 	}
 
@@ -69,11 +69,11 @@ $.fn.visible = function (value) {
 $.fn.disabled = function (value, includeLabel) {
 	// Setter
 	if (value !== undefined) {
-		return this.each(function () {
+		return this.each(function (_, obj) {
 			if (value)
-				$(this).disable(includeLabel);
+				$(obj).disable(includeLabel);
 			else
-				$(this).enable(includeLabel);
+				$(obj).enable(includeLabel);
 		});
 	}
 
@@ -87,32 +87,32 @@ $.fn.disabled = function (value, includeLabel) {
 //
 // includeLabel: Also updates the parent form row label, if there is one. Default: true.
 $.fn.enable = function (includeLabel) {
-	return this.each$(function () {
-		var supportsDisabledProp = "disabled" in this[0];
+	return this.each$(function (_, obj) {
+		var supportsDisabledProp = "disabled" in obj[0];
 		if (supportsDisabledProp) {
 			// Set property so that the hook can trigger the change event.
 			// This automatically removes the HTML attribute as well.
-			this.prop("disabled", false);
+			obj.prop("disabled", false);
 			// Also update replacement elements of Frontfire controls
-			if (this.data("ff-replacement"))
-				this.data("ff-replacement").enable(false);
+			if (obj.data("ff-replacement"))
+				obj.data("ff-replacement").enable(false);
 		}
-		else if (this.attr("disabled") !== undefined) {
+		else if (obj.attr("disabled") !== undefined) {
 			// Don't set the property or it will be added where not supported.
 			// Only remove HTML attribute to allow CSS styling other elements than inputs
-			this.removeAttr("disabled");
+			obj.removeAttr("disabled");
 			// Trigger the event manually
-			this.trigger("disabledchange");
+			obj.trigger("disabledchange");
 		}
 
-		this.parents("label").enable();
-		var id = this.attr("id");
+		obj.parents("label").enable();
+		var id = obj.attr("id");
 		if (id)
 			$("label[for='" + id + "']").enable();
 		
 		if (includeLabel !== false) {
 			// Find previous .label sibling up on the .form-row level
-			let refNode = this;
+			let refNode = obj;
 			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
 				refNode = refNode.parent();
 			let label = refNode.prev();
@@ -126,32 +126,32 @@ $.fn.enable = function (includeLabel) {
 //
 // includeLabel: Also updates the parent form row label, if there is one. Default: true.
 $.fn.disable = function (includeLabel) {
-	return this.each$(function () {
-		var supportsDisabledProp = "disabled" in this[0];
+	return this.each$(function (_, obj) {
+		var supportsDisabledProp = "disabled" in obj[0];
 		if (supportsDisabledProp) {
 			// Set property so that the hook can trigger the change event.
 			// This automatically sets the HTML attribute as well.
-			this.prop("disabled", true);
+			obj.prop("disabled", true);
 			// Also update replacement elements of Frontfire controls
-			if (this.data("ff-replacement"))
-				this.data("ff-replacement").disable(false);
+			if (obj.data("ff-replacement"))
+				obj.data("ff-replacement").disable(false);
 		}
-		else if (this.attr("disabled") === undefined) {
+		else if (obj.attr("disabled") === undefined) {
 			// Don't set the property or it will be added where not supported.
 			// Only set HTML attribute to allow CSS styling other elements than inputs
-			this.attr("disabled", "");
+			obj.attr("disabled", "");
 			// Trigger the event manually
-			this.trigger("disabledchange");
+			obj.trigger("disabledchange");
 		}
 
-		this.parents("label").disable();
-		var id = this.attr("id");
+		obj.parents("label").disable();
+		var id = obj.attr("id");
 		if (id)
 			$("label[for='" + id + "']").disable();
 		
 		if (includeLabel !== false) {
 			// Find previous .label sibling up on the .form-row level
-			let refNode = this;
+			let refNode = obj;
 			while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
 				refNode = refNode.parent();
 			let label = refNode.prev();
@@ -165,19 +165,19 @@ $.fn.disable = function (includeLabel) {
 //
 // includeLabel: Also updates the parent form row label, if there is one. Default: true.
 $.fn.toggleDisabled = function (includeLabel) {
-	return this.each$(function () {
-		if (this.disabled())
-			this.enable(includeLabel);
+	return this.each$(function (_, obj) {
+		if (obj.disabled())
+			obj.enable(includeLabel);
 		else
-			this.disable(includeLabel);
+			obj.disable(includeLabel);
 	});
 };
 
 // Returns the first child of each selected element, in the fastest possible way.
 $.fn.firstChild = function () {
 	var ret = $();
-	this.each(function () {
-		ret = ret.add(this.firstElementChild);
+	this.each(function (_, obj) {
+		ret = ret.add(obj.firstElementChild);
 	});
 	return ret;
 };
@@ -254,9 +254,8 @@ $.fn.pointer = function (type, handler, capture) {
 		if (this.length > 1) {
 			// Call self for each element and combine all event remover functions in a new function to return
 			let eventRemovers = [];
-			let that = this;
-			this.each(function () {
-				eventRemovers.push($(that).pointer(type, handler, capture));
+			this.each$(function (_, obj) {
+				eventRemovers.push(obj.pointer(type, handler, capture));
 			});
 			return function () {
 				eventRemovers.forEach(function (eventRemover) { eventRemover(); });

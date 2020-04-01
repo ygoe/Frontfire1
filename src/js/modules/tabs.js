@@ -11,13 +11,12 @@ var tabsDefaults = {
 // Converts all div elements in each selected element into tab pages.
 // The tab page headers are read from the div elements' title attribute.
 function tabs(options) {
-	return this.each(function () {
-		var container = $(this);
+	return this.each$(function (_, container) {
 		if (container.children("div." + tabHeadersClass).length !== 0) return;   // Already done
 		var opt = initOptions("tabs", tabsDefaults, container, {}, options);
 		opt._addTab = addTab;
 
-		var pageDivs = $(this).children("div");
+		var pageDivs = container.children("div");
 		var activePage = pageDivs.filter(".active").first();
 		var headers = $("<div/>").addClass(tabHeadersClass).appendTo(container);
 		var pages = $("<div/>").addClass(tabPagesClass).appendTo(container);
@@ -122,8 +121,7 @@ function activeTab(indexOrPage) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var container = $(this);
+	return this.each$(function (_, container) {
 		var headers = container.children("div." + tabHeadersClass).first();
 		var pages = container.find("div." + tabPagesClass).first();
 		var index, page;

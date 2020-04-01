@@ -23,16 +23,15 @@ var progressbarDefaults = {
 
 // Shows a progressbar on the element.
 function progressbar(options) {
-	return this.each(function () {
-		var $elem = $(this);
-		if ($elem.hasClass(progressbarClass)) return;   // Already done
-		$elem.addClass(progressbarClass);
-		var opt = initOptions("progressbar", progressbarDefaults, $elem, {}, options);
+	return this.each$(function (_, elem) {
+		if (elem.hasClass(progressbarClass)) return;   // Already done
+		elem.addClass(progressbarClass);
+		var opt = initOptions("progressbar", progressbarDefaults, elem, {}, options);
 		opt._setValue = setValue;
 
 		let bar = $("<div/>")
 			.addClass("ff-bar")
-			.appendTo($elem);
+			.appendTo(elem);
 		let number = $("<span/>")
 			.appendTo(bar);
 		setValue(opt.value);
@@ -43,11 +42,11 @@ function progressbar(options) {
 			let relWidth = (value - opt.min) / (opt.max - opt.min);
 			bar.css("width", (relWidth * 100) + "%");
 			number.text(opt.valuePrefix + value + opt.valueSuffix);
-			number.toggleClass("outside", number.width() + 8 > relWidth * $elem.width());
+			number.toggleClass("outside", number.width() + 8 > relWidth * elem.width());
 			
 			if (value !== opt.value) {
 				opt.value = value;
-				$elem.trigger("valuechange");
+				elem.trigger("valuechange");
 			}
 		}
 	});
@@ -66,8 +65,7 @@ function progressbarValue(value) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var progressbar = $(this);
+	return this.each$(function (_, progressbar) {
 		var opt = loadOptions("progressbar", progressbar);
 		opt._setValue(value);
 	});
@@ -86,8 +84,7 @@ function valuePrefix(prefix) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var progressbar = $(this);
+	return this.each$(function (_, progressbar) {
 		var opt = loadOptions("progressbar", progressbar);
 		opt.valuePrefix = prefix;
 		opt._setValue(opt.value);
@@ -107,8 +104,7 @@ function valueSuffix(suffix) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var progressbar = $(this);
+	return this.each$(function (_, progressbar) {
 		var opt = loadOptions("progressbar", progressbar);
 		opt.valueSuffix = suffix;
 		opt._setValue(opt.value);

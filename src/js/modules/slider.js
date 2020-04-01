@@ -70,8 +70,7 @@ var sliderDefaults = {
 
 // Creates a slider widget.
 function slider(options) {
-	return this.each(function () {
-		var slider = $(this);
+	return this.each$(function (_, slider) {
 		if (slider.children("div." + handleClass).length !== 0) return;   // Already done
 		var opt = initOptions("slider", sliderDefaults, slider, {}, options);
 		var htmlCursor, draggedHandleCursor;
@@ -487,8 +486,7 @@ function sliderMultiValue(index, value) {
 	}
 
 	// Setter
-	return this.each(function () {
-		var slider = $(this);
+	return this.each$(function (_, slider) {
 		var opt = loadOptions("slider", slider);
 		opt._setValue(index, value);
 	});

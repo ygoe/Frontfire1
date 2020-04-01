@@ -20,8 +20,7 @@ var selectableDefaults = {
 
 // Makes the child elements in each selected element selectable.
 function selectable(options) {
-	return this.each(function () {
-		var elem = $(this);
+	return this.each$(function (_, elem) {
 		if (elem.hasClass(selectableClass)) return;   // Already done
 		elem.addClass(selectableClass);
 		var opt = initOptions("selectable", selectableDefaults, elem, {}, options);

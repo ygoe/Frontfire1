@@ -15,15 +15,14 @@ var accordionDefaults = {
 
 // Converts all div elements in each selected element into accordion pages.
 function accordion(options) {
-	return this.each(function () {
-		var accordion = $(this);
+	return this.each(function (_, obj) {
+		var accordion = $(obj);
 		if (accordion.hasClass(accordionClass)) return;   // Already done
 		var opt = initOptions("accordion", accordionDefaults, accordion, {}, options);
 
 		accordion.addClass(accordionClass);
-		var items = $(this).children("div");
-		items.each$(function () {
-			var item = this;
+		var items = accordion.children("div");
+		items.each$(function (_, item) {
 			var header = item.children("div").first();
 			var content = item.children("div").last();
 
@@ -73,15 +72,15 @@ function accordion(options) {
 }
 
 function collapse(indexOrItem) {
-	return this.each(function () {
-		var accordion = $(this);
+	return this.each(function (_, obj) {
+		var accordion = $(obj);
 		var opt = loadOptions("accordion", accordion);
 
 		var items = accordion.children("div");
 		if (indexOrItem === undefined) {
 			// Collapse all items
-			items.each(function () {
-				accordion.accordion.collapse(this);
+			items.each(function (_, obj) {
+				accordion.accordion.collapse(obj);
 			});
 			return;
 		}
@@ -115,15 +114,15 @@ function collapse(indexOrItem) {
 }
 
 function expand(indexOrItem) {
-	return this.each(function () {
-		var accordion = $(this);
+	return this.each(function (_, obj) {
+		var accordion = $(obj);
 		var opt = loadOptions("accordion", accordion);
 
 		var items = accordion.children("div");
 		if (indexOrItem === undefined && !opt.exclusive) {
 			// Expand all items
-			items.each(function () {
-				accordion.accordion.expand(this);
+			items.each(function (_, obj) {
+				accordion.accordion.expand(obj);
 			});
 			return;
 		}
@@ -158,11 +157,11 @@ function expand(indexOrItem) {
 		var previousItemCollapsedHeight = 0;
 		if (opt.exclusive) {
 			let passedExpandedItem = false;
-			items.each(function () {
-				if (this !== item[0]) {
+			items.each(function (_, obj) {
+				if (obj !== item[0]) {
 					if (!passedExpandedItem)
-						previousItemCollapsedHeight += $(this).children("div.ff-accordion-content").height();
-					accordion.accordion.collapse(this);
+						previousItemCollapsedHeight += $(obj).children("div.ff-accordion-content").height();
+					accordion.accordion.collapse(obj);
 				}
 				else {
 					passedExpandedItem = true;
