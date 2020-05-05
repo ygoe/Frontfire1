@@ -1,0 +1,404 @@
+@import "../settings";
+
+.ff-timepicker
+{
+	@include user-select(none);
+	display: flex;
+	flex-direction: column;
+
+	button svg,
+	a svg
+	{
+		pointer-events: none;
+	}
+	button[disabled] svg,
+	a[disabled] svg
+	{
+		opacity: 0.4;
+	}
+	
+	.dark &
+	{
+		background-color: $darkBackground;
+		color: $darkTextColor;
+	}
+}
+
+.ff-timepicker-buttons
+{
+	display: grid;
+	grid-gap: 1px;
+	grid-template-columns: 1fr 3fr 1fr;
+	margin-bottom: 1px;
+	&.four-buttons
+	{
+		grid-template-columns: 1fr 3fr 1fr 1fr;
+	}
+}
+	
+.ff-timepicker button,
+.ff-timepicker a.button
+{
+	svg path
+	{
+		fill: black;
+	}
+	svg polyline
+	{
+		stroke: black;
+	}
+	.dark &
+	{
+		svg path
+		{
+			fill: white;
+		}
+		svg polyline
+		{
+			stroke: white;
+		}
+	}
+}
+
+.ff-timepicker-content
+{
+	position: relative;
+}
+
+.ff-timepicker-year,
+.ff-timepicker-month,
+.ff-timepicker-clock
+{
+	touch-action: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+
+	.ff-timepicker-inner
+	{
+		position: relative;
+		transition: transform $animationDuration $animationFunction, opacity $animationDuration $animationFunction;
+		z-index: 2;
+		
+		&.hidden,
+		&.hidden-reverse
+		{
+			transform: scale(0.67);
+			opacity: 0;
+			z-index: 1;   // move to back to ignore pointer input
+		}
+		&.hidden-reverse
+		{
+			transform: scale(1.5);
+		}
+
+		.header
+		{
+			margin-bottom: 1px;
+			display: flex;
+			justify-content: space-between;
+			align-content: center;
+			align-items: center;
+			text-align: center;
+			font-weight: bold;
+		}
+	}
+}
+
+.ff-timepicker-year
+{
+	.ff-timepicker-inner
+	{
+		.months
+		{
+			display: flex;
+			flex-wrap: wrap;
+
+			.item
+			{
+				width: 33.333%;
+				cursor: pointer;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-content: center;
+				align-items: center;
+				transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction;
+				&:hover
+				{
+					background: $timePickerHoverBackground;
+					transition: background 0s;
+					.dark &
+					{
+						background: $darkTimePickerHoverBackground;
+					}
+				}
+				&.selected,
+				&.selected:hover
+				{
+					background: $timePickerSelectedBackground;
+					transition: background 0s;
+					color: $timePickerSelectedColor;
+					.dark &
+					{
+						background: $darkTimePickerSelectedBackground;
+						color: $darkTimePickerSelectedColor;
+					}
+				}
+				&.now
+				{
+					border: solid 1px $timePickerNowBorderColor;
+					.dark &
+					{
+						border-color: $darkTimePickerNowBorderColor;
+					}
+				}
+
+				.week-numbers
+				{
+					font-size: 0.7em;
+				}
+			}
+		}
+	}
+}
+
+.ff-timepicker-month
+{
+	.ff-timepicker-inner
+	{
+		.weekdays
+		{
+			display: flex;
+
+			> div
+			{
+				width: calc((100% - 20px) / 7);   // 1 / 7 - week-number
+				border-bottom: solid 1px $timePickerMonthBorderColor;
+				.dark &
+				{
+					border-bottom: solid 1px $darkTimePickerMonthBorderColor;
+				}
+				padding-top: 4px;
+				text-align: center;
+				font-size: 0.7em;
+				line-height: 110%;
+				&:first-child
+				{
+					margin-left: 19px;   // week-number - 1px
+					width: calc((100% - 20px) / 7 + 1px);   // 1px additional border above week-number border
+				}
+			}
+		}
+
+		.weeks
+		{
+			display: flex;
+			flex-direction: column;
+
+			.days
+			{
+				display: flex;
+				transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction;
+
+				.week-number
+				{
+					width: 20px;
+					display: flex;
+					justify-content: center;
+					align-content: center;
+					align-items: center;
+					font-size: 0.7em;
+					border-right: solid 1px $timePickerMonthBorderColor;
+					.dark &
+					{
+						border-right: solid 1px $darkTimePickerMonthBorderColor;
+					}
+				}
+				.item
+				{
+					width: calc((100% - 20px) / 7);   // 1 / 7 - week-number
+					cursor: pointer;
+					display: flex;
+					justify-content: center;
+					align-content: center;
+					align-items: center;
+					&[disabled]
+					{
+						cursor: default;
+						background: inherit !important;
+					}
+					&.now
+					{
+						border: solid 1px $timePickerNowBorderColor;
+						.dark &
+						{
+							border-color: $darkTimePickerNowBorderColor;
+						}
+					}
+					&.prev-month,
+					&.next-month
+					{
+						> span
+						{
+							opacity: 0.4;
+						}
+						&.now
+						{
+							border: solid 1px $timePickerNowOtherMonthBorderColor;
+							.dark &
+							{
+								border-color: $darkTimePickerNowOtherMonthBorderColor;
+							}
+						}
+					}
+				}
+			}
+			&.day-selection
+			{
+				.item:hover
+				{
+					background: $timePickerHoverBackground;
+					transition: background 0s;
+					.dark &
+					{
+						background: $darkTimePickerHoverBackground;
+					}
+				}
+				.item.selected,
+				.item.selected:hover
+				{
+					background: $timePickerSelectedBackground;
+					transition: background 0s;
+					color: $timePickerSelectedColor;
+					.dark &
+					{
+						background: $darkTimePickerSelectedBackground;
+						color: $darkTimePickerSelectedColor;
+					}
+				}
+			}
+			&.week-selection
+			{
+				.days
+				{
+					cursor: pointer;
+				}
+				.days:hover
+				{
+					background: $timePickerHoverBackground;
+					transition: background 0s;
+					.dark &
+					{
+						background: $darkTimePickerHoverBackground;
+					}
+				}
+				.days.selected,
+				.days.selected:hover
+				{
+					background: $timePickerSelectedBackground;
+					transition: background 0s;
+					color: $timePickerSelectedColor;
+					.dark &
+					{
+						background: $darkTimePickerSelectedBackground;
+						color: $darkTimePickerSelectedColor;
+					}
+				}
+			}
+		}
+	}
+}
+
+.ff-timepicker-clock
+{
+	.ff-timepicker-inner
+	{
+		border-radius: 100%;
+		background: $timePickerClockBackground;
+		border: solid $timePickerClockBorderWidth $timePickerClockBorderColor;
+		.dark &
+		{
+			background: $darkTimePickerClockBackground;
+			border-color: $darkTimePickerClockBorderColor;
+		}
+		.item
+		{
+			position: absolute;
+			border-radius: 100%;
+			display: flex;
+			justify-content: center;
+			align-content: center;
+			align-items: center;
+			font-size: 1.1em;
+			&.inner-circle
+			{
+				font-size: 0.85em;
+			}
+			&.selected
+			{
+				background: $timePickerClockSelectedBackground;
+				color: $timePickerClockSelectedColor;
+				.dark &
+				{
+					background: $darkTimePickerClockSelectedBackground;
+					color: $darkTimePickerClockSelectedColor;
+				}
+			}
+		}
+		svg
+		{
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+		.clock-center-cirle
+		{
+			fill: $timePickerClockLineColor;
+			.dark &
+			{
+				fill: $darkTimePickerClockLineColor;
+			}
+		}
+		.clock-hour-line
+		{
+			stroke: $timePickerClockLineColor;
+			stroke-width: 3;
+			.dark &
+			{
+				stroke: $darkTimePickerClockLineColor;
+			}
+		}
+		.clock-hour-line.secondary
+		{
+			stroke: $timePickerClockSecondaryLineColor;
+			stroke-width: 3;
+			.dark &
+			{
+				stroke: $darkTimePickerClockSecondaryLineColor;
+			}
+		}
+		.clock-minute-line
+		{
+			stroke: $timePickerClockLineColor;
+			stroke-width: 2;
+			.dark &
+			{
+				stroke: $darkTimePickerClockLineColor;
+			}
+		}
+		.clock-extra-item
+		{
+			stroke: $timePickerClockSelectedBackground;
+			fill: $timePickerClockSelectedColor;
+			.dark &
+			{
+				stroke: $darkTimePickerClockSelectedBackground;
+				fill: $darkTimePickerClockSelectedColor;
+			}
+		}
+	}
+}

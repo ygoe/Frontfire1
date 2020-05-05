@@ -264,6 +264,7 @@ a.button
 	border-radius: 0;
 	background: $buttonBackground;
 	color: $buttonColor;
+	text-decoration: none !important;
 	padding: 5px 9px;   // textbox padding + 1 for the missing border
 	min-width: 75px;
 	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)
@@ -303,7 +304,8 @@ a.button
 			background: $darkButtonHoverBackground;
 		}
 	}
-	&:active:not(:disabled):not([disabled])
+	&:active:not(:disabled):not([disabled]),
+	&.ff-active:not(:disabled):not([disabled])
 	{
 		background: $buttonPressedBackground;
 		transition: background 0s;
@@ -377,7 +379,8 @@ a.button
 				background: $darkButtonDefaultHoverBackground;
 			}
 		}
-		&:active
+		&:active,
+		&.ff-active
 		{
 			background: $buttonDefaultPressedBackground;
 			color: $buttonDefaultPressedColor;
@@ -430,7 +433,8 @@ a.button
 				background: $darkButtonCautionHoverBackground;
 			}
 		}
-		&:active
+		&:active,
+		&.ff-active
 		{
 			background: $buttonCautionPressedBackground;
 			color: $buttonCautionPressedColor;
@@ -483,7 +487,8 @@ a.button
 				background: $darkButtonTransparentHoverBackground;
 			}
 		}
-		&:active
+		&:active,
+		&.ff-active
 		{
 			background: $buttonTransparentPressedBackground;
 			color: $buttonTransparentPressedColor;

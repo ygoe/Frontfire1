@@ -16,10 +16,12 @@ function repeatButton() {
 		var timeout, ms;
 		button.on("mousedown touchstart", function (event) {
 			event.preventDefault();
+			button.addClass("ff-active");   // CSS :active doesn't trigger, do it manually with an alternate class
 			ms = 500;
 			click();
 		});
 		button.on("mouseup mouseleave touchend touchcancel", function (event) {
+			button.removeClass("ff-active");
 			if (timeout) {
 				clearTimeout(timeout);
 				timeout = undefined;
@@ -55,7 +57,7 @@ function spinner() {
 		var buttons = [];
 		var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 		buttons.push(decButton);
-		decButton.on("repeatclick", function (event) {
+		decButton.on("repeatclick", function () {
 			if (input.disabled()) return;
 			var value = +input.val();
 			var min = input.attr("min");
@@ -82,7 +84,7 @@ function spinner() {
 		decButton.repeatButton();
 		var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
 		buttons.push(incButton);
-		incButton.on("repeatclick", function (event) {
+		incButton.on("repeatclick", function () {
 			if (input.disabled()) return;
 			var value = +input.val();
 			var min = input.attr("min");
@@ -119,7 +121,11 @@ function colorPicker() {
 		if (input.parent().hasClass(inputWrapperClass)) return;   // Already done
 		var lastColor;
 
-		input.attr("type", "text").attr("autocomplete", "off");
+		input.attr("type", "text")
+			.attr("autocapitalize", "off")
+			.attr("autocomplete", "off")
+			.attr("autocorrect", "off")
+			.attr("spellcheck", "false");
 
 		// Put a wrapper between the input and its parent
 		var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));

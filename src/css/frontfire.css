@@ -529,20 +529,22 @@ div.justify {
   font-size: 18px !important;
   line-height: 25px !important; }
 
-a:link, a:visited {
-  color: #2755dd;
-  text-decoration: none; }
-  a:link:hover, a:visited:hover {
-    color: #1d40a6; }
-
-.dark a:link, .dark a:visited {
-  color: #91acff;
-  text-decoration: none; }
-  .dark a:link:hover, .dark a:visited:hover {
-    color: #a7bdff; }
-
-a[disabled] {
-  color: #a0a0a0; }
+a {
+  transition: color 0.2s ease; }
+  a:link, a:visited {
+    color: #2755dd;
+    text-decoration: none; }
+    a:link:hover, a:visited:hover {
+      color: #1d40a6;
+      transition: color 0s; }
+  .dark a:link, .dark a:visited {
+    color: #91acff;
+    text-decoration: none; }
+    .dark a:link:hover, .dark a:visited:hover {
+      color: #a7bdff;
+      transition: color 0s; }
+  a[disabled] {
+    color: #a0a0a0; }
 
 table {
   border: 1px solid #d8d8d8;
@@ -633,6 +635,9 @@ td.right {
 th.top,
 td.top {
   vertical-align: top !important; }
+
+table.big-links tr td > a {
+  display: block; }
 
 hr {
   clear: both;
@@ -1588,14 +1593,8 @@ input[type=number] {
 
 button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit],
 div.buttons a,
-div.buttons a:link,
-div.buttons a:visited,
 span.buttons a,
-span.buttons a:link,
-span.buttons a:visited,
-a.button,
-a.button:link,
-a.button:visited {
+a.button {
   display: inline-block;
   text-align: center;
   border: none;
@@ -1608,492 +1607,485 @@ a.button:visited {
   line-height: 20px;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease, border 0.2s ease; }
+  buttona:link, buttona:visited, input[type=button]a:link, input[type=button]a:visited, input[type=color]a:link, input[type=color]a:visited, input[type=image]a:link, input[type=image]a:visited, input[type=reset]a:link, input[type=reset]a:visited, input[type=submit]a:link, input[type=submit]a:visited,
+  div.buttons aa:link,
+  div.buttons aa:visited,
+  span.buttons aa:link,
+  span.buttons aa:visited,
+  a.buttona:link,
+  a.buttona:visited {
+    color: #000000;
+    text-decoration: none !important; }
   .dark button, .dark input[type=button], .dark input[type=color], .dark input[type=image], .dark input[type=reset], .dark input[type=submit], .dark
   div.buttons a, .dark
-  div.buttons a:link, .dark
-  div.buttons a:visited, .dark
   span.buttons a, .dark
-  span.buttons a:link, .dark
-  span.buttons a:visited, .dark
-  a.button, .dark
-  a.button:link, .dark
-  a.button:visited {
+  a.button {
     background: #606060;
     color: #f0f0f0; }
+    .dark buttona:link, .dark buttona:visited, .dark input[type=button]a:link, .dark input[type=button]a:visited, .dark input[type=color]a:link, .dark input[type=color]a:visited, .dark input[type=image]a:link, .dark input[type=image]a:visited, .dark input[type=reset]a:link, .dark input[type=reset]a:visited, .dark input[type=submit]a:link, .dark input[type=submit]a:visited, .dark
+    div.buttons aa:link, .dark
+    div.buttons aa:visited, .dark
+    span.buttons aa:link, .dark
+    span.buttons aa:visited, .dark
+    a.buttona:link, .dark
+    a.buttona:visited {
+      color: #f0f0f0; }
   .larger button, button.larger, .larger input[type=button], input[type=button].larger, .larger input[type=color], input[type=color].larger, .larger input[type=image], input[type=image].larger, .larger input[type=reset], input[type=reset].larger, .larger input[type=submit], input[type=submit].larger, .larger
   div.buttons a,
   div.buttons a.larger, .larger
-  div.buttons a:link,
-  div.buttons a:link.larger, .larger
-  div.buttons a:visited,
-  div.buttons a:visited.larger, .larger
   span.buttons a,
   span.buttons a.larger, .larger
-  span.buttons a:link,
-  span.buttons a:link.larger, .larger
-  span.buttons a:visited,
-  span.buttons a:visited.larger, .larger
   a.button,
-  a.button.larger, .larger
-  a.button:link,
-  a.button:link.larger, .larger
-  a.button:visited,
-  a.button:visited.larger {
+  a.button.larger {
     padding: 7px 12px; }
   button:hover:not(:disabled):not([disabled]), button:focus:not(:disabled):not([disabled]), input[type=button]:hover:not(:disabled):not([disabled]), input[type=button]:focus:not(:disabled):not([disabled]), input[type=color]:hover:not(:disabled):not([disabled]), input[type=color]:focus:not(:disabled):not([disabled]), input[type=image]:hover:not(:disabled):not([disabled]), input[type=image]:focus:not(:disabled):not([disabled]), input[type=reset]:hover:not(:disabled):not([disabled]), input[type=reset]:focus:not(:disabled):not([disabled]), input[type=submit]:hover:not(:disabled):not([disabled]), input[type=submit]:focus:not(:disabled):not([disabled]),
   div.buttons a:hover:not(:disabled):not([disabled]),
   div.buttons a:focus:not(:disabled):not([disabled]),
-  div.buttons a:link:hover:not(:disabled):not([disabled]),
-  div.buttons a:link:focus:not(:disabled):not([disabled]),
-  div.buttons a:visited:hover:not(:disabled):not([disabled]),
-  div.buttons a:visited:focus:not(:disabled):not([disabled]),
   span.buttons a:hover:not(:disabled):not([disabled]),
   span.buttons a:focus:not(:disabled):not([disabled]),
-  span.buttons a:link:hover:not(:disabled):not([disabled]),
-  span.buttons a:link:focus:not(:disabled):not([disabled]),
-  span.buttons a:visited:hover:not(:disabled):not([disabled]),
-  span.buttons a:visited:focus:not(:disabled):not([disabled]),
   a.button:hover:not(:disabled):not([disabled]),
-  a.button:focus:not(:disabled):not([disabled]),
-  a.button:link:hover:not(:disabled):not([disabled]),
-  a.button:link:focus:not(:disabled):not([disabled]),
-  a.button:visited:hover:not(:disabled):not([disabled]),
-  a.button:visited:focus:not(:disabled):not([disabled]) {
+  a.button:focus:not(:disabled):not([disabled]) {
     background: #c7c7c7;
     transition: background 0s;
     outline: none; }
     .dark button:hover:not(:disabled):not([disabled]), .dark button:focus:not(:disabled):not([disabled]), .dark input[type=button]:hover:not(:disabled):not([disabled]), .dark input[type=button]:focus:not(:disabled):not([disabled]), .dark input[type=color]:hover:not(:disabled):not([disabled]), .dark input[type=color]:focus:not(:disabled):not([disabled]), .dark input[type=image]:hover:not(:disabled):not([disabled]), .dark input[type=image]:focus:not(:disabled):not([disabled]), .dark input[type=reset]:hover:not(:disabled):not([disabled]), .dark input[type=reset]:focus:not(:disabled):not([disabled]), .dark input[type=submit]:hover:not(:disabled):not([disabled]), .dark input[type=submit]:focus:not(:disabled):not([disabled]), .dark
     div.buttons a:hover:not(:disabled):not([disabled]), .dark
     div.buttons a:focus:not(:disabled):not([disabled]), .dark
-    div.buttons a:link:hover:not(:disabled):not([disabled]), .dark
-    div.buttons a:link:focus:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited:hover:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited:focus:not(:disabled):not([disabled]), .dark
     span.buttons a:hover:not(:disabled):not([disabled]), .dark
     span.buttons a:focus:not(:disabled):not([disabled]), .dark
-    span.buttons a:link:hover:not(:disabled):not([disabled]), .dark
-    span.buttons a:link:focus:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited:hover:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited:focus:not(:disabled):not([disabled]), .dark
     a.button:hover:not(:disabled):not([disabled]), .dark
-    a.button:focus:not(:disabled):not([disabled]), .dark
-    a.button:link:hover:not(:disabled):not([disabled]), .dark
-    a.button:link:focus:not(:disabled):not([disabled]), .dark
-    a.button:visited:hover:not(:disabled):not([disabled]), .dark
-    a.button:visited:focus:not(:disabled):not([disabled]) {
+    a.button:focus:not(:disabled):not([disabled]) {
       background: #737373; }
-  button:active:not(:disabled):not([disabled]), input[type=button]:active:not(:disabled):not([disabled]), input[type=color]:active:not(:disabled):not([disabled]), input[type=image]:active:not(:disabled):not([disabled]), input[type=reset]:active:not(:disabled):not([disabled]), input[type=submit]:active:not(:disabled):not([disabled]),
+  button:active:not(:disabled):not([disabled]), button.ff-active:not(:disabled):not([disabled]), input[type=button]:active:not(:disabled):not([disabled]), input[type=button].ff-active:not(:disabled):not([disabled]), input[type=color]:active:not(:disabled):not([disabled]), input[type=color].ff-active:not(:disabled):not([disabled]), input[type=image]:active:not(:disabled):not([disabled]), input[type=image].ff-active:not(:disabled):not([disabled]), input[type=reset]:active:not(:disabled):not([disabled]), input[type=reset].ff-active:not(:disabled):not([disabled]), input[type=submit]:active:not(:disabled):not([disabled]), input[type=submit].ff-active:not(:disabled):not([disabled]),
   div.buttons a:active:not(:disabled):not([disabled]),
-  div.buttons a:link:active:not(:disabled):not([disabled]),
-  div.buttons a:visited:active:not(:disabled):not([disabled]),
+  div.buttons a.ff-active:not(:disabled):not([disabled]),
   span.buttons a:active:not(:disabled):not([disabled]),
-  span.buttons a:link:active:not(:disabled):not([disabled]),
-  span.buttons a:visited:active:not(:disabled):not([disabled]),
+  span.buttons a.ff-active:not(:disabled):not([disabled]),
   a.button:active:not(:disabled):not([disabled]),
-  a.button:link:active:not(:disabled):not([disabled]),
-  a.button:visited:active:not(:disabled):not([disabled]) {
+  a.button.ff-active:not(:disabled):not([disabled]) {
     background: #adadad;
     transition: background 0s;
     color: #000000; }
-    .dark button:active:not(:disabled):not([disabled]), .dark input[type=button]:active:not(:disabled):not([disabled]), .dark input[type=color]:active:not(:disabled):not([disabled]), .dark input[type=image]:active:not(:disabled):not([disabled]), .dark input[type=reset]:active:not(:disabled):not([disabled]), .dark input[type=submit]:active:not(:disabled):not([disabled]), .dark
+    button:active:not(:disabled):not([disabled])a:link, button:active:not(:disabled):not([disabled])a:visited, button.ff-active:not(:disabled):not([disabled])a:link, button.ff-active:not(:disabled):not([disabled])a:visited, input[type=button]:active:not(:disabled):not([disabled])a:link, input[type=button]:active:not(:disabled):not([disabled])a:visited, input[type=button].ff-active:not(:disabled):not([disabled])a:link, input[type=button].ff-active:not(:disabled):not([disabled])a:visited, input[type=color]:active:not(:disabled):not([disabled])a:link, input[type=color]:active:not(:disabled):not([disabled])a:visited, input[type=color].ff-active:not(:disabled):not([disabled])a:link, input[type=color].ff-active:not(:disabled):not([disabled])a:visited, input[type=image]:active:not(:disabled):not([disabled])a:link, input[type=image]:active:not(:disabled):not([disabled])a:visited, input[type=image].ff-active:not(:disabled):not([disabled])a:link, input[type=image].ff-active:not(:disabled):not([disabled])a:visited, input[type=reset]:active:not(:disabled):not([disabled])a:link, input[type=reset]:active:not(:disabled):not([disabled])a:visited, input[type=reset].ff-active:not(:disabled):not([disabled])a:link, input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, input[type=submit]:active:not(:disabled):not([disabled])a:link, input[type=submit]:active:not(:disabled):not([disabled])a:visited, input[type=submit].ff-active:not(:disabled):not([disabled])a:link, input[type=submit].ff-active:not(:disabled):not([disabled])a:visited,
+    div.buttons a:active:not(:disabled):not([disabled])a:link,
+    div.buttons a:active:not(:disabled):not([disabled])a:visited,
+    div.buttons a.ff-active:not(:disabled):not([disabled])a:link,
+    div.buttons a.ff-active:not(:disabled):not([disabled])a:visited,
+    span.buttons a:active:not(:disabled):not([disabled])a:link,
+    span.buttons a:active:not(:disabled):not([disabled])a:visited,
+    span.buttons a.ff-active:not(:disabled):not([disabled])a:link,
+    span.buttons a.ff-active:not(:disabled):not([disabled])a:visited,
+    a.button:active:not(:disabled):not([disabled])a:link,
+    a.button:active:not(:disabled):not([disabled])a:visited,
+    a.button.ff-active:not(:disabled):not([disabled])a:link,
+    a.button.ff-active:not(:disabled):not([disabled])a:visited {
+      color: #000000; }
+    .dark button:active:not(:disabled):not([disabled]), .dark button.ff-active:not(:disabled):not([disabled]), .dark input[type=button]:active:not(:disabled):not([disabled]), .dark input[type=button].ff-active:not(:disabled):not([disabled]), .dark input[type=color]:active:not(:disabled):not([disabled]), .dark input[type=color].ff-active:not(:disabled):not([disabled]), .dark input[type=image]:active:not(:disabled):not([disabled]), .dark input[type=image].ff-active:not(:disabled):not([disabled]), .dark input[type=reset]:active:not(:disabled):not([disabled]), .dark input[type=reset].ff-active:not(:disabled):not([disabled]), .dark input[type=submit]:active:not(:disabled):not([disabled]), .dark input[type=submit].ff-active:not(:disabled):not([disabled]), .dark
     div.buttons a:active:not(:disabled):not([disabled]), .dark
-    div.buttons a:link:active:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited:active:not(:disabled):not([disabled]), .dark
+    div.buttons a.ff-active:not(:disabled):not([disabled]), .dark
     span.buttons a:active:not(:disabled):not([disabled]), .dark
-    span.buttons a:link:active:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited:active:not(:disabled):not([disabled]), .dark
+    span.buttons a.ff-active:not(:disabled):not([disabled]), .dark
     a.button:active:not(:disabled):not([disabled]), .dark
-    a.button:link:active:not(:disabled):not([disabled]), .dark
-    a.button:visited:active:not(:disabled):not([disabled]) {
+    a.button.ff-active:not(:disabled):not([disabled]) {
       background: #888888;
       color: #f0f0f0; }
+      .dark button:active:not(:disabled):not([disabled])a:link, .dark button:active:not(:disabled):not([disabled])a:visited, .dark button.ff-active:not(:disabled):not([disabled])a:link, .dark button.ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=button]:active:not(:disabled):not([disabled])a:link, .dark input[type=button]:active:not(:disabled):not([disabled])a:visited, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=color]:active:not(:disabled):not([disabled])a:link, .dark input[type=color]:active:not(:disabled):not([disabled])a:visited, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=image]:active:not(:disabled):not([disabled])a:link, .dark input[type=image]:active:not(:disabled):not([disabled])a:visited, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=reset]:active:not(:disabled):not([disabled])a:link, .dark input[type=reset]:active:not(:disabled):not([disabled])a:visited, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=submit]:active:not(:disabled):not([disabled])a:link, .dark input[type=submit]:active:not(:disabled):not([disabled])a:visited, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a:active:not(:disabled):not([disabled])a:link, .dark
+      div.buttons a:active:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.ff-active:not(:disabled):not([disabled])a:link, .dark
+      div.buttons a.ff-active:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a:active:not(:disabled):not([disabled])a:link, .dark
+      span.buttons a:active:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.ff-active:not(:disabled):not([disabled])a:link, .dark
+      span.buttons a.ff-active:not(:disabled):not([disabled])a:visited, .dark
+      a.button:active:not(:disabled):not([disabled])a:link, .dark
+      a.button:active:not(:disabled):not([disabled])a:visited, .dark
+      a.button.ff-active:not(:disabled):not([disabled])a:link, .dark
+      a.button.ff-active:not(:disabled):not([disabled])a:visited {
+        color: #f0f0f0; }
   button:disabled, button[disabled], input[type=button]:disabled, input[type=button][disabled], input[type=color]:disabled, input[type=color][disabled], input[type=image]:disabled, input[type=image][disabled], input[type=reset]:disabled, input[type=reset][disabled], input[type=submit]:disabled, input[type=submit][disabled],
   div.buttons a:disabled,
   div.buttons a[disabled],
-  div.buttons a:link:disabled,
-  div.buttons a:link[disabled],
-  div.buttons a:visited:disabled,
-  div.buttons a:visited[disabled],
   span.buttons a:disabled,
   span.buttons a[disabled],
-  span.buttons a:link:disabled,
-  span.buttons a:link[disabled],
-  span.buttons a:visited:disabled,
-  span.buttons a:visited[disabled],
   a.button:disabled,
-  a.button[disabled],
-  a.button:link:disabled,
-  a.button:link[disabled],
-  a.button:visited:disabled,
-  a.button:visited[disabled] {
+  a.button[disabled] {
     background: #e4e4e4;
     color: #808080;
     cursor: default; }
+    button:disableda:link, button:disableda:visited, button[disabled]a:link, button[disabled]a:visited, input[type=button]:disableda:link, input[type=button]:disableda:visited, input[type=button][disabled]a:link, input[type=button][disabled]a:visited, input[type=color]:disableda:link, input[type=color]:disableda:visited, input[type=color][disabled]a:link, input[type=color][disabled]a:visited, input[type=image]:disableda:link, input[type=image]:disableda:visited, input[type=image][disabled]a:link, input[type=image][disabled]a:visited, input[type=reset]:disableda:link, input[type=reset]:disableda:visited, input[type=reset][disabled]a:link, input[type=reset][disabled]a:visited, input[type=submit]:disableda:link, input[type=submit]:disableda:visited, input[type=submit][disabled]a:link, input[type=submit][disabled]a:visited,
+    div.buttons a:disableda:link,
+    div.buttons a:disableda:visited,
+    div.buttons a[disabled]a:link,
+    div.buttons a[disabled]a:visited,
+    span.buttons a:disableda:link,
+    span.buttons a:disableda:visited,
+    span.buttons a[disabled]a:link,
+    span.buttons a[disabled]a:visited,
+    a.button:disableda:link,
+    a.button:disableda:visited,
+    a.button[disabled]a:link,
+    a.button[disabled]a:visited {
+      color: #808080; }
     .dark button:disabled, .dark button[disabled], .dark input[type=button]:disabled, .dark input[type=button][disabled], .dark input[type=color]:disabled, .dark input[type=color][disabled], .dark input[type=image]:disabled, .dark input[type=image][disabled], .dark input[type=reset]:disabled, .dark input[type=reset][disabled], .dark input[type=submit]:disabled, .dark input[type=submit][disabled], .dark
     div.buttons a:disabled, .dark
     div.buttons a[disabled], .dark
-    div.buttons a:link:disabled, .dark
-    div.buttons a:link[disabled], .dark
-    div.buttons a:visited:disabled, .dark
-    div.buttons a:visited[disabled], .dark
     span.buttons a:disabled, .dark
     span.buttons a[disabled], .dark
-    span.buttons a:link:disabled, .dark
-    span.buttons a:link[disabled], .dark
-    span.buttons a:visited:disabled, .dark
-    span.buttons a:visited[disabled], .dark
     a.button:disabled, .dark
-    a.button[disabled], .dark
-    a.button:link:disabled, .dark
-    a.button:link[disabled], .dark
-    a.button:visited:disabled, .dark
-    a.button:visited[disabled] {
+    a.button[disabled] {
       background: #3e3e3e;
       color: #a0a0a0; }
+      .dark button:disableda:link, .dark button:disableda:visited, .dark button[disabled]a:link, .dark button[disabled]a:visited, .dark input[type=button]:disableda:link, .dark input[type=button]:disableda:visited, .dark input[type=button][disabled]a:link, .dark input[type=button][disabled]a:visited, .dark input[type=color]:disableda:link, .dark input[type=color]:disableda:visited, .dark input[type=color][disabled]a:link, .dark input[type=color][disabled]a:visited, .dark input[type=image]:disableda:link, .dark input[type=image]:disableda:visited, .dark input[type=image][disabled]a:link, .dark input[type=image][disabled]a:visited, .dark input[type=reset]:disableda:link, .dark input[type=reset]:disableda:visited, .dark input[type=reset][disabled]a:link, .dark input[type=reset][disabled]a:visited, .dark input[type=submit]:disableda:link, .dark input[type=submit]:disableda:visited, .dark input[type=submit][disabled]a:link, .dark input[type=submit][disabled]a:visited, .dark
+      div.buttons a:disableda:link, .dark
+      div.buttons a:disableda:visited, .dark
+      div.buttons a[disabled]a:link, .dark
+      div.buttons a[disabled]a:visited, .dark
+      span.buttons a:disableda:link, .dark
+      span.buttons a:disableda:visited, .dark
+      span.buttons a[disabled]a:link, .dark
+      span.buttons a[disabled]a:visited, .dark
+      a.button:disableda:link, .dark
+      a.button:disableda:visited, .dark
+      a.button[disabled]a:link, .dark
+      a.button[disabled]a:visited {
+        color: #a0a0a0; }
   button.default:not(:disabled):not([disabled]), input[type=button].default:not(:disabled):not([disabled]), input[type=color].default:not(:disabled):not([disabled]), input[type=image].default:not(:disabled):not([disabled]), input[type=reset].default:not(:disabled):not([disabled]), input[type=submit].default:not(:disabled):not([disabled]),
   div.buttons a.default:not(:disabled):not([disabled]),
-  div.buttons a:link.default:not(:disabled):not([disabled]),
-  div.buttons a:visited.default:not(:disabled):not([disabled]),
   span.buttons a.default:not(:disabled):not([disabled]),
-  span.buttons a:link.default:not(:disabled):not([disabled]),
-  span.buttons a:visited.default:not(:disabled):not([disabled]),
-  a.button.default:not(:disabled):not([disabled]),
-  a.button:link.default:not(:disabled):not([disabled]),
-  a.button:visited.default:not(:disabled):not([disabled]) {
+  a.button.default:not(:disabled):not([disabled]) {
     background: #2755dd;
     color: #ffffff; }
+    button.default:not(:disabled):not([disabled])a:link, button.default:not(:disabled):not([disabled])a:visited, input[type=button].default:not(:disabled):not([disabled])a:link, input[type=button].default:not(:disabled):not([disabled])a:visited, input[type=color].default:not(:disabled):not([disabled])a:link, input[type=color].default:not(:disabled):not([disabled])a:visited, input[type=image].default:not(:disabled):not([disabled])a:link, input[type=image].default:not(:disabled):not([disabled])a:visited, input[type=reset].default:not(:disabled):not([disabled])a:link, input[type=reset].default:not(:disabled):not([disabled])a:visited, input[type=submit].default:not(:disabled):not([disabled])a:link, input[type=submit].default:not(:disabled):not([disabled])a:visited,
+    div.buttons a.default:not(:disabled):not([disabled])a:link,
+    div.buttons a.default:not(:disabled):not([disabled])a:visited,
+    span.buttons a.default:not(:disabled):not([disabled])a:link,
+    span.buttons a.default:not(:disabled):not([disabled])a:visited,
+    a.button.default:not(:disabled):not([disabled])a:link,
+    a.button.default:not(:disabled):not([disabled])a:visited {
+      color: #ffffff; }
     .dark button.default:not(:disabled):not([disabled]), .dark input[type=button].default:not(:disabled):not([disabled]), .dark input[type=color].default:not(:disabled):not([disabled]), .dark input[type=image].default:not(:disabled):not([disabled]), .dark input[type=reset].default:not(:disabled):not([disabled]), .dark input[type=submit].default:not(:disabled):not([disabled]), .dark
     div.buttons a.default:not(:disabled):not([disabled]), .dark
-    div.buttons a:link.default:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited.default:not(:disabled):not([disabled]), .dark
     span.buttons a.default:not(:disabled):not([disabled]), .dark
-    span.buttons a:link.default:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited.default:not(:disabled):not([disabled]), .dark
-    a.button.default:not(:disabled):not([disabled]), .dark
-    a.button:link.default:not(:disabled):not([disabled]), .dark
-    a.button:visited.default:not(:disabled):not([disabled]) {
+    a.button.default:not(:disabled):not([disabled]) {
       background: #2755dd;
       color: #ffffff; }
+      .dark button.default:not(:disabled):not([disabled])a:link, .dark button.default:not(:disabled):not([disabled])a:visited, .dark input[type=button].default:not(:disabled):not([disabled])a:link, .dark input[type=button].default:not(:disabled):not([disabled])a:visited, .dark input[type=color].default:not(:disabled):not([disabled])a:link, .dark input[type=color].default:not(:disabled):not([disabled])a:visited, .dark input[type=image].default:not(:disabled):not([disabled])a:link, .dark input[type=image].default:not(:disabled):not([disabled])a:visited, .dark input[type=reset].default:not(:disabled):not([disabled])a:link, .dark input[type=reset].default:not(:disabled):not([disabled])a:visited, .dark input[type=submit].default:not(:disabled):not([disabled])a:link, .dark input[type=submit].default:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.default:not(:disabled):not([disabled])a:link, .dark
+      div.buttons a.default:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.default:not(:disabled):not([disabled])a:link, .dark
+      span.buttons a.default:not(:disabled):not([disabled])a:visited, .dark
+      a.button.default:not(:disabled):not([disabled])a:link, .dark
+      a.button.default:not(:disabled):not([disabled])a:visited {
+        color: #ffffff; }
     button.default:not(:disabled):not([disabled]):hover, button.default:not(:disabled):not([disabled]):focus, input[type=button].default:not(:disabled):not([disabled]):hover, input[type=button].default:not(:disabled):not([disabled]):focus, input[type=color].default:not(:disabled):not([disabled]):hover, input[type=color].default:not(:disabled):not([disabled]):focus, input[type=image].default:not(:disabled):not([disabled]):hover, input[type=image].default:not(:disabled):not([disabled]):focus, input[type=reset].default:not(:disabled):not([disabled]):hover, input[type=reset].default:not(:disabled):not([disabled]):focus, input[type=submit].default:not(:disabled):not([disabled]):hover, input[type=submit].default:not(:disabled):not([disabled]):focus,
     div.buttons a.default:not(:disabled):not([disabled]):hover,
     div.buttons a.default:not(:disabled):not([disabled]):focus,
-    div.buttons a:link.default:not(:disabled):not([disabled]):hover,
-    div.buttons a:link.default:not(:disabled):not([disabled]):focus,
-    div.buttons a:visited.default:not(:disabled):not([disabled]):hover,
-    div.buttons a:visited.default:not(:disabled):not([disabled]):focus,
     span.buttons a.default:not(:disabled):not([disabled]):hover,
     span.buttons a.default:not(:disabled):not([disabled]):focus,
-    span.buttons a:link.default:not(:disabled):not([disabled]):hover,
-    span.buttons a:link.default:not(:disabled):not([disabled]):focus,
-    span.buttons a:visited.default:not(:disabled):not([disabled]):hover,
-    span.buttons a:visited.default:not(:disabled):not([disabled]):focus,
     a.button.default:not(:disabled):not([disabled]):hover,
-    a.button.default:not(:disabled):not([disabled]):focus,
-    a.button:link.default:not(:disabled):not([disabled]):hover,
-    a.button:link.default:not(:disabled):not([disabled]):focus,
-    a.button:visited.default:not(:disabled):not([disabled]):hover,
-    a.button:visited.default:not(:disabled):not([disabled]):focus {
+    a.button.default:not(:disabled):not([disabled]):focus {
       background: #2148bc;
       transition: background 0s; }
       .dark button.default:not(:disabled):not([disabled]):hover, .dark button.default:not(:disabled):not([disabled]):focus, .dark input[type=button].default:not(:disabled):not([disabled]):hover, .dark input[type=button].default:not(:disabled):not([disabled]):focus, .dark input[type=color].default:not(:disabled):not([disabled]):hover, .dark input[type=color].default:not(:disabled):not([disabled]):focus, .dark input[type=image].default:not(:disabled):not([disabled]):hover, .dark input[type=image].default:not(:disabled):not([disabled]):focus, .dark input[type=reset].default:not(:disabled):not([disabled]):hover, .dark input[type=reset].default:not(:disabled):not([disabled]):focus, .dark input[type=submit].default:not(:disabled):not([disabled]):hover, .dark input[type=submit].default:not(:disabled):not([disabled]):focus, .dark
       div.buttons a.default:not(:disabled):not([disabled]):hover, .dark
       div.buttons a.default:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:link.default:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:link.default:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:visited.default:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:visited.default:not(:disabled):not([disabled]):focus, .dark
       span.buttons a.default:not(:disabled):not([disabled]):hover, .dark
       span.buttons a.default:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:link.default:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:link.default:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:visited.default:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:visited.default:not(:disabled):not([disabled]):focus, .dark
       a.button.default:not(:disabled):not([disabled]):hover, .dark
-      a.button.default:not(:disabled):not([disabled]):focus, .dark
-      a.button:link.default:not(:disabled):not([disabled]):hover, .dark
-      a.button:link.default:not(:disabled):not([disabled]):focus, .dark
-      a.button:visited.default:not(:disabled):not([disabled]):hover, .dark
-      a.button:visited.default:not(:disabled):not([disabled]):focus {
+      a.button.default:not(:disabled):not([disabled]):focus {
         background: #2148bc; }
-    button.default:not(:disabled):not([disabled]):active, input[type=button].default:not(:disabled):not([disabled]):active, input[type=color].default:not(:disabled):not([disabled]):active, input[type=image].default:not(:disabled):not([disabled]):active, input[type=reset].default:not(:disabled):not([disabled]):active, input[type=submit].default:not(:disabled):not([disabled]):active,
+    button.default:not(:disabled):not([disabled]):active, button.default:not(:disabled):not([disabled]).ff-active, input[type=button].default:not(:disabled):not([disabled]):active, input[type=button].default:not(:disabled):not([disabled]).ff-active, input[type=color].default:not(:disabled):not([disabled]):active, input[type=color].default:not(:disabled):not([disabled]).ff-active, input[type=image].default:not(:disabled):not([disabled]):active, input[type=image].default:not(:disabled):not([disabled]).ff-active, input[type=reset].default:not(:disabled):not([disabled]):active, input[type=reset].default:not(:disabled):not([disabled]).ff-active, input[type=submit].default:not(:disabled):not([disabled]):active, input[type=submit].default:not(:disabled):not([disabled]).ff-active,
     div.buttons a.default:not(:disabled):not([disabled]):active,
-    div.buttons a:link.default:not(:disabled):not([disabled]):active,
-    div.buttons a:visited.default:not(:disabled):not([disabled]):active,
+    div.buttons a.default:not(:disabled):not([disabled]).ff-active,
     span.buttons a.default:not(:disabled):not([disabled]):active,
-    span.buttons a:link.default:not(:disabled):not([disabled]):active,
-    span.buttons a:visited.default:not(:disabled):not([disabled]):active,
+    span.buttons a.default:not(:disabled):not([disabled]).ff-active,
     a.button.default:not(:disabled):not([disabled]):active,
-    a.button:link.default:not(:disabled):not([disabled]):active,
-    a.button:visited.default:not(:disabled):not([disabled]):active {
+    a.button.default:not(:disabled):not([disabled]).ff-active {
       background: #193790;
-      transition: background 0s;
-      color: #ffffff; }
-      .dark button.default:not(:disabled):not([disabled]):active, .dark input[type=button].default:not(:disabled):not([disabled]):active, .dark input[type=color].default:not(:disabled):not([disabled]):active, .dark input[type=image].default:not(:disabled):not([disabled]):active, .dark input[type=reset].default:not(:disabled):not([disabled]):active, .dark input[type=submit].default:not(:disabled):not([disabled]):active, .dark
+      color: #ffffff;
+      transition: background 0s; }
+      button.default:not(:disabled):not([disabled]):activea:link, button.default:not(:disabled):not([disabled]):activea:visited, button.default:not(:disabled):not([disabled]).ff-activea:link, button.default:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].default:not(:disabled):not([disabled]):activea:link, input[type=button].default:not(:disabled):not([disabled]):activea:visited, input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].default:not(:disabled):not([disabled]):activea:link, input[type=color].default:not(:disabled):not([disabled]):activea:visited, input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].default:not(:disabled):not([disabled]):activea:link, input[type=image].default:not(:disabled):not([disabled]):activea:visited, input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].default:not(:disabled):not([disabled]):activea:link, input[type=reset].default:not(:disabled):not([disabled]):activea:visited, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].default:not(:disabled):not([disabled]):activea:link, input[type=submit].default:not(:disabled):not([disabled]):activea:visited, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.default:not(:disabled):not([disabled]):activea:link,
+      div.buttons a.default:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.default:not(:disabled):not([disabled]).ff-activea:link,
+      div.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.default:not(:disabled):not([disabled]):activea:link,
+      span.buttons a.default:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.default:not(:disabled):not([disabled]).ff-activea:link,
+      span.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.default:not(:disabled):not([disabled]):activea:link,
+      a.button.default:not(:disabled):not([disabled]):activea:visited,
+      a.button.default:not(:disabled):not([disabled]).ff-activea:link,
+      a.button.default:not(:disabled):not([disabled]).ff-activea:visited {
+        color: #ffffff; }
+      .dark button.default:not(:disabled):not([disabled]):active, .dark button.default:not(:disabled):not([disabled]).ff-active, .dark input[type=button].default:not(:disabled):not([disabled]):active, .dark input[type=button].default:not(:disabled):not([disabled]).ff-active, .dark input[type=color].default:not(:disabled):not([disabled]):active, .dark input[type=color].default:not(:disabled):not([disabled]).ff-active, .dark input[type=image].default:not(:disabled):not([disabled]):active, .dark input[type=image].default:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].default:not(:disabled):not([disabled]):active, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].default:not(:disabled):not([disabled]):active, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.default:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:link.default:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:visited.default:not(:disabled):not([disabled]):active, .dark
+      div.buttons a.default:not(:disabled):not([disabled]).ff-active, .dark
       span.buttons a.default:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:link.default:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:visited.default:not(:disabled):not([disabled]):active, .dark
+      span.buttons a.default:not(:disabled):not([disabled]).ff-active, .dark
       a.button.default:not(:disabled):not([disabled]):active, .dark
-      a.button:link.default:not(:disabled):not([disabled]):active, .dark
-      a.button:visited.default:not(:disabled):not([disabled]):active {
+      a.button.default:not(:disabled):not([disabled]).ff-active {
         background: #193790;
         color: #ffffff; }
+        .dark button.default:not(:disabled):not([disabled]):activea:link, .dark button.default:not(:disabled):not([disabled]):activea:visited, .dark button.default:not(:disabled):not([disabled]).ff-activea:link, .dark button.default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]):activea:link, .dark input[type=button].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]):activea:link, .dark input[type=color].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]):activea:link, .dark input[type=image].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.default:not(:disabled):not([disabled]):activea:link, .dark
+        div.buttons a.default:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.default:not(:disabled):not([disabled]).ff-activea:link, .dark
+        div.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.default:not(:disabled):not([disabled]):activea:link, .dark
+        span.buttons a.default:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.default:not(:disabled):not([disabled]).ff-activea:link, .dark
+        span.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.default:not(:disabled):not([disabled]):activea:link, .dark
+        a.button.default:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.default:not(:disabled):not([disabled]).ff-activea:link, .dark
+        a.button.default:not(:disabled):not([disabled]).ff-activea:visited {
+          color: #ffffff; }
   button.caution:not(:disabled):not([disabled]), input[type=button].caution:not(:disabled):not([disabled]), input[type=color].caution:not(:disabled):not([disabled]), input[type=image].caution:not(:disabled):not([disabled]), input[type=reset].caution:not(:disabled):not([disabled]), input[type=submit].caution:not(:disabled):not([disabled]),
   div.buttons a.caution:not(:disabled):not([disabled]),
-  div.buttons a:link.caution:not(:disabled):not([disabled]),
-  div.buttons a:visited.caution:not(:disabled):not([disabled]),
   span.buttons a.caution:not(:disabled):not([disabled]),
-  span.buttons a:link.caution:not(:disabled):not([disabled]),
-  span.buttons a:visited.caution:not(:disabled):not([disabled]),
-  a.button.caution:not(:disabled):not([disabled]),
-  a.button:link.caution:not(:disabled):not([disabled]),
-  a.button:visited.caution:not(:disabled):not([disabled]) {
+  a.button.caution:not(:disabled):not([disabled]) {
     background: #c44818;
     color: #ffffff; }
+    button.caution:not(:disabled):not([disabled])a:link, button.caution:not(:disabled):not([disabled])a:visited, input[type=button].caution:not(:disabled):not([disabled])a:link, input[type=button].caution:not(:disabled):not([disabled])a:visited, input[type=color].caution:not(:disabled):not([disabled])a:link, input[type=color].caution:not(:disabled):not([disabled])a:visited, input[type=image].caution:not(:disabled):not([disabled])a:link, input[type=image].caution:not(:disabled):not([disabled])a:visited, input[type=reset].caution:not(:disabled):not([disabled])a:link, input[type=reset].caution:not(:disabled):not([disabled])a:visited, input[type=submit].caution:not(:disabled):not([disabled])a:link, input[type=submit].caution:not(:disabled):not([disabled])a:visited,
+    div.buttons a.caution:not(:disabled):not([disabled])a:link,
+    div.buttons a.caution:not(:disabled):not([disabled])a:visited,
+    span.buttons a.caution:not(:disabled):not([disabled])a:link,
+    span.buttons a.caution:not(:disabled):not([disabled])a:visited,
+    a.button.caution:not(:disabled):not([disabled])a:link,
+    a.button.caution:not(:disabled):not([disabled])a:visited {
+      color: #ffffff; }
     .dark button.caution:not(:disabled):not([disabled]), .dark input[type=button].caution:not(:disabled):not([disabled]), .dark input[type=color].caution:not(:disabled):not([disabled]), .dark input[type=image].caution:not(:disabled):not([disabled]), .dark input[type=reset].caution:not(:disabled):not([disabled]), .dark input[type=submit].caution:not(:disabled):not([disabled]), .dark
     div.buttons a.caution:not(:disabled):not([disabled]), .dark
-    div.buttons a:link.caution:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited.caution:not(:disabled):not([disabled]), .dark
     span.buttons a.caution:not(:disabled):not([disabled]), .dark
-    span.buttons a:link.caution:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited.caution:not(:disabled):not([disabled]), .dark
-    a.button.caution:not(:disabled):not([disabled]), .dark
-    a.button:link.caution:not(:disabled):not([disabled]), .dark
-    a.button:visited.caution:not(:disabled):not([disabled]) {
+    a.button.caution:not(:disabled):not([disabled]) {
       background: #c44818;
       color: #ffffff; }
+      .dark button.caution:not(:disabled):not([disabled])a:link, .dark button.caution:not(:disabled):not([disabled])a:visited, .dark input[type=button].caution:not(:disabled):not([disabled])a:link, .dark input[type=button].caution:not(:disabled):not([disabled])a:visited, .dark input[type=color].caution:not(:disabled):not([disabled])a:link, .dark input[type=color].caution:not(:disabled):not([disabled])a:visited, .dark input[type=image].caution:not(:disabled):not([disabled])a:link, .dark input[type=image].caution:not(:disabled):not([disabled])a:visited, .dark input[type=reset].caution:not(:disabled):not([disabled])a:link, .dark input[type=reset].caution:not(:disabled):not([disabled])a:visited, .dark input[type=submit].caution:not(:disabled):not([disabled])a:link, .dark input[type=submit].caution:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.caution:not(:disabled):not([disabled])a:link, .dark
+      div.buttons a.caution:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.caution:not(:disabled):not([disabled])a:link, .dark
+      span.buttons a.caution:not(:disabled):not([disabled])a:visited, .dark
+      a.button.caution:not(:disabled):not([disabled])a:link, .dark
+      a.button.caution:not(:disabled):not([disabled])a:visited {
+        color: #ffffff; }
     button.caution:not(:disabled):not([disabled]):hover, button.caution:not(:disabled):not([disabled]):focus, input[type=button].caution:not(:disabled):not([disabled]):hover, input[type=button].caution:not(:disabled):not([disabled]):focus, input[type=color].caution:not(:disabled):not([disabled]):hover, input[type=color].caution:not(:disabled):not([disabled]):focus, input[type=image].caution:not(:disabled):not([disabled]):hover, input[type=image].caution:not(:disabled):not([disabled]):focus, input[type=reset].caution:not(:disabled):not([disabled]):hover, input[type=reset].caution:not(:disabled):not([disabled]):focus, input[type=submit].caution:not(:disabled):not([disabled]):hover, input[type=submit].caution:not(:disabled):not([disabled]):focus,
     div.buttons a.caution:not(:disabled):not([disabled]):hover,
     div.buttons a.caution:not(:disabled):not([disabled]):focus,
-    div.buttons a:link.caution:not(:disabled):not([disabled]):hover,
-    div.buttons a:link.caution:not(:disabled):not([disabled]):focus,
-    div.buttons a:visited.caution:not(:disabled):not([disabled]):hover,
-    div.buttons a:visited.caution:not(:disabled):not([disabled]):focus,
     span.buttons a.caution:not(:disabled):not([disabled]):hover,
     span.buttons a.caution:not(:disabled):not([disabled]):focus,
-    span.buttons a:link.caution:not(:disabled):not([disabled]):hover,
-    span.buttons a:link.caution:not(:disabled):not([disabled]):focus,
-    span.buttons a:visited.caution:not(:disabled):not([disabled]):hover,
-    span.buttons a:visited.caution:not(:disabled):not([disabled]):focus,
     a.button.caution:not(:disabled):not([disabled]):hover,
-    a.button.caution:not(:disabled):not([disabled]):focus,
-    a.button:link.caution:not(:disabled):not([disabled]):hover,
-    a.button:link.caution:not(:disabled):not([disabled]):focus,
-    a.button:visited.caution:not(:disabled):not([disabled]):hover,
-    a.button:visited.caution:not(:disabled):not([disabled]):focus {
+    a.button.caution:not(:disabled):not([disabled]):focus {
       background: #b04116;
       transition: background 0s; }
       .dark button.caution:not(:disabled):not([disabled]):hover, .dark button.caution:not(:disabled):not([disabled]):focus, .dark input[type=button].caution:not(:disabled):not([disabled]):hover, .dark input[type=button].caution:not(:disabled):not([disabled]):focus, .dark input[type=color].caution:not(:disabled):not([disabled]):hover, .dark input[type=color].caution:not(:disabled):not([disabled]):focus, .dark input[type=image].caution:not(:disabled):not([disabled]):hover, .dark input[type=image].caution:not(:disabled):not([disabled]):focus, .dark input[type=reset].caution:not(:disabled):not([disabled]):hover, .dark input[type=reset].caution:not(:disabled):not([disabled]):focus, .dark input[type=submit].caution:not(:disabled):not([disabled]):hover, .dark input[type=submit].caution:not(:disabled):not([disabled]):focus, .dark
       div.buttons a.caution:not(:disabled):not([disabled]):hover, .dark
       div.buttons a.caution:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:link.caution:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:link.caution:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:visited.caution:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:visited.caution:not(:disabled):not([disabled]):focus, .dark
       span.buttons a.caution:not(:disabled):not([disabled]):hover, .dark
       span.buttons a.caution:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:link.caution:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:link.caution:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:visited.caution:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:visited.caution:not(:disabled):not([disabled]):focus, .dark
       a.button.caution:not(:disabled):not([disabled]):hover, .dark
-      a.button.caution:not(:disabled):not([disabled]):focus, .dark
-      a.button:link.caution:not(:disabled):not([disabled]):hover, .dark
-      a.button:link.caution:not(:disabled):not([disabled]):focus, .dark
-      a.button:visited.caution:not(:disabled):not([disabled]):hover, .dark
-      a.button:visited.caution:not(:disabled):not([disabled]):focus {
+      a.button.caution:not(:disabled):not([disabled]):focus {
         background: #b04116; }
-    button.caution:not(:disabled):not([disabled]):active, input[type=button].caution:not(:disabled):not([disabled]):active, input[type=color].caution:not(:disabled):not([disabled]):active, input[type=image].caution:not(:disabled):not([disabled]):active, input[type=reset].caution:not(:disabled):not([disabled]):active, input[type=submit].caution:not(:disabled):not([disabled]):active,
+    button.caution:not(:disabled):not([disabled]):active, button.caution:not(:disabled):not([disabled]).ff-active, input[type=button].caution:not(:disabled):not([disabled]):active, input[type=button].caution:not(:disabled):not([disabled]).ff-active, input[type=color].caution:not(:disabled):not([disabled]):active, input[type=color].caution:not(:disabled):not([disabled]).ff-active, input[type=image].caution:not(:disabled):not([disabled]):active, input[type=image].caution:not(:disabled):not([disabled]).ff-active, input[type=reset].caution:not(:disabled):not([disabled]):active, input[type=reset].caution:not(:disabled):not([disabled]).ff-active, input[type=submit].caution:not(:disabled):not([disabled]):active, input[type=submit].caution:not(:disabled):not([disabled]).ff-active,
     div.buttons a.caution:not(:disabled):not([disabled]):active,
-    div.buttons a:link.caution:not(:disabled):not([disabled]):active,
-    div.buttons a:visited.caution:not(:disabled):not([disabled]):active,
+    div.buttons a.caution:not(:disabled):not([disabled]).ff-active,
     span.buttons a.caution:not(:disabled):not([disabled]):active,
-    span.buttons a:link.caution:not(:disabled):not([disabled]):active,
-    span.buttons a:visited.caution:not(:disabled):not([disabled]):active,
+    span.buttons a.caution:not(:disabled):not([disabled]).ff-active,
     a.button.caution:not(:disabled):not([disabled]):active,
-    a.button:link.caution:not(:disabled):not([disabled]):active,
-    a.button:visited.caution:not(:disabled):not([disabled]):active {
+    a.button.caution:not(:disabled):not([disabled]).ff-active {
       background: #893211;
-      transition: background 0s;
-      color: #ffffff; }
-      .dark button.caution:not(:disabled):not([disabled]):active, .dark input[type=button].caution:not(:disabled):not([disabled]):active, .dark input[type=color].caution:not(:disabled):not([disabled]):active, .dark input[type=image].caution:not(:disabled):not([disabled]):active, .dark input[type=reset].caution:not(:disabled):not([disabled]):active, .dark input[type=submit].caution:not(:disabled):not([disabled]):active, .dark
+      color: #ffffff;
+      transition: background 0s; }
+      button.caution:not(:disabled):not([disabled]):activea:link, button.caution:not(:disabled):not([disabled]):activea:visited, button.caution:not(:disabled):not([disabled]).ff-activea:link, button.caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].caution:not(:disabled):not([disabled]):activea:link, input[type=button].caution:not(:disabled):not([disabled]):activea:visited, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].caution:not(:disabled):not([disabled]):activea:link, input[type=color].caution:not(:disabled):not([disabled]):activea:visited, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].caution:not(:disabled):not([disabled]):activea:link, input[type=image].caution:not(:disabled):not([disabled]):activea:visited, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].caution:not(:disabled):not([disabled]):activea:link, input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].caution:not(:disabled):not([disabled]):activea:link, input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.caution:not(:disabled):not([disabled]):activea:link,
+      div.buttons a.caution:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link,
+      div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.caution:not(:disabled):not([disabled]):activea:link,
+      span.buttons a.caution:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link,
+      span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.caution:not(:disabled):not([disabled]):activea:link,
+      a.button.caution:not(:disabled):not([disabled]):activea:visited,
+      a.button.caution:not(:disabled):not([disabled]).ff-activea:link,
+      a.button.caution:not(:disabled):not([disabled]).ff-activea:visited {
+        color: #ffffff; }
+      .dark button.caution:not(:disabled):not([disabled]):active, .dark button.caution:not(:disabled):not([disabled]).ff-active, .dark input[type=button].caution:not(:disabled):not([disabled]):active, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=color].caution:not(:disabled):not([disabled]):active, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=image].caution:not(:disabled):not([disabled]):active, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].caution:not(:disabled):not([disabled]):active, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].caution:not(:disabled):not([disabled]):active, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.caution:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:link.caution:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:visited.caution:not(:disabled):not([disabled]):active, .dark
+      div.buttons a.caution:not(:disabled):not([disabled]).ff-active, .dark
       span.buttons a.caution:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:link.caution:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:visited.caution:not(:disabled):not([disabled]):active, .dark
+      span.buttons a.caution:not(:disabled):not([disabled]).ff-active, .dark
       a.button.caution:not(:disabled):not([disabled]):active, .dark
-      a.button:link.caution:not(:disabled):not([disabled]):active, .dark
-      a.button:visited.caution:not(:disabled):not([disabled]):active {
+      a.button.caution:not(:disabled):not([disabled]).ff-active {
         background: #893211;
         color: #ffffff; }
+        .dark button.caution:not(:disabled):not([disabled]):activea:link, .dark button.caution:not(:disabled):not([disabled]):activea:visited, .dark button.caution:not(:disabled):not([disabled]).ff-activea:link, .dark button.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]):activea:link, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]):activea:link, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.caution:not(:disabled):not([disabled]):activea:link, .dark
+        a.button.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
+        a.button.caution:not(:disabled):not([disabled]).ff-activea:visited {
+          color: #ffffff; }
   button.transparent:not(:disabled):not([disabled]), input[type=button].transparent:not(:disabled):not([disabled]), input[type=color].transparent:not(:disabled):not([disabled]), input[type=image].transparent:not(:disabled):not([disabled]), input[type=reset].transparent:not(:disabled):not([disabled]), input[type=submit].transparent:not(:disabled):not([disabled]),
   div.buttons a.transparent:not(:disabled):not([disabled]),
-  div.buttons a:link.transparent:not(:disabled):not([disabled]),
-  div.buttons a:visited.transparent:not(:disabled):not([disabled]),
   span.buttons a.transparent:not(:disabled):not([disabled]),
-  span.buttons a:link.transparent:not(:disabled):not([disabled]),
-  span.buttons a:visited.transparent:not(:disabled):not([disabled]),
-  a.button.transparent:not(:disabled):not([disabled]),
-  a.button:link.transparent:not(:disabled):not([disabled]),
-  a.button:visited.transparent:not(:disabled):not([disabled]) {
+  a.button.transparent:not(:disabled):not([disabled]) {
     background: transparent;
     color: #2755dd; }
+    button.transparent:not(:disabled):not([disabled])a:link, button.transparent:not(:disabled):not([disabled])a:visited, input[type=button].transparent:not(:disabled):not([disabled])a:link, input[type=button].transparent:not(:disabled):not([disabled])a:visited, input[type=color].transparent:not(:disabled):not([disabled])a:link, input[type=color].transparent:not(:disabled):not([disabled])a:visited, input[type=image].transparent:not(:disabled):not([disabled])a:link, input[type=image].transparent:not(:disabled):not([disabled])a:visited, input[type=reset].transparent:not(:disabled):not([disabled])a:link, input[type=reset].transparent:not(:disabled):not([disabled])a:visited, input[type=submit].transparent:not(:disabled):not([disabled])a:link, input[type=submit].transparent:not(:disabled):not([disabled])a:visited,
+    div.buttons a.transparent:not(:disabled):not([disabled])a:link,
+    div.buttons a.transparent:not(:disabled):not([disabled])a:visited,
+    span.buttons a.transparent:not(:disabled):not([disabled])a:link,
+    span.buttons a.transparent:not(:disabled):not([disabled])a:visited,
+    a.button.transparent:not(:disabled):not([disabled])a:link,
+    a.button.transparent:not(:disabled):not([disabled])a:visited {
+      color: #2755dd; }
     .dark button.transparent:not(:disabled):not([disabled]), .dark input[type=button].transparent:not(:disabled):not([disabled]), .dark input[type=color].transparent:not(:disabled):not([disabled]), .dark input[type=image].transparent:not(:disabled):not([disabled]), .dark input[type=reset].transparent:not(:disabled):not([disabled]), .dark input[type=submit].transparent:not(:disabled):not([disabled]), .dark
     div.buttons a.transparent:not(:disabled):not([disabled]), .dark
-    div.buttons a:link.transparent:not(:disabled):not([disabled]), .dark
-    div.buttons a:visited.transparent:not(:disabled):not([disabled]), .dark
     span.buttons a.transparent:not(:disabled):not([disabled]), .dark
-    span.buttons a:link.transparent:not(:disabled):not([disabled]), .dark
-    span.buttons a:visited.transparent:not(:disabled):not([disabled]), .dark
-    a.button.transparent:not(:disabled):not([disabled]), .dark
-    a.button:link.transparent:not(:disabled):not([disabled]), .dark
-    a.button:visited.transparent:not(:disabled):not([disabled]) {
+    a.button.transparent:not(:disabled):not([disabled]) {
       background: transparent;
       color: #91acff; }
+      .dark button.transparent:not(:disabled):not([disabled])a:link, .dark button.transparent:not(:disabled):not([disabled])a:visited, .dark input[type=button].transparent:not(:disabled):not([disabled])a:link, .dark input[type=button].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=color].transparent:not(:disabled):not([disabled])a:link, .dark input[type=color].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=image].transparent:not(:disabled):not([disabled])a:link, .dark input[type=image].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:link, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:link, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.transparent:not(:disabled):not([disabled])a:link, .dark
+      div.buttons a.transparent:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.transparent:not(:disabled):not([disabled])a:link, .dark
+      span.buttons a.transparent:not(:disabled):not([disabled])a:visited, .dark
+      a.button.transparent:not(:disabled):not([disabled])a:link, .dark
+      a.button.transparent:not(:disabled):not([disabled])a:visited {
+        color: #91acff; }
     button.transparent:not(:disabled):not([disabled]):hover, button.transparent:not(:disabled):not([disabled]):focus, input[type=button].transparent:not(:disabled):not([disabled]):hover, input[type=button].transparent:not(:disabled):not([disabled]):focus, input[type=color].transparent:not(:disabled):not([disabled]):hover, input[type=color].transparent:not(:disabled):not([disabled]):focus, input[type=image].transparent:not(:disabled):not([disabled]):hover, input[type=image].transparent:not(:disabled):not([disabled]):focus, input[type=reset].transparent:not(:disabled):not([disabled]):hover, input[type=reset].transparent:not(:disabled):not([disabled]):focus, input[type=submit].transparent:not(:disabled):not([disabled]):hover, input[type=submit].transparent:not(:disabled):not([disabled]):focus,
     div.buttons a.transparent:not(:disabled):not([disabled]):hover,
     div.buttons a.transparent:not(:disabled):not([disabled]):focus,
-    div.buttons a:link.transparent:not(:disabled):not([disabled]):hover,
-    div.buttons a:link.transparent:not(:disabled):not([disabled]):focus,
-    div.buttons a:visited.transparent:not(:disabled):not([disabled]):hover,
-    div.buttons a:visited.transparent:not(:disabled):not([disabled]):focus,
     span.buttons a.transparent:not(:disabled):not([disabled]):hover,
     span.buttons a.transparent:not(:disabled):not([disabled]):focus,
-    span.buttons a:link.transparent:not(:disabled):not([disabled]):hover,
-    span.buttons a:link.transparent:not(:disabled):not([disabled]):focus,
-    span.buttons a:visited.transparent:not(:disabled):not([disabled]):hover,
-    span.buttons a:visited.transparent:not(:disabled):not([disabled]):focus,
     a.button.transparent:not(:disabled):not([disabled]):hover,
-    a.button.transparent:not(:disabled):not([disabled]):focus,
-    a.button:link.transparent:not(:disabled):not([disabled]):hover,
-    a.button:link.transparent:not(:disabled):not([disabled]):focus,
-    a.button:visited.transparent:not(:disabled):not([disabled]):hover,
-    a.button:visited.transparent:not(:disabled):not([disabled]):focus {
+    a.button.transparent:not(:disabled):not([disabled]):focus {
       background: rgba(0, 0, 0, 0.07);
       transition: background 0s; }
       .dark button.transparent:not(:disabled):not([disabled]):hover, .dark button.transparent:not(:disabled):not([disabled]):focus, .dark input[type=button].transparent:not(:disabled):not([disabled]):hover, .dark input[type=button].transparent:not(:disabled):not([disabled]):focus, .dark input[type=color].transparent:not(:disabled):not([disabled]):hover, .dark input[type=color].transparent:not(:disabled):not([disabled]):focus, .dark input[type=image].transparent:not(:disabled):not([disabled]):hover, .dark input[type=image].transparent:not(:disabled):not([disabled]):focus, .dark input[type=reset].transparent:not(:disabled):not([disabled]):hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]):focus, .dark input[type=submit].transparent:not(:disabled):not([disabled]):hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]):focus, .dark
       div.buttons a.transparent:not(:disabled):not([disabled]):hover, .dark
       div.buttons a.transparent:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:link.transparent:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:link.transparent:not(:disabled):not([disabled]):focus, .dark
-      div.buttons a:visited.transparent:not(:disabled):not([disabled]):hover, .dark
-      div.buttons a:visited.transparent:not(:disabled):not([disabled]):focus, .dark
       span.buttons a.transparent:not(:disabled):not([disabled]):hover, .dark
       span.buttons a.transparent:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:link.transparent:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:link.transparent:not(:disabled):not([disabled]):focus, .dark
-      span.buttons a:visited.transparent:not(:disabled):not([disabled]):hover, .dark
-      span.buttons a:visited.transparent:not(:disabled):not([disabled]):focus, .dark
       a.button.transparent:not(:disabled):not([disabled]):hover, .dark
-      a.button.transparent:not(:disabled):not([disabled]):focus, .dark
-      a.button:link.transparent:not(:disabled):not([disabled]):hover, .dark
-      a.button:link.transparent:not(:disabled):not([disabled]):focus, .dark
-      a.button:visited.transparent:not(:disabled):not([disabled]):hover, .dark
-      a.button:visited.transparent:not(:disabled):not([disabled]):focus {
-        background: rgba(0, 0, 0, 0.07); }
-    button.transparent:not(:disabled):not([disabled]):active, input[type=button].transparent:not(:disabled):not([disabled]):active, input[type=color].transparent:not(:disabled):not([disabled]):active, input[type=image].transparent:not(:disabled):not([disabled]):active, input[type=reset].transparent:not(:disabled):not([disabled]):active, input[type=submit].transparent:not(:disabled):not([disabled]):active,
+      a.button.transparent:not(:disabled):not([disabled]):focus {
+        background: rgba(255, 255, 255, 0.14); }
+    button.transparent:not(:disabled):not([disabled]):active, button.transparent:not(:disabled):not([disabled]).ff-active, input[type=button].transparent:not(:disabled):not([disabled]):active, input[type=button].transparent:not(:disabled):not([disabled]).ff-active, input[type=color].transparent:not(:disabled):not([disabled]):active, input[type=color].transparent:not(:disabled):not([disabled]).ff-active, input[type=image].transparent:not(:disabled):not([disabled]):active, input[type=image].transparent:not(:disabled):not([disabled]).ff-active, input[type=reset].transparent:not(:disabled):not([disabled]):active, input[type=reset].transparent:not(:disabled):not([disabled]).ff-active, input[type=submit].transparent:not(:disabled):not([disabled]):active, input[type=submit].transparent:not(:disabled):not([disabled]).ff-active,
     div.buttons a.transparent:not(:disabled):not([disabled]):active,
-    div.buttons a:link.transparent:not(:disabled):not([disabled]):active,
-    div.buttons a:visited.transparent:not(:disabled):not([disabled]):active,
+    div.buttons a.transparent:not(:disabled):not([disabled]).ff-active,
     span.buttons a.transparent:not(:disabled):not([disabled]):active,
-    span.buttons a:link.transparent:not(:disabled):not([disabled]):active,
-    span.buttons a:visited.transparent:not(:disabled):not([disabled]):active,
+    span.buttons a.transparent:not(:disabled):not([disabled]).ff-active,
     a.button.transparent:not(:disabled):not([disabled]):active,
-    a.button:link.transparent:not(:disabled):not([disabled]):active,
-    a.button:visited.transparent:not(:disabled):not([disabled]):active {
+    a.button.transparent:not(:disabled):not([disabled]).ff-active {
       background: #adadad;
-      transition: background 0s;
-      color: #000000; }
-      .dark button.transparent:not(:disabled):not([disabled]):active, .dark input[type=button].transparent:not(:disabled):not([disabled]):active, .dark input[type=color].transparent:not(:disabled):not([disabled]):active, .dark input[type=image].transparent:not(:disabled):not([disabled]):active, .dark input[type=reset].transparent:not(:disabled):not([disabled]):active, .dark input[type=submit].transparent:not(:disabled):not([disabled]):active, .dark
+      color: #000000;
+      transition: background 0s; }
+      button.transparent:not(:disabled):not([disabled]):activea:link, button.transparent:not(:disabled):not([disabled]):activea:visited, button.transparent:not(:disabled):not([disabled]).ff-activea:link, button.transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].transparent:not(:disabled):not([disabled]):activea:link, input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].transparent:not(:disabled):not([disabled]):activea:link, input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].transparent:not(:disabled):not([disabled]):activea:link, input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.transparent:not(:disabled):not([disabled]):activea:link,
+      div.buttons a.transparent:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link,
+      div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.transparent:not(:disabled):not([disabled]):activea:link,
+      span.buttons a.transparent:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link,
+      span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.transparent:not(:disabled):not([disabled]):activea:link,
+      a.button.transparent:not(:disabled):not([disabled]):activea:visited,
+      a.button.transparent:not(:disabled):not([disabled]).ff-activea:link,
+      a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited {
+        color: #000000; }
+      .dark button.transparent:not(:disabled):not([disabled]):active, .dark button.transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=button].transparent:not(:disabled):not([disabled]):active, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=color].transparent:not(:disabled):not([disabled]):active, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=image].transparent:not(:disabled):not([disabled]):active, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].transparent:not(:disabled):not([disabled]):active, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].transparent:not(:disabled):not([disabled]):active, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.transparent:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:link.transparent:not(:disabled):not([disabled]):active, .dark
-      div.buttons a:visited.transparent:not(:disabled):not([disabled]):active, .dark
+      div.buttons a.transparent:not(:disabled):not([disabled]).ff-active, .dark
       span.buttons a.transparent:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:link.transparent:not(:disabled):not([disabled]):active, .dark
-      span.buttons a:visited.transparent:not(:disabled):not([disabled]):active, .dark
+      span.buttons a.transparent:not(:disabled):not([disabled]).ff-active, .dark
       a.button.transparent:not(:disabled):not([disabled]):active, .dark
-      a.button:link.transparent:not(:disabled):not([disabled]):active, .dark
-      a.button:visited.transparent:not(:disabled):not([disabled]):active {
+      a.button.transparent:not(:disabled):not([disabled]).ff-active {
         background: #888888;
         color: #f0f0f0; }
+        .dark button.transparent:not(:disabled):not([disabled]):activea:link, .dark button.transparent:not(:disabled):not([disabled]):activea:visited, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]):activea:link, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]):activea:link, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.transparent:not(:disabled):not([disabled]):activea:link, .dark
+        a.button.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
+        a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited {
+          color: #f0f0f0; }
   button.transparent:disabled, button.transparent[disabled], input[type=button].transparent:disabled, input[type=button].transparent[disabled], input[type=color].transparent:disabled, input[type=color].transparent[disabled], input[type=image].transparent:disabled, input[type=image].transparent[disabled], input[type=reset].transparent:disabled, input[type=reset].transparent[disabled], input[type=submit].transparent:disabled, input[type=submit].transparent[disabled],
   div.buttons a.transparent:disabled,
   div.buttons a.transparent[disabled],
-  div.buttons a:link.transparent:disabled,
-  div.buttons a:link.transparent[disabled],
-  div.buttons a:visited.transparent:disabled,
-  div.buttons a:visited.transparent[disabled],
   span.buttons a.transparent:disabled,
   span.buttons a.transparent[disabled],
-  span.buttons a:link.transparent:disabled,
-  span.buttons a:link.transparent[disabled],
-  span.buttons a:visited.transparent:disabled,
-  span.buttons a:visited.transparent[disabled],
   a.button.transparent:disabled,
-  a.button.transparent[disabled],
-  a.button:link.transparent:disabled,
-  a.button:link.transparent[disabled],
-  a.button:visited.transparent:disabled,
-  a.button:visited.transparent[disabled] {
+  a.button.transparent[disabled] {
     background: transparent;
     color: #808080; }
+    button.transparent:disableda:link, button.transparent:disableda:visited, button.transparent[disabled]a:link, button.transparent[disabled]a:visited, input[type=button].transparent:disableda:link, input[type=button].transparent:disableda:visited, input[type=button].transparent[disabled]a:link, input[type=button].transparent[disabled]a:visited, input[type=color].transparent:disableda:link, input[type=color].transparent:disableda:visited, input[type=color].transparent[disabled]a:link, input[type=color].transparent[disabled]a:visited, input[type=image].transparent:disableda:link, input[type=image].transparent:disableda:visited, input[type=image].transparent[disabled]a:link, input[type=image].transparent[disabled]a:visited, input[type=reset].transparent:disableda:link, input[type=reset].transparent:disableda:visited, input[type=reset].transparent[disabled]a:link, input[type=reset].transparent[disabled]a:visited, input[type=submit].transparent:disableda:link, input[type=submit].transparent:disableda:visited, input[type=submit].transparent[disabled]a:link, input[type=submit].transparent[disabled]a:visited,
+    div.buttons a.transparent:disableda:link,
+    div.buttons a.transparent:disableda:visited,
+    div.buttons a.transparent[disabled]a:link,
+    div.buttons a.transparent[disabled]a:visited,
+    span.buttons a.transparent:disableda:link,
+    span.buttons a.transparent:disableda:visited,
+    span.buttons a.transparent[disabled]a:link,
+    span.buttons a.transparent[disabled]a:visited,
+    a.button.transparent:disableda:link,
+    a.button.transparent:disableda:visited,
+    a.button.transparent[disabled]a:link,
+    a.button.transparent[disabled]a:visited {
+      color: #808080; }
     .dark button.transparent:disabled, .dark button.transparent[disabled], .dark input[type=button].transparent:disabled, .dark input[type=button].transparent[disabled], .dark input[type=color].transparent:disabled, .dark input[type=color].transparent[disabled], .dark input[type=image].transparent:disabled, .dark input[type=image].transparent[disabled], .dark input[type=reset].transparent:disabled, .dark input[type=reset].transparent[disabled], .dark input[type=submit].transparent:disabled, .dark input[type=submit].transparent[disabled], .dark
     div.buttons a.transparent:disabled, .dark
     div.buttons a.transparent[disabled], .dark
-    div.buttons a:link.transparent:disabled, .dark
-    div.buttons a:link.transparent[disabled], .dark
-    div.buttons a:visited.transparent:disabled, .dark
-    div.buttons a:visited.transparent[disabled], .dark
     span.buttons a.transparent:disabled, .dark
     span.buttons a.transparent[disabled], .dark
-    span.buttons a:link.transparent:disabled, .dark
-    span.buttons a:link.transparent[disabled], .dark
-    span.buttons a:visited.transparent:disabled, .dark
-    span.buttons a:visited.transparent[disabled], .dark
     a.button.transparent:disabled, .dark
-    a.button.transparent[disabled], .dark
-    a.button:link.transparent:disabled, .dark
-    a.button:link.transparent[disabled], .dark
-    a.button:visited.transparent:disabled, .dark
-    a.button:visited.transparent[disabled] {
+    a.button.transparent[disabled] {
       background: transparent;
       color: #a0a0a0; }
+      .dark button.transparent:disableda:link, .dark button.transparent:disableda:visited, .dark button.transparent[disabled]a:link, .dark button.transparent[disabled]a:visited, .dark input[type=button].transparent:disableda:link, .dark input[type=button].transparent:disableda:visited, .dark input[type=button].transparent[disabled]a:link, .dark input[type=button].transparent[disabled]a:visited, .dark input[type=color].transparent:disableda:link, .dark input[type=color].transparent:disableda:visited, .dark input[type=color].transparent[disabled]a:link, .dark input[type=color].transparent[disabled]a:visited, .dark input[type=image].transparent:disableda:link, .dark input[type=image].transparent:disableda:visited, .dark input[type=image].transparent[disabled]a:link, .dark input[type=image].transparent[disabled]a:visited, .dark input[type=reset].transparent:disableda:link, .dark input[type=reset].transparent:disableda:visited, .dark input[type=reset].transparent[disabled]a:link, .dark input[type=reset].transparent[disabled]a:visited, .dark input[type=submit].transparent:disableda:link, .dark input[type=submit].transparent:disableda:visited, .dark input[type=submit].transparent[disabled]a:link, .dark input[type=submit].transparent[disabled]a:visited, .dark
+      div.buttons a.transparent:disableda:link, .dark
+      div.buttons a.transparent:disableda:visited, .dark
+      div.buttons a.transparent[disabled]a:link, .dark
+      div.buttons a.transparent[disabled]a:visited, .dark
+      span.buttons a.transparent:disableda:link, .dark
+      span.buttons a.transparent:disableda:visited, .dark
+      span.buttons a.transparent[disabled]a:link, .dark
+      span.buttons a.transparent[disabled]a:visited, .dark
+      a.button.transparent:disableda:link, .dark
+      a.button.transparent:disableda:visited, .dark
+      a.button.transparent[disabled]a:link, .dark
+      a.button.transparent[disabled]a:visited {
+        color: #a0a0a0; }
   .ff-input-wrapper button, button.narrow, .ff-input-wrapper input[type=button], input[type=button].narrow, .ff-input-wrapper input[type=color], input[type=color].narrow, .ff-input-wrapper input[type=image], input[type=image].narrow, .ff-input-wrapper input[type=reset], input[type=reset].narrow, .ff-input-wrapper input[type=submit], input[type=submit].narrow, .ff-input-wrapper
   div.buttons a,
   div.buttons a.narrow, .ff-input-wrapper
-  div.buttons a:link,
-  div.buttons a:link.narrow, .ff-input-wrapper
-  div.buttons a:visited,
-  div.buttons a:visited.narrow, .ff-input-wrapper
   span.buttons a,
   span.buttons a.narrow, .ff-input-wrapper
-  span.buttons a:link,
-  span.buttons a:link.narrow, .ff-input-wrapper
-  span.buttons a:visited,
-  span.buttons a:visited.narrow, .ff-input-wrapper
   a.button,
-  a.button.narrow, .ff-input-wrapper
-  a.button:link,
-  a.button:link.narrow, .ff-input-wrapper
-  a.button:visited,
-  a.button:visited.narrow {
+  a.button.narrow {
     min-width: 30px;
     padding-left: 4px;
     padding-right: 4px; }
   button:not(.narrow) i:empty, input[type=button]:not(.narrow) i:empty, input[type=color]:not(.narrow) i:empty, input[type=image]:not(.narrow) i:empty, input[type=reset]:not(.narrow) i:empty, input[type=submit]:not(.narrow) i:empty,
   div.buttons a:not(.narrow) i:empty,
-  div.buttons a:link:not(.narrow) i:empty,
-  div.buttons a:visited:not(.narrow) i:empty,
   span.buttons a:not(.narrow) i:empty,
-  span.buttons a:link:not(.narrow) i:empty,
-  span.buttons a:visited:not(.narrow) i:empty,
-  a.button:not(.narrow) i:empty,
-  a.button:link:not(.narrow) i:empty,
-  a.button:visited:not(.narrow) i:empty {
+  a.button:not(.narrow) i:empty {
     margin-right: 3px; }
 
 div.buttons,
@@ -2380,20 +2372,22 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   right: 0;
   width: 25px;
   height: 25px;
-  color: gray;
   text-align: center;
   font-size: 19px;
   line-height: 19px;
-  text-decoration: none;
   transition: background 0.2s, color 0.2s; }
+  .ff-modal-close-button:link, .ff-modal-close-button:visited {
+    color: gray;
+    text-decoration: none; }
   .ff-modal-close-button::after {
     display: block;
     content: '\D7'; }
   .ff-modal-close-button:hover {
     background: #e81123;
-    color: white;
     text-decoration: none;
     transition: background 0s, color 0s; }
+    .ff-modal-close-button:hover:link, .ff-modal-close-button:hover:visited {
+      color: white; }
 
 .ff-tab-headers {
   display: flex;
@@ -3067,6 +3061,9 @@ nav .menu {
     border: none;
     padding: 0;
     background: #f4f4f4; }
+  .progressbar.critical, .progressbar.error, .progressbar.warning, .progressbar.information, .progressbar.success {
+    background: #ffffff;
+    padding: 1px; }
   .progressbar.success .ff-bar {
     background: #6ec418; }
   .progressbar.warning .ff-bar {
@@ -3198,5 +3195,254 @@ nav .menu {
       background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIxLjIiIHBvaW50cz0iMSw2IDYsMSAxMSw2Ii8+PC9zdmc+"); }
     .dark .ff-selectable-button[disabled] {
       background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cG9seWxpbmUgZmlsbD0ibm9uZSIgc3Ryb2tlPSJncmF5IiBzdHJva2Utd2lkdGg9IjEuMiIgcG9pbnRzPSIxLDYgNiwxIDExLDYiLz48L3N2Zz4"); }
+
+.ff-timepicker {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column; }
+  .ff-timepicker button svg,
+  .ff-timepicker a svg {
+    pointer-events: none; }
+  .ff-timepicker button[disabled] svg,
+  .ff-timepicker a[disabled] svg {
+    opacity: 0.4; }
+  .dark .ff-timepicker {
+    background-color: #303030;
+    color: #f0f0f0; }
+
+.ff-timepicker-buttons {
+  display: grid;
+  grid-gap: 1px;
+  grid-template-columns: 1fr 3fr 1fr;
+  margin-bottom: 1px; }
+  .ff-timepicker-buttons.four-buttons {
+    grid-template-columns: 1fr 3fr 1fr 1fr; }
+
+.ff-timepicker button svg path,
+.ff-timepicker a.button svg path {
+  fill: black; }
+
+.ff-timepicker button svg polyline,
+.ff-timepicker a.button svg polyline {
+  stroke: black; }
+
+.dark .ff-timepicker button svg path, .dark
+.ff-timepicker a.button svg path {
+  fill: white; }
+
+.dark .ff-timepicker button svg polyline, .dark
+.ff-timepicker a.button svg polyline {
+  stroke: white; }
+
+.ff-timepicker-content {
+  position: relative; }
+
+.ff-timepicker-year,
+.ff-timepicker-month,
+.ff-timepicker-clock {
+  touch-action: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden; }
+  .ff-timepicker-year .ff-timepicker-inner,
+  .ff-timepicker-month .ff-timepicker-inner,
+  .ff-timepicker-clock .ff-timepicker-inner {
+    position: relative;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    z-index: 2; }
+    .ff-timepicker-year .ff-timepicker-inner.hidden, .ff-timepicker-year .ff-timepicker-inner.hidden-reverse,
+    .ff-timepicker-month .ff-timepicker-inner.hidden,
+    .ff-timepicker-month .ff-timepicker-inner.hidden-reverse,
+    .ff-timepicker-clock .ff-timepicker-inner.hidden,
+    .ff-timepicker-clock .ff-timepicker-inner.hidden-reverse {
+      transform: scale(0.67);
+      opacity: 0;
+      z-index: 1; }
+    .ff-timepicker-year .ff-timepicker-inner.hidden-reverse,
+    .ff-timepicker-month .ff-timepicker-inner.hidden-reverse,
+    .ff-timepicker-clock .ff-timepicker-inner.hidden-reverse {
+      transform: scale(1.5); }
+    .ff-timepicker-year .ff-timepicker-inner .header,
+    .ff-timepicker-month .ff-timepicker-inner .header,
+    .ff-timepicker-clock .ff-timepicker-inner .header {
+      margin-bottom: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-content: center;
+      align-items: center;
+      text-align: center;
+      font-weight: bold; }
+
+.ff-timepicker-year .ff-timepicker-inner .months {
+  display: flex;
+  flex-wrap: wrap; }
+  .ff-timepicker-year .ff-timepicker-inner .months .item {
+    width: 33.333%;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    transition: background 0.2s ease, color 0.2s ease; }
+    .ff-timepicker-year .ff-timepicker-inner .months .item:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transition: background 0s; }
+      .dark .ff-timepicker-year .ff-timepicker-inner .months .item:hover {
+        background: rgba(255, 255, 255, 0.1); }
+    .ff-timepicker-year .ff-timepicker-inner .months .item.selected, .ff-timepicker-year .ff-timepicker-inner .months .item.selected:hover {
+      background: rgba(29, 176, 255, 0.4);
+      transition: background 0s;
+      color: unset; }
+      .dark .ff-timepicker-year .ff-timepicker-inner .months .item.selected, .dark .ff-timepicker-year .ff-timepicker-inner .months .item.selected:hover {
+        background: rgba(29, 176, 255, 0.8);
+        color: unset; }
+    .ff-timepicker-year .ff-timepicker-inner .months .item.now {
+      border: solid 1px darkorange; }
+      .dark .ff-timepicker-year .ff-timepicker-inner .months .item.now {
+        border-color: darkorange; }
+    .ff-timepicker-year .ff-timepicker-inner .months .item .week-numbers {
+      font-size: 0.7em; }
+
+.ff-timepicker-month .ff-timepicker-inner .weekdays {
+  display: flex; }
+  .ff-timepicker-month .ff-timepicker-inner .weekdays > div {
+    width: calc((100% - 20px) / 7);
+    border-bottom: solid 1px #e0e0e0;
+    padding-top: 4px;
+    text-align: center;
+    font-size: 0.7em;
+    line-height: 110%; }
+    .dark .ff-timepicker-month .ff-timepicker-inner .weekdays > div {
+      border-bottom: solid 1px #505050; }
+    .ff-timepicker-month .ff-timepicker-inner .weekdays > div:first-child {
+      margin-left: 19px;
+      width: calc((100% - 20px) / 7 + 1px); }
+
+.ff-timepicker-month .ff-timepicker-inner .weeks {
+  display: flex;
+  flex-direction: column; }
+  .ff-timepicker-month .ff-timepicker-inner .weeks .days {
+    display: flex;
+    transition: background 0.2s ease, color 0.2s ease; }
+    .ff-timepicker-month .ff-timepicker-inner .weeks .days .week-number {
+      width: 20px;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      font-size: 0.7em;
+      border-right: solid 1px #e0e0e0; }
+      .dark .ff-timepicker-month .ff-timepicker-inner .weeks .days .week-number {
+        border-right: solid 1px #505050; }
+    .ff-timepicker-month .ff-timepicker-inner .weeks .days .item {
+      width: calc((100% - 20px) / 7);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center; }
+      .ff-timepicker-month .ff-timepicker-inner .weeks .days .item[disabled] {
+        cursor: default;
+        background: inherit !important; }
+      .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.now {
+        border: solid 1px darkorange; }
+        .dark .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.now {
+          border-color: darkorange; }
+      .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.prev-month > span, .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.next-month > span {
+        opacity: 0.4; }
+      .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.prev-month.now, .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.next-month.now {
+        border: solid 1px #ffc581; }
+        .dark .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.prev-month.now, .dark .ff-timepicker-month .ff-timepicker-inner .weeks .days .item.next-month.now {
+          border-color: #c06800; }
+  .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transition: background 0s; }
+    .dark .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item:hover {
+      background: rgba(255, 255, 255, 0.1); }
+  .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item.selected,
+  .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item.selected:hover {
+    background: rgba(29, 176, 255, 0.4);
+    transition: background 0s;
+    color: unset; }
+    .dark .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item.selected, .dark
+    .ff-timepicker-month .ff-timepicker-inner .weeks.day-selection .item.selected:hover {
+      background: rgba(29, 176, 255, 0.8);
+      color: unset; }
+  .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days {
+    cursor: pointer; }
+  .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transition: background 0s; }
+    .dark .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days:hover {
+      background: rgba(255, 255, 255, 0.1); }
+  .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days.selected,
+  .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days.selected:hover {
+    background: rgba(29, 176, 255, 0.4);
+    transition: background 0s;
+    color: unset; }
+    .dark .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days.selected, .dark
+    .ff-timepicker-month .ff-timepicker-inner .weeks.week-selection .days.selected:hover {
+      background: rgba(29, 176, 255, 0.8);
+      color: unset; }
+
+.ff-timepicker-clock .ff-timepicker-inner {
+  border-radius: 100%;
+  background: #fafafa;
+  border: solid 1px #e0e0e0; }
+  .dark .ff-timepicker-clock .ff-timepicker-inner {
+    background: #404040;
+    border-color: #505050; }
+  .ff-timepicker-clock .ff-timepicker-inner .item {
+    position: absolute;
+    border-radius: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    font-size: 1.1em; }
+    .ff-timepicker-clock .ff-timepicker-inner .item.inner-circle {
+      font-size: 0.85em; }
+    .ff-timepicker-clock .ff-timepicker-inner .item.selected {
+      background: #91d8ff;
+      color: unset; }
+      .dark .ff-timepicker-clock .ff-timepicker-inner .item.selected {
+        background: #31a2df;
+        color: unset; }
+  .ff-timepicker-clock .ff-timepicker-inner svg {
+    position: absolute;
+    width: 100%;
+    height: 100%; }
+  .ff-timepicker-clock .ff-timepicker-inner .clock-center-cirle {
+    fill: #009cf0; }
+    .dark .ff-timepicker-clock .ff-timepicker-inner .clock-center-cirle {
+      fill: #91d8ff; }
+  .ff-timepicker-clock .ff-timepicker-inner .clock-hour-line {
+    stroke: #009cf0;
+    stroke-width: 3; }
+    .dark .ff-timepicker-clock .ff-timepicker-inner .clock-hour-line {
+      stroke: #91d8ff; }
+  .ff-timepicker-clock .ff-timepicker-inner .clock-hour-line.secondary {
+    stroke: #91d8ff;
+    stroke-width: 3; }
+    .dark .ff-timepicker-clock .ff-timepicker-inner .clock-hour-line.secondary {
+      stroke: #31a2df; }
+  .ff-timepicker-clock .ff-timepicker-inner .clock-minute-line {
+    stroke: #009cf0;
+    stroke-width: 2; }
+    .dark .ff-timepicker-clock .ff-timepicker-inner .clock-minute-line {
+      stroke: #91d8ff; }
+  .ff-timepicker-clock .ff-timepicker-inner .clock-extra-item {
+    stroke: #91d8ff;
+    fill: unset; }
+    .dark .ff-timepicker-clock .ff-timepicker-inner .clock-extra-item {
+      stroke: #31a2df;
+      fill: unset; }
 
 /*# sourceMappingURL=frontfire.css.map */

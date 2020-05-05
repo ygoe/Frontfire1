@@ -26,6 +26,7 @@ import "./modules/selectable";
 import "./modules/slider";
 import "./modules/sortable";
 import "./modules/tabs";
+import "./modules/timepicker";
 
 // Automatically apply all controls
 import "./modules/autostart";

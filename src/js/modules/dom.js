@@ -182,6 +182,28 @@ $.fn.firstChild = function () {
 	return ret;
 };
 
+// Returns the closest parent of each selected element that matches the predicate function.
+//
+// predicate: A function that is called with each parent as first argument and the starting element
+//   as second argument. If it returns true, the search is stopped and the parent element is added
+//   to the returned list.
+$.fn.parentWhere = function (predicate) {
+	var ret = $();
+	this.each(function (_, obj) {
+		let parent = obj;
+		do
+		{
+			if (predicate(parent, obj)) {
+				ret = ret.add(parent);
+				break;
+			}
+			parent = parent.parentElement;
+		}
+		while (parent);
+	});
+	return ret;
+};
+
 // Determines the actual cursor of the first selected element. "auto" is returned as "default".
 $.fn.actualCursor = function () {
 	// Most elements like <a>, <input>, <textarea> or <area> already compute their actual cursor

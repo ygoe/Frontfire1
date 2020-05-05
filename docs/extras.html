@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Extras - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main class="page-width">
+		<h1>Extras</h1>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			Operating system and browser detection are based on hacks that may change at any time. See the source code for current incompatibilities.
+		</p>
+
+		<h2>Operating system detection</h2>
+
+		<table>
+			<tr>
+				<th>Android</th>
+				<td id="is-android"></td>
+				<td><code>$.isAndroid()</code></td>
+			</tr>
+			<tr>
+				<th>iOS</th>
+				<td id="is-ios"></td>
+				<td><code>$.isIos()</code></td>
+			</tr>
+			<tr>
+				<th>Linux</th>
+				<td id="is-linux"></td>
+				<td><code>$.isLinux()</code></td>
+			</tr>
+			<tr>
+				<th>macOS</th>
+				<td id="is-macos"></td>
+				<td><code>$.isMac()</code></td>
+			</tr>
+			<tr>
+				<th>Windows</th>
+				<td id="is-windows"></td>
+				<td><code>$.isWindows()</code></td>
+			</tr>
+		</table>
+
+		<h2>Browser detection</h2>
+
+		<table>
+			<tr>
+				<th>Blink</th>
+				<td id="is-blink"></td>
+				<td><code>$.isBlink()</code></td>
+			</tr>
+			<tr>
+				<th>Chrome</th>
+				<td id="is-chrome"></td>
+				<td><code>$.isChrome()</code></td>
+			</tr>
+			<tr>
+				<th>Edge (original)</th>
+				<td id="is-edge"></td>
+				<td><code>$.isEdge()</code></td>
+			</tr>
+			<tr>
+				<th>Edge (Chromium)</th>
+				<td id="is-edgechromium"></td>
+				<td><code>$.isEdgeChromium()</code></td>
+			</tr>
+			<tr>
+				<th>Firefox</th>
+				<td id="is-firefox"></td>
+				<td><code>$.isFirefox()</code></td>
+			</tr>
+			<tr>
+				<th>Internet Explorer</th>
+				<td id="is-internetexplorer"></td>
+				<td><code>$.isInternetExplorer()</code></td>
+			</tr>
+			<tr>
+				<th>Opera</th>
+				<td id="is-opera"></td>
+				<td><code>$.isOpera()</code></td>
+			</tr>
+			<tr>
+				<th>Safari</th>
+				<td id="is-safari"></td>
+				<td><code>$.isSafari()</code></td>
+			</tr>
+		</table>
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+	
+	<script>
+		$("#is-android").text($.isAndroid() ? "yes" : "no");
+		$("#is-ios").text($.isIos() ? "yes" : "no");
+		$("#is-linux").text($.isLinux() ? "yes" : "no");
+		$("#is-macos").text($.isMac() ? "yes" : "no");
+		$("#is-windows").text($.isWindows() ? "yes" : "no");
+		$("#is-blink").text($.isBlink() ? "yes" : "no");
+		$("#is-chrome").text($.isChrome() ? "yes" : "no");
+		$("#is-edge").text($.isEdge() ? "yes" : "no");
+		$("#is-edgechromium").text($.isEdgeChromium() ? "yes" : "no");
+		$("#is-firefox").text($.isFirefox() ? "yes" : "no");
+		$("#is-internetexplorer").text($.isInternetExplorer() ? "yes" : "no");
+		$("#is-opera").text($.isOpera() ? "yes" : "no");
+		$("#is-safari").text($.isSafari() ? "yes" : "no");
+	</script>
+</body>
+</html>

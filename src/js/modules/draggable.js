@@ -31,7 +31,10 @@ var draggableDefaults = {
 	grid: undefined,
 
 	// Indicates whether the window should scroll to keep the dragged element visible. Default: false.
-	scroll: false
+	scroll: false,
+	
+	// An element that catches all pointer input and moves the draggable to that point. Default: None.
+	catchElement: undefined
 };
 
 // Makes each selected element draggable.
@@ -77,6 +80,117 @@ function draggable(options) {
 				event.stopImmediatePropagation();
 			}));
 		}
+		
+		if (opt.catchElement) {
+			opt.eventRemovers.push($(opt.catchElement).pointer("down", function (event) {
+				if (event.button === 0) {
+					event.stopImmediatePropagation();
+					if (dragging) return;
+					draggingCancelled = false;
+					dragPoint = { left: event.pageX, top: event.pageY };
+					pointerId = event.pointerId;
+					eventRemovers.push($window.pointer("move", onMove, true));
+					eventRemovers.push($window.pointer("up cancel", onEnd, true));
+					// Start dragging mode immediately when catching.
+					tryStartDragging();
+					if (dragging) {
+						// Move the draggable element directly under the pointer initially
+						elemRect.top = dragPoint.top - elemRect.height / 2;
+						elemRect.left = dragPoint.left - elemRect.width / 2;
+						handleMove(event);
+					}
+				}
+			}));
+		}
+		
+		function tryStartDragging() {
+			elemRect = $elem.rect();
+			let event2 = $.Event("draggablestart");
+			event2.dragPoint = dragPoint;
+			event2.newPoint = { left: event.pageX, top: event.pageY };
+			$elem.trigger(event2);
+			if (!event2.isDefaultPrevented()) {
+				dragging = true;
+				opt.dragClass && $elem.addClass(opt.dragClass);
+				elem.setCapture && elem.setCapture();   // Firefox only (set cursor over entire desktop)
+				$("html").addClass(resetAllCursorsClass);   // All browsers (set cursor at least within page)
+				if (opt.stack) {
+					stackElements($(opt.stack), elem);
+				}
+				htmlCursor = document.documentElement.style.getPropertyValue("cursor");
+				document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
+			}
+			else {
+				draggingCancelled = true;
+			}
+		}
+		
+		function handleMove(event) {
+			// Start with the default drag movement position
+			var newPoint = {
+				top: elemRect.top + event.pageY - dragPoint.top,
+				left: elemRect.left + event.pageX - dragPoint.left
+			};
+
+			// Consider constraints
+			if (opt.grid) {
+				let gridBase = $elem.parent().offset();
+				newPoint = {
+					top: Math.round((newPoint.top - gridBase.top) / opt.grid[1]) * opt.grid[1] + gridBase.top,
+					left: Math.round((newPoint.left - gridBase.left) / opt.grid[0]) * opt.grid[0] + gridBase.left
+				};
+			}
+			if (opt.axis === "x") {
+				newPoint.top = elemRect.top;
+			}
+			if (opt.axis === "y") {
+				newPoint.left = elemRect.left;
+			}
+			if (opt.containment) {
+				let cont, contRect;
+				if (opt.containment === "parent") {
+					cont = $elem.parent();
+				}
+				else if (opt.containment === "viewport") {
+					let scrollTop = $window.scrollTop();
+					let scrollLeft = $window.scrollLeft();
+					contRect = {
+						top: 0 + scrollTop,
+						left: 0 + scrollLeft,
+						bottom: $window.height() + scrollTop,
+						right: $window.width() + scrollLeft
+					};
+				}
+				else {
+					cont = $(opt.containment);
+				}
+				if (cont && cont.length > 0) {
+					contRect = cont.rect();
+				}
+				if (contRect) {
+					let stepX = opt.grid ? opt.grid[0] : 1;
+					let stepY = opt.grid ? opt.grid[1] : 1;
+					while (newPoint.left < contRect.left) newPoint.left += stepX;
+					while (newPoint.left + elemRect.width > contRect.right) newPoint.left -= stepX;
+					while (newPoint.top < contRect.top) newPoint.top += stepY;
+					while (newPoint.top + elemRect.height > contRect.bottom) newPoint.top -= stepY;
+				}
+			}
+
+			// Move element
+			let event2 = $.Event("draggablemove");
+			event2.elemRect = elemRect;
+			event2.newPoint = newPoint;
+			$elem.trigger(event2);
+			if (!event2.isDefaultPrevented()) {
+				$elem.offset(event2.newPoint);
+			}
+
+			// Handle auto-scrolling
+			if (opt.scroll) {
+				scrollIntoView($elem.rect());
+			}
+		}
 
 		function onMove(event) {
 			if (event.pointerId !== pointerId) return;   // Not my pointer
@@ -86,94 +200,13 @@ function draggable(options) {
 			if (dragPoint && !dragging && !$elem.disabled()) {
 				let distance = Math.sqrt(Math.pow(event.pageX - dragPoint.left, 2) + Math.pow(event.pageY - dragPoint.top, 2));
 				if (distance >= minDragDistance) {
-					elemRect = $elem.rect();
-					let event2 = $.Event("draggablestart");
-					event2.dragPoint = dragPoint;
-					event2.newPoint = { left: event.pageX, top: event.pageY };
-					$elem.trigger(event2);
-					if (!event2.isDefaultPrevented()) {
-						dragging = true;
-						opt.dragClass && $elem.addClass(opt.dragClass);
-						elem.setCapture && elem.setCapture();   // Firefox only (set cursor over entire desktop)
-						$("html").addClass(resetAllCursorsClass);   // All browsers (set cursor at least within page)
-						if (opt.stack) {
-							stackElements($(opt.stack), elem);
-						}
-						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-						document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
-					}
-					else {
-						draggingCancelled = true;
-					}
+					tryStartDragging();
 				}
 			}
 
 			// Handle an ongoing drag operation
 			if (dragging) {
-				// Start with the default drag movement position
-				var newPoint = {
-					top: elemRect.top + event.pageY - dragPoint.top,
-					left: elemRect.left + event.pageX - dragPoint.left
-				};
-
-				// Consider constraints
-				if (opt.grid) {
-					let gridBase = $elem.parent().offset();
-					newPoint = {
-						top: Math.round((newPoint.top - gridBase.top) / opt.grid[1]) * opt.grid[1] + gridBase.top,
-						left: Math.round((newPoint.left - gridBase.left) / opt.grid[0]) * opt.grid[0] + gridBase.left
-					};
-				}
-				if (opt.axis === "x") {
-					newPoint.top = elemRect.top;
-				}
-				if (opt.axis === "y") {
-					newPoint.left = elemRect.left;
-				}
-				if (opt.containment) {
-					let cont, contRect;
-					if (opt.containment === "parent") {
-						cont = $elem.parent();
-					}
-					else if (opt.containment === "viewport") {
-						let scrollTop = $window.scrollTop();
-						let scrollLeft = $window.scrollLeft();
-						contRect = {
-							top: 0 + scrollTop,
-							left: 0 + scrollLeft,
-							bottom: $window.height() + scrollTop,
-							right: $window.width() + scrollLeft
-						};
-					}
-					else {
-						cont = $(opt.containment);
-					}
-					if (cont && cont.length > 0) {
-						contRect = cont.rect();
-					}
-					if (contRect) {
-						let stepX = opt.grid ? opt.grid[0] : 1;
-						let stepY = opt.grid ? opt.grid[1] : 1;
-						while (newPoint.left < contRect.left) newPoint.left += stepX;
-						while (newPoint.left + elemRect.width > contRect.right) newPoint.left -= stepX;
-						while (newPoint.top < contRect.top) newPoint.top += stepY;
-						while (newPoint.top + elemRect.height > contRect.bottom) newPoint.top -= stepY;
-					}
-				}
-
-				// Move element
-				let event2 = $.Event("draggablemove");
-				event2.elemRect = elemRect;
-				event2.newPoint = newPoint;
-				$elem.trigger(event2);
-				if (!event2.isDefaultPrevented()) {
-					$elem.offset(event2.newPoint);
-				}
-
-				// Handle auto-scrolling
-				if (opt.scroll) {
-					scrollIntoView($elem.rect());
-				}
+				handleMove(event);
 			}
 		}
 

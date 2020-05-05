@@ -19,6 +19,7 @@ $.fn.frontfire = function (prefix) {
 	findInclSelf(prefix + "input[type=ff-color]").colorPicker();
 	findInclSelf(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
 	findInclSelf(prefix + "input[type=checkbox].three-state").threeState();
+	findInclSelf(prefix + "input[type=date],input[type=datetime-local],input[type=month],input[type=time],input[type=week]").timePicker();
 	findInclSelf(prefix + "textarea.auto-height").autoHeight();
 	findInclSelf(prefix + ".menu").menu();
 	findInclSelf(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();

@@ -156,7 +156,7 @@ $buttonTransparentPressedBackground: $buttonPressedBackground;
 $buttonTransparentColor: $linkColor;
 $buttonTransparentPressedColor: $buttonPressedColor;
 $darkButtonTransparentBackground: transparent;
-$darkButtonTransparentHoverBackground: rgba(0, 0, 0, 0.07);
+$darkButtonTransparentHoverBackground: rgba(255, 255, 255, 0.14);
 $darkButtonTransparentPressedBackground: $darkButtonPressedBackground;
 $darkButtonTransparentColor: $darkLinkColor;
 $darkButtonTransparentPressedColor: $darkButtonPressedColor;
@@ -271,3 +271,32 @@ $darkSelectedBackground: rgba(#1db0ff, 0.8);
 $darkSelectedColor: $darkTextboxColor;
 $darkSelectableHoverBackground: rgba(#1db0ff, 0.2);
 $darkSelectableHoverColor: $darkTextboxColor;
+
+// ========== TimePicker ==========
+
+$timePickerHoverBackground: rgba(0, 0, 0, 0.05);
+$timePickerSelectedBackground: $selectedBackground; //#a5dfff;
+$timePickerSelectedColor: unset;
+$timePickerClockBackground: #fafafa;
+$timePickerClockBorderColor: #e0e0e0;
+$timePickerClockBorderWidth: 1px;
+$timePickerClockSelectedBackground: #91d8ff;   // $selectedBackground, without transparency, a bit darker because of the grey background
+$timePickerClockSelectedColor: unset;
+$timePickerClockLineColor: #009cf0;
+$timePickerClockSecondaryLineColor: #91d8ff;
+$timePickerNowBorderColor: darkorange;
+$timePickerNowOtherMonthBorderColor: #ffc581;
+$timePickerMonthBorderColor: #e0e0e0;
+
+$darkTimePickerHoverBackground: rgba(255, 255, 255, 0.1);
+$darkTimePickerSelectedBackground: $darkSelectedBackground; //#2196d6;
+$darkTimePickerSelectedColor: unset;
+$darkTimePickerClockBackground: #404040;
+$darkTimePickerClockBorderColor: #505050;
+$darkTimePickerClockSelectedBackground: #31a2df;   // $darkSelectedBackground, without transparency, a bit lighter because of the grey background
+$darkTimePickerClockSelectedColor: unset;
+$darkTimePickerClockLineColor: #91d8ff;
+$darkTimePickerClockSecondaryLineColor: #31a2df;
+$darkTimePickerNowBorderColor: darkorange;
+$darkTimePickerNowOtherMonthBorderColor: #c06800;
+$darkTimePickerMonthBorderColor: #505050;

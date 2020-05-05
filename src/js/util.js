@@ -10,6 +10,11 @@ export function round(value, decimals) {
 	return Math.round(value * precision) / precision;
 }
 
+// Escapes a string for use in a regular expression.
+export function regExpEscape(text) {
+	return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+}
+
 // Forces a browser layout reflow. This can be used to start CSS transitions on new elements.
 export function forceReflow() {
 	// Try two different methods

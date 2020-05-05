@@ -304,6 +304,11 @@ td.top
 	vertical-align: top !important;
 }
 
+table.big-links tr td > a
+{
+	display: block;
+}
+
 // ========== Others ==========
 
 hr

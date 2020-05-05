@@ -114,6 +114,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return Math.round(value * precision) / precision;
 	}
 
+	// Escapes a string for use in a regular expression.
+	function regExpEscape(text) {
+		return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
+	}
+
 	// Forces a browser layout reflow. This can be used to start CSS transitions on new elements.
 	function forceReflow() {
 		// Try two different methods
@@ -250,8 +255,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(function (o) {
 				return o.zIndex;
 			}));
-			stackedElems.each(function (index) {
-				$(this.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
+			stackedElems.each(function (index, item) {
+				$(item.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
 			});
 		}
 	}
@@ -349,21 +354,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Browser tests
-	// Source: https://stackoverflow.com/a/9851769
+	// Source (sometimes updated): https://stackoverflow.com/a/9851769
 
 	// Determines whether the browser has a Blink engine.
 	$.isBlink = function () {
 		return ($.isChrome() || $.isOpera()) && !!window.CSS;
 	};
 
-	// Determines whether the browser is Chrome.
+	// Determines whether the browser is Chrome. (Not functional for v80/81)
 	$.isChrome = function () {
-		return !!window.chrome && !!window.chrome.webstore;
+		return !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 	};
 
-	// Determines whether the browser is Edge.
+	// Determines whether the browser is original Edge.
 	$.isEdge = function () {
 		return !$.isInternetExplorer() && !!window.StyleMedia;
+	};
+
+	// Determines whether the browser is Chromium-based Edge.
+	$.isEdgeChromium = function () {
+		return $.isChrome() && navigator.userAgent.indexOf("Edg") != -1;
 	};
 
 	// Determines whether the browser is Firefox.
@@ -382,7 +392,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 	};
 
-	// Determines whether the browser is Safari.
+	// Determines whether the browser is Safari. (Not functional for iOS/iPadOS 13)
 	$.isSafari = function () {
 		return (/constructor/i.test(window.HTMLElement) || function (p) {
 				return p.toString() === "[object SafariRemoteNotification]";
@@ -559,15 +569,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Converts all div elements in each selected element into accordion pages.
 	function accordion(options) {
-		return this.each(function () {
-			var accordion = $(this);
+		return this.each(function (_, obj) {
+			var accordion = $(obj);
 			if (accordion.hasClass(accordionClass)) return; // Already done
 			var opt = initOptions("accordion", accordionDefaults, accordion, {}, options);
 
 			accordion.addClass(accordionClass);
-			var items = $(this).children("div");
-			items.each$(function () {
-				var item = this;
+			var items = accordion.children("div");
+			items.each$(function (_, item) {
 				var header = item.children("div").first();
 				var content = item.children("div").last();
 
@@ -617,15 +626,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	function collapse(indexOrItem) {
-		return this.each(function () {
-			var accordion = $(this);
+		return this.each(function (_, obj) {
+			var accordion = $(obj);
 			var opt = loadOptions("accordion", accordion);
 
 			var items = accordion.children("div");
 			if (indexOrItem === undefined) {
 				// Collapse all items
-				items.each(function () {
-					accordion.accordion.collapse(this);
+				items.each(function (_, obj) {
+					accordion.accordion.collapse(obj);
 				});
 				return;
 			}
@@ -645,9 +654,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				content.addClass("ff-fixed-height");
 				item.removeClass("expanded");
 
-				var event = $.Event("itemCollapse");
-				event.item = item;
-				accordion.trigger(event);
+				var _event = $.Event("itemCollapse");
+				_event.item = item;
+				accordion.trigger(_event);
 			}
 
 			var id = item.attr("id");
@@ -658,15 +667,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	function expand(indexOrItem) {
-		return this.each(function () {
-			var accordion = $(this);
+		return this.each(function (_, obj) {
+			var accordion = $(obj);
 			var opt = loadOptions("accordion", accordion);
 
 			var items = accordion.children("div");
 			if (indexOrItem === undefined && !opt.exclusive) {
 				// Expand all items
-				items.each(function () {
-					accordion.accordion.expand(this);
+				items.each(function (_, obj) {
+					accordion.accordion.expand(obj);
 				});
 				return;
 			}
@@ -700,10 +709,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var previousItemCollapsedHeight = 0;
 			if (opt.exclusive) {
 				var passedExpandedItem = false;
-				items.each(function () {
-					if (this !== item[0]) {
-						if (!passedExpandedItem) previousItemCollapsedHeight += $(this).children("div.ff-accordion-content").height();
-						accordion.accordion.collapse(this);
+				items.each(function (_, obj) {
+					if (obj !== item[0]) {
+						if (!passedExpandedItem) previousItemCollapsedHeight += $(obj).children("div.ff-accordion-content").height();
+						accordion.accordion.collapse(obj);
 					} else {
 						passedExpandedItem = true;
 					}
@@ -776,8 +785,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Converts each selected element into a carousel.
 	function carousel(options) {
-		return this.each(function () {
-			var carousel = $(this);
+		return this.each(function (_, obj) {
+			var carousel = $(obj);
 			if (carousel.find("." + carouselClass).length) return; // Already done
 			var opt = initOptions("carousel", carouselDefaults, carousel, {}, options);
 
@@ -799,10 +808,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			opt.dotsEach = minmax(opt.dotsEach, 0, opt.items);
 
 			// Set up items positioning
-			items.each$(function () {
-				this.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
-				maxItemHeight = Math.max(maxItemHeight, this.outerHeight());
-				this.detach().appendTo(stage);
+			items.each$(function (_, obj) {
+				obj.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
+				maxItemHeight = Math.max(maxItemHeight, obj.outerHeight());
+				obj.detach().appendTo(stage);
 			});
 			stage.appendTo(carousel);
 			stage.css("height", maxItemHeight);
@@ -978,11 +987,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							var z1 = void 0,
 							    z2 = void 0,
 							    z2Opacity = void 0;
-							items.each$(function (index) {
-								if (this.css("z-index") == 1) z1 = index;
-								if (this.css("z-index") == 2) {
+							items.each$(function (index, obj) {
+								if (obj.css("z-index") == 1) z1 = index;
+								if (obj.css("z-index") == 2) {
 									z2 = index;
-									z2Opacity = parseFloat(this.css("opacity"));
+									z2Opacity = parseFloat(obj.css("opacity"));
 								}
 							});
 							//console.log("get layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
@@ -996,8 +1005,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						case "slide-in":
 							var anyZero = false;
 							var firstGtZero = -1;
-							items.each$(function (index) {
-								var left = parseFloat(this.css("left"));
+							items.each$(function (index, obj) {
+								var left = parseFloat(obj.css("left"));
 								pos.push(left);
 								if (left !== pos[0]) allSame = false;
 								if (left === 0) anyZero = true;
@@ -1010,8 +1019,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						case "slide-out":
 							var anyPositive = false;
 							var firstZero = -1;
-							items.each$(function (index) {
-								var left = parseFloat(this.css("left"));
+							items.each$(function (index, obj) {
+								var left = parseFloat(obj.css("left"));
 								pos.push(left);
 								if (left !== pos[0]) allSame = false;
 								if (left >= 0) anyPositive = true;
@@ -1038,24 +1047,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							var fullyVisible = opt.active + Math.trunc(itemOffset);
 							var partiallyVisible = opt.active + Math.trunc(itemOffset) + Math.sign(itemOffset);
 							//console.log(fullyVisible, partiallyVisible);
-							items.each$(function (index) {
+							items.each$(function (index, obj) {
 								if (index === fullyVisible) {
-									this.css("z-index", 1).css("opacity", 1);
+									obj.css("z-index", 1).css("opacity", 1);
 								} else if (index === partiallyVisible) {
-									this.css("z-index", 2).css("opacity", Math.abs(itemOffset) - Math.trunc(Math.abs(itemOffset)));
+									obj.css("z-index", 2).css("opacity", Math.abs(itemOffset) - Math.trunc(Math.abs(itemOffset)));
 								} else {
-									this.css("z-index", 0).css("opacity", 0);
+									obj.css("z-index", 0).css("opacity", 0);
 								}
 							});
 						} else {
 							var _z = void 0,
 							    _z2 = void 0,
 							    _z2Opacity = void 0;
-							items.each$(function (index) {
-								if (this.css("z-index") == 1) _z = index;
-								if (this.css("z-index") == 2) {
+							items.each$(function (index, obj) {
+								if (obj.css("z-index") == 1) _z = index;
+								if (obj.css("z-index") == 2) {
 									_z2 = index;
-									_z2Opacity = parseFloat(this.css("opacity"));
+									_z2Opacity = parseFloat(obj.css("opacity"));
 								}
 							});
 							//console.log("set layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
@@ -1070,58 +1079,58 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								items.eq(_z).css("opacity", 0).css("pointer-events", "none");
 							} else {
 								var currentVisible = void 0;
-								items.each$(function (index) {
-									if (this.css("z-index") == 1) currentVisible = index;
+								items.each$(function (index, obj) {
+									if (obj.css("z-index") == 1) currentVisible = index;
 								});
 								removeTransition();
 								items.eq(opt.active).css("z-index", 1).css("opacity", 1).css("pointer-events", "");
 								forceReflow();
 								if (!opt._isDragging) addTransition();
-								items.each$(function (index) {
+								items.each$(function (index, obj) {
 									if (index === opt.active) ;else if (index === currentVisible) {
-										this.css("z-index", 2).css("opacity", 0).css("pointer-events", "none");
+										obj.css("z-index", 2).css("opacity", 0).css("pointer-events", "none");
 									} else {
-										this.css("z-index", 0).css("opacity", 0).css("pointer-events", "");
+										obj.css("z-index", 0).css("opacity", 0).css("pointer-events", "");
 									}
 								});
 							}
 						}
 
 						var status = "";
-						items.each$(function (index) {
-							status += index + ": z=" + this.css("z-index") + " op=" + this.css("opacity") + (index === opt.active ? " active" : "") + "\n";
+						items.each$(function (index, obj) {
+							status += index + ": z=" + obj.css("z-index") + " op=" + obj.css("opacity") + (index === opt.active ? " active" : "") + "\n";
 						});
 						//console.log(status);
 						break;
 					case "slide-in":
-						items.each$(function (index) {
+						items.each$(function (index, obj) {
 							var left = opt.active + itemOffset <= items.length - 1 ? minmax((index - opt.active - itemOffset) * 100, 0, 100) : (items.length - 1 - opt.active - itemOffset) * 100;
-							this.css("left", left + "%");
-							this.css("z-index", index);
+							obj.css("left", left + "%");
+							obj.css("z-index", index);
 						});
 						break;
 					case "slide-out":
-						items.each$(function (index) {
+						items.each$(function (index, obj) {
 							var left = opt.active + itemOffset >= 0 ? minmax((index - opt.active - itemOffset) * 100, -100, 0) : (-opt.active - itemOffset) * 100;
-							this.css("left", left + "%");
-							this.css("z-index", items.length - 1 - index);
+							obj.css("left", left + "%");
+							obj.css("z-index", items.length - 1 - index);
 						});
 						break;
 					case "slide-fade":
-						items.each$(function (index) {
+						items.each$(function (index, obj) {
 							var percent = (index - opt.active) * 100 / 10;
 							var left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / 10;
-							this.css("left", "calc(" + percent + "% + " + left + "px)");
+							obj.css("left", "calc(" + percent + "% + " + left + "px)");
 							var opacity = 1 - minmax(Math.abs(index - (opt.active + itemOffset)), 0, 1);
-							this.css("opacity", opacity);
+							obj.css("opacity", opacity);
 						});
 						break;
 					case "slide-all":
 					default:
-						items.each$(function (index) {
+						items.each$(function (index, obj) {
 							var percent = (index - opt.active) * opt._itemWidthPercent;
 							var left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / opt.items;
-							this.css("left", "calc(" + percent + "% + " + left + "px)");
+							obj.css("left", "calc(" + percent + "% + " + left + "px)");
 						});
 						break;
 				}
@@ -1142,8 +1151,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var carousel = $(this);
+		return this.each(function (_, obj) {
+			var carousel = $(obj);
 			var opt = loadOptions("carousel", carousel);
 			if (opt._isDragging) return; // Ignore request while dragging
 			var items = carousel.find("." + carouselClass).children();
@@ -1428,24 +1437,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var origToggle = $.fn.toggle;
 	$.fn.toggle = function () {
 		var args = arguments;
-		return this.each$(function () {
-			origToggle.apply(this.data("ff-replacement") || this, args);
+		return this.each$(function (_, obj) {
+			origToggle.apply(obj.data("ff-replacement") || obj, args);
 		});
 	};
 
 	var origShow = $.fn.show;
 	$.fn.show = function () {
 		var args = arguments;
-		return this.each$(function () {
-			origShow.apply(this.data("ff-replacement") || this, args);
+		return this.each$(function (_, obj) {
+			origShow.apply(obj.data("ff-replacement") || obj, args);
 		});
 	};
 
 	var origHide = $.fn.hide;
 	$.fn.hide = function () {
 		var args = arguments;
-		return this.each$(function () {
-			origHide.apply(this.data("ff-replacement") || this, args);
+		return this.each$(function (_, obj) {
+			origHide.apply(obj.data("ff-replacement") || obj, args);
 		});
 	};
 
@@ -1472,8 +1481,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.visible = function (value) {
 		// Setter
 		if (value !== undefined) {
-			return this.each(function () {
-				if (value) $(this).show();else $(this).hide();
+			return this.each(function (_, obj) {
+				if (value) $(obj).show();else $(obj).hide();
 			});
 		}
 
@@ -1490,8 +1499,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.disabled = function (value, includeLabel) {
 		// Setter
 		if (value !== undefined) {
-			return this.each(function () {
-				if (value) $(this).disable(includeLabel);else $(this).enable(includeLabel);
+			return this.each(function (_, obj) {
+				if (value) $(obj).disable(includeLabel);else $(obj).enable(includeLabel);
 			});
 		}
 
@@ -1505,29 +1514,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
 	$.fn.enable = function (includeLabel) {
-		return this.each$(function () {
-			var supportsDisabledProp = "disabled" in this[0];
+		return this.each$(function (_, obj) {
+			var supportsDisabledProp = "disabled" in obj[0];
 			if (supportsDisabledProp) {
 				// Set property so that the hook can trigger the change event.
 				// This automatically removes the HTML attribute as well.
-				this.prop("disabled", false);
+				obj.prop("disabled", false);
 				// Also update replacement elements of Frontfire controls
-				if (this.data("ff-replacement")) this.data("ff-replacement").enable(false);
-			} else if (this.attr("disabled") !== undefined) {
+				if (obj.data("ff-replacement")) obj.data("ff-replacement").enable(false);
+			} else if (obj.attr("disabled") !== undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only remove HTML attribute to allow CSS styling other elements than inputs
-				this.removeAttr("disabled");
+				obj.removeAttr("disabled");
 				// Trigger the event manually
-				this.trigger("disabledchange");
+				obj.trigger("disabledchange");
 			}
 
-			this.parents("label").enable();
-			var id = this.attr("id");
+			obj.parents("label").enable();
+			var id = obj.attr("id");
 			if (id) $("label[for='" + id + "']").enable();
 
 			if (includeLabel !== false) {
 				// Find previous .label sibling up on the .form-row level
-				var refNode = this;
+				var refNode = obj;
 				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
 					refNode = refNode.parent();
 				}var label = refNode.prev();
@@ -1540,29 +1549,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
 	$.fn.disable = function (includeLabel) {
-		return this.each$(function () {
-			var supportsDisabledProp = "disabled" in this[0];
+		return this.each$(function (_, obj) {
+			var supportsDisabledProp = "disabled" in obj[0];
 			if (supportsDisabledProp) {
 				// Set property so that the hook can trigger the change event.
 				// This automatically sets the HTML attribute as well.
-				this.prop("disabled", true);
+				obj.prop("disabled", true);
 				// Also update replacement elements of Frontfire controls
-				if (this.data("ff-replacement")) this.data("ff-replacement").disable(false);
-			} else if (this.attr("disabled") === undefined) {
+				if (obj.data("ff-replacement")) obj.data("ff-replacement").disable(false);
+			} else if (obj.attr("disabled") === undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only set HTML attribute to allow CSS styling other elements than inputs
-				this.attr("disabled", "");
+				obj.attr("disabled", "");
 				// Trigger the event manually
-				this.trigger("disabledchange");
+				obj.trigger("disabledchange");
 			}
 
-			this.parents("label").disable();
-			var id = this.attr("id");
+			obj.parents("label").disable();
+			var id = obj.attr("id");
 			if (id) $("label[for='" + id + "']").disable();
 
 			if (includeLabel !== false) {
 				// Find previous .label sibling up on the .form-row level
-				var refNode = this;
+				var refNode = obj;
 				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
 					refNode = refNode.parent();
 				}var label = refNode.prev();
@@ -1575,16 +1584,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
 	$.fn.toggleDisabled = function (includeLabel) {
-		return this.each$(function () {
-			if (this.disabled()) this.enable(includeLabel);else this.disable(includeLabel);
+		return this.each$(function (_, obj) {
+			if (obj.disabled()) obj.enable(includeLabel);else obj.disable(includeLabel);
 		});
 	};
 
 	// Returns the first child of each selected element, in the fastest possible way.
 	$.fn.firstChild = function () {
 		var ret = $();
-		this.each(function () {
-			ret = ret.add(this.firstElementChild);
+		this.each(function (_, obj) {
+			ret = ret.add(obj.firstElementChild);
+		});
+		return ret;
+	};
+
+	// Returns the closest parent of each selected element that matches the predicate function.
+	//
+	// predicate: A function that is called with each parent as first argument and the starting element
+	//   as second argument. If it returns true, the search is stopped and the parent element is added
+	//   to the returned list.
+	$.fn.parentWhere = function (predicate) {
+		var ret = $();
+		this.each(function (_, obj) {
+			var parent = obj;
+			do {
+				if (predicate(parent, obj)) {
+					ret = ret.add(parent);
+					break;
+				}
+				parent = parent.parentElement;
+			} while (parent);
 		});
 		return ret;
 	};
@@ -1670,9 +1699,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (this.length > 1) {
 				// Call self for each element and combine all event remover functions in a new function to return
 				var _eventRemovers = [];
-				var _that = this;
-				this.each(function () {
-					_eventRemovers.push($(_that).pointer(type, handler, capture));
+				this.each$(function (_, obj) {
+					_eventRemovers.push(obj.pointer(type, handler, capture));
 				});
 				return function () {
 					_eventRemovers.forEach(function (eventRemover) {
@@ -1775,13 +1803,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		grid: undefined,
 
 		// Indicates whether the window should scroll to keep the dragged element visible. Default: false.
-		scroll: false
+		scroll: false,
+
+		// An element that catches all pointer input and moves the draggable to that point. Default: None.
+		catchElement: undefined
 	};
 
 	// Makes each selected element draggable.
 	function draggable(options) {
-		return this.each(function () {
-			var elem = this;
+		return this.each(function (_, elem) {
 			var $elem = $(elem);
 			if ($elem.hasClass(draggableClass)) return; // Already done
 			$elem.addClass(draggableClass);
@@ -1818,6 +1848,120 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}));
 			}
 
+			if (opt.catchElement) {
+				opt.eventRemovers.push($(opt.catchElement).pointer("down", function (event) {
+					if (event.button === 0) {
+						event.stopImmediatePropagation();
+						if (dragging) return;
+						draggingCancelled = false;
+						dragPoint = { left: event.pageX, top: event.pageY };
+						pointerId = event.pointerId;
+						eventRemovers.push($window.pointer("move", onMove, true));
+						eventRemovers.push($window.pointer("up cancel", onEnd, true));
+						// Start dragging mode immediately when catching.
+						tryStartDragging();
+						if (dragging) {
+							// Move the draggable element directly under the pointer initially
+							elemRect.top = dragPoint.top - elemRect.height / 2;
+							elemRect.left = dragPoint.left - elemRect.width / 2;
+							handleMove(event);
+						}
+					}
+				}));
+			}
+
+			function tryStartDragging() {
+				elemRect = $elem.rect();
+				var event2 = $.Event("draggablestart");
+				event2.dragPoint = dragPoint;
+				event2.newPoint = { left: event.pageX, top: event.pageY };
+				$elem.trigger(event2);
+				if (!event2.isDefaultPrevented()) {
+					dragging = true;
+					opt.dragClass && $elem.addClass(opt.dragClass);
+					elem.setCapture && elem.setCapture(); // Firefox only (set cursor over entire desktop)
+					$("html").addClass(resetAllCursorsClass); // All browsers (set cursor at least within page)
+					if (opt.stack) {
+						stackElements($(opt.stack), elem);
+					}
+					htmlCursor = document.documentElement.style.getPropertyValue("cursor");
+					document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
+				} else {
+					draggingCancelled = true;
+				}
+			}
+
+			function handleMove(event) {
+				// Start with the default drag movement position
+				var newPoint = {
+					top: elemRect.top + event.pageY - dragPoint.top,
+					left: elemRect.left + event.pageX - dragPoint.left
+				};
+
+				// Consider constraints
+				if (opt.grid) {
+					var gridBase = $elem.parent().offset();
+					newPoint = {
+						top: Math.round((newPoint.top - gridBase.top) / opt.grid[1]) * opt.grid[1] + gridBase.top,
+						left: Math.round((newPoint.left - gridBase.left) / opt.grid[0]) * opt.grid[0] + gridBase.left
+					};
+				}
+				if (opt.axis === "x") {
+					newPoint.top = elemRect.top;
+				}
+				if (opt.axis === "y") {
+					newPoint.left = elemRect.left;
+				}
+				if (opt.containment) {
+					var cont = void 0,
+					    contRect = void 0;
+					if (opt.containment === "parent") {
+						cont = $elem.parent();
+					} else if (opt.containment === "viewport") {
+						var scrollTop = $window.scrollTop();
+						var scrollLeft = $window.scrollLeft();
+						contRect = {
+							top: 0 + scrollTop,
+							left: 0 + scrollLeft,
+							bottom: $window.height() + scrollTop,
+							right: $window.width() + scrollLeft
+						};
+					} else {
+						cont = $(opt.containment);
+					}
+					if (cont && cont.length > 0) {
+						contRect = cont.rect();
+					}
+					if (contRect) {
+						var stepX = opt.grid ? opt.grid[0] : 1;
+						var stepY = opt.grid ? opt.grid[1] : 1;
+						while (newPoint.left < contRect.left) {
+							newPoint.left += stepX;
+						}while (newPoint.left + elemRect.width > contRect.right) {
+							newPoint.left -= stepX;
+						}while (newPoint.top < contRect.top) {
+							newPoint.top += stepY;
+						}while (newPoint.top + elemRect.height > contRect.bottom) {
+							newPoint.top -= stepY;
+						}
+					}
+				}
+
+				// Move element
+				var event2 = $.Event("draggablemove");
+				event2.elemRect = elemRect;
+				event2.newPoint = newPoint;
+				$elem.trigger(event2);
+				if (!event2.isDefaultPrevented()) {
+					$elem.offset(event2.newPoint);
+				}
+
+				// Handle auto-scrolling
+				if (opt.scroll) {
+					scrollIntoView($elem.rect());
+				}
+			}
+
 			function onMove(event) {
 				if (event.pointerId !== pointerId) return; // Not my pointer
 				if (draggingCancelled) return; // Don't try again until the button was released
@@ -1826,97 +1970,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (dragPoint && !dragging && !$elem.disabled()) {
 					var distance = Math.sqrt(Math.pow(event.pageX - dragPoint.left, 2) + Math.pow(event.pageY - dragPoint.top, 2));
 					if (distance >= minDragDistance) {
-						elemRect = $elem.rect();
-						var event2 = $.Event("draggablestart");
-						event2.dragPoint = dragPoint;
-						event2.newPoint = { left: event.pageX, top: event.pageY };
-						$elem.trigger(event2);
-						if (!event2.isDefaultPrevented()) {
-							dragging = true;
-							opt.dragClass && $elem.addClass(opt.dragClass);
-							elem.setCapture && elem.setCapture(); // Firefox only (set cursor over entire desktop)
-							$("html").addClass(resetAllCursorsClass); // All browsers (set cursor at least within page)
-							if (opt.stack) {
-								stackElements($(opt.stack), elem);
-							}
-							htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-							document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
-						} else {
-							draggingCancelled = true;
-						}
+						tryStartDragging();
 					}
 				}
 
 				// Handle an ongoing drag operation
 				if (dragging) {
-					// Start with the default drag movement position
-					var newPoint = {
-						top: elemRect.top + event.pageY - dragPoint.top,
-						left: elemRect.left + event.pageX - dragPoint.left
-					};
-
-					// Consider constraints
-					if (opt.grid) {
-						var gridBase = $elem.parent().offset();
-						newPoint = {
-							top: Math.round((newPoint.top - gridBase.top) / opt.grid[1]) * opt.grid[1] + gridBase.top,
-							left: Math.round((newPoint.left - gridBase.left) / opt.grid[0]) * opt.grid[0] + gridBase.left
-						};
-					}
-					if (opt.axis === "x") {
-						newPoint.top = elemRect.top;
-					}
-					if (opt.axis === "y") {
-						newPoint.left = elemRect.left;
-					}
-					if (opt.containment) {
-						var cont = void 0,
-						    contRect = void 0;
-						if (opt.containment === "parent") {
-							cont = $elem.parent();
-						} else if (opt.containment === "viewport") {
-							var scrollTop = $window.scrollTop();
-							var scrollLeft = $window.scrollLeft();
-							contRect = {
-								top: 0 + scrollTop,
-								left: 0 + scrollLeft,
-								bottom: $window.height() + scrollTop,
-								right: $window.width() + scrollLeft
-							};
-						} else {
-							cont = $(opt.containment);
-						}
-						if (cont && cont.length > 0) {
-							contRect = cont.rect();
-						}
-						if (contRect) {
-							var stepX = opt.grid ? opt.grid[0] : 1;
-							var stepY = opt.grid ? opt.grid[1] : 1;
-							while (newPoint.left < contRect.left) {
-								newPoint.left += stepX;
-							}while (newPoint.left + elemRect.width > contRect.right) {
-								newPoint.left -= stepX;
-							}while (newPoint.top < contRect.top) {
-								newPoint.top += stepY;
-							}while (newPoint.top + elemRect.height > contRect.bottom) {
-								newPoint.top -= stepY;
-							}
-						}
-					}
-
-					// Move element
-					var _event = $.Event("draggablemove");
-					_event.elemRect = elemRect;
-					_event.newPoint = newPoint;
-					$elem.trigger(_event);
-					if (!_event.isDefaultPrevented()) {
-						$elem.offset(_event.newPoint);
-					}
-
-					// Handle auto-scrolling
-					if (opt.scroll) {
-						scrollIntoView($elem.rect());
-					}
+					handleMove(event);
 				}
 			}
 
@@ -1953,8 +2013,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Removes the draggable features from the elements.
 	function remove() {
-		return this.each(function () {
-			var elem = this;
+		return this.each(function (_, elem) {
 			var $elem = $(elem);
 			if (!$elem.hasClass(draggableClass)) return;
 			$elem.removeClass(draggableClass);
@@ -2249,17 +2308,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes each selected button trigger repeated click events while being pressed.
 	// The button will not trigger a click event anymore but instead repeatclick events.
 	function repeatButton() {
-		return this.each(function () {
-			var button = $(this);
+		return this.each$(function (_, button) {
 			if (button.hasClass(repeatButtonClass)) return; // Already done
 			button.addClass(repeatButtonClass);
 			var timeout, ms;
 			button.on("mousedown touchstart", function (event) {
 				event.preventDefault();
+				button.addClass("ff-active"); // CSS :active doesn't trigger, do it manually with an alternate class
 				ms = 500;
 				click();
 			});
 			button.on("mouseup mouseleave touchend touchcancel", function (event) {
+				button.removeClass("ff-active");
 				if (timeout) {
 					clearTimeout(timeout);
 					timeout = undefined;
@@ -2283,8 +2343,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Adds buttons to each selected input[type=number] element to decrement or increment the value.
 	function spinner() {
-		return this.each(function () {
-			var input = $(this);
+		return this.each$(function (_, input) {
 			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
 
 			// Put a wrapper between the input and its parent
@@ -2296,7 +2355,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var buttons = [];
 			var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text('\u2212'); // &minus;
 			buttons.push(decButton);
-			decButton.on("repeatclick", function (event) {
+			decButton.on("repeatclick", function () {
 				if (input.disabled()) return;
 				var value = +input.val();
 				var min = input.attr("min");
@@ -2323,7 +2382,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			decButton.repeatButton();
 			var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
 			buttons.push(incButton);
-			incButton.on("repeatclick", function (event) {
+			incButton.on("repeatclick", function () {
 				if (input.disabled()) return;
 				var value = +input.val();
 				var min = input.attr("min");
@@ -2356,12 +2415,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Converts each selected input[type=color] element into a text field with color picker button.
 	function colorPicker() {
-		return this.each(function () {
-			var input = $(this);
+		return this.each$(function (_, input) {
 			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
 			var lastColor;
 
-			input.attr("type", "text").attr("autocomplete", "off");
+			input.attr("type", "text").attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false");
 
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
@@ -2484,10 +2542,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			pickButton.click(function (event) {
 				var currentColor = input.val();
 				var activeButton;
-				dropdown.find("button").each$(function () {
-					var active = this.data("color") === currentColor;
-					this.toggleClass("active", active);
-					if (active) activeButton = this[0];
+				dropdown.find("button").each$(function (_, obj) {
+					var active = obj.data("color") === currentColor;
+					obj.toggleClass("active", active);
+					if (active) activeButton = obj[0];
 				});
 
 				dropdown.dropdown(pickButton, { placement: "right" });
@@ -2514,8 +2572,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Applies the enhanced style on the selected checkbox and radio input elements.
 	function styleCheckbox() {
-		return this.each(function () {
-			var input = $(this);
+		return this.each$(function (_, input) {
 			if (input.hasClass(styleCheckboxClass)) return; // Already done
 			if (!input.is("input[type=checkbox], input[type=radio]")) return; // Wrong element
 
@@ -2531,8 +2588,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Makes each selected checkbox cycle through indeterminate (third) state on clicking.
 	function threeState() {
-		return this.each(function () {
-			var input = $(this);
+		return this.each$(function (_, input) {
 			if (input.hasClass(treeStateClass)) return; // Already done
 			if (!input.is("input[type=checkbox]")) return; // Wrong element
 			input.addClass(treeStateClass);
@@ -2561,8 +2617,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes each selected textarea element automatically adjust its height to its content.
 	function autoHeight(minRows, maxRows, extraRows) {
 		minRows = minRows || 3;
-		return this.each(function () {
-			var textarea = $(this);
+		return this.each$(function (_, textarea) {
 			if (textarea.parent().hasClass(textareaWrapperClass)) return; // Already done
 
 			// Put a wrapper between the textarea and its parent, and host a new shadow element in
@@ -2607,12 +2662,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Converts each selected list element into a menu. Submenus are opened for nested lists.
 	function menu() {
-		return this.each(function () {
-			var menu = $(this);
+		return this.each$(function (_, menu) {
 			var isVertical = menu.hasClass("vertical");
 			var itemsWithSubmenu = menu.children("li").has("ul");
-			itemsWithSubmenu.each(function () {
-				var item = $(this);
+			itemsWithSubmenu.each$(function (_, item) {
 				item.addClass("ff-has-submenu");
 				var submenu = item.children("ul").first();
 				if (submenu.hasClass("ff-submenu")) return; // Already done
@@ -2635,16 +2688,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 
 				// Prepare separators
-				submenu.children("li").each$(function () {
-					if (this.text() === "-") {
-						this.text("");
-						this.addClass("separator");
+				submenu.children("li").each$(function (_, obj) {
+					if (obj.text() === "-") {
+						obj.text("");
+						obj.addClass("separator");
 					}
 				});
 
 				// Close submenu when clicking on one of its items
-				submenu.find("li > a:not(.stay-open)").each$(function () {
-					this.click(function () {
+				submenu.find("li > a:not(.stay-open)").each$(function (_, obj) {
+					obj.click(function () {
 						submenu.dropdown.close();
 					});
 				});
@@ -2661,8 +2714,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Makes each selected message div element closable by adding a close button to it.
 	function closableMessage() {
-		return this.each(function () {
-			var message = $(this);
+		return this.each$(function (_, message) {
 			if (message.find("." + messageCloseButtonClass).length !== 0) return; // Already added
 
 			// Add close button
@@ -2679,8 +2731,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Closes each selected message div and removes it from the document.
 	function closeMessage() {
-		return this.each(function () {
-			var message = $(this);
+		return this.each$(function (_, message) {
 			message.addClass("ff-closed");
 			message.on("transitionend", function () {
 				message.remove();
@@ -3075,14 +3126,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Shows a progressbar on the element.
 	function progressbar(options) {
-		return this.each(function () {
-			var $elem = $(this);
-			if ($elem.hasClass(progressbarClass)) return; // Already done
-			$elem.addClass(progressbarClass);
-			var opt = initOptions("progressbar", progressbarDefaults, $elem, {}, options);
+		return this.each$(function (_, elem) {
+			if (elem.hasClass(progressbarClass)) return; // Already done
+			elem.addClass(progressbarClass);
+			var opt = initOptions("progressbar", progressbarDefaults, elem, {}, options);
 			opt._setValue = setValue;
 
-			var bar = $("<div/>").addClass("ff-bar").appendTo($elem);
+			var bar = $("<div/>").addClass("ff-bar").appendTo(elem);
 			var number = $("<span/>").appendTo(bar);
 			setValue(opt.value);
 
@@ -3092,11 +3142,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var relWidth = (value - opt.min) / (opt.max - opt.min);
 				bar.css("width", relWidth * 100 + "%");
 				number.text(opt.valuePrefix + value + opt.valueSuffix);
-				number.toggleClass("outside", number.width() + 8 > relWidth * $elem.width());
+				number.toggleClass("outside", number.width() + 8 > relWidth * elem.width());
 
 				if (value !== opt.value) {
 					opt.value = value;
-					$elem.trigger("valuechange");
+					elem.trigger("valuechange");
 				}
 			}
 		});
@@ -3115,8 +3165,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var progressbar = $(this);
+		return this.each$(function (_, progressbar) {
 			var opt = loadOptions("progressbar", progressbar);
 			opt._setValue(value);
 		});
@@ -3135,8 +3184,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var progressbar = $(this);
+		return this.each$(function (_, progressbar) {
 			var opt = loadOptions("progressbar", progressbar);
 			opt.valuePrefix = prefix;
 			opt._setValue(opt.value);
@@ -3156,8 +3204,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var progressbar = $(this);
+		return this.each$(function (_, progressbar) {
 			var opt = loadOptions("progressbar", progressbar);
 			opt.valueSuffix = suffix;
 			opt._setValue(opt.value);
@@ -3208,24 +3255,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Makes each selected element resizable.
 	function resizable(options) {
-		return this.each(function () {
-			var elem = this;
-			var $elem = $(elem);
-			if ($elem.hasClass(resizableClass)) return; // Already done
-			$elem.addClass(resizableClass);
+		return this.each$(function (_, elem) {
+			if (elem.hasClass(resizableClass)) return; // Already done
+			elem.addClass(resizableClass);
 			var htmlCursor;
 			var handleElements = $();
-			var opt = initOptions("resizable", resizableDefaults, $elem, {}, options);
+			var opt = initOptions("resizable", resizableDefaults, elem, {}, options);
 			var $window = $(window);
 
 			var aspectRatio = opt.aspectRatio;
-			if (aspectRatio === true || aspectRatio === "true") aspectRatio = $elem.outerWidth() / $elem.outerHeight();
+			if (aspectRatio === true || aspectRatio === "true") aspectRatio = elem.outerWidth() / elem.outerHeight();
 			if ($.isNumeric(aspectRatio)) aspectRatio = parseFloat(aspectRatio);
 			if (aspectRatio === 0 || !isFinite(aspectRatio) || !$.isNumber(aspectRatio)) aspectRatio = undefined;
 
-			if ($elem.css("position") === "static") {
+			if (elem.css("position") === "static") {
 				opt.wasPositionStatic = true;
-				$elem.css("position", "relative");
+				elem.css("position", "relative");
 			}
 
 			var optHandles = opt.handles;
@@ -3263,13 +3308,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			installDisabledchangeHook();
-			$elem.on("disabledchange.resizable", function () {
-				handleElements.visible(!$elem.disabled());
+			elem.on("disabledchange.resizable", function () {
+				handleElements.visible(!elem.disabled());
 			});
 
 			function addHandle(style, cursor, vertical, negative, vertical2, negative2) {
 				var handle = $("<div/>").addClass("ff-resizable-handle " + opt.handleAddClass).css(style).css("position", "absolute").css("cursor", cursor);
-				$elem.append(handle);
+				elem.append(handle);
 				handleElements = handleElements.add(handle);
 				handle.draggable({ scroll: opt.scroll });
 				handle.on("draggablestart", function (event) {
@@ -3278,7 +3323,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					event2.vertical = vertical;
 					event2.negative = negative;
 					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
-					$elem.trigger(event2);
+					elem.trigger(event2);
 					if (!event2.isDefaultPrevented()) {
 						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
 						document.documentElement.style.setProperty("cursor", cursor, "important");
@@ -3299,7 +3344,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					event2.vertical = vertical;
 					event2.negative = negative;
 					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
-					$elem.trigger(event2);
+					elem.trigger(event2);
 				});
 				return handle;
 			}
@@ -3311,22 +3356,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var delta = newPoint[side] - handle.offset()[side];
 				if (negative) delta = -delta;
 
-				var newElemOffset = $elem.offset();
+				var newElemOffset = elem.offset();
 				var step = opt.grid ? opt.grid[vertical ? 1 : 0] : 1;
 
 				if (opt.grid) {
-					var gridBase = $elem.parent().offset();
+					var gridBase = elem.parent().offset();
 					if (negative) {
 						delta = newElemOffset[side] - (Math.round((newElemOffset[side] - delta - gridBase[side]) / step) * step + gridBase[side]);
 					} else {
-						var length = $elem["outer" + extent]();
+						var length = elem["outer" + extent]();
 						delta = Math.round((newElemOffset[side] + length + delta - gridBase[side]) / step) * step + gridBase[side] - (newElemOffset[side] + length);
 					}
 				}
 
-				var newLength = $elem["outer" + extent]() + delta;
+				var newLength = elem["outer" + extent]() + delta;
 
-				var minLength = Math.max($elem["outer" + extent]() - $elem[extentLower](), opt["min" + extent] || 0);
+				var minLength = Math.max(elem["outer" + extent]() - elem[extentLower](), opt["min" + extent] || 0);
 				while (newLength < minLength) {
 					delta += step;
 					newLength += step;
@@ -3343,7 +3388,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var cont = void 0,
 					    contRect = void 0;
 					if (opt.containment === "parent") {
-						cont = $elem.parent();
+						cont = elem.parent();
 					} else if (opt.containment === "viewport") {
 						var scrollTop = $window.scrollTop();
 						var scrollLeft = $window.scrollLeft();
@@ -3381,11 +3426,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
 				event2.newLength = newLength;
 				event2.newPosition = newElemOffset[side];
-				$elem.trigger(event2);
+				elem.trigger(event2);
 				if (!event2.isDefaultPrevented()) {
-					$elem["outer" + extent](event2.newLength);
+					elem["outer" + extent](event2.newLength);
 					newElemOffset[side] = event2.newPosition;
-					if (negative) $elem.offset(newElemOffset);
+					if (negative) elem.offset(newElemOffset);
 				}
 			}
 		});
@@ -3393,15 +3438,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Removes the resizing features from the elements.
 	function remove$1() {
-		return this.each(function () {
-			var elem = this;
-			var $elem = $(elem);
-			if (!$elem.hasClass(resizableClass)) return;
-			$elem.removeClass(resizableClass);
-			var opt = loadOptions("resizable", $elem);
-			if (opt.wasPositionStatic) $elem.css("position", "static");
-			$elem.find(".ff-resizable-handle").remove();
-			$elem.off("disabledchange.resizable");
+		return this.each$(function (_, elem) {
+			if (!elem.hasClass(resizableClass)) return;
+			elem.removeClass(resizableClass);
+			var opt = loadOptions("resizable", elem);
+			if (opt.wasPositionStatic) elem.css("position", "static");
+			elem.find(".ff-resizable-handle").remove();
+			elem.off("disabledchange.resizable");
 		});
 	}
 
@@ -3429,8 +3472,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Makes the child elements in each selected element selectable.
 	function selectable(options) {
-		return this.each(function () {
-			var elem = $(this);
+		return this.each$(function (_, elem) {
 			if (elem.hasClass(selectableClass)) return; // Already done
 			elem.addClass(selectableClass);
 			var opt = initOptions("selectable", selectableDefaults, elem, {}, options);
@@ -3464,12 +3506,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					button.click(function () {
 						if (button.disabled()) return;
 						button.addClass("open");
-						newSelect.dropdown(button);
+						var fixed = button.parentWhere(function (p) {
+							return $(p).css("position") === "fixed";
+						}).length > 0;
+						newSelect.dropdown(button, { fixed: fixed });
 						if (button.closest(".dark").length > 0) newSelect.parent().addClass("dark"); // Set dropdown container to dark
-						newSelect.on("dropdownclose", function () {
-							button.removeClass("open");
-						});
 						newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
+					});
+					newSelect.on("dropdownclose", function () {
+						button.removeClass("open");
 					});
 					button.on("keydown", function (event) {
 						//console.log(event);
@@ -3933,8 +3978,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Creates a slider widget.
 	function slider(options) {
-		return this.each(function () {
-			var slider = $(this);
+		return this.each$(function (_, slider) {
 			if (slider.children("div." + handleClass).length !== 0) return; // Already done
 			var opt = initOptions("slider", sliderDefaults, slider, {}, options);
 			var htmlCursor, draggedHandleCursor;
@@ -4337,8 +4381,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var slider = $(this);
+		return this.each$(function (_, slider) {
 			var opt = loadOptions("slider", slider);
 			opt._setValue(index, value);
 		});
@@ -4382,32 +4425,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Makes the child elements in each selected element sortable by drag&drop.
 	function sortable(options) {
-		return this.each(function () {
-			var elem = this;
-			var $elem = $(elem);
-			if ($elem.hasClass(sortableClass)) return; // Already done
-			$elem.addClass(sortableClass);
-			var opt = initOptions("sortable", sortableDefaults, $elem, {}, options);
+		return this.each$(function (_, elem) {
+			if (elem.hasClass(sortableClass)) return; // Already done
+			elem.addClass(sortableClass);
+			var opt = initOptions("sortable", sortableDefaults, elem, {}, options);
 			opt._prepareChild = prepareChild;
 
 			// Remove text nodes between children which cause layout issues when dragging
-			$elem.contents().filter(function () {
+			elem.contents().filter(function () {
 				return this.nodeType === 3;
 			}).remove();
 
-			var isVertical = isBlockDisplay($elem.firstChild().css("display"));
+			var isVertical = isBlockDisplay(elem.firstChild().css("display"));
 			var flowStart = isVertical ? "top" : "left";
 			var flowEnd = isVertical ? "bottom" : "right";
 			var crossStart = isVertical ? "left" : "top";
 			var crossEnd = isVertical ? "right" : "bottom";
 
-			$elem.children().each(prepareChild);
+			elem.children().each(prepareChild);
 
 			function prepareChild() {
 				var child = $(this);
 				var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren, initialChildIndex;
 				var stack = opt.stack;
-				if (stack === true) stack = $elem.children();
+				if (stack === true) stack = elem.children();
 
 				child.draggable({
 					handle: opt.handle,
@@ -4437,12 +4478,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					// Fix the size of table row cells while dragging
 					if (child[0].nodeName === "TR") {
-						var table = child.closest("table").find("tr").first().children("td, th").each$(function () {
-							this.data("width-before-drag", this[0].style.width || "");
-							this.css("width", this.outerWidth());
+						var table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+							obj.data("width-before-drag", obj[0].style.width || "");
+							obj.css("width", obj.outerWidth());
 						});
-						child.children("td, th").each$(function () {
-							this.css("width", this.outerWidth());
+						child.children("td, th").each$(function (_, obj) {
+							obj.css("width", obj.outerWidth());
 						});
 						child.css("min-width", child.outerWidth() + 1);
 					}
@@ -4518,7 +4559,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							eventCancelled = _event2.isDefaultPrevented();
 						}
 						if (!eventCancelled) {
-							if (!newPlaceholderAfterElement) placeholder.detach().insertBefore($elem.firstChild());else placeholder.detach().insertAfter(newPlaceholderAfterElement);
+							if (!newPlaceholderAfterElement) placeholder.detach().insertBefore(elem.firstChild());else placeholder.detach().insertAfter(newPlaceholderAfterElement);
 							placeholderAfterElement = newPlaceholderAfterElement;
 							updateChildren();
 						}
@@ -4533,12 +4574,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					// Reset the size of table row cells
 					if (child[0].nodeName === "TR") {
-						var table = child.closest("table").find("tr").first().children("td, th").each$(function () {
-							this.css("width", this.data("width-before-drag"));
-							this.data("width-before-drag", null);
+						var table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+							obj.css("width", obj.data("width-before-drag"));
+							obj.data("width-before-drag", null);
 						});
-						child.children("td, th").each$(function () {
-							this.css("width", "");
+						child.children("td, th").each$(function (_, obj) {
+							obj.css("width", "");
 						});
 						child.css("width", "");
 					}
@@ -4549,7 +4590,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					event2.after = placeholderAfterElement;
 					child.trigger(event2);
 					if (event2.isDefaultPrevented()) {
-						if (!initialChildAfterElement) child.detach().insertBefore($elem.firstChild());else child.detach().insertAfter(initialChildAfterElement);
+						if (!initialChildAfterElement) child.detach().insertBefore(elem.firstChild());else child.detach().insertAfter(initialChildAfterElement);
 					}
 					initialChildAfterElement = undefined;
 				});
@@ -4560,10 +4601,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var rowMin,
 					    rowMax,
 					    currentPos,
-					    elem = null;
-					$elem.children().each(function () {
-						if (this !== child[0]) {
-							var rect = $(this).rect();
+					    childElem = null;
+					elem.children().each(function (_, obj) {
+						if (obj !== child[0]) {
+							var rect = $(obj).rect();
 							if (rect[flowStart] + 0.1 < currentPos) {
 								// Need to compensate for rounding issues from the 4th decimal in Chrome/Edge/IE
 								// This element is in a new row
@@ -4577,8 +4618,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							// Remember how far the row has been used
 							currentPos = rect[flowEnd];
 
-							if (this !== placeholder[0]) elem = this;
-							rowElements.push({ elem: elem, rect: rect });
+							if (obj !== placeholder[0]) childElem = obj;
+							rowElements.push({ elem: childElem, rect: rect });
 						}
 					});
 
@@ -4679,13 +4720,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Converts all div elements in each selected element into tab pages.
 	// The tab page headers are read from the div elements' title attribute.
 	function tabs(options) {
-		return this.each(function () {
-			var container = $(this);
+		return this.each$(function (_, container) {
 			if (container.children("div." + tabHeadersClass).length !== 0) return; // Already done
 			var opt = initOptions("tabs", tabsDefaults, container, {}, options);
 			opt._addTab = addTab;
 
-			var pageDivs = $(this).children("div");
+			var pageDivs = container.children("div");
 			var activePage = pageDivs.filter(".active").first();
 			var headers = $("<div/>").addClass(tabHeadersClass).appendTo(container);
 			var pages = $("<div/>").addClass(tabPagesClass).appendTo(container);
@@ -4793,8 +4833,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Setter
-		return this.each(function () {
-			var container = $(this);
+		return this.each$(function (_, container) {
 			var headers = container.children("div." + tabHeadersClass).first();
 			var pages = container.find("div." + tabPagesClass).first();
 			var index, page;
@@ -4871,6 +4910,1684 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.tabs.defaults = tabsDefaults;
 
+	// Encoding: UTF-8 without BOM (auto-detect: °°°°°) for built-in message texts
+
+	var inputWrapperClass$1 = "ff-input-wrapper";
+
+	// Defines default options for the timePicker plugin.
+	var timePickerDefaults = {
+		// The locale used for formats and text translations. Default: Auto.
+		localeCode: undefined,
+
+		// A function that changes the format of a month item. Default: None.
+		monthFormatter: undefined,
+
+		// A function that changes the format of a day item. Default: None.
+		dayFormatter: undefined
+	};
+
+	// Converts each selected date/time input element into a masked text field with time picker button.
+	function timePicker(options) {
+		return this.each$(function (_, input) {
+			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
+			var opt = initOptions("timePicker", timePickerDefaults, input, {}, options);
+			var originalType = input.attr("type").trim().toLowerCase();
+			var dateSelection = originalType === "date" || originalType === "datetime-local" || originalType === "month" || originalType === "week";
+			var weekSelection = originalType === "week";
+			var daySelection = originalType === "date" || originalType === "datetime-local";
+			var timeSelection = originalType === "datetime-local" || originalType === "time";
+			var step = +input.attr("step") || (timeSelection ? 60 : 1);
+			var minuteSelection = timeSelection && step < 3600;
+			var secondSelection = timeSelection && step < 60;
+			var required = input.prop("required");
+			input.prop("required", false); // We have no way to show a browser-generated message on the original hidden and new readonly field
+
+			// Put a wrapper between the input and its parent
+			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
+			input.before(wrapper).appendTo(wrapper);
+
+			// Hide original input and add a new one, synchronise (and convert) values
+			input.hide();
+			input.attr("autocomplete", "off");
+			var inputChanging = false;
+			var isKeyboardMode = false;
+			var newInput = $("<input/>").attr("type", "text").prop("readonly", true).attr("inputmode", "none").attr("enterkeyhint", "done") // Enter key is handled separately to close dropdown/keyboard but prevent submit
+			.attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false").insertAfter(input);
+			input.data("ff-replacement", newInput);
+			newInput.change(function () {
+				inputChanging = true;
+				input.valChange(getValue());
+				inputChanging = false;
+				validate();
+				updateViews();
+			});
+			input.change(function () {
+				if (!inputChanging) {
+					setValue(input.val());
+					newInput.trigger("input").change();
+				}
+			});
+
+			newInput.on("copy", function (event) {
+				if (event.originalEvent.clipboardData) {
+					event.originalEvent.clipboardData.setData("text/plain", newInput.val());
+					event.preventDefault();
+				}
+			});
+			newInput.on("paste", function (event) {
+				event.preventDefault();
+				if (event.originalEvent.clipboardData) {
+					var text = event.originalEvent.clipboardData.getData("text");
+					var pattern = "";
+					var matchParts = [];
+					for (var i = 0; i < parts.length; i++) {
+						if (parts[i].name) {
+							if (parts[i].options) {
+								pattern += "(" + parts[i].options.map(function (o) {
+									return regExpEscape(o);
+								}).join("|") + ")";
+							} else {
+								pattern += "([0-9]{1," + parts[i].length + "})";
+							}
+							matchParts.push(parts[i]);
+						} else {
+							pattern += regExpEscape(parts[i].text);
+						}
+					}
+					var re = new RegExp("^" + pattern + "$");
+					var match = re.exec(text);
+					var newPartData = {};
+					if (match) {
+						for (var _i = 0; _i < matchParts.length; _i++) {
+							var value = +match[_i + 1];
+							if (isNaN(value)) {
+								value = matchParts[_i].options.indexOf(match[_i + 1]) + matchParts[_i].min;
+							}
+							if (value < matchParts[_i].min || value > matchParts[_i].max) return; // Invalid value
+							newPartData[matchParts[_i].name] = value;
+						}
+						partData = newPartData;
+						input.val(getValue()); // Update native field for validation/fixing
+						fixValue(true);
+						updateText();
+						newInput.trigger("input").change();
+					}
+				}
+			});
+
+			// Chromium sources: https://github.com/chromium/chromium/tree/master/third_party/blink/public/strings/translations
+			// "en" is the fallback and must be complete.
+			var dictionary = {
+				cs: { y: "rrrr", month: "Měsíc", week1: null, week2: ". týden, ", w: "tt", today: "Dnes", now: "Teď", back: "Zpátky", keyboard: "Klávesnice", clear: "Smazat" },
+				da: { y: "åååå", month: "Måned", week1: "Uge ", w: "uu", today: "I dag", now: "Nu", back: "Tilbage", keyboard: "Tastatur", clear: "Slette" },
+				de: { y: "jjjj", month: "Monat", week1: "Woche ", w: "ww", d: "tt", today: "Heute", now: "Jetzt", back: "Zurück", keyboard: "Tastatur", clear: "Löschen" },
+				en: { y: "yyyy", month: "Month", mo: "mm", week1: "Week ", week2: ", ", w: "ww", d: "dd", today: "Today", now: "Now", back: "Back", keyboard: "Keyboard", clear: "Clear" },
+				es: { y: "aaaa", month: "Mes", week1: "Semana ", w: "ss", today: "Hoy", now: "Ahora", back: "Atrás", keyboard: "Teclado", clear: "Borrar" },
+				fi: { y: "vvvv", month: "Kuukausi", mo: "kk", week1: "Viikko ", w: "vv", d: "pp", today: "Tänään", now: "Nyt", back: "Takaisin", keyboard: "Näppäimistö", clear: "Poistaa" },
+				fr: { y: "aaaa", month: "Mois", week1: "Semaine ", w: "ss", d: "jj", today: "Aujourd’hui", now: "Maintenant", back: "Retour", keyboard: "Clavier", clear: "Supprimer" },
+				hu: { y: "éééé", month: "Hónap", mo: "hh", week1: null, week2: ". hét, ", w: "hh", d: "nn", today: "Ma", now: "Most", back: "Vissza", keyboard: "Billentyűzet", clear: "Töröl" },
+				is: { y: "áááá", month: "Mánuður", week1: "Vika ", w: "vv", today: "Í dag", now: "Núna", back: "Aftur", keyboard: "Lyklaborð", clear: "Eyðing" },
+				it: { y: "aaaa", month: "Mese", week1: "Settimana ", w: "ss", d: "gg", today: "Oggi", now: "Ora", back: "Indietro", keyboard: "Tastiera", clear: "Cancellare" },
+				nl: { y: "jjjj", month: "Maand", week1: "Week ", w: "ww", today: "Vandaag", now: "Nu", back: "Terug", keyboard: "Toetsenbord", clear: "Wissen" },
+				no: { y: "åååå", month: "Måned", week1: "Uke ", w: "uu", today: "I dag", now: "Nå", back: "Tilbake", keyboard: "Tastatur", clear: "Slette" },
+				pt: { y: "aaaa", month: "Mês", week1: "Semana ", week2: ", de ", w: "ss", today: "Hoje", now: "Agora", back: "De volta", keyboard: "Teclado", clear: "Cancelar" },
+				ro: { y: "aaaa", month: "Lună", mo: "ll", week1: "Săptămâna ", w: "ss", d: "zz", today: "Astăzi", now: "Acum", back: "Înapoi", keyboard: "Tastatură", clear: "Șterge" },
+				sk: { y: "rrrr", month: "Mesiac", week1: null, week2: ". týždeň, ", w: "tt", today: "Dnes", now: "Teraz", back: "Späť", keyboard: "Klávesnica", clear: "Vymazať" },
+				sl: { y: "llll", month: "Mesec", week1: null, week2: ". teden, ", w: "tt", today: "Danes", now: "Zdaj", back: "Nazaj", keyboard: "Tipkovnica", clear: "Izbrisati" },
+				sv: { y: "åååå", month: "Månad", week1: "Vecka ", week2: " ", w: "vv", today: "Idag", now: "Nu", back: "Tillbaka", keyboard: "Tangentbord", clear: "Radera" }
+			};
+
+			function translate(key) {
+				if (key in dictionary[language]) return dictionary[language][key];
+				return dictionary.en[key];
+			}
+
+			function fixValue(noChangeEvent) {
+				var isComplete = true;
+				for (var i = 0; i < parts.length; i++) {
+					if (parts[i].name && !$.isSet(partData[parts[i].name])) {
+						isComplete = false;
+						break;
+					}
+				}
+				if (isComplete && !input.val()) {
+					// All values set but no valid value available
+					if (weekSelection) {
+						var part = findPart("w");
+						if (part) partData.w = getPartMax(part);
+					} else {
+						var _part = findPart("d");
+						if (_part) partData.d = getPartMax(_part);
+					}
+					if (!noChangeEvent) {
+						updateText();
+						newInput.trigger("input").change();
+					}
+				}
+			}
+
+			function validate() {
+				if (required) {
+					if (input.val()) newInput.attr("pattern", null);else newInput.attr("pattern", "^invalid$");
+				}
+			}
+
+			validate();
+
+			// Create picker dropdown
+			var dropdown = $("<div/>").addClass("dropdown bordered");
+
+			// Set up masked edit
+			var formatOptions = {
+				calendar: "gregory",
+				numberingSystem: "latn"
+			};
+			if (dateSelection && !weekSelection) {
+				if (daySelection) {
+					formatOptions.day = "numeric";
+					formatOptions.month = "numeric";
+				} else {
+					formatOptions.month = "long";
+				}
+				formatOptions.year = "numeric";
+			}
+			if (timeSelection) {
+				formatOptions.hour = "numeric";
+				formatOptions.hour12 = false; // TODO: Add 12h clock support; detect from format part "dayPeriod"
+				if (minuteSelection) {
+					formatOptions.minute = "numeric";
+					if (secondSelection) {
+						formatOptions.second = "numeric";
+					}
+				}
+			}
+			var format = new Intl.DateTimeFormat(opt.localeCode, formatOptions);
+			var formatResolvedOptions = format.resolvedOptions();
+			//console.log(formatResolvedOptions);
+			var language = formatResolvedOptions.locale.split("-")[0];
+			// All data and text parts of the masked input
+			var parts = [];
+			if (!weekSelection) {
+				var formatParts = format.formatToParts(new Date());
+				var _iteratorNormalCompletion = true;
+				var _didIteratorError = false;
+				var _iteratorError = undefined;
+
+				try {
+					for (var _iterator = formatParts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+						var f = _step.value;
+
+						switch (f.type) {
+							case "literal":
+								parts.push({ text: f.value });break;
+							case "year":
+								parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });break;
+							case "month":
+								if (formatOptions.month === "numeric") {
+									parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+								} else {
+									// Collect all localised month names
+									var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+									var monthNames = [];
+									for (var m = 0; m < 12; m++) {
+										monthNames.push(monthFormat.format(new Date(2000, m, 1)));
+									}parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
+								}
+								break;
+							case "day":
+								parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });break;
+							case "hour":
+								parts.push({ name: "h", min: 0, max: 23, length: 2 });break;
+							case "minute":
+								parts.push({ name: "min", min: 0, max: 59, length: 2 });break;
+							case "second":
+								parts.push({ name: "s", min: 0, max: 59, length: 2 });break;
+						}
+					}
+				} catch (err) {
+					_didIteratorError = true;
+					_iteratorError = err;
+				} finally {
+					try {
+						if (!_iteratorNormalCompletion && _iterator.return) {
+							_iterator.return();
+						}
+					} finally {
+						if (_didIteratorError) {
+							throw _iteratorError;
+						}
+					}
+				}
+			} else {
+				if (translate("week1")) parts.push({ text: translate("week1") });
+				parts.push({ name: "w", min: 1, max: 53, length: 2, placeholder: translate("w") });
+				if (translate("week2")) parts.push({ text: translate("week2") });
+				parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });
+			}
+			/*
+   if (dateSelection && !weekSelection) {
+   	if (daySelection) {
+   		parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: "tt" });
+   		parts.push({ text: "." });
+   		parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: "mm" });
+   		parts.push({ text: "." });
+   	}
+   	else {
+   		parts.push({ name: "mo", min: 1, max: 12, options: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], length: 4, placeholder: "mmmm" });
+   		parts.push({ text: " " });
+   	}
+   	parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
+   	if (timeSelection) {
+   		parts.push({ text: ", " });
+   	}
+   }
+   if (weekSelection) {
+   	parts.push({ text: "Woche " });
+   	parts.push({ name: "w", min: 1, max: 53, length: 2, placeholder: "ww" });
+   	parts.push({ text: ", " });
+   	parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
+   }
+   if (timeSelection) {
+   	parts.push({ name: "h", min: 0, max: 23, length: 2 });
+   	if (minuteSelection) {
+   		parts.push({ text: ":" });
+   		parts.push({ name: "min", min: 0, max: 59, length: 2 });
+   		if (secondSelection) {
+   			parts.push({ text: ":" });
+   			parts.push({ name: "s", min: 0, max: 59, length: 2 });
+   		}
+   	}
+   }
+   */
+			// The index of the selected data part (text part indices are invalid)
+			var selectedPart = -1;
+			for (var i = 0; i < parts.length; i++) {
+				if (parts[i].name) {
+					selectedPart = i;
+					break;
+				}
+			}
+			// Indicates whether further input is appended to the current part
+			// (Set to false when the part is entered, to overwrite the current value with new input;
+			// set to true on the first input event in a part)
+			var appendInput = false;
+			// The number of typed digits in the selected data part
+			var inputLength = 0;
+			// The values for each data part
+			var partData = {};
+			// Collecting characters for an options lookup input in the current field
+			var optionSearch;
+			// An active timeout to restart the options search
+			var optionSearchTimeout;
+
+			function findPart(name) {
+				for (var _i2 = 0; _i2 < parts.length; _i2++) {
+					if (parts[_i2].name === name) return parts[_i2];
+				}
+				return null;
+			}
+
+			function findGreaterPartName(name) {
+				switch (name) {
+					case "mo":
+						return "y";
+					case "w":
+						return "y";
+					case "d":
+						return "mo";
+					case "h":
+						return "d";
+					case "min":
+						return "h";
+					case "s":
+						return "min";
+					default:
+						return null;
+				}
+			}
+
+			function selectPart(name) {
+				for (var _i3 = 0; _i3 < parts.length; _i3++) {
+					if (parts[_i3].name === name) {
+						selectedPart = _i3;
+						appendInput = false;
+						inputLength = 0;
+						break;
+					}
+				}
+			}
+
+			function updateText() {
+				var text = "";
+				for (var _i4 = 0; _i4 < parts.length; _i4++) {
+					var part = parts[_i4];
+					if ($.isSet(part.text)) {
+						text += part.text;
+					} else if (part.name) {
+						part.start = text.length;
+						var value = partData[part.name];
+						if ($.isSet(value)) {
+							// Display value
+							if (part.options) {
+								text += part.options[value - part.min];
+							} else {
+								text += (value + "").padStart(part.length, "0");
+							}
+						} else {
+							// Display placeholder or empty space
+							if (part.placeholder) text += part.placeholder;else text += "-".repeat(part.length);
+							//text += "\u2007".repeat(part.length);   // FIGURE SPACE
+						}
+						part.end = text.length;
+					}
+				}
+				newInput.val(text);
+				if (parts[selectedPart] && parts[selectedPart].end) {
+					newInput[0].setSelectionRange(parts[selectedPart].start, parts[selectedPart][isFocused ? "end" : "start"]);
+					// Setting a non-empty selection always shows the selection background, even if not
+					// focused. To avoid this, when unfocused, only the selection start is set to
+					// maintain the selected part.
+				}
+			}
+
+			updateText();
+
+			function getValue() {
+				var value = "";
+				if (dateSelection) {
+					if (!$.isSet(partData.y)) return "";
+					value += (partData.y + "").padStart(4, "0") + "-";
+					if (weekSelection) {
+						if (!$.isSet(partData.w)) return "";
+						value += "W" + (partData.w + "").padStart(2, "0");
+					} else {
+						if (!$.isSet(partData.mo)) return "";
+						value += (partData.mo + "").padStart(2, "0");
+						if (daySelection) {
+							if (!$.isSet(partData.d)) return "";
+							value += "-" + (partData.d + "").padStart(2, "0");
+						}
+					}
+				}
+				if (timeSelection) {
+					if (dateSelection) value += "T";
+					if (!$.isSet(partData.h)) return "";
+					if (!$.isSet(partData.min)) return "";
+					value += (partData.h + "").padStart(2, "0") + ":" + (partData.min + "").padStart(2, "0");
+					if (secondSelection) {
+						if (!$.isSet(partData.s)) return "";
+						value += ":" + (partData.s + "").padStart(2, "0");
+					}
+				}
+				return value;
+			}
+
+			function setValue(value) {
+				var match = void 0;
+				partData = {};
+				if (match = value.match(/^([0-9]+)-([0-9]+)(?:-([0-9]+)(?:T([0-9]+):([0-9]+)(?::([0-9]+)(?:.[0-9]+)?)?)?)?$/)) {
+					partData.y = +match[1];
+					partData.mo = +match[2];
+					if (match[3]) partData.d = +match[3];
+					if (match[4]) partData.h = +match[4];
+					if (match[5]) partData.min = +match[5];
+					if (match[6]) partData.s = +match[6];
+					// Ignore (but accept) optional milliseconds
+				} else if (match = value.match(/^([0-9]+):([0-9]+)(?::([0-9]+))?$/)) {
+					partData.h = +match[1];
+					partData.min = +match[2];
+					if (match[3]) partData.s = +match[3];
+				} else if (match = value.match(/^([0-9]+)-W([0-9]+)$/)) {
+					partData.y = +match[1];
+					partData.w = +match[2];
+				}
+				updateText();
+				validate();
+				cancelSearchTimeout();
+			}
+
+			// Add control buttons
+			//var buttons = [];
+			//var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
+			//buttons.push(decButton);
+			//decButton.on("repeatclick", function () {
+			//	changeValue(-1, 1);
+			//});
+			//decButton.repeatButton();
+			//var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
+			//buttons.push(incButton);
+			//incButton.on("repeatclick", function () {
+			//	changeValue(1, 1);
+			//});
+			//incButton.repeatButton();
+			//bindInputButtonsDisabled(newInput, buttons);
+
+			function changeValue(direction, count, partName) {
+				var part = partName ? findPart(partName) : parts[selectedPart];
+				if (part) {
+					var value = partData[part.name];
+					// TODO: Consider valid values as defined by step and min
+					if ($.isSet(value)) {
+						var backupPartData = $.extend({}, partData);
+						while (count-- > 0) {
+							var isOverflow = void 0;
+							var myPart = part;
+							do {
+								partData[myPart.name] += direction;
+								isOverflow = false;
+								if (direction > 0 && partData[myPart.name] > getPartMax(myPart)) {
+									isOverflow = true;
+									partData[myPart.name] = getPartMin(myPart, direction); // min of next overflow state
+								} else if (direction < 0 && partData[myPart.name] < getPartMin(myPart)) {
+									isOverflow = true;
+									partData[myPart.name] = getPartMax(myPart, direction); // max of next overflow state
+								}
+								if (isOverflow) {
+									myPart = findPart(findGreaterPartName(myPart.name));
+									if (myPart && !$.isSet(partData[myPart.name])) isOverflow = false; // Incomplete data, don't overflow to next field
+								}
+							} while (myPart && isOverflow);
+							if (isOverflow && dateSelection) {
+								// No more space for the overflow, cancel entire change
+								partData = backupPartData;
+							}
+						}
+					} else {
+						partData[part.name] = part[direction > 0 ? "min" : "max"];
+					}
+					updateText();
+					cancelSearchTimeout();
+					newInput.trigger("input").change();
+					newInput[0].focus();
+					appendInput = false;
+					inputLength = 0;
+				}
+			}
+
+			// Gets the minimum value of a part.
+			// If nextLevelOffset is 1, the next-higher part is incremented by 1 to consider the
+			// correct min value of the requested part.
+			// nextLevelOffset can only be 0 or 1. Undefined is interpreted as 0.
+			function getPartMin(part, nextLevelOffset) {
+				// TODO: Consider valid values as defined by min and max
+				return part.min;
+			}
+
+			// Gets the maximum value of a part.
+			// If nextLevelOffset is -1, the next-higher part is decremented by 1 to consider the
+			// correct max value of the requested part.
+			// nextLevelOffset can only be -1 or 0. Undefined is interpreted as 0.
+			function getPartMax(part, nextLevelOffset) {
+				// TODO: Consider valid values as defined by min and max
+				if (part.name === "w") {
+					var year = partData.y;
+					if (year) {
+						year += nextLevelOffset || 0;
+						// A year has 53 weeks if it begins or ends on a Thursday
+						// Source: https://de.wikipedia.org/wiki/Woche#Z%C3%A4hlweise_nach_ISO_8601
+						// Algorithm to determine the weekday of the 1st January in a year (0 = Sun ... 6 = Sat)
+						// Source: https://de.wikipedia.org/wiki/Gau%C3%9Fsche_Wochentagsformel
+						// Simplification:
+						// * A year that begins on a Thursday (= 4) has 53 weeks
+						// * A year that ends on a Thursday (the next year begins on a Friday = 5) has 53 weeks
+						// * Other years have 52 weeks
+						var firstWeekday = function firstWeekday(year) {
+							return (1 + 5 * ((year - 1) % 4) + 4 * ((year - 1) % 100) + 6 * ((year - 1) % 400)) % 7;
+						};
+						if (firstWeekday(year) !== 4 && firstWeekday(year + 1) !== 5) return 52;
+					}
+					return part.max;
+				}
+				if (part.name === "d") {
+					var month = partData.mo;
+					if (month) {
+						month += nextLevelOffset || 0;
+						if (month === 0) month = 12;
+						var _year = partData.y;
+						return getDaysInMonth(month, _year);
+					}
+					return part.max;
+				}
+				return part.max;
+			}
+
+			// Focus and selection events
+			var isFocused = false;
+			var blurCloseTimeout;
+			newInput.focus(function () {
+				//console.log("newInput.focus:", newInput[0]);
+				isFocused = true;
+				setTimeout(fixSelection, 0);
+				if (blurCloseTimeout) {
+					// Clicked on an item, focused back; don't close the dropdown
+					clearTimeout(blurCloseTimeout);
+					blurCloseTimeout = undefined;
+				}
+			});
+			newInput.blur(function () {
+				//console.log("newInput.blur:", newInput[0]);
+				isFocused = false;
+				cancelSearchTimeout();
+				newInput.prop("readonly", true).attr("inputmode", "none");
+				isKeyboardMode = false;
+				if (!newInput.hasClass("open")) fixValue();
+				// Close the dropdown when leaving the field with the Tab key
+				// (but not when clicking an item in the dropdown)
+				// DEBUG: disable following code to allow inspecting the dropdown contents
+				if (newInput.hasClass("open") && !blurCloseTimeout) {
+					blurCloseTimeout = setTimeout(function () {
+						dropdown.dropdown.close();
+						blurCloseTimeout = undefined;
+					}, 50);
+				}
+			});
+			newInput.on("mousedown mouseup", function (event) {
+				//console.log("newInput." + event.type);
+				cancelSearchTimeout();
+				setTimeout(fixSelection, 0);
+			});
+			newInput.click(function () {
+				//console.log("newInput.click");
+				if (newInput.disabled()) return;
+				if (!isKeyboardMode && !newInput.hasClass("open")) {
+					// Select useful part if no data is set
+					if (daySelection && !partData.d) {
+						selectPart("d");
+						updateText();
+					} else if (weekSelection && !partData.w) {
+						selectPart("w");
+						updateText();
+					} else if (timeSelection && !$.isSet(partData.h)) {
+						selectPart("h");
+						updateText();
+					}
+					openDropdown();
+				}
+			});
+			var separatorChars = [".", ":", "-", "/", ","];
+			newInput.keydown(function (event) {
+				//console.log("keydown: keyCode:", event.keyCode, event);
+				//alert("keyCode: " + event.keyCode + ", key: " + event.originalEvent.key);
+				var keyCode = event.keyCode;
+				if (event.keyCode === 13) {
+					// Enter
+					event.preventDefault();
+					dropdown.dropdown.close();
+					newInput.prop("readonly", true).attr("inputmode", "none");
+					isKeyboardMode = false;
+				}
+				if (event.keyCode === 27) {
+					// Esc
+					event.preventDefault();
+					dropdown.dropdown.close();
+				}
+				if (event.keyCode === 32) {
+					// Space
+					event.preventDefault();
+					if (!newInput.hasClass("open")) openDropdown();else dropdown.dropdown.close();
+				} else if (keyCode === 37) {
+					// Left
+					event.preventDefault();
+					prevPart();
+					updateText();
+					cancelSearchTimeout();
+				} else if (keyCode === 39) {
+					// Right
+					event.preventDefault();
+					nextPart();
+					updateText();
+					cancelSearchTimeout();
+				} else if (keyCode === 38) {
+					// Up
+					event.preventDefault();
+					changeValue(1, 1);
+				} else if (keyCode === 40) {
+					// Down
+					event.preventDefault();
+					changeValue(-1, 1);
+				} else if (keyCode === 33) {
+					// PageUp
+					event.preventDefault();
+					changeValue(1, getPartLargeStep());
+				} else if (keyCode === 34) {
+					// PageDown
+					event.preventDefault();
+					changeValue(-1, getPartLargeStep());
+				} else if (keyCode === 8 || keyCode === 46) {
+					// Backspace, Del
+					event.preventDefault();
+					if (!required) {
+						delete partData[parts[selectedPart].name];
+						updateText();
+						newInput.trigger("input").change();
+					}
+					cancelSearchTimeout();
+				} else if (keyCode >= 48 && keyCode <= 57 || keyCode >= 96 && keyCode <= 105) {
+					// 0-9, Num0-Num9
+					event.preventDefault();
+					var digit = event.keyCode;
+					if (digit >= 96) digit -= 96 - 48;
+					digit -= 48;
+					var part = parts[selectedPart];
+					var value = partData[part.name];
+					if ($.isSet(value) && appendInput) {
+						value = value * 10 + digit;
+						if (value > getPartMax(part)) value = digit;
+					} else {
+						value = digit;
+					}
+					appendInput = true;
+					inputLength++;
+					partData[part.name] = value;
+					// Skip to next part if the value is complete
+					if (inputLength >= part.length && value >= part.min || value * 10 > getPartMax(part)) {
+						nextPart();
+					}
+					updateText();
+					cancelSearchTimeout();
+					newInput.trigger("input").change();
+				} else if (separatorChars.indexOf(event.originalEvent.key) !== -1) {
+					// Separator
+					event.preventDefault();
+					if (appendInput) {
+						nextPart();
+						updateText();
+					}
+					cancelSearchTimeout();
+				} else if (event.originalEvent.key.length === 1 && !event.originalEvent.altKey && !event.originalEvent.ctrlKey) {
+					// Other char
+					event.preventDefault();
+					if (!appendInput) optionSearch = "";
+					optionSearch += event.originalEvent.key.toLowerCase();
+					appendInput = true;
+					inputLength++;
+					//console.log("optionSearch:", optionSearch);
+					var _part2 = parts[selectedPart];
+					if (_part2.options) {
+						for (var _i5 = 0; _i5 < _part2.options.length; _i5++) {
+							if (_part2.options[_i5].toLowerCase().startsWith(optionSearch)) {
+								partData[_part2.name] = _i5 + _part2.min;
+								updateText();
+								break;
+							}
+						}
+					}
+					startSearchTimeout();
+				} else {
+					// Whatever it was, reset the text
+					updateText();
+					newInput.trigger("input").change();
+				}
+			});
+			newInput.on("input", function (event) {
+				if (event.originalEvent) {
+					// Something was typed in, reset the text
+					// (Generated input events have no originalEvent)
+					if (separatorChars.indexOf(event.originalEvent.data) !== -1) {
+						// Separator (for Chrome/Android: https://crbug.com/118639)
+						if (appendInput) {
+							nextPart();
+						}
+						cancelSearchTimeout();
+					}
+					updateText();
+					newInput.trigger("input").change();
+				}
+			});
+
+			function startSearchTimeout() {
+				if (!optionSearchTimeout) {
+					optionSearchTimeout = setTimeout(function () {
+						appendInput = false;
+						inputLength = 0;
+						optionSearchTimeout = null;
+						optionSearch = "";
+					}, 2000);
+				}
+			}
+
+			function cancelSearchTimeout() {
+				if (optionSearchTimeout) {
+					clearTimeout(optionSearchTimeout);
+					optionSearchTimeout = null;
+					optionSearch = "";
+				}
+			}
+
+			function getPartLargeStep() {
+				switch (parts[selectedPart].name) {
+					case "y":
+						return 10;
+					case "mo":
+						return 3;
+					case "d":
+						return 7;
+					case "h":
+						return 12;
+					case "min":
+						return 15;
+					case "s":
+						return 15;
+					default:
+						return 1;
+				}
+			}
+
+			function prevPart() {
+				//console.log("selectedPart:", selectedPart);
+				for (var _i6 = selectedPart - 1; _i6 >= 0; _i6--) {
+					if (parts[_i6].name) {
+						selectedPart = _i6;
+						//console.log("new selectedPart:", selectedPart);
+						appendInput = false;
+						inputLength = 0;
+						updateViewVisibilities();
+						break;
+					}
+				}
+			}
+
+			function nextPart() {
+				//console.log("selectedPart:", selectedPart);
+				for (var _i7 = selectedPart + 1; _i7 < parts.length; _i7++) {
+					if (parts[_i7].name) {
+						selectedPart = _i7;
+						//console.log("new selectedPart:", selectedPart);
+						appendInput = false;
+						inputLength = 0;
+						updateViewVisibilities();
+						break;
+					}
+				}
+			}
+
+			function fixSelection() {
+				var selStart = newInput[0].selectionStart;
+				//console.log("selectionStart:", selStart);
+				for (var _i8 = 0; _i8 < parts.length; _i8++) {
+					var part = parts[_i8];
+					if (part.name && selStart <= part.end) {
+						selectedPart = _i8;
+						//console.log("New selected part:", i);
+						appendInput = false;
+						inputLength = 0;
+						updateViewVisibilities();
+						if (isFocused) newInput[0].setSelectionRange(part.start, part.end);
+						break;
+					}
+				}
+			}
+
+			// Load initial value
+			setValue(input.val());
+
+			// Create dropdown contents
+			var dropdownInner = $("<div/>").addClass("ff-timepicker").appendTo(dropdown);
+			var dropdownButtons = $("<div/>").addClass("ff-timepicker-buttons").appendTo(dropdownInner);
+
+			var boxSize = { width: 280, height: 240 };
+			if (!dateSelection) boxSize.width = boxSize.height; // No need for space for longer month names
+			var dropdownContent = $("<div/>").addClass("ff-timepicker-content").css("width", boxSize.width).css("height", boxSize.height).appendTo(dropdownInner);
+			var darkMode = dropdown.parent().hasClass("dark");
+
+			var updateHandler = function updateHandler() {
+				updateText();
+				newInput.trigger("input").change();
+			};
+
+			var yearView = void 0;
+			var monthView = void 0;
+			var clockHourView = void 0;
+			var clockMinuteView = void 0;
+			var clockSecondView = void 0;
+			if (dateSelection) {
+				yearView = new YearView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection, function () {
+					return partData;
+				}, changeValue, updateHandler, function () {
+					if (daySelection) {
+						selectPart("d");
+						updateText();
+						yearView.hide();
+						monthView.show();
+					} else if (weekSelection) {
+						// Convert month selection to week selection
+						// (Keep selected week if the month matches)
+						if (partData.w < getWeekData(new Date(partData.y, partData.mo - 1, 1)).w || partData.w > getWeekData(new Date(partData.y, partData.mo, 0)).w) {
+							var weekData = getWeekData(new Date(partData.y, partData.mo - 1, 4)); // Thursday
+							delete partData.mo;
+							partData.y = weekData.y;
+							partData.w = weekData.w;
+						}
+						selectPart("w");
+						updateText();
+						monthView.update();
+						yearView.hide();
+						monthView.show();
+					} else {
+						dropdown.dropdown.close();
+					}
+				});
+				monthView = new MonthView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection ? "w" : "d", function () {
+					return partData;
+				}, changeValue, updateHandler, function () {
+					if (timeSelection) {
+						selectPart("h");
+						updateText();
+						monthView.hide();
+						clockHourView.show();
+					} else {
+						dropdown.dropdown.close();
+					}
+				});
+				opt._updateMonthView = function () {
+					return monthView.update(true);
+				};
+			}
+			if (timeSelection) {
+				clockHourView = new ClockView(dropdownContent, boxSize, darkMode, translate, "h", function () {
+					return partData;
+				}, changeValue, updateHandler, function () {
+					if (minuteSelection) {
+						selectPart("min");
+						updateText();
+						clockHourView.hide();
+						clockMinuteView.show();
+					} else {
+						dropdown.dropdown.close();
+					}
+				});
+				if (minuteSelection) clockMinuteView = new ClockView(dropdownContent, boxSize, darkMode, translate, "min", function () {
+					return partData;
+				}, changeValue, updateHandler, function () {
+					if (secondSelection) {
+						selectPart("s");
+						updateText();
+						clockMinuteView.hide();
+						clockSecondView.show();
+					} else {
+						dropdown.dropdown.close();
+					}
+				});
+				if (secondSelection) clockSecondView = new ClockView(dropdownContent, boxSize, darkMode, translate, "s", function () {
+					return partData;
+				}, changeValue, updateHandler, function () {
+					dropdown.dropdown.close();
+				});
+			}
+
+			var backButton = $("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>').attr("title", translate("back")).appendTo(dropdownButtons).click(function (event) {
+				selectPart(findGreaterPartName(parts[selectedPart].name));
+				updateViewVisibilities();
+				updateText();
+				cancelSearchTimeout();
+			});
+			$("<button type='button'/>").text(timeSelection ? translate("now") : translate("today")).appendTo(dropdownButtons).click(setNow);
+			$("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>').attr("title", translate("keyboard")).appendTo(dropdownButtons).click(function (event) {
+				isKeyboardMode = true;
+				dropdown.dropdown.close();
+				newInput.prop("readonly", false).attr("inputmode", "decimal");
+				// https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
+			});
+			if (!required) {
+				$("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>').attr("title", translate("clear")).appendTo(dropdownButtons).click(function (event) {
+					dropdown.dropdown.close();
+					setValue("");
+				});
+				dropdownButtons.addClass("four-buttons");
+			}
+
+			function updateViewVisibilities() {
+				backButton.enable();
+				switch (parts[selectedPart].name) {
+					case "y":
+					case "mo":
+						yearView && yearView.show();
+						monthView && monthView.hide();
+						clockHourView && clockHourView.hide();
+						clockMinuteView && clockMinuteView.hide();
+						clockSecondView && clockSecondView.hide();
+						backButton.disable();
+						break;
+					case "w":
+					case "d":
+						yearView && yearView.hideReverse();
+						monthView && monthView.show();
+						clockHourView && clockHourView.hide();
+						clockMinuteView && clockMinuteView.hide();
+						clockSecondView && clockSecondView.hide();
+						break;
+					case "h":
+						yearView && yearView.hideReverse();
+						monthView && monthView.hideReverse();
+						clockHourView && clockHourView.show();
+						clockMinuteView && clockMinuteView.hide();
+						clockSecondView && clockSecondView.hide();
+						if (!dateSelection) backButton.disable();
+						break;
+					case "min":
+						yearView && yearView.hideReverse();
+						monthView && monthView.hideReverse();
+						clockHourView && clockHourView.hideReverse();
+						clockMinuteView && clockMinuteView.show();
+						clockSecondView && clockSecondView.hide();
+						break;
+					case "s":
+						yearView && yearView.hideReverse();
+						monthView && monthView.hideReverse();
+						clockHourView && clockHourView.hideReverse();
+						clockMinuteView && clockMinuteView.hideReverse();
+						clockSecondView && clockSecondView.show();
+						break;
+				}
+			}
+
+			function updateViews() {
+				yearView && yearView.update();
+				monthView && monthView.update();
+				clockHourView && clockHourView.update();
+				clockMinuteView && clockMinuteView.update();
+				clockSecondView && clockSecondView.update();
+			}
+
+			function openDropdown() {
+				updateViewVisibilities();
+				updateViews();
+				newInput.addClass("open");
+				dropdown.dropdown(newInput, { autoClose: false });
+				if (newInput.closest(".dark").length > 0) dropdown.parent().addClass("dark"); // Set dropdown container to dark
+			}
+
+			function setNow() {
+				var now = new Date();
+				if (weekSelection) {
+					var weekData = getWeekData(now);
+					partData.y = weekData.y;
+					partData.w = weekData.w;
+				} else if (dateSelection) {
+					partData.y = now.getFullYear();
+					partData.mo = now.getMonth() + 1;
+				}
+				if (daySelection) partData.d = now.getDate();
+				if (timeSelection) partData.h = now.getHours();
+				if (minuteSelection) partData.min = now.getMinutes();
+				if (secondSelection) partData.s = now.getSeconds();
+				updateText();
+				newInput.trigger("input").change();
+			}
+
+			var isMouseDown = false;
+			dropdown.on("mousedown", function (event) {
+				if (event.originalEvent.button === 0) {
+					isMouseDown = true;
+					setTimeout(function () {
+						newInput.focus();
+					}, 0);
+				} else {
+					isMouseDown = false;
+				}
+			});
+			dropdown.on("mouseup", function (event) {
+				if (!isMouseDown) return;
+				isMouseDown = false;
+				newInput.focus();
+			});
+			dropdown.on("dropdownclose", function () {
+				//console.log("dropdown.dropdownclose");
+				newInput.removeClass("open");
+				if (!isKeyboardMode) fixValue();
+			});
+		});
+	}
+
+	function YearView(container, boxSize, darkMode, opt, translate, weekSelection, partDataAccessor, changeValue, updateHandler, doneHandler) {
+		var instance = this;
+
+		var outerDiv = $("<div/>").addClass("ff-timepicker-year").appendTo(container);
+		var innerDiv = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").appendTo(outerDiv);
+
+		var headerHeight = 30;
+		var monthHeight = (boxSize.height - headerHeight - 1 /* margin */) / 4;
+
+		var header = $("<div/>").addClass("header").css("height", headerHeight).appendTo(innerDiv);
+		var prevButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>').on("repeatclick", function (event) {
+			event.preventDefault();
+			ensureYear();
+			changeValue(-1, 1, "y");
+		}).appendTo(header);
+		prevButton.repeatButton();
+		var yearText = $("<span/>").appendTo(header);
+		var nextButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>').on("repeatclick", function (event) {
+			event.preventDefault();
+			ensureYear();
+			changeValue(1, 1, "y");
+		}).appendTo(header);
+		nextButton.repeatButton();
+
+		function ensureYear() {
+			var partData = partDataAccessor();
+			var now = new Date();
+			if (!partData.y) partData.y = now.getFullYear();
+		}
+
+		var months = $("<div/>").addClass("months").appendTo(innerDiv);
+		var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+
+		instance.update = function () {
+			var partData = partDataAccessor();
+
+			var now = new Date();
+			var year = partData.y || now.getFullYear();
+			yearText.text((year + "").padStart(4, "0"));
+
+			prevButton.disabled(partData.y === 1);
+			nextButton.disabled(partData.y === 9999);
+
+			months.children().remove();
+
+			var _loop2 = function _loop2(n) {
+				var item = $("<div/>").addClass("item").css("height", monthHeight).appendTo(months).click(function () {
+					var partData = partDataAccessor();
+					partData.mo = n;
+					if (!$.isSet(partData.y)) partData.y = new Date().getFullYear();
+					instance.update();
+					updateHandler && updateHandler();
+					doneHandler && doneHandler();
+				});
+				var text = $("<span/>").text(monthFormat.format(new Date(2000, n - 1, 1))).appendTo(item);
+				opt.monthFormatter && opt.monthFormatter(item, new Date(year, n - 1, 1));
+			};
+
+			for (var n = 1; n <= 12; n++) {
+				_loop2(n);
+			}
+
+			// Update week numbers
+			if (weekSelection) {
+				months.find(".item").each$(function (n, item) {
+					item.children().eq(1).remove();
+					$("<span/>").addClass("week-numbers").text(translate("w").substring(0, 1).toUpperCase() + " " + getWeekData(new Date(year, n, 1)).w + '\u202F\u2013\u202F' + getWeekData(new Date(year, n + 1, 0)).w) // NNBSP
+					.appendTo(item);
+				});
+			}
+
+			// Set current month as "selected"
+			months.find(".item").removeClass("selected now");
+			if ($.isSet(partData.mo)) {
+				months.find(".item").eq(partData.mo - 1).addClass("selected");
+			}
+			if (now.getFullYear() === year) {
+				months.find(".item").eq(now.getMonth()).addClass("now");
+			}
+		};
+
+		instance.show = function () {
+			innerDiv.removeClass("hidden hidden-reverse");
+		};
+
+		instance.hide = function () {
+			innerDiv.addClass("hidden");
+			innerDiv.removeClass("hidden-reverse");
+		};
+
+		instance.hideReverse = function () {
+			innerDiv.addClass("hidden-reverse");
+			innerDiv.removeClass("hidden");
+		};
+
+		instance.update();
+	}
+
+	function MonthView(container, boxSize, darkMode, opt, translate, partName, partDataAccessor, changeValue, updateHandler, doneHandler) {
+		var instance = this;
+
+		var outerDiv = $("<div/>").addClass("ff-timepicker-month").appendTo(container);
+		var innerDiv = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").appendTo(outerDiv);
+
+		var headerHeight = 30;
+		var weekdayHeight = 20;
+		var dayHeight = (boxSize.height - headerHeight - 1 /* margin */ - weekdayHeight) / 6;
+		var skipWeeksFwd = void 0,
+		    skipWeeksRev = void 0;
+
+		var header = $("<div/>").addClass("header").css("height", headerHeight).appendTo(innerDiv);
+		var prevButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>').on("repeatclick", function (event) {
+			event.preventDefault();
+			if (partName === "d") {
+				ensureYearMonth();
+				changeValue(-1, 1, "mo");
+			} else {
+				ensureYearWeek();
+				changeValue(-1, skipWeeksRev, "w");
+			}
+		}).appendTo(header);
+		prevButton.repeatButton();
+		var monthText = $("<span/>").appendTo(header);
+		var nextButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>').on("repeatclick", function (event) {
+			event.preventDefault();
+			if (partName === "d") {
+				ensureYearMonth();
+				changeValue(1, 1, "mo");
+			} else {
+				ensureYearWeek();
+				changeValue(1, skipWeeksFwd, "w");
+			}
+		}).appendTo(header);
+		nextButton.repeatButton();
+
+		function ensureYearMonth() {
+			var partData = partDataAccessor();
+			var now = new Date();
+			if (!partData.mo) partData.mo = now.getMonth() + 1;
+			if (!partData.y) partData.y = now.getFullYear();
+		}
+
+		function ensureYearWeek() {
+			var partData = partDataAccessor();
+			var now = new Date();
+			var weekData = getWeekData(now);
+			if (!partData.w || !partData.y) {
+				partData.w = weekData.w;
+				partData.y = weekData.y;
+			}
+		}
+
+		var dayFormat = new Intl.DateTimeFormat(opt.localeCode, { weekday: "short" });
+		var weekdays = $("<div/>").addClass("weekdays").appendTo(innerDiv);
+		for (var n = 1; n <= 7; n++) {
+			var item = $("<div/>").css("height", weekdayHeight).text(dayFormat.format(new Date(2018, 0, n)).toUpperCase()).appendTo(weekdays);
+		}
+
+		var weeks = $("<div/>").addClass("weeks").addClass(partName === "d" ? "day-selection" : "week-selection").appendTo(innerDiv);
+		var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+
+		var displayedYear = void 0,
+		    displayedMonth = void 0,
+		    prevMonthFirstDay = void 0;
+
+		instance.update = function (force) {
+			var partData = partDataAccessor();
+
+			var now = new Date();
+			var year = partData.y || now.getFullYear();
+			var month = partData.mo || now.getMonth() + 1;
+			if (partName === "w" && partData.w) {
+				// Find month that contains the selected week
+				var date = new Date(year, 1, 1);
+				while (date.getDay() !== 4) {
+					// Thursday
+					date.setDate(date.getDate() + 1);
+				}while (partData.w !== getWeekData(date).w) {
+					date.setDate(date.getDate() + 7);
+				}month = date.getMonth() + 1;
+
+				skipWeeksFwd = 4;
+				date = new Date(year, month - 1, 1);
+				if (getDaysInMonth(month, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36) // Found by try&analyse
+					skipWeeksFwd++;
+
+				skipWeeksRev = 4;
+				date = new Date(year, month - 2, 1);
+				if (getDaysInMonth(month - 1, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36) skipWeeksRev++;
+			}
+
+			monthText.text(monthFormat.format(new Date(year, month - 1, 1)) + " " + (year + "").padStart(4, "0"));
+
+			prevButton.disabled(year === 1 && month === 1);
+			nextButton.disabled(year === 9999 && month === 12);
+
+			if (force || year !== displayedYear || month !== displayedMonth) {
+				// Recreate days for the selected month
+				weeks.children().remove();
+				var maxDay = getDaysInMonth(month, year);
+				var _date = new Date(year, month - 1, 1);
+				var dayOfWeek = _date.getDay(); // 0 = Sun ... 6 = Sat
+				if (dayOfWeek === 0) dayOfWeek = 7; // 1 = Mon ... 7 = Sun
+				var maxDayPrevMonth = getDaysInMonth(month === 1 ? 12 : month - 1, year);
+				prevMonthFirstDay = maxDayPrevMonth - (dayOfWeek - 2);
+				var days = addWeek(_date);
+				var daysCount = 0;
+
+				var _loop3 = function _loop3(_n) {
+					if (days.children(".item").length === 7) {
+						_date.setDate(_date.getDate() + 7);
+						days = addWeek(_date);
+					}
+					var item = $("<div/>").addClass("item prev-month").css("height", dayHeight).appendTo(days);
+					if (partName === "d" && (month > 1 || year > 1)) {
+						item.click(function () {
+							var partData = partDataAccessor();
+							partData.d = _n;
+							partData.mo = month - 1;
+							partData.y = year;
+							if (partData.mo === 0) {
+								partData.mo = 12;
+								partData.y = year - 1;
+							}
+							instance.update();
+							updateHandler && updateHandler();
+							doneHandler && doneHandler();
+						});
+					}
+					if (month > 1 || year > 1) {
+						var text = $("<span/>").text(_n).appendTo(item);
+					} else {
+						item.disable();
+					}
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 2, _n));
+					daysCount++;
+				};
+
+				for (var _n = prevMonthFirstDay; _n <= maxDayPrevMonth; _n++) {
+					_loop3(_n);
+				}
+
+				var _loop4 = function _loop4(_n2) {
+					if (days.children(".item").length === 7) {
+						_date.setDate(_date.getDate() + 7);
+						days = addWeek(_date);
+					}
+					var item = $("<div/>").addClass("item day").css("height", dayHeight).appendTo(days);
+					if (partName === "d") {
+						item.click(function () {
+							var partData = partDataAccessor();
+							partData.d = _n2;
+							partData.mo = month;
+							partData.y = year;
+							instance.update();
+							updateHandler && updateHandler();
+							doneHandler && doneHandler();
+						});
+					}
+					var text = $("<span/>").text(_n2).appendTo(item);
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 1, _n2));
+					daysCount++;
+				};
+
+				for (var _n2 = 1; _n2 <= maxDay; _n2++) {
+					_loop4(_n2);
+				}
+
+				var _loop5 = function _loop5(_n3) {
+					if (days.children(".item").length === 7) {
+						_date.setDate(_date.getDate() + 7);
+						days = addWeek(_date);
+					}
+					var item = $("<div/>").addClass("item next-month").css("height", dayHeight).appendTo(days);
+					if (partName === "d" && (month < 12 || year < 9999)) {
+						item.click(function () {
+							var partData = partDataAccessor();
+							partData.d = _n3;
+							partData.mo = month + 1;
+							partData.y = year;
+							if (partData.mo === 13) {
+								partData.mo = 1;
+								partData.y = year + 1;
+							}
+							instance.update();
+							updateHandler && updateHandler();
+							doneHandler && doneHandler();
+						});
+					}
+					if (month < 12 || year < 9999) {
+						var text = $("<span/>").text(_n3).appendTo(item);
+					} else {
+						item.disable();
+					}
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month, _n3));
+				};
+
+				for (var _n3 = 1; _n3 <= 6 * 7 - daysCount; _n3++) {
+					_loop5(_n3);
+				}
+
+				displayedYear = year;
+				displayedMonth = month;
+			}
+
+			function addWeek(date) {
+				var weekData = getWeekData(date);
+				var week = $("<div/>").addClass("days").data("week", weekData.w).data("year", weekData.y).appendTo(weeks).append($("<div/>").addClass("week-number").append($("<span/>").text(weekData.w)));
+				if (partName === "w") {
+					week.click(function () {
+						var partData = partDataAccessor();
+						partData.w = weekData.w;
+						partData.y = weekData.y;
+						instance.update();
+						updateHandler && updateHandler();
+						doneHandler && doneHandler();
+					});
+				}
+				return week;
+			}
+
+			// Set current day as "selected"
+			if (partName === "d") {
+				weeks.find(".item").removeClass("selected");
+				if ($.isSet(partData.d)) {
+					weeks.find(".item.day").eq(partData.d - 1).addClass("selected");
+				}
+			} else {
+				weeks.children().removeClass("selected");
+				if ($.isSet(partData.w)) {
+					weeks.children().each$(function (_, week) {
+						if (week.data("week") == partData.w) week.addClass("selected");
+					});
+				}
+			}
+
+			// Mark today
+			weeks.find(".item").removeClass("now");
+			if (now.getFullYear() === year && now.getMonth() === month - 1) {
+				weeks.find(".item.day").eq(now.getDate() - 1).addClass("now");
+			} else {
+				var nowYearMonth = now.getFullYear() * 12 + now.getMonth();
+				var yearMonth = year * 12 + month - 1;
+				if (nowYearMonth === yearMonth - 1 && now.getDate() >= prevMonthFirstDay) {
+					weeks.find(".item.prev-month").eq(now.getDate() - prevMonthFirstDay).addClass("now");
+				} else if (nowYearMonth === yearMonth + 1 && now.getDate() <= 14) {
+					weeks.find(".item.next-month").eq(now.getDate() - 1).addClass("now");
+				}
+			}
+		};
+
+		instance.show = function () {
+			innerDiv.removeClass("hidden hidden-reverse");
+		};
+
+		instance.hide = function () {
+			innerDiv.addClass("hidden");
+			innerDiv.removeClass("hidden-reverse");
+		};
+
+		instance.hideReverse = function () {
+			innerDiv.addClass("hidden-reverse");
+			innerDiv.removeClass("hidden");
+		};
+
+		instance.update();
+	}
+
+	function ClockView(container, boxSize, darkMode, translate, partName, partDataAccessor, changeValue, updateHandler, doneHandler) {
+		var instance = this;
+
+		var padding = 10;
+		var clockOuter = $("<div/>").addClass("ff-timepicker-clock").css("padding", padding + "px " + ((boxSize.width - boxSize.height) / 2 + padding) + "px").appendTo(container);
+		var clockSize = boxSize.height - 2 * padding;
+		var clockInner = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").css("width", clockSize).css("height", clockSize).appendTo(clockOuter);
+		var itemSize = 32;
+		var outerRadius = clockSize / 2 - itemSize / 2 - 5;
+		var innerRadius = clockSize * 0.32 - itemSize / 2;
+		if (partName === "h") {
+			for (var n = 1; n <= 24; n++) {
+				var radius = n <= 12 ? outerRadius : innerRadius;
+				var top = clockSize / 2 - Math.cos(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
+				var left = clockSize / 2 + Math.sin(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
+				var item = $("<span/>").css("top", top).css("left", left).appendTo(clockInner);
+				var text = $("<span/>").text(n % 24).appendTo(item);
+				if (n > 12) item.addClass("inner-circle");
+			}
+		} else {
+			for (var _n4 = 0; _n4 < 60; _n4 += 5) {
+				var _top = clockSize / 2 - Math.cos(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
+				var _left = clockSize / 2 + Math.sin(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
+				var _item = $("<span/>").css("top", _top).css("left", _left).appendTo(clockInner);
+				var _text = $("<span/>").text(_n4).appendTo(_item);
+			}
+		}
+		clockInner.children().addClass("item").css("width", itemSize).css("height", itemSize);
+
+		var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		clockInner.append(svg);
+		var centerCircle = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+		centerCircle.setAttribute("class", "clock-center-cirle");
+		centerCircle.setAttribute("cx", clockSize / 2);
+		centerCircle.setAttribute("cy", clockSize / 2);
+		centerCircle.setAttribute("rx", 3.5);
+		centerCircle.setAttribute("ry", 3.5);
+		svg.appendChild(centerCircle);
+		var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		line.setAttribute("class", "clock-hour-line");
+		line.setAttribute("visibility", "hidden");
+		line.setAttribute("x1", clockSize / 2);
+		line.setAttribute("y1", clockSize / 2);
+		svg.appendChild(line);
+		var extraItem = void 0,
+		    line2 = void 0;
+		if (partName !== "h") {
+			line.setAttribute("class", "clock-minute-line");
+			var backSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			clockInner.prepend(backSvg);
+			extraItem = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+			extraItem.setAttribute("class", "clock-extra-item");
+			extraItem.setAttribute("visibility", "hidden");
+			extraItem.setAttribute("stroke-width", itemSize / 2 - 2);
+			extraItem.setAttribute("rx", itemSize / 4 + 1);
+			extraItem.setAttribute("ry", itemSize / 4 + 1);
+			backSvg.appendChild(extraItem);
+			line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+			line2.setAttribute("class", "clock-hour-line secondary");
+			line2.setAttribute("visibility", "hidden");
+			line2.setAttribute("x1", clockSize / 2);
+			line2.setAttribute("y1", clockSize / 2);
+			backSvg.appendChild(line2);
+		}
+		var draggable = $("<div/>").css("width", 0).css("height", 0) // draggable itself need not be seen or touchable
+		.appendTo(clockInner);
+		draggable.draggable({ catchElement: clockOuter });
+		draggable.on("draggablemove", function (event) {
+			// Compute angle and distance of draggable from centre
+			var draggableRadius = draggable.outerWidth() / 2;
+			var clockRect = clockInner.rect();
+			var clockRadius = clockRect.width / 2;
+			var angle = Math.atan2(event.newPoint.left + draggableRadius - (clockRect.left + clockRadius), clockRect.top + clockRadius - (event.newPoint.top + draggableRadius));
+			var distance = Math.sqrt(Math.pow(event.newPoint.left + draggableRadius - (clockRect.left + clockRadius), 2) + Math.pow(event.newPoint.top + draggableRadius - (clockRect.top + clockRadius), 2));
+
+			if (partName === "h") {
+				// Closer to inner or outer hours circle?
+				var isOuterCircle = distance > (innerRadius + outerRadius) / 2;
+
+				// Determine nearest hour
+				var angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360; // rad to degrees
+				var hour = Math.round(angleDegree / 360 * 12);
+				hour = (hour + 11) % 12 + 1; // 0..11 → 1..12
+				angleDegree = hour / 12 * 360;
+				angle = angleDegree / 360 * 2 * Math.PI; // degrees to rad
+				if (!isOuterCircle) hour = (hour + 12) % 24; // 1..12 → 13..0
+				partDataAccessor()[partName] = hour;
+				var _radius = isOuterCircle ? outerRadius : innerRadius;
+				instance.update();
+				updateHandler && updateHandler();
+
+				// Calculate point for determined hour (not really displayed...)
+				event.newPoint = {
+					top: -Math.cos(angle) * _radius + clockRect.top + clockRadius - draggableRadius,
+					left: Math.sin(angle) * _radius + clockRect.left + clockRadius - draggableRadius
+				};
+			} else {
+				// Determine nearest minute/second
+				var _angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360; // rad to degrees
+				var _n5 = Math.round(_angleDegree / 360 * 60) % 60; // 60 → 0
+				_angleDegree = _n5 / 60 * 360;
+				angle = _angleDegree / 360 * 2 * Math.PI; // degrees to rad
+				var partData = partDataAccessor();
+				if (partData[partName] >= 45 && _n5 <= 15) {
+					// Increment next level
+					changeValue(1, 1, partName === "s" ? "min" : "h");
+				} else if (partData[partName] <= 15 && _n5 >= 45) {
+					// Decrement next level
+					changeValue(-1, 1, partName === "s" ? "min" : "h");
+				}
+				partData[partName] = _n5;
+				instance.update();
+				updateHandler && updateHandler();
+
+				// Calculate point for determined minute/second (not really displayed...)
+				event.newPoint = {
+					top: -Math.cos(angle) * outerRadius + clockRect.top + clockRadius - draggableRadius,
+					left: Math.sin(angle) * outerRadius + clockRect.left + clockRadius - draggableRadius
+				};
+			}
+		});
+		draggable.on("draggableend", function (event) {
+			doneHandler && doneHandler();
+		});
+
+		instance.update = function () {
+			var partData = partDataAccessor();
+
+			if (partName === "h") {
+				// Set current hour as "selected"
+				clockInner.find(".item").removeClass("selected");
+				if ($.isSet(partData[partName])) {
+					// hour 1 → index 0 (first element), 2 → 1, 23 → 22, 0 → 23 (last element)
+					clockInner.find(".item").eq((partData[partName] + 23) % 24).addClass("selected");
+					// Move line to the edge of that item circle
+					var clockRadius = clockSize / 2;
+					var angle = partData[partName] / 12 * 2 * Math.PI; // rad
+					var _radius2 = partData[partName] >= 1 && partData[partName] <= 12 ? outerRadius : innerRadius;
+					_radius2 -= itemSize / 2 + 4; // only touch the item circle, don't go to its centre
+					line.setAttribute("visibility", "visible");
+					line.setAttribute("x2", Math.sin(angle) * _radius2 + clockRadius);
+					line.setAttribute("y2", -Math.cos(angle) * _radius2 + clockRadius);
+				} else {
+					// Remove line
+					line.setAttribute("visibility", "hidden");
+					line.setAttribute("x2", clockSize / 2);
+					line.setAttribute("y2", clockSize / 2);
+				}
+			} else {
+				// Set current minute/second as "selected"
+				clockInner.find(".item").removeClass("selected");
+				if ($.isSet(partData[partName])) {
+					if (partData[partName] % 5 === 0) clockInner.find(".item").eq(partData[partName] / 5).addClass("selected");
+					// Move line to the edge of that item circle
+					var _clockRadius = clockSize / 2;
+					var _angle = partData[partName] / 60 * 2 * Math.PI; // rad
+					var _radius3 = outerRadius - (itemSize / 2 + 4); // only touch the item circle, don't go to its centre
+					line.setAttribute("visibility", "visible");
+					line.setAttribute("x2", Math.sin(_angle) * _radius3 + _clockRadius);
+					line.setAttribute("y2", -Math.cos(_angle) * _radius3 + _clockRadius);
+					// Set extra item position
+					if (partData[partName] % 5 !== 0) {
+						extraItem.setAttribute("visibility", "visible");
+						extraItem.setAttribute("cx", Math.sin(_angle) * outerRadius + _clockRadius);
+						extraItem.setAttribute("cy", -Math.cos(_angle) * outerRadius + _clockRadius);
+					} else {
+						extraItem.setAttribute("visibility", "hidden");
+					}
+
+					if (partName === "min") {
+						if ($.isSet(partData.h)) {
+							// Set secondary (hour) line
+							_angle = (partData.h + partData.min / 60) / 12 * 2 * Math.PI; // rad
+							_radius3 *= 0.6;
+							line2.setAttribute("visibility", "visible");
+							line2.setAttribute("x2", Math.sin(_angle) * _radius3 + _clockRadius);
+							line2.setAttribute("y2", -Math.cos(_angle) * _radius3 + _clockRadius);
+						} else {
+							// Remove secondary (hour) line
+							line2.setAttribute("visibility", "hidden");
+						}
+					}
+				} else {
+					// Remove lines
+					line.setAttribute("visibility", "hidden");
+					line2.setAttribute("visibility", "hidden");
+					// Remove extra item
+					extraItem.setAttribute("visibility", "hidden");
+				}
+			}
+		};
+
+		instance.show = function () {
+			clockInner.removeClass("hidden hidden-reverse");
+		};
+
+		instance.hide = function () {
+			clockInner.addClass("hidden");
+			clockInner.removeClass("hidden-reverse");
+		};
+
+		instance.hideReverse = function () {
+			clockInner.addClass("hidden-reverse");
+			clockInner.removeClass("hidden");
+		};
+
+		instance.update();
+	}
+
+	function getDaysInMonth(month, year) {
+		if (month === 4 || month === 6 || month === 9 || month === 11) return 30;
+		if (month === 2) {
+			if (year) {
+				var leapYear = year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+				return leapYear ? 29 : 28;
+			}
+			return 29;
+		}
+		return 31;
+	}
+
+	function getWeekData(date) {
+		// Source: https://weeknumber.net/how-to/javascript
+		var data = {};
+		date = new Date(date.getTime());
+		date.setHours(0, 0, 0, 0);
+		// Thursday in current week decides the year
+		date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
+		data.y = date.getFullYear();
+		// January 4 is always in week 1
+		var week1 = new Date(date.getFullYear(), 0, 4);
+		// Adjust to Thursday in week 1 and count number of weeks from date to week1
+		data.w = 1 + Math.round(((date.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+		return data;
+	}
+
+	// Gets a function that changes the format of a month item.
+	//
+	// fn: Sets the function.
+	function monthFormatter(fn) {
+		// Getter
+		if (fn === undefined) {
+			var timePicker = this.first();
+			if (timePicker.length === 0) return; // Nothing to do
+			var opt = loadOptions("timePicker", timePicker);
+			return opt.monthFormatter;
+		}
+
+		// Setter
+		return this.each$(function (_, timePicker) {
+			var opt = loadOptions("timePicker", timePicker);
+			opt.monthFormatter = fn;
+		});
+	}
+
+	// Gets a function that changes the format of a day item.
+	//
+	// fn: Sets the function.
+	function dayFormatter(fn) {
+		// Getter
+		if (fn === undefined) {
+			var timePicker = this.first();
+			if (timePicker.length === 0) return; // Nothing to do
+			var opt = loadOptions("timePicker", timePicker);
+			return opt.dayFormatter;
+		}
+
+		// Setter
+		return this.each$(function (_, timePicker) {
+			var opt = loadOptions("timePicker", timePicker);
+			opt.dayFormatter = fn;
+			opt._updateMonthView && opt._updateMonthView();
+		});
+	}
+
+	registerPlugin("timePicker", timePicker, {
+		monthFormatter: monthFormatter,
+		dayFormatter: dayFormatter
+	});
+	$.fn.timePicker.defaults = timePickerDefaults;
+
 	// Automatically apply all controls now. Must be loaded at the end of the document.
 	// Doing it now is faster than waiting for the DOM ready event, and when loaded at the end of the
 	// document, all relevant DOM parts are already there.
@@ -4892,6 +6609,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		findInclSelf(prefix + "input[type=ff-color]").colorPicker();
 		findInclSelf(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
 		findInclSelf(prefix + "input[type=checkbox].three-state").threeState();
+		findInclSelf(prefix + "input[type=date],input[type=datetime-local],input[type=month],input[type=time],input[type=week]").timePicker();
 		findInclSelf(prefix + "textarea.auto-height").autoHeight();
 		findInclSelf(prefix + ".menu").menu();
 		findInclSelf(prefix + ".critical.closable, .error.closable, .warning.closable, .information.closable, .success.closable").closableMessage();

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="center">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Date and time picker - Frontfire Demo</title>
+
+	<link rel="stylesheet" href="lib/frontfire/css/frontfire.min.css">
+	<link rel="stylesheet" href="css/site.css">
+	<link rel="stylesheet" href="lib/fontawesome/css/fontawesome-all.min.css">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+</head>
+<body>
+	<header>
+		<div class="page-width">
+			<a href="index.html"><img src="images/frontfire.svg" alt="Logo">Frontfire Demo</a>
+		</div>
+	</header>
+
+	<main>
+		<div class="page-width">
+		<h1>Date and time picker</h1>
+
+		<p>
+			HTML defines a number of input control elements for date- and time-related input.
+			They provide a basic input method but are not very convenient or usable and highly depend on the browser implementation.
+			To achieve a more modern and cross-platform consistent look and provide better usability, these controls are reimplemented by Frontfire.
+			The time picker is highly flexible and can allow input of reduced time components or highlighting of dates.
+			The following samples show these input controls.
+		</p>
+
+		<p>
+			The “Disabled” checkbox can be used to toggle the above controls and inspect their disabled appearance and behaviour.
+		</p>
+
+		<h2>Date selection</h2>
+
+		<p>
+			The basic date selection is used with <code>&lt;input type="date"&gt;</code> and allows the selection of a date. <!--The +/− buttons adjust the currently selected component.--> The field value (shown next to the input field) is in the <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format “YYYY-MM-DD”, e.g. “2019-09-30”.
+		</p>
+
+		<p class="date-samples">
+			<input type="date" id="date-input"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			<button type="button" id="set-date-today">Set today</button>
+		</p>
+
+		<p>
+			Each day or month item can be customised with a function that is passed the item and the date as arguments. The function can be specified in the options or later with the <code>monthFormatter</code> or <code>dayFormatter</code> getter/setter. In the example above, all Sundays are marked in red colour.
+		</p>
+		
+		<p>
+			The date and time format and labels texts are automatically set by the browser language. To override, set the <code>localeCode</code> option, the following example is set to Icelandic (is-IS):
+		</p>
+
+		<p class="date-samples">
+			<input type="date" data-opt-locale-code="is-IS"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			The selection can be limited to months instead of full dates with <code>&lt;input type="month"&gt;</code>. The field value is in the ISO 8601 format “YYYY-MM”, e.g. “2019-09”.
+		</p>
+
+		<p class="date-samples">
+			<input type="month"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			The selection can be limited to weeks instead of full dates with <code>&lt;input type="week"&gt;</code>. The field value is in the ISO 8601 format “YYYY-‘W’WW”, e.g. “2019-W40”.
+		</p>
+
+		<p class="date-samples">
+			<input type="week"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			If the input is not optional and a valid date is required, the <code>required</code> attribute can be used as usual.
+		</p>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			The <code>required</code> attribute is not fully functional for now. It hides the “clear” button in the dropdown but is itself removed until a proper form validation is in place, because there is no way to show a browser-generated message on the original hidden and the new readonly field.
+		</p>
+
+		<form>
+		<p class="date-samples">
+			<input type="date" id="required-date-input" required> <span class="value-view"></span>
+			<button type="submit">Submit date</button>
+		</p>
+		</form>
+
+		<p>
+			<label><input type="checkbox" data-target="date-samples"> Disabled</label>
+		</p>
+
+		<h2>Time selection</h2>
+
+		<p>
+			The basic time selection is used with <code>&lt;input type="time"&gt;</code> and allows the selection of a time of day, with hours and minutes. The field value is in the ISO 8601 format “hh:mm”, e.g. “21:42”.
+		</p>
+
+		<p class="time-samples">
+			<input type="time" id="time-input"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			<button type="button" id="set-time-now">Set now</button>
+		</p>
+
+		<p>
+			By setting the <code>step</code> attribute to a value of less than 60 (seconds), the control also enables the input of seconds: <code>&lt;input type="time" step="1"&gt;</code>. You should only choose steps that align with full increments on the higher level, e.g. 5/10/15/30 seconds that align at a full minute, or 5/10/15/30 minutes (300/600/900/1800 seconds) that align at a full hour. This is because each time component can be adjusted individually and the step only applies to the smallest component.
+		</p>
+
+		<p class="warning icon">
+			<i class="fa fa-exclamation-triangle"></i>
+			<code>min</code>, <code>max</code> and <code>step</code> attributes are not yet implemented (except for activating of seconds input).
+		</p>
+
+		<p class="time-samples">
+			<input type="time" step="1"> <span class="value-view"></span> (allows every second)
+		</p>
+		<p class="time-samples">
+			<input type="time" step="15"> <span class="value-view"></span> (allows every 15 seconds)
+		</p>
+		<p class="time-samples">
+			<input type="time" step="300"> <span class="value-view"></span> (allows every 5 minutes)
+		</p>
+
+		<p>
+			<label><input type="checkbox" data-target="time-samples"> Disabled</label>
+		</p>
+
+		<h2>Combined date and time selection</h2>
+
+		<p>
+			A single field can contain a full timestamp consisting of a date and time of day: <code>&lt;input type="datetime-local"&gt;</code> This does not support time zones and can only represent a local timestamp (not UTC). The field value is in the ISO 8601 format “YYYY-MM-DD‘T’hh:mm”, e.g. “2019-09-30T21:42”.
+		</p>
+
+		<p class="datetime-samples">
+			<input type="datetime-local" id="datetime-input"> <span class="value-view"></span>
+		</p>
+
+		<p>
+			<button type="button" id="set-datetime-now">Set now</button>
+		</p>
+
+		<p>
+			<label><input type="checkbox" data-target="datetime-samples"> Disabled</label>
+		</p>
+		</div><!-- .page-width -->
+		
+		<div class="dark" style="margin: 2em 0; padding: 2em 0;">
+			<div class="page-width">
+				<p>
+					This area uses the dark theme and shows how a date and time picker looks in a dark environment automatically.
+				</p>
+
+				<p class="date-samples">
+					<input type="datetime-local"> <span class="value-view"></span>
+				</p>
+			</div><!-- .page-width -->
+		</div>
+		
+		<div class="page-width">
+		</div><!-- .page-width -->
+	</main>
+
+	<footer>
+		<div class="page-width">
+			<strong>Frontfire</strong> Web Frontend Framework © Yves Goergen
+		</div>
+	</footer>
+
+	<script src="lib/jquery/js/jquery-3.3.1.min.js"></script>
+	<script src="lib/frontfire/js/frontfire.min.js"></script>
+	<script src="js/site.js"></script>
+	
+	<style>
+		.holiday
+		{
+			color: #c00000;
+		}
+		.holiday.selected
+		{
+			color: #e00000 !important;
+		}
+	</style>
+
+	<script>
+		$("input[data-target]").click(function () {
+			let targetClass = $(this).data("target");
+			$("." + targetClass + " input").disabled(this.checked);
+		});
+
+		$(".value-view").each$(function (_, view) {
+			view.css("margin", "0 10px");
+			var input = view.parent().find("input").first();
+			input.on("change input", function (event) {
+				view.text($(this).val());
+			});
+			view.text(input.val());
+		});
+		
+		$("#date-input").timePicker.dayFormatter((item, date) => {
+			if (date.getDay() === 0)
+				item.addClass("holiday");
+		});
+
+		// Full ISO format: 2011-10-05T14:48:00
+		$("#set-date-today").click(function () {
+			$("#date-input").valChange(getLocalNowISOString().substring(0, 10));
+		});
+		$("#set-time-now").click(function () {
+			$("#time-input").valChange(getLocalNowISOString().substring(11, 16));
+		});
+		$("#set-datetime-now").click(function () {
+			$("#datetime-input").valChange(getLocalNowISOString().substring(0, 16));
+		});
+
+		function getLocalNowISOString() {
+			var now = new Date();
+			return (now.getFullYear() + "").padStart(4, "0") + "-" +
+				(now.getMonth() + 1 + "").padStart(2, "0") + "-" +
+				(now.getDate() + "").padStart(2, "0") + "T" +
+				(now.getHours() + "").padStart(2, "0") + ":" +
+				(now.getMinutes() + "").padStart(2, "0") + ":" +
+				(now.getSeconds() + "").padStart(2, "0");
+		}
+	</script>
+</body>
+</html>

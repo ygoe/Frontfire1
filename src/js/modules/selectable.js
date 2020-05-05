@@ -58,13 +58,14 @@ function selectable(options) {
 				button.click(function () {
 					if (button.disabled()) return;
 					button.addClass("open");
-					newSelect.dropdown(button);
+					let fixed = button.parentWhere(p => $(p).css("position") === "fixed").length > 0;
+					newSelect.dropdown(button, { fixed: fixed });
 					if (button.closest(".dark").length > 0)
 						newSelect.parent().addClass("dark");   // Set dropdown container to dark
-					newSelect.on("dropdownclose", function () {
-						button.removeClass("open");
-					});
 					newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
+				});
+				newSelect.on("dropdownclose", function () {
+					button.removeClass("open");
 				});
 				button.on("keydown", function (event) {
 					//console.log(event);

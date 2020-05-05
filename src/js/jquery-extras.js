@@ -69,16 +69,19 @@ if ($.isAndroid()) {
 }
 
 // Browser tests
-// Source: https://stackoverflow.com/a/9851769
+// Source (sometimes updated): https://stackoverflow.com/a/9851769
 
 // Determines whether the browser has a Blink engine.
 $.isBlink = () => ($.isChrome() || $.isOpera()) && !!window.CSS;
 
-// Determines whether the browser is Chrome.
-$.isChrome = () => !!window.chrome && !!window.chrome.webstore;
+// Determines whether the browser is Chrome. (Not functional for v80/81)
+$.isChrome = () => !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
-// Determines whether the browser is Edge.
+// Determines whether the browser is original Edge.
 $.isEdge = () => !$.isInternetExplorer() && !!window.StyleMedia;
+
+// Determines whether the browser is Chromium-based Edge.
+$.isEdgeChromium = () => $.isChrome() && (navigator.userAgent.indexOf("Edg") != -1);
 
 // Determines whether the browser is Firefox.
 $.isFirefox = () => typeof InstallTrigger !== 'undefined';
@@ -89,5 +92,5 @@ $.isInternetExplorer = () => /*@cc_on!@*/false || !!document.documentMode;
 // Determines whether the browser is Opera.
 $.isOpera = () => (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 
-// Determines whether the browser is Safari.
+// Determines whether the browser is Safari. (Not functional for iOS/iPadOS 13)
 $.isSafari = () => /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));

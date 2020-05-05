@@ -123,8 +123,12 @@
 
 		<p>The following draggable element will stick to a circle line around the centre.</p>
 
-		<div style="margin-top: 30px; position: relative; width: 150px; height: 150px; border: dashed 1px gray; border-radius: 100%;">
-			<div id="draggableCircle" style="position: absolute; top: -20px; left: 55px; width: 40px; height: 40px; border-radius: 100%; background: #80d030;"></div>
+		<p>The dragging can also be started by clicking or touching anywhere in the light grey square around the circle. This is set as the <code>catchElement</code> in the options of the draggable.</p>
+
+		<div style="padding: 20px; background: #f6f6f6; width: 190px;">
+			<div style="position: relative; width: 150px; height: 150px; border: dashed 1px gray; border-radius: 100%;">
+				<div id="draggableCircle" style="position: absolute; top: -20px; left: 55px; width: 40px; height: 40px; border-radius: 100%; background: #80d030;"></div>
+			</div>
 		</div>
 	</main>
 
@@ -172,7 +176,7 @@
 		$("#draggableGrid").draggable({ containment: "#container2", grid: [20, 20] });
 		$("#draggableGridX").draggable({ containment: "#container2", axis: "x", grid: [20, 20] });
 
-		$("#draggableCircle").draggable();
+		$("#draggableCircle").draggable({ catchElement: $("#draggableCircle").parent().parent() });
 		$("#draggableCircle").on("draggablemove", function (event) {
 			var draggableRadius = $("#draggableCircle").outerWidth() / 2;
 			var circleRect = $("#draggableCircle").parent().rect();
@@ -180,13 +184,14 @@
 
 			// Compute angle of draggable from centre
 			var angle = Math.atan2(
-				(event.newPoint.top + draggableRadius) - (circleRect.top + radius),
-				(event.newPoint.left + draggableRadius) - (circleRect.left + radius));
+				(event.newPoint.left + draggableRadius) - (circleRect.left + radius),
+				(circleRect.top + radius) - (event.newPoint.top + draggableRadius));
+			console.log(event.newPoint, (angle / 2 / Math.PI * 360 + 360) % 360);
 
 			// Determine point on circle at this angle
 			event.newPoint = {
-				top: Math.round(Math.sin(angle) * radius * 100) / 100 + circleRect.top + radius - draggableRadius,
-				left: Math.round(Math.cos(angle) * radius * 100) / 100 + circleRect.left + radius - draggableRadius
+				top: Math.round(-Math.cos(angle) * radius * 100) / 100 + circleRect.top + radius - draggableRadius,
+				left: Math.round(Math.sin(angle) * radius * 100) / 100 + circleRect.left + radius - draggableRadius
 			};
 		});
 	</script>
