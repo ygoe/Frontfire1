@@ -417,14 +417,6 @@ html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimm
   .ff-background-dimmer.noinput {
     pointer-events: auto; }
 
-.group:before,
-.group:after {
-  content: "";
-  display: table; }
-
-.group:after {
-  clear: both; }
-
 .print-only {
   display: none; }
   @media (print) {
@@ -440,6 +432,10 @@ html:not(.simple-dimmer) > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimm
   @media (max-width: 930px) {
     .page-width {
       max-width: calc(100% - 30px); } }
+
+.full-page-width {
+  margin-left: 15px;
+  max-width: calc(100% - 30px); }
 
 html.center {
   overflow-y: scroll; }
@@ -469,8 +465,10 @@ code,
 tt,
 pre,
 samp,
+div.code,
 input.monospace,
-textarea.monospace {
+textarea.monospace,
+.monospace {
   font-family: Consolas, monospace;
   font-size: 13px; }
 
@@ -507,7 +505,13 @@ h6 {
 p,
 div.p,
 table.p {
-  margin: 1em 0; }
+  margin-top: 1em;
+  margin-bottom: 1em; }
+  p.double-margin,
+  div.p.double-margin,
+  table.p.double-margin {
+    margin-top: 2em;
+    margin-bottom: 2em; }
 
 p.left-align,
 div.left-align {
@@ -529,6 +533,20 @@ div.justify {
   font-size: 18px !important;
   line-height: 25px !important; }
 
+.smaller {
+  font-size: 11px !important;
+  line-height: 16px !important; }
+
+.no-top-margin {
+  margin-top: 0 !important; }
+
+.no-bottom-margin {
+  margin-bottom: 0 !important; }
+
+.no-vertical-margin {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important; }
+
 a {
   transition: color 0.2s ease; }
   a:link, a:visited {
@@ -538,8 +556,7 @@ a {
       color: #1d40a6;
       transition: color 0s; }
   .dark a:link, .dark a:visited {
-    color: #91acff;
-    text-decoration: none; }
+    color: #91acff; }
     .dark a:link:hover, .dark a:visited:hover {
       color: #a7bdff;
       transition: color 0s; }
@@ -599,10 +616,12 @@ table.no-grid td {
   border-top: none;
   border-bottom: none; }
 
-table.no-outer-padding td:first-child {
+table.no-outer-padding td:first-child,
+table.no-outer-padding td.first-column {
   padding-left: 0; }
 
-table.no-outer-padding td:last-child {
+table.no-outer-padding td:last-child,
+table.no-outer-padding td.last-column {
   padding-right: 0; }
 
 table.no-padding th,
@@ -639,6 +658,25 @@ td.top {
 table.big-links tr td > a {
   display: block; }
 
+table.tall-rows td {
+  height: calc(20px + 17px); }
+
+table.tall-rows.no-border tr:last-child > td {
+  height: calc(20px + 16px); }
+
+table.tall-rows.big-links tr td > a {
+  padding: 5px 0; }
+
+table.sticky-header thead th {
+  position: sticky;
+  top: 0px;
+  z-index: 2; }
+
+.clearfix::before, .clearfix::after {
+  content: "";
+  display: table;
+  clear: both; }
+
 hr {
   clear: both;
   margin: 1rem 0;
@@ -649,11 +687,18 @@ hr {
   .dark hr {
     border-top-color: #585858; }
 
-code {
-  background-color: #eeeeee;
-  padding: 0 2px; }
-  .dark code {
-    background-color: #484848; }
+code,
+div.code {
+  background-color: rgba(0, 0, 0, 0.06);
+  padding: 0 2px;
+  hyphens: none;
+  overflow-wrap: break-word; }
+  .dark code, .dark
+  div.code {
+    background-color: rgba(255, 255, 255, 0.12); }
+
+div.code {
+  padding: 6px 10px; }
 
 kbd {
   display: inline-block;
@@ -718,6 +763,10 @@ i.loading {
     animation-iteration-count: infinite; }
   i.loading.inverted::before {
     border-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15); }
+  .dark i.loading::before {
+    border-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15); }
+  .dark i.loading.inverted::before {
+    border-color: rgba(0, 0, 0, 0.6) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1); }
   i.loading.small {
     font-size: 16px; }
   i.loading.medium {
@@ -764,6 +813,10 @@ img.circle,
 svg.circle {
   border-radius: 100%; }
 
+.dark img.dark-invert,
+.dark svg.dark-invert {
+  filter: invert(1); }
+
 img.left,
 svg.left {
   max-width: calc(50% - 1.5em);
@@ -788,7 +841,13 @@ svg.left {
       img.left.require-minitab.narrow-center,
       svg.left.require-minitab.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.left.require-minitab.narrow-full-width,
+      svg.left.require-minitab.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 760px) {
     img.left.require-tablet,
     svg.left.require-tablet {
@@ -805,7 +864,13 @@ svg.left {
       img.left.require-tablet.narrow-center,
       svg.left.require-tablet.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.left.require-tablet.narrow-full-width,
+      svg.left.require-tablet.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 900px) {
     img.left.require-desktop,
     svg.left.require-desktop {
@@ -822,7 +887,13 @@ svg.left {
       img.left.require-desktop.narrow-center,
       svg.left.require-desktop.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.left.require-desktop.narrow-full-width,
+      svg.left.require-desktop.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 1200px) {
     img.left.require-wide,
     svg.left.require-wide {
@@ -839,7 +910,13 @@ svg.left {
       img.left.require-wide.narrow-center,
       svg.left.require-wide.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.left.require-wide.narrow-full-width,
+      svg.left.require-wide.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
 
 img.right,
 svg.right {
@@ -865,7 +942,13 @@ svg.right {
       img.right.require-minitab.narrow-center,
       svg.right.require-minitab.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.right.require-minitab.narrow-full-width,
+      svg.right.require-minitab.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 760px) {
     img.right.require-tablet,
     svg.right.require-tablet {
@@ -882,7 +965,13 @@ svg.right {
       img.right.require-tablet.narrow-center,
       svg.right.require-tablet.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.right.require-tablet.narrow-full-width,
+      svg.right.require-tablet.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 900px) {
     img.right.require-desktop,
     svg.right.require-desktop {
@@ -899,7 +988,13 @@ svg.right {
       img.right.require-desktop.narrow-center,
       svg.right.require-desktop.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.right.require-desktop.narrow-full-width,
+      svg.right.require-desktop.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 1200px) {
     img.right.require-wide,
     svg.right.require-wide {
@@ -916,7 +1011,13 @@ svg.right {
       img.right.require-wide.narrow-center,
       svg.right.require-wide.narrow-center {
         margin-left: auto;
-        margin-right: auto; } }
+        margin-right: auto; }
+      img.right.require-wide.narrow-full-width,
+      svg.right.require-wide.narrow-full-width {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
 
 div.image-full-width {
   clear: both;
@@ -925,11 +1026,13 @@ div.image-full-width {
   text-align: center;
   padding: 0 2em;
   color: #666666; }
+  .dark div.image-full-width {
+    color: #888888; }
   div.image-full-width img,
   div.image-full-width svg {
     display: block;
     margin: 0 -2em 0.5em;
-    width: calc(100% + 4em);
+    width: calc(100% + 4em) !important;
     max-height: 100vh; }
 
 div.image-center {
@@ -939,6 +1042,8 @@ div.image-center {
   text-align: center;
   padding: 0 2em;
   color: #666666; }
+  .dark div.image-center {
+    color: #888888; }
   div.image-center img,
   div.image-center svg {
     display: block;
@@ -956,6 +1061,8 @@ div.image-left {
   float: left;
   margin-right: 1.5em;
   text-align: left; }
+  .dark div.image-left {
+    color: #888888; }
   div.image-left img,
   div.image-left svg {
     display: block;
@@ -986,7 +1093,13 @@ div.image-left {
         div.image-left.require-minitab.narrow-center img,
         div.image-left.require-minitab.narrow-center svg {
           margin-left: auto;
-          margin-right: auto; } }
+          margin-right: auto; }
+      div.image-left.require-minitab.narrow-full-width img,
+      div.image-left.require-minitab.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 760px) {
     div.image-left.require-tablet {
       float: none;
@@ -1010,7 +1123,13 @@ div.image-left {
         div.image-left.require-tablet.narrow-center img,
         div.image-left.require-tablet.narrow-center svg {
           margin-left: auto;
-          margin-right: auto; } }
+          margin-right: auto; }
+      div.image-left.require-tablet.narrow-full-width img,
+      div.image-left.require-tablet.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 900px) {
     div.image-left.require-desktop {
       float: none;
@@ -1034,7 +1153,13 @@ div.image-left {
         div.image-left.require-desktop.narrow-center img,
         div.image-left.require-desktop.narrow-center svg {
           margin-left: auto;
-          margin-right: auto; } }
+          margin-right: auto; }
+      div.image-left.require-desktop.narrow-full-width img,
+      div.image-left.require-desktop.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
   @media (max-width: 1200px) {
     div.image-left.require-wide {
       float: none;
@@ -1058,7 +1183,13 @@ div.image-left {
         div.image-left.require-wide.narrow-center img,
         div.image-left.require-wide.narrow-center svg {
           margin-left: auto;
-          margin-right: auto; } }
+          margin-right: auto; }
+      div.image-left.require-wide.narrow-full-width img,
+      div.image-left.require-wide.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; } }
 
 div.image-right {
   margin: 0.4em 0 1em 0;
@@ -1070,6 +1201,8 @@ div.image-right {
   float: right;
   margin-left: 1.5em;
   text-align: right; }
+  .dark div.image-right {
+    color: #888888; }
   div.image-right img,
   div.image-right svg {
     display: block;
@@ -1101,6 +1234,12 @@ div.image-right {
         div.image-right.require-minitab.narrow-center svg {
           margin-left: auto;
           margin-right: auto; }
+      div.image-right.require-minitab.narrow-full-width img,
+      div.image-right.require-minitab.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; }
       div.image-right.require-minitab img,
       div.image-right.require-minitab svg {
         margin-left: auto; } }
@@ -1128,6 +1267,12 @@ div.image-right {
         div.image-right.require-tablet.narrow-center svg {
           margin-left: auto;
           margin-right: auto; }
+      div.image-right.require-tablet.narrow-full-width img,
+      div.image-right.require-tablet.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; }
       div.image-right.require-tablet img,
       div.image-right.require-tablet svg {
         margin-left: auto; } }
@@ -1155,6 +1300,12 @@ div.image-right {
         div.image-right.require-desktop.narrow-center svg {
           margin-left: auto;
           margin-right: auto; }
+      div.image-right.require-desktop.narrow-full-width img,
+      div.image-right.require-desktop.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; }
       div.image-right.require-desktop img,
       div.image-right.require-desktop svg {
         margin-left: auto; } }
@@ -1182,9 +1333,234 @@ div.image-right {
         div.image-right.require-wide.narrow-center svg {
           margin-left: auto;
           margin-right: auto; }
+      div.image-right.require-wide.narrow-full-width img,
+      div.image-right.require-wide.narrow-full-width svg {
+        margin-left: 0;
+        margin-right: 0;
+        width: 100%;
+        max-height: 100vh; }
       div.image-right.require-wide img,
       div.image-right.require-wide svg {
         margin-left: auto; } }
+
+div.image-overlay-text,
+a.image-overlay-text {
+  position: relative;
+  display: block;
+  font-size: 20px;
+  line-height: 28px;
+  text-align: left;
+  color: inherit; }
+  div.image-overlay-text > *,
+  a.image-overlay-text > * {
+    position: absolute;
+    top: 8%;
+    left: 8%;
+    right: 8%; }
+    div.image-overlay-text > *.bottom,
+    a.image-overlay-text > *.bottom {
+      top: unset;
+      bottom: 8%; }
+    div.image-overlay-text > *.center,
+    a.image-overlay-text > *.center {
+      text-align: center; }
+    div.image-overlay-text > *.right,
+    a.image-overlay-text > *.right {
+      text-align: right; }
+    div.image-overlay-text > * > span,
+    a.image-overlay-text > * > span {
+      padding: 2px 7px;
+      background: #ffffff;
+      color: #000000;
+      opacity: 0.8;
+      hyphens: auto;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone; }
+      div.image-overlay-text > * > span.dark,
+      a.image-overlay-text > * > span.dark {
+        background: #000000;
+        color: #ffffff; }
+    div.image-overlay-text > *.ff-background-only > span,
+    a.image-overlay-text > *.ff-background-only > span {
+      color: transparent; }
+      div.image-overlay-text > *.ff-background-only > span.dark,
+      a.image-overlay-text > *.ff-background-only > span.dark {
+        color: transparent; }
+    div.image-overlay-text > *.ff-foreground-only > span,
+    a.image-overlay-text > *.ff-foreground-only > span {
+      opacity: 1;
+      background: transparent; }
+      div.image-overlay-text > *.ff-foreground-only > span.dark,
+      a.image-overlay-text > *.ff-foreground-only > span.dark {
+        background: transparent; }
+  div.image-overlay-text > img,
+  a.image-overlay-text > img {
+    position: unset;
+    display: block; }
+
+a.image-overlay-text > * > span {
+  color: #2755dd; }
+  a.image-overlay-text > * > span.dark {
+    background: #2755dd; }
+
+a.image-overlay-text:hover > :not(.ff-foreground-only) > span, a.image-overlay-text:focus > :not(.ff-foreground-only) > span {
+  opacity: 0.87; }
+
+a.image-overlay-text:hover > :not(.ff-foreground-only) > span.dark, a.image-overlay-text:focus > :not(.ff-foreground-only) > span.dark {
+  background: #2148bc; }
+
+a.image-overlay-text:hover > img, a.image-overlay-text:focus > img {
+  outline: 3px solid rgba(39, 85, 221, 0.8);
+  outline-offset: -3px; }
+
+div.image-x2,
+div.image-x3,
+div.image-x4 {
+  display: grid;
+  grid-gap: 2em;
+  justify-items: center;
+  align-items: center;
+  grid-auto-flow: row; }
+  div.image-x2.top,
+  div.image-x3.top,
+  div.image-x4.top {
+    align-items: start; }
+  div.image-x2.bottom,
+  div.image-x3.bottom,
+  div.image-x4.bottom {
+    align-items: end; }
+  div.image-x2 > * > img,
+  div.image-x2 > *,
+  div.image-x3 > * > img,
+  div.image-x3 > *,
+  div.image-x4 > * > img,
+  div.image-x4 > * {
+    width: 100%; }
+  @media (max-width: 540px) {
+    div.image-x2.require-minitab,
+    div.image-x3.require-minitab,
+    div.image-x4.require-minitab {
+      grid-template-columns: 1fr !important; }
+      div.image-x2.require-minitab.narrow-left,
+      div.image-x3.require-minitab.narrow-left,
+      div.image-x4.require-minitab.narrow-left {
+        justify-items: start; }
+        div.image-x2.require-minitab.narrow-left > *,
+        div.image-x3.require-minitab.narrow-left > *,
+        div.image-x4.require-minitab.narrow-left > * {
+          width: unset; }
+      div.image-x2.require-minitab.narrow-right,
+      div.image-x3.require-minitab.narrow-right,
+      div.image-x4.require-minitab.narrow-right {
+        justify-items: end; }
+        div.image-x2.require-minitab.narrow-right > *,
+        div.image-x3.require-minitab.narrow-right > *,
+        div.image-x4.require-minitab.narrow-right > * {
+          width: unset; }
+      div.image-x2.require-minitab.narrow-center > *,
+      div.image-x3.require-minitab.narrow-center > *,
+      div.image-x4.require-minitab.narrow-center > * {
+        width: unset; }
+      div.image-x2.require-minitab.narrow-x2,
+      div.image-x3.require-minitab.narrow-x2,
+      div.image-x4.require-minitab.narrow-x2 {
+        grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (max-width: 760px) {
+    div.image-x2.require-tablet,
+    div.image-x3.require-tablet,
+    div.image-x4.require-tablet {
+      grid-template-columns: 1fr !important; }
+      div.image-x2.require-tablet.narrow-left,
+      div.image-x3.require-tablet.narrow-left,
+      div.image-x4.require-tablet.narrow-left {
+        justify-items: start; }
+        div.image-x2.require-tablet.narrow-left > *,
+        div.image-x3.require-tablet.narrow-left > *,
+        div.image-x4.require-tablet.narrow-left > * {
+          width: unset; }
+      div.image-x2.require-tablet.narrow-right,
+      div.image-x3.require-tablet.narrow-right,
+      div.image-x4.require-tablet.narrow-right {
+        justify-items: end; }
+        div.image-x2.require-tablet.narrow-right > *,
+        div.image-x3.require-tablet.narrow-right > *,
+        div.image-x4.require-tablet.narrow-right > * {
+          width: unset; }
+      div.image-x2.require-tablet.narrow-center > *,
+      div.image-x3.require-tablet.narrow-center > *,
+      div.image-x4.require-tablet.narrow-center > * {
+        width: unset; }
+      div.image-x2.require-tablet.narrow-x2,
+      div.image-x3.require-tablet.narrow-x2,
+      div.image-x4.require-tablet.narrow-x2 {
+        grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (max-width: 900px) {
+    div.image-x2.require-desktop,
+    div.image-x3.require-desktop,
+    div.image-x4.require-desktop {
+      grid-template-columns: 1fr !important; }
+      div.image-x2.require-desktop.narrow-left,
+      div.image-x3.require-desktop.narrow-left,
+      div.image-x4.require-desktop.narrow-left {
+        justify-items: start; }
+        div.image-x2.require-desktop.narrow-left > *,
+        div.image-x3.require-desktop.narrow-left > *,
+        div.image-x4.require-desktop.narrow-left > * {
+          width: unset; }
+      div.image-x2.require-desktop.narrow-right,
+      div.image-x3.require-desktop.narrow-right,
+      div.image-x4.require-desktop.narrow-right {
+        justify-items: end; }
+        div.image-x2.require-desktop.narrow-right > *,
+        div.image-x3.require-desktop.narrow-right > *,
+        div.image-x4.require-desktop.narrow-right > * {
+          width: unset; }
+      div.image-x2.require-desktop.narrow-center > *,
+      div.image-x3.require-desktop.narrow-center > *,
+      div.image-x4.require-desktop.narrow-center > * {
+        width: unset; }
+      div.image-x2.require-desktop.narrow-x2,
+      div.image-x3.require-desktop.narrow-x2,
+      div.image-x4.require-desktop.narrow-x2 {
+        grid-template-columns: repeat(2, 1fr) !important; } }
+  @media (max-width: 1200px) {
+    div.image-x2.require-wide,
+    div.image-x3.require-wide,
+    div.image-x4.require-wide {
+      grid-template-columns: 1fr !important; }
+      div.image-x2.require-wide.narrow-left,
+      div.image-x3.require-wide.narrow-left,
+      div.image-x4.require-wide.narrow-left {
+        justify-items: start; }
+        div.image-x2.require-wide.narrow-left > *,
+        div.image-x3.require-wide.narrow-left > *,
+        div.image-x4.require-wide.narrow-left > * {
+          width: unset; }
+      div.image-x2.require-wide.narrow-right,
+      div.image-x3.require-wide.narrow-right,
+      div.image-x4.require-wide.narrow-right {
+        justify-items: end; }
+        div.image-x2.require-wide.narrow-right > *,
+        div.image-x3.require-wide.narrow-right > *,
+        div.image-x4.require-wide.narrow-right > * {
+          width: unset; }
+      div.image-x2.require-wide.narrow-center > *,
+      div.image-x3.require-wide.narrow-center > *,
+      div.image-x4.require-wide.narrow-center > * {
+        width: unset; }
+      div.image-x2.require-wide.narrow-x2,
+      div.image-x3.require-wide.narrow-x2,
+      div.image-x4.require-wide.narrow-x2 {
+        grid-template-columns: repeat(2, 1fr) !important; } }
+
+div.image-x2 {
+  grid-template-columns: repeat(2, 1fr); }
+
+div.image-x3 {
+  grid-template-columns: repeat(3, 1fr); }
+
+div.image-x4 {
+  grid-template-columns: repeat(4, 1fr); }
 
 p.critical,
 div.critical, p.error,
@@ -1420,6 +1796,8 @@ form {
   .form-row label {
     justify-self: start;
     align-self: center; }
+    .form-row label.top {
+      align-self: start; }
   @media (max-width: 540px) {
     .form-row.require-minitab {
       grid-template-columns: 100% !important;
@@ -1616,19 +1994,33 @@ a.button {
   a.buttona:visited {
     color: #000000;
     text-decoration: none !important; }
+  button:link:hover, button:visited:hover, input[type=button]:link:hover, input[type=button]:visited:hover, input[type=color]:link:hover, input[type=color]:visited:hover, input[type=image]:link:hover, input[type=image]:visited:hover, input[type=reset]:link:hover, input[type=reset]:visited:hover, input[type=submit]:link:hover, input[type=submit]:visited:hover,
+  div.buttons a:link:hover,
+  div.buttons a:visited:hover,
+  span.buttons a:link:hover,
+  span.buttons a:visited:hover,
+  a.button:link:hover,
+  a.button:visited:hover {
+    color: #000000; }
   .dark button, .dark input[type=button], .dark input[type=color], .dark input[type=image], .dark input[type=reset], .dark input[type=submit], .dark
   div.buttons a, .dark
   span.buttons a, .dark
   a.button {
     background: #606060;
     color: #f0f0f0; }
-    .dark buttona:link, .dark buttona:visited, .dark input[type=button]a:link, .dark input[type=button]a:visited, .dark input[type=color]a:link, .dark input[type=color]a:visited, .dark input[type=image]a:link, .dark input[type=image]a:visited, .dark input[type=reset]a:link, .dark input[type=reset]a:visited, .dark input[type=submit]a:link, .dark input[type=submit]a:visited, .dark
+    .dark buttona:link, .dark buttona:visited, .dark button:link:hover, .dark button:visited:hover, .dark input[type=button]a:link, .dark input[type=button]a:visited, .dark input[type=button]:link:hover, .dark input[type=button]:visited:hover, .dark input[type=color]a:link, .dark input[type=color]a:visited, .dark input[type=color]:link:hover, .dark input[type=color]:visited:hover, .dark input[type=image]a:link, .dark input[type=image]a:visited, .dark input[type=image]:link:hover, .dark input[type=image]:visited:hover, .dark input[type=reset]a:link, .dark input[type=reset]a:visited, .dark input[type=reset]:link:hover, .dark input[type=reset]:visited:hover, .dark input[type=submit]a:link, .dark input[type=submit]a:visited, .dark input[type=submit]:link:hover, .dark input[type=submit]:visited:hover, .dark
     div.buttons aa:link, .dark
     div.buttons aa:visited, .dark
+    div.buttons a:link:hover, .dark
+    div.buttons a:visited:hover, .dark
     span.buttons aa:link, .dark
     span.buttons aa:visited, .dark
+    span.buttons a:link:hover, .dark
+    span.buttons a:visited:hover, .dark
     a.buttona:link, .dark
-    a.buttona:visited {
+    a.buttona:visited, .dark
+    a.button:link:hover, .dark
+    a.button:visited:hover {
       color: #f0f0f0; }
   .larger button, button.larger, .larger input[type=button], input[type=button].larger, .larger input[type=color], input[type=color].larger, .larger input[type=image], input[type=image].larger, .larger input[type=reset], input[type=reset].larger, .larger input[type=submit], input[type=submit].larger, .larger
   div.buttons a,
@@ -1666,19 +2058,31 @@ a.button {
     background: #adadad;
     transition: background 0s;
     color: #000000; }
-    button:active:not(:disabled):not([disabled])a:link, button:active:not(:disabled):not([disabled])a:visited, button.ff-active:not(:disabled):not([disabled])a:link, button.ff-active:not(:disabled):not([disabled])a:visited, input[type=button]:active:not(:disabled):not([disabled])a:link, input[type=button]:active:not(:disabled):not([disabled])a:visited, input[type=button].ff-active:not(:disabled):not([disabled])a:link, input[type=button].ff-active:not(:disabled):not([disabled])a:visited, input[type=color]:active:not(:disabled):not([disabled])a:link, input[type=color]:active:not(:disabled):not([disabled])a:visited, input[type=color].ff-active:not(:disabled):not([disabled])a:link, input[type=color].ff-active:not(:disabled):not([disabled])a:visited, input[type=image]:active:not(:disabled):not([disabled])a:link, input[type=image]:active:not(:disabled):not([disabled])a:visited, input[type=image].ff-active:not(:disabled):not([disabled])a:link, input[type=image].ff-active:not(:disabled):not([disabled])a:visited, input[type=reset]:active:not(:disabled):not([disabled])a:link, input[type=reset]:active:not(:disabled):not([disabled])a:visited, input[type=reset].ff-active:not(:disabled):not([disabled])a:link, input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, input[type=submit]:active:not(:disabled):not([disabled])a:link, input[type=submit]:active:not(:disabled):not([disabled])a:visited, input[type=submit].ff-active:not(:disabled):not([disabled])a:link, input[type=submit].ff-active:not(:disabled):not([disabled])a:visited,
+    button:active:not(:disabled):not([disabled])a:link, button:active:not(:disabled):not([disabled])a:visited, button:active:not(:disabled):not([disabled]):link:hover, button:active:not(:disabled):not([disabled]):visited:hover, button.ff-active:not(:disabled):not([disabled])a:link, button.ff-active:not(:disabled):not([disabled])a:visited, button.ff-active:not(:disabled):not([disabled]):link:hover, button.ff-active:not(:disabled):not([disabled]):visited:hover, input[type=button]:active:not(:disabled):not([disabled])a:link, input[type=button]:active:not(:disabled):not([disabled])a:visited, input[type=button]:active:not(:disabled):not([disabled]):link:hover, input[type=button]:active:not(:disabled):not([disabled]):visited:hover, input[type=button].ff-active:not(:disabled):not([disabled])a:link, input[type=button].ff-active:not(:disabled):not([disabled])a:visited, input[type=button].ff-active:not(:disabled):not([disabled]):link:hover, input[type=button].ff-active:not(:disabled):not([disabled]):visited:hover, input[type=color]:active:not(:disabled):not([disabled])a:link, input[type=color]:active:not(:disabled):not([disabled])a:visited, input[type=color]:active:not(:disabled):not([disabled]):link:hover, input[type=color]:active:not(:disabled):not([disabled]):visited:hover, input[type=color].ff-active:not(:disabled):not([disabled])a:link, input[type=color].ff-active:not(:disabled):not([disabled])a:visited, input[type=color].ff-active:not(:disabled):not([disabled]):link:hover, input[type=color].ff-active:not(:disabled):not([disabled]):visited:hover, input[type=image]:active:not(:disabled):not([disabled])a:link, input[type=image]:active:not(:disabled):not([disabled])a:visited, input[type=image]:active:not(:disabled):not([disabled]):link:hover, input[type=image]:active:not(:disabled):not([disabled]):visited:hover, input[type=image].ff-active:not(:disabled):not([disabled])a:link, input[type=image].ff-active:not(:disabled):not([disabled])a:visited, input[type=image].ff-active:not(:disabled):not([disabled]):link:hover, input[type=image].ff-active:not(:disabled):not([disabled]):visited:hover, input[type=reset]:active:not(:disabled):not([disabled])a:link, input[type=reset]:active:not(:disabled):not([disabled])a:visited, input[type=reset]:active:not(:disabled):not([disabled]):link:hover, input[type=reset]:active:not(:disabled):not([disabled]):visited:hover, input[type=reset].ff-active:not(:disabled):not([disabled])a:link, input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, input[type=reset].ff-active:not(:disabled):not([disabled]):link:hover, input[type=reset].ff-active:not(:disabled):not([disabled]):visited:hover, input[type=submit]:active:not(:disabled):not([disabled])a:link, input[type=submit]:active:not(:disabled):not([disabled])a:visited, input[type=submit]:active:not(:disabled):not([disabled]):link:hover, input[type=submit]:active:not(:disabled):not([disabled]):visited:hover, input[type=submit].ff-active:not(:disabled):not([disabled])a:link, input[type=submit].ff-active:not(:disabled):not([disabled])a:visited, input[type=submit].ff-active:not(:disabled):not([disabled]):link:hover, input[type=submit].ff-active:not(:disabled):not([disabled]):visited:hover,
     div.buttons a:active:not(:disabled):not([disabled])a:link,
     div.buttons a:active:not(:disabled):not([disabled])a:visited,
+    div.buttons a:active:not(:disabled):not([disabled]):link:hover,
+    div.buttons a:active:not(:disabled):not([disabled]):visited:hover,
     div.buttons a.ff-active:not(:disabled):not([disabled])a:link,
     div.buttons a.ff-active:not(:disabled):not([disabled])a:visited,
+    div.buttons a.ff-active:not(:disabled):not([disabled]):link:hover,
+    div.buttons a.ff-active:not(:disabled):not([disabled]):visited:hover,
     span.buttons a:active:not(:disabled):not([disabled])a:link,
     span.buttons a:active:not(:disabled):not([disabled])a:visited,
+    span.buttons a:active:not(:disabled):not([disabled]):link:hover,
+    span.buttons a:active:not(:disabled):not([disabled]):visited:hover,
     span.buttons a.ff-active:not(:disabled):not([disabled])a:link,
     span.buttons a.ff-active:not(:disabled):not([disabled])a:visited,
+    span.buttons a.ff-active:not(:disabled):not([disabled]):link:hover,
+    span.buttons a.ff-active:not(:disabled):not([disabled]):visited:hover,
     a.button:active:not(:disabled):not([disabled])a:link,
     a.button:active:not(:disabled):not([disabled])a:visited,
+    a.button:active:not(:disabled):not([disabled]):link:hover,
+    a.button:active:not(:disabled):not([disabled]):visited:hover,
     a.button.ff-active:not(:disabled):not([disabled])a:link,
-    a.button.ff-active:not(:disabled):not([disabled])a:visited {
+    a.button.ff-active:not(:disabled):not([disabled])a:visited,
+    a.button.ff-active:not(:disabled):not([disabled]):link:hover,
+    a.button.ff-active:not(:disabled):not([disabled]):visited:hover {
       color: #000000; }
     .dark button:active:not(:disabled):not([disabled]), .dark button.ff-active:not(:disabled):not([disabled]), .dark input[type=button]:active:not(:disabled):not([disabled]), .dark input[type=button].ff-active:not(:disabled):not([disabled]), .dark input[type=color]:active:not(:disabled):not([disabled]), .dark input[type=color].ff-active:not(:disabled):not([disabled]), .dark input[type=image]:active:not(:disabled):not([disabled]), .dark input[type=image].ff-active:not(:disabled):not([disabled]), .dark input[type=reset]:active:not(:disabled):not([disabled]), .dark input[type=reset].ff-active:not(:disabled):not([disabled]), .dark input[type=submit]:active:not(:disabled):not([disabled]), .dark input[type=submit].ff-active:not(:disabled):not([disabled]), .dark
     div.buttons a:active:not(:disabled):not([disabled]), .dark
@@ -1689,19 +2093,31 @@ a.button {
     a.button.ff-active:not(:disabled):not([disabled]) {
       background: #888888;
       color: #f0f0f0; }
-      .dark button:active:not(:disabled):not([disabled])a:link, .dark button:active:not(:disabled):not([disabled])a:visited, .dark button.ff-active:not(:disabled):not([disabled])a:link, .dark button.ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=button]:active:not(:disabled):not([disabled])a:link, .dark input[type=button]:active:not(:disabled):not([disabled])a:visited, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=color]:active:not(:disabled):not([disabled])a:link, .dark input[type=color]:active:not(:disabled):not([disabled])a:visited, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=image]:active:not(:disabled):not([disabled])a:link, .dark input[type=image]:active:not(:disabled):not([disabled])a:visited, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=reset]:active:not(:disabled):not([disabled])a:link, .dark input[type=reset]:active:not(:disabled):not([disabled])a:visited, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=submit]:active:not(:disabled):not([disabled])a:link, .dark input[type=submit]:active:not(:disabled):not([disabled])a:visited, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:visited, .dark
+      .dark button:active:not(:disabled):not([disabled])a:link, .dark button:active:not(:disabled):not([disabled])a:visited, .dark button:active:not(:disabled):not([disabled]):link:hover, .dark button:active:not(:disabled):not([disabled]):visited:hover, .dark button.ff-active:not(:disabled):not([disabled])a:link, .dark button.ff-active:not(:disabled):not([disabled])a:visited, .dark button.ff-active:not(:disabled):not([disabled]):link:hover, .dark button.ff-active:not(:disabled):not([disabled]):visited:hover, .dark input[type=button]:active:not(:disabled):not([disabled])a:link, .dark input[type=button]:active:not(:disabled):not([disabled])a:visited, .dark input[type=button]:active:not(:disabled):not([disabled]):link:hover, .dark input[type=button]:active:not(:disabled):not([disabled]):visited:hover, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=button].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=button].ff-active:not(:disabled):not([disabled]):link:hover, .dark input[type=button].ff-active:not(:disabled):not([disabled]):visited:hover, .dark input[type=color]:active:not(:disabled):not([disabled])a:link, .dark input[type=color]:active:not(:disabled):not([disabled])a:visited, .dark input[type=color]:active:not(:disabled):not([disabled]):link:hover, .dark input[type=color]:active:not(:disabled):not([disabled]):visited:hover, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=color].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=color].ff-active:not(:disabled):not([disabled]):link:hover, .dark input[type=color].ff-active:not(:disabled):not([disabled]):visited:hover, .dark input[type=image]:active:not(:disabled):not([disabled])a:link, .dark input[type=image]:active:not(:disabled):not([disabled])a:visited, .dark input[type=image]:active:not(:disabled):not([disabled]):link:hover, .dark input[type=image]:active:not(:disabled):not([disabled]):visited:hover, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=image].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=image].ff-active:not(:disabled):not([disabled]):link:hover, .dark input[type=image].ff-active:not(:disabled):not([disabled]):visited:hover, .dark input[type=reset]:active:not(:disabled):not([disabled])a:link, .dark input[type=reset]:active:not(:disabled):not([disabled])a:visited, .dark input[type=reset]:active:not(:disabled):not([disabled]):link:hover, .dark input[type=reset]:active:not(:disabled):not([disabled]):visited:hover, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=reset].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=reset].ff-active:not(:disabled):not([disabled]):link:hover, .dark input[type=reset].ff-active:not(:disabled):not([disabled]):visited:hover, .dark input[type=submit]:active:not(:disabled):not([disabled])a:link, .dark input[type=submit]:active:not(:disabled):not([disabled])a:visited, .dark input[type=submit]:active:not(:disabled):not([disabled]):link:hover, .dark input[type=submit]:active:not(:disabled):not([disabled]):visited:hover, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:link, .dark input[type=submit].ff-active:not(:disabled):not([disabled])a:visited, .dark input[type=submit].ff-active:not(:disabled):not([disabled]):link:hover, .dark input[type=submit].ff-active:not(:disabled):not([disabled]):visited:hover, .dark
       div.buttons a:active:not(:disabled):not([disabled])a:link, .dark
       div.buttons a:active:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a:active:not(:disabled):not([disabled]):link:hover, .dark
+      div.buttons a:active:not(:disabled):not([disabled]):visited:hover, .dark
       div.buttons a.ff-active:not(:disabled):not([disabled])a:link, .dark
       div.buttons a.ff-active:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.ff-active:not(:disabled):not([disabled]):link:hover, .dark
+      div.buttons a.ff-active:not(:disabled):not([disabled]):visited:hover, .dark
       span.buttons a:active:not(:disabled):not([disabled])a:link, .dark
       span.buttons a:active:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a:active:not(:disabled):not([disabled]):link:hover, .dark
+      span.buttons a:active:not(:disabled):not([disabled]):visited:hover, .dark
       span.buttons a.ff-active:not(:disabled):not([disabled])a:link, .dark
       span.buttons a.ff-active:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.ff-active:not(:disabled):not([disabled]):link:hover, .dark
+      span.buttons a.ff-active:not(:disabled):not([disabled]):visited:hover, .dark
       a.button:active:not(:disabled):not([disabled])a:link, .dark
       a.button:active:not(:disabled):not([disabled])a:visited, .dark
+      a.button:active:not(:disabled):not([disabled]):link:hover, .dark
+      a.button:active:not(:disabled):not([disabled]):visited:hover, .dark
       a.button.ff-active:not(:disabled):not([disabled])a:link, .dark
-      a.button.ff-active:not(:disabled):not([disabled])a:visited {
+      a.button.ff-active:not(:disabled):not([disabled])a:visited, .dark
+      a.button.ff-active:not(:disabled):not([disabled]):link:hover, .dark
+      a.button.ff-active:not(:disabled):not([disabled]):visited:hover {
         color: #f0f0f0; }
   button:disabled, button[disabled], input[type=button]:disabled, input[type=button][disabled], input[type=color]:disabled, input[type=color][disabled], input[type=image]:disabled, input[type=image][disabled], input[type=reset]:disabled, input[type=reset][disabled], input[type=submit]:disabled, input[type=submit][disabled],
   div.buttons a:disabled,
@@ -1713,19 +2129,31 @@ a.button {
     background: #e4e4e4;
     color: #808080;
     cursor: default; }
-    button:disableda:link, button:disableda:visited, button[disabled]a:link, button[disabled]a:visited, input[type=button]:disableda:link, input[type=button]:disableda:visited, input[type=button][disabled]a:link, input[type=button][disabled]a:visited, input[type=color]:disableda:link, input[type=color]:disableda:visited, input[type=color][disabled]a:link, input[type=color][disabled]a:visited, input[type=image]:disableda:link, input[type=image]:disableda:visited, input[type=image][disabled]a:link, input[type=image][disabled]a:visited, input[type=reset]:disableda:link, input[type=reset]:disableda:visited, input[type=reset][disabled]a:link, input[type=reset][disabled]a:visited, input[type=submit]:disableda:link, input[type=submit]:disableda:visited, input[type=submit][disabled]a:link, input[type=submit][disabled]a:visited,
+    button:disableda:link, button:disableda:visited, button:disabled:link:hover, button:disabled:visited:hover, button[disabled]a:link, button[disabled]a:visited, button[disabled]:link:hover, button[disabled]:visited:hover, input[type=button]:disableda:link, input[type=button]:disableda:visited, input[type=button]:disabled:link:hover, input[type=button]:disabled:visited:hover, input[type=button][disabled]a:link, input[type=button][disabled]a:visited, input[type=button][disabled]:link:hover, input[type=button][disabled]:visited:hover, input[type=color]:disableda:link, input[type=color]:disableda:visited, input[type=color]:disabled:link:hover, input[type=color]:disabled:visited:hover, input[type=color][disabled]a:link, input[type=color][disabled]a:visited, input[type=color][disabled]:link:hover, input[type=color][disabled]:visited:hover, input[type=image]:disableda:link, input[type=image]:disableda:visited, input[type=image]:disabled:link:hover, input[type=image]:disabled:visited:hover, input[type=image][disabled]a:link, input[type=image][disabled]a:visited, input[type=image][disabled]:link:hover, input[type=image][disabled]:visited:hover, input[type=reset]:disableda:link, input[type=reset]:disableda:visited, input[type=reset]:disabled:link:hover, input[type=reset]:disabled:visited:hover, input[type=reset][disabled]a:link, input[type=reset][disabled]a:visited, input[type=reset][disabled]:link:hover, input[type=reset][disabled]:visited:hover, input[type=submit]:disableda:link, input[type=submit]:disableda:visited, input[type=submit]:disabled:link:hover, input[type=submit]:disabled:visited:hover, input[type=submit][disabled]a:link, input[type=submit][disabled]a:visited, input[type=submit][disabled]:link:hover, input[type=submit][disabled]:visited:hover,
     div.buttons a:disableda:link,
     div.buttons a:disableda:visited,
+    div.buttons a:disabled:link:hover,
+    div.buttons a:disabled:visited:hover,
     div.buttons a[disabled]a:link,
     div.buttons a[disabled]a:visited,
+    div.buttons a[disabled]:link:hover,
+    div.buttons a[disabled]:visited:hover,
     span.buttons a:disableda:link,
     span.buttons a:disableda:visited,
+    span.buttons a:disabled:link:hover,
+    span.buttons a:disabled:visited:hover,
     span.buttons a[disabled]a:link,
     span.buttons a[disabled]a:visited,
+    span.buttons a[disabled]:link:hover,
+    span.buttons a[disabled]:visited:hover,
     a.button:disableda:link,
     a.button:disableda:visited,
+    a.button:disabled:link:hover,
+    a.button:disabled:visited:hover,
     a.button[disabled]a:link,
-    a.button[disabled]a:visited {
+    a.button[disabled]a:visited,
+    a.button[disabled]:link:hover,
+    a.button[disabled]:visited:hover {
       color: #808080; }
     .dark button:disabled, .dark button[disabled], .dark input[type=button]:disabled, .dark input[type=button][disabled], .dark input[type=color]:disabled, .dark input[type=color][disabled], .dark input[type=image]:disabled, .dark input[type=image][disabled], .dark input[type=reset]:disabled, .dark input[type=reset][disabled], .dark input[type=submit]:disabled, .dark input[type=submit][disabled], .dark
     div.buttons a:disabled, .dark
@@ -1736,19 +2164,31 @@ a.button {
     a.button[disabled] {
       background: #3e3e3e;
       color: #a0a0a0; }
-      .dark button:disableda:link, .dark button:disableda:visited, .dark button[disabled]a:link, .dark button[disabled]a:visited, .dark input[type=button]:disableda:link, .dark input[type=button]:disableda:visited, .dark input[type=button][disabled]a:link, .dark input[type=button][disabled]a:visited, .dark input[type=color]:disableda:link, .dark input[type=color]:disableda:visited, .dark input[type=color][disabled]a:link, .dark input[type=color][disabled]a:visited, .dark input[type=image]:disableda:link, .dark input[type=image]:disableda:visited, .dark input[type=image][disabled]a:link, .dark input[type=image][disabled]a:visited, .dark input[type=reset]:disableda:link, .dark input[type=reset]:disableda:visited, .dark input[type=reset][disabled]a:link, .dark input[type=reset][disabled]a:visited, .dark input[type=submit]:disableda:link, .dark input[type=submit]:disableda:visited, .dark input[type=submit][disabled]a:link, .dark input[type=submit][disabled]a:visited, .dark
+      .dark button:disableda:link, .dark button:disableda:visited, .dark button:disabled:link:hover, .dark button:disabled:visited:hover, .dark button[disabled]a:link, .dark button[disabled]a:visited, .dark button[disabled]:link:hover, .dark button[disabled]:visited:hover, .dark input[type=button]:disableda:link, .dark input[type=button]:disableda:visited, .dark input[type=button]:disabled:link:hover, .dark input[type=button]:disabled:visited:hover, .dark input[type=button][disabled]a:link, .dark input[type=button][disabled]a:visited, .dark input[type=button][disabled]:link:hover, .dark input[type=button][disabled]:visited:hover, .dark input[type=color]:disableda:link, .dark input[type=color]:disableda:visited, .dark input[type=color]:disabled:link:hover, .dark input[type=color]:disabled:visited:hover, .dark input[type=color][disabled]a:link, .dark input[type=color][disabled]a:visited, .dark input[type=color][disabled]:link:hover, .dark input[type=color][disabled]:visited:hover, .dark input[type=image]:disableda:link, .dark input[type=image]:disableda:visited, .dark input[type=image]:disabled:link:hover, .dark input[type=image]:disabled:visited:hover, .dark input[type=image][disabled]a:link, .dark input[type=image][disabled]a:visited, .dark input[type=image][disabled]:link:hover, .dark input[type=image][disabled]:visited:hover, .dark input[type=reset]:disableda:link, .dark input[type=reset]:disableda:visited, .dark input[type=reset]:disabled:link:hover, .dark input[type=reset]:disabled:visited:hover, .dark input[type=reset][disabled]a:link, .dark input[type=reset][disabled]a:visited, .dark input[type=reset][disabled]:link:hover, .dark input[type=reset][disabled]:visited:hover, .dark input[type=submit]:disableda:link, .dark input[type=submit]:disableda:visited, .dark input[type=submit]:disabled:link:hover, .dark input[type=submit]:disabled:visited:hover, .dark input[type=submit][disabled]a:link, .dark input[type=submit][disabled]a:visited, .dark input[type=submit][disabled]:link:hover, .dark input[type=submit][disabled]:visited:hover, .dark
       div.buttons a:disableda:link, .dark
       div.buttons a:disableda:visited, .dark
+      div.buttons a:disabled:link:hover, .dark
+      div.buttons a:disabled:visited:hover, .dark
       div.buttons a[disabled]a:link, .dark
       div.buttons a[disabled]a:visited, .dark
+      div.buttons a[disabled]:link:hover, .dark
+      div.buttons a[disabled]:visited:hover, .dark
       span.buttons a:disableda:link, .dark
       span.buttons a:disableda:visited, .dark
+      span.buttons a:disabled:link:hover, .dark
+      span.buttons a:disabled:visited:hover, .dark
       span.buttons a[disabled]a:link, .dark
       span.buttons a[disabled]a:visited, .dark
+      span.buttons a[disabled]:link:hover, .dark
+      span.buttons a[disabled]:visited:hover, .dark
       a.button:disableda:link, .dark
       a.button:disableda:visited, .dark
+      a.button:disabled:link:hover, .dark
+      a.button:disabled:visited:hover, .dark
       a.button[disabled]a:link, .dark
-      a.button[disabled]a:visited {
+      a.button[disabled]a:visited, .dark
+      a.button[disabled]:link:hover, .dark
+      a.button[disabled]:visited:hover {
         color: #a0a0a0; }
   button.default:not(:disabled):not([disabled]), input[type=button].default:not(:disabled):not([disabled]), input[type=color].default:not(:disabled):not([disabled]), input[type=image].default:not(:disabled):not([disabled]), input[type=reset].default:not(:disabled):not([disabled]), input[type=submit].default:not(:disabled):not([disabled]),
   div.buttons a.default:not(:disabled):not([disabled]),
@@ -1756,13 +2196,19 @@ a.button {
   a.button.default:not(:disabled):not([disabled]) {
     background: #2755dd;
     color: #ffffff; }
-    button.default:not(:disabled):not([disabled])a:link, button.default:not(:disabled):not([disabled])a:visited, input[type=button].default:not(:disabled):not([disabled])a:link, input[type=button].default:not(:disabled):not([disabled])a:visited, input[type=color].default:not(:disabled):not([disabled])a:link, input[type=color].default:not(:disabled):not([disabled])a:visited, input[type=image].default:not(:disabled):not([disabled])a:link, input[type=image].default:not(:disabled):not([disabled])a:visited, input[type=reset].default:not(:disabled):not([disabled])a:link, input[type=reset].default:not(:disabled):not([disabled])a:visited, input[type=submit].default:not(:disabled):not([disabled])a:link, input[type=submit].default:not(:disabled):not([disabled])a:visited,
+    button.default:not(:disabled):not([disabled])a:link, button.default:not(:disabled):not([disabled])a:visited, button.default:not(:disabled):not([disabled]):link:hover, button.default:not(:disabled):not([disabled]):visited:hover, input[type=button].default:not(:disabled):not([disabled])a:link, input[type=button].default:not(:disabled):not([disabled])a:visited, input[type=button].default:not(:disabled):not([disabled]):link:hover, input[type=button].default:not(:disabled):not([disabled]):visited:hover, input[type=color].default:not(:disabled):not([disabled])a:link, input[type=color].default:not(:disabled):not([disabled])a:visited, input[type=color].default:not(:disabled):not([disabled]):link:hover, input[type=color].default:not(:disabled):not([disabled]):visited:hover, input[type=image].default:not(:disabled):not([disabled])a:link, input[type=image].default:not(:disabled):not([disabled])a:visited, input[type=image].default:not(:disabled):not([disabled]):link:hover, input[type=image].default:not(:disabled):not([disabled]):visited:hover, input[type=reset].default:not(:disabled):not([disabled])a:link, input[type=reset].default:not(:disabled):not([disabled])a:visited, input[type=reset].default:not(:disabled):not([disabled]):link:hover, input[type=reset].default:not(:disabled):not([disabled]):visited:hover, input[type=submit].default:not(:disabled):not([disabled])a:link, input[type=submit].default:not(:disabled):not([disabled])a:visited, input[type=submit].default:not(:disabled):not([disabled]):link:hover, input[type=submit].default:not(:disabled):not([disabled]):visited:hover,
     div.buttons a.default:not(:disabled):not([disabled])a:link,
     div.buttons a.default:not(:disabled):not([disabled])a:visited,
+    div.buttons a.default:not(:disabled):not([disabled]):link:hover,
+    div.buttons a.default:not(:disabled):not([disabled]):visited:hover,
     span.buttons a.default:not(:disabled):not([disabled])a:link,
     span.buttons a.default:not(:disabled):not([disabled])a:visited,
+    span.buttons a.default:not(:disabled):not([disabled]):link:hover,
+    span.buttons a.default:not(:disabled):not([disabled]):visited:hover,
     a.button.default:not(:disabled):not([disabled])a:link,
-    a.button.default:not(:disabled):not([disabled])a:visited {
+    a.button.default:not(:disabled):not([disabled])a:visited,
+    a.button.default:not(:disabled):not([disabled]):link:hover,
+    a.button.default:not(:disabled):not([disabled]):visited:hover {
       color: #ffffff; }
     .dark button.default:not(:disabled):not([disabled]), .dark input[type=button].default:not(:disabled):not([disabled]), .dark input[type=color].default:not(:disabled):not([disabled]), .dark input[type=image].default:not(:disabled):not([disabled]), .dark input[type=reset].default:not(:disabled):not([disabled]), .dark input[type=submit].default:not(:disabled):not([disabled]), .dark
     div.buttons a.default:not(:disabled):not([disabled]), .dark
@@ -1770,13 +2216,19 @@ a.button {
     a.button.default:not(:disabled):not([disabled]) {
       background: #2755dd;
       color: #ffffff; }
-      .dark button.default:not(:disabled):not([disabled])a:link, .dark button.default:not(:disabled):not([disabled])a:visited, .dark input[type=button].default:not(:disabled):not([disabled])a:link, .dark input[type=button].default:not(:disabled):not([disabled])a:visited, .dark input[type=color].default:not(:disabled):not([disabled])a:link, .dark input[type=color].default:not(:disabled):not([disabled])a:visited, .dark input[type=image].default:not(:disabled):not([disabled])a:link, .dark input[type=image].default:not(:disabled):not([disabled])a:visited, .dark input[type=reset].default:not(:disabled):not([disabled])a:link, .dark input[type=reset].default:not(:disabled):not([disabled])a:visited, .dark input[type=submit].default:not(:disabled):not([disabled])a:link, .dark input[type=submit].default:not(:disabled):not([disabled])a:visited, .dark
+      .dark button.default:not(:disabled):not([disabled])a:link, .dark button.default:not(:disabled):not([disabled])a:visited, .dark button.default:not(:disabled):not([disabled]):link:hover, .dark button.default:not(:disabled):not([disabled]):visited:hover, .dark input[type=button].default:not(:disabled):not([disabled])a:link, .dark input[type=button].default:not(:disabled):not([disabled])a:visited, .dark input[type=button].default:not(:disabled):not([disabled]):link:hover, .dark input[type=button].default:not(:disabled):not([disabled]):visited:hover, .dark input[type=color].default:not(:disabled):not([disabled])a:link, .dark input[type=color].default:not(:disabled):not([disabled])a:visited, .dark input[type=color].default:not(:disabled):not([disabled]):link:hover, .dark input[type=color].default:not(:disabled):not([disabled]):visited:hover, .dark input[type=image].default:not(:disabled):not([disabled])a:link, .dark input[type=image].default:not(:disabled):not([disabled])a:visited, .dark input[type=image].default:not(:disabled):not([disabled]):link:hover, .dark input[type=image].default:not(:disabled):not([disabled]):visited:hover, .dark input[type=reset].default:not(:disabled):not([disabled])a:link, .dark input[type=reset].default:not(:disabled):not([disabled])a:visited, .dark input[type=reset].default:not(:disabled):not([disabled]):link:hover, .dark input[type=reset].default:not(:disabled):not([disabled]):visited:hover, .dark input[type=submit].default:not(:disabled):not([disabled])a:link, .dark input[type=submit].default:not(:disabled):not([disabled])a:visited, .dark input[type=submit].default:not(:disabled):not([disabled]):link:hover, .dark input[type=submit].default:not(:disabled):not([disabled]):visited:hover, .dark
       div.buttons a.default:not(:disabled):not([disabled])a:link, .dark
       div.buttons a.default:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.default:not(:disabled):not([disabled]):link:hover, .dark
+      div.buttons a.default:not(:disabled):not([disabled]):visited:hover, .dark
       span.buttons a.default:not(:disabled):not([disabled])a:link, .dark
       span.buttons a.default:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.default:not(:disabled):not([disabled]):link:hover, .dark
+      span.buttons a.default:not(:disabled):not([disabled]):visited:hover, .dark
       a.button.default:not(:disabled):not([disabled])a:link, .dark
-      a.button.default:not(:disabled):not([disabled])a:visited {
+      a.button.default:not(:disabled):not([disabled])a:visited, .dark
+      a.button.default:not(:disabled):not([disabled]):link:hover, .dark
+      a.button.default:not(:disabled):not([disabled]):visited:hover {
         color: #ffffff; }
     button.default:not(:disabled):not([disabled]):hover, button.default:not(:disabled):not([disabled]):focus, input[type=button].default:not(:disabled):not([disabled]):hover, input[type=button].default:not(:disabled):not([disabled]):focus, input[type=color].default:not(:disabled):not([disabled]):hover, input[type=color].default:not(:disabled):not([disabled]):focus, input[type=image].default:not(:disabled):not([disabled]):hover, input[type=image].default:not(:disabled):not([disabled]):focus, input[type=reset].default:not(:disabled):not([disabled]):hover, input[type=reset].default:not(:disabled):not([disabled]):focus, input[type=submit].default:not(:disabled):not([disabled]):hover, input[type=submit].default:not(:disabled):not([disabled]):focus,
     div.buttons a.default:not(:disabled):not([disabled]):hover,
@@ -1805,19 +2257,31 @@ a.button {
       background: #193790;
       color: #ffffff;
       transition: background 0s; }
-      button.default:not(:disabled):not([disabled]):activea:link, button.default:not(:disabled):not([disabled]):activea:visited, button.default:not(:disabled):not([disabled]).ff-activea:link, button.default:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].default:not(:disabled):not([disabled]):activea:link, input[type=button].default:not(:disabled):not([disabled]):activea:visited, input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].default:not(:disabled):not([disabled]):activea:link, input[type=color].default:not(:disabled):not([disabled]):activea:visited, input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].default:not(:disabled):not([disabled]):activea:link, input[type=image].default:not(:disabled):not([disabled]):activea:visited, input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].default:not(:disabled):not([disabled]):activea:link, input[type=reset].default:not(:disabled):not([disabled]):activea:visited, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].default:not(:disabled):not([disabled]):activea:link, input[type=submit].default:not(:disabled):not([disabled]):activea:visited, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited,
+      button.default:not(:disabled):not([disabled]):activea:link, button.default:not(:disabled):not([disabled]):activea:visited, button.default:not(:disabled):not([disabled]):active:link:hover, button.default:not(:disabled):not([disabled]):active:visited:hover, button.default:not(:disabled):not([disabled]).ff-activea:link, button.default:not(:disabled):not([disabled]).ff-activea:visited, button.default:not(:disabled):not([disabled]).ff-active:link:hover, button.default:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=button].default:not(:disabled):not([disabled]):activea:link, input[type=button].default:not(:disabled):not([disabled]):activea:visited, input[type=button].default:not(:disabled):not([disabled]):active:link:hover, input[type=button].default:not(:disabled):not([disabled]):active:visited:hover, input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].default:not(:disabled):not([disabled]).ff-active:link:hover, input[type=button].default:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=color].default:not(:disabled):not([disabled]):activea:link, input[type=color].default:not(:disabled):not([disabled]):activea:visited, input[type=color].default:not(:disabled):not([disabled]):active:link:hover, input[type=color].default:not(:disabled):not([disabled]):active:visited:hover, input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].default:not(:disabled):not([disabled]).ff-active:link:hover, input[type=color].default:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=image].default:not(:disabled):not([disabled]):activea:link, input[type=image].default:not(:disabled):not([disabled]):activea:visited, input[type=image].default:not(:disabled):not([disabled]):active:link:hover, input[type=image].default:not(:disabled):not([disabled]):active:visited:hover, input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].default:not(:disabled):not([disabled]).ff-active:link:hover, input[type=image].default:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=reset].default:not(:disabled):not([disabled]):activea:link, input[type=reset].default:not(:disabled):not([disabled]):activea:visited, input[type=reset].default:not(:disabled):not([disabled]):active:link:hover, input[type=reset].default:not(:disabled):not([disabled]):active:visited:hover, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].default:not(:disabled):not([disabled]).ff-active:link:hover, input[type=reset].default:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=submit].default:not(:disabled):not([disabled]):activea:link, input[type=submit].default:not(:disabled):not([disabled]):activea:visited, input[type=submit].default:not(:disabled):not([disabled]):active:link:hover, input[type=submit].default:not(:disabled):not([disabled]):active:visited:hover, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].default:not(:disabled):not([disabled]).ff-active:link:hover, input[type=submit].default:not(:disabled):not([disabled]).ff-active:visited:hover,
       div.buttons a.default:not(:disabled):not([disabled]):activea:link,
       div.buttons a.default:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.default:not(:disabled):not([disabled]):active:link:hover,
+      div.buttons a.default:not(:disabled):not([disabled]):active:visited:hover,
       div.buttons a.default:not(:disabled):not([disabled]).ff-activea:link,
       div.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.default:not(:disabled):not([disabled]).ff-active:link:hover,
+      div.buttons a.default:not(:disabled):not([disabled]).ff-active:visited:hover,
       span.buttons a.default:not(:disabled):not([disabled]):activea:link,
       span.buttons a.default:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.default:not(:disabled):not([disabled]):active:link:hover,
+      span.buttons a.default:not(:disabled):not([disabled]):active:visited:hover,
       span.buttons a.default:not(:disabled):not([disabled]).ff-activea:link,
       span.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.default:not(:disabled):not([disabled]).ff-active:link:hover,
+      span.buttons a.default:not(:disabled):not([disabled]).ff-active:visited:hover,
       a.button.default:not(:disabled):not([disabled]):activea:link,
       a.button.default:not(:disabled):not([disabled]):activea:visited,
+      a.button.default:not(:disabled):not([disabled]):active:link:hover,
+      a.button.default:not(:disabled):not([disabled]):active:visited:hover,
       a.button.default:not(:disabled):not([disabled]).ff-activea:link,
-      a.button.default:not(:disabled):not([disabled]).ff-activea:visited {
+      a.button.default:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.default:not(:disabled):not([disabled]).ff-active:link:hover,
+      a.button.default:not(:disabled):not([disabled]).ff-active:visited:hover {
         color: #ffffff; }
       .dark button.default:not(:disabled):not([disabled]):active, .dark button.default:not(:disabled):not([disabled]).ff-active, .dark input[type=button].default:not(:disabled):not([disabled]):active, .dark input[type=button].default:not(:disabled):not([disabled]).ff-active, .dark input[type=color].default:not(:disabled):not([disabled]):active, .dark input[type=color].default:not(:disabled):not([disabled]).ff-active, .dark input[type=image].default:not(:disabled):not([disabled]):active, .dark input[type=image].default:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].default:not(:disabled):not([disabled]):active, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].default:not(:disabled):not([disabled]):active, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.default:not(:disabled):not([disabled]):active, .dark
@@ -1828,19 +2292,31 @@ a.button {
       a.button.default:not(:disabled):not([disabled]).ff-active {
         background: #193790;
         color: #ffffff; }
-        .dark button.default:not(:disabled):not([disabled]):activea:link, .dark button.default:not(:disabled):not([disabled]):activea:visited, .dark button.default:not(:disabled):not([disabled]).ff-activea:link, .dark button.default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]):activea:link, .dark input[type=button].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]):activea:link, .dark input[type=color].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]):activea:link, .dark input[type=image].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        .dark button.default:not(:disabled):not([disabled]):activea:link, .dark button.default:not(:disabled):not([disabled]):activea:visited, .dark button.default:not(:disabled):not([disabled]):active:link:hover, .dark button.default:not(:disabled):not([disabled]):active:visited:hover, .dark button.default:not(:disabled):not([disabled]).ff-activea:link, .dark button.default:not(:disabled):not([disabled]).ff-activea:visited, .dark button.default:not(:disabled):not([disabled]).ff-active:link:hover, .dark button.default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=button].default:not(:disabled):not([disabled]):activea:link, .dark input[type=button].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]):active:link:hover, .dark input[type=button].default:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].default:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=button].default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=color].default:not(:disabled):not([disabled]):activea:link, .dark input[type=color].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]):active:link:hover, .dark input[type=color].default:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].default:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=color].default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=image].default:not(:disabled):not([disabled]):activea:link, .dark input[type=image].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]):active:link:hover, .dark input[type=image].default:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].default:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=image].default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]):active:link:hover, .dark input[type=reset].default:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=reset].default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]):active:link:hover, .dark input[type=submit].default:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=submit].default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         div.buttons a.default:not(:disabled):not([disabled]):activea:link, .dark
         div.buttons a.default:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.default:not(:disabled):not([disabled]):active:link:hover, .dark
+        div.buttons a.default:not(:disabled):not([disabled]):active:visited:hover, .dark
         div.buttons a.default:not(:disabled):not([disabled]).ff-activea:link, .dark
         div.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.default:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        div.buttons a.default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         span.buttons a.default:not(:disabled):not([disabled]):activea:link, .dark
         span.buttons a.default:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.default:not(:disabled):not([disabled]):active:link:hover, .dark
+        span.buttons a.default:not(:disabled):not([disabled]):active:visited:hover, .dark
         span.buttons a.default:not(:disabled):not([disabled]).ff-activea:link, .dark
         span.buttons a.default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.default:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        span.buttons a.default:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         a.button.default:not(:disabled):not([disabled]):activea:link, .dark
         a.button.default:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.default:not(:disabled):not([disabled]):active:link:hover, .dark
+        a.button.default:not(:disabled):not([disabled]):active:visited:hover, .dark
         a.button.default:not(:disabled):not([disabled]).ff-activea:link, .dark
-        a.button.default:not(:disabled):not([disabled]).ff-activea:visited {
+        a.button.default:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.default:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        a.button.default:not(:disabled):not([disabled]).ff-active:visited:hover {
           color: #ffffff; }
   button.caution:not(:disabled):not([disabled]), input[type=button].caution:not(:disabled):not([disabled]), input[type=color].caution:not(:disabled):not([disabled]), input[type=image].caution:not(:disabled):not([disabled]), input[type=reset].caution:not(:disabled):not([disabled]), input[type=submit].caution:not(:disabled):not([disabled]),
   div.buttons a.caution:not(:disabled):not([disabled]),
@@ -1848,13 +2324,19 @@ a.button {
   a.button.caution:not(:disabled):not([disabled]) {
     background: #c44818;
     color: #ffffff; }
-    button.caution:not(:disabled):not([disabled])a:link, button.caution:not(:disabled):not([disabled])a:visited, input[type=button].caution:not(:disabled):not([disabled])a:link, input[type=button].caution:not(:disabled):not([disabled])a:visited, input[type=color].caution:not(:disabled):not([disabled])a:link, input[type=color].caution:not(:disabled):not([disabled])a:visited, input[type=image].caution:not(:disabled):not([disabled])a:link, input[type=image].caution:not(:disabled):not([disabled])a:visited, input[type=reset].caution:not(:disabled):not([disabled])a:link, input[type=reset].caution:not(:disabled):not([disabled])a:visited, input[type=submit].caution:not(:disabled):not([disabled])a:link, input[type=submit].caution:not(:disabled):not([disabled])a:visited,
+    button.caution:not(:disabled):not([disabled])a:link, button.caution:not(:disabled):not([disabled])a:visited, button.caution:not(:disabled):not([disabled]):link:hover, button.caution:not(:disabled):not([disabled]):visited:hover, input[type=button].caution:not(:disabled):not([disabled])a:link, input[type=button].caution:not(:disabled):not([disabled])a:visited, input[type=button].caution:not(:disabled):not([disabled]):link:hover, input[type=button].caution:not(:disabled):not([disabled]):visited:hover, input[type=color].caution:not(:disabled):not([disabled])a:link, input[type=color].caution:not(:disabled):not([disabled])a:visited, input[type=color].caution:not(:disabled):not([disabled]):link:hover, input[type=color].caution:not(:disabled):not([disabled]):visited:hover, input[type=image].caution:not(:disabled):not([disabled])a:link, input[type=image].caution:not(:disabled):not([disabled])a:visited, input[type=image].caution:not(:disabled):not([disabled]):link:hover, input[type=image].caution:not(:disabled):not([disabled]):visited:hover, input[type=reset].caution:not(:disabled):not([disabled])a:link, input[type=reset].caution:not(:disabled):not([disabled])a:visited, input[type=reset].caution:not(:disabled):not([disabled]):link:hover, input[type=reset].caution:not(:disabled):not([disabled]):visited:hover, input[type=submit].caution:not(:disabled):not([disabled])a:link, input[type=submit].caution:not(:disabled):not([disabled])a:visited, input[type=submit].caution:not(:disabled):not([disabled]):link:hover, input[type=submit].caution:not(:disabled):not([disabled]):visited:hover,
     div.buttons a.caution:not(:disabled):not([disabled])a:link,
     div.buttons a.caution:not(:disabled):not([disabled])a:visited,
+    div.buttons a.caution:not(:disabled):not([disabled]):link:hover,
+    div.buttons a.caution:not(:disabled):not([disabled]):visited:hover,
     span.buttons a.caution:not(:disabled):not([disabled])a:link,
     span.buttons a.caution:not(:disabled):not([disabled])a:visited,
+    span.buttons a.caution:not(:disabled):not([disabled]):link:hover,
+    span.buttons a.caution:not(:disabled):not([disabled]):visited:hover,
     a.button.caution:not(:disabled):not([disabled])a:link,
-    a.button.caution:not(:disabled):not([disabled])a:visited {
+    a.button.caution:not(:disabled):not([disabled])a:visited,
+    a.button.caution:not(:disabled):not([disabled]):link:hover,
+    a.button.caution:not(:disabled):not([disabled]):visited:hover {
       color: #ffffff; }
     .dark button.caution:not(:disabled):not([disabled]), .dark input[type=button].caution:not(:disabled):not([disabled]), .dark input[type=color].caution:not(:disabled):not([disabled]), .dark input[type=image].caution:not(:disabled):not([disabled]), .dark input[type=reset].caution:not(:disabled):not([disabled]), .dark input[type=submit].caution:not(:disabled):not([disabled]), .dark
     div.buttons a.caution:not(:disabled):not([disabled]), .dark
@@ -1862,13 +2344,19 @@ a.button {
     a.button.caution:not(:disabled):not([disabled]) {
       background: #c44818;
       color: #ffffff; }
-      .dark button.caution:not(:disabled):not([disabled])a:link, .dark button.caution:not(:disabled):not([disabled])a:visited, .dark input[type=button].caution:not(:disabled):not([disabled])a:link, .dark input[type=button].caution:not(:disabled):not([disabled])a:visited, .dark input[type=color].caution:not(:disabled):not([disabled])a:link, .dark input[type=color].caution:not(:disabled):not([disabled])a:visited, .dark input[type=image].caution:not(:disabled):not([disabled])a:link, .dark input[type=image].caution:not(:disabled):not([disabled])a:visited, .dark input[type=reset].caution:not(:disabled):not([disabled])a:link, .dark input[type=reset].caution:not(:disabled):not([disabled])a:visited, .dark input[type=submit].caution:not(:disabled):not([disabled])a:link, .dark input[type=submit].caution:not(:disabled):not([disabled])a:visited, .dark
+      .dark button.caution:not(:disabled):not([disabled])a:link, .dark button.caution:not(:disabled):not([disabled])a:visited, .dark button.caution:not(:disabled):not([disabled]):link:hover, .dark button.caution:not(:disabled):not([disabled]):visited:hover, .dark input[type=button].caution:not(:disabled):not([disabled])a:link, .dark input[type=button].caution:not(:disabled):not([disabled])a:visited, .dark input[type=button].caution:not(:disabled):not([disabled]):link:hover, .dark input[type=button].caution:not(:disabled):not([disabled]):visited:hover, .dark input[type=color].caution:not(:disabled):not([disabled])a:link, .dark input[type=color].caution:not(:disabled):not([disabled])a:visited, .dark input[type=color].caution:not(:disabled):not([disabled]):link:hover, .dark input[type=color].caution:not(:disabled):not([disabled]):visited:hover, .dark input[type=image].caution:not(:disabled):not([disabled])a:link, .dark input[type=image].caution:not(:disabled):not([disabled])a:visited, .dark input[type=image].caution:not(:disabled):not([disabled]):link:hover, .dark input[type=image].caution:not(:disabled):not([disabled]):visited:hover, .dark input[type=reset].caution:not(:disabled):not([disabled])a:link, .dark input[type=reset].caution:not(:disabled):not([disabled])a:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]):link:hover, .dark input[type=reset].caution:not(:disabled):not([disabled]):visited:hover, .dark input[type=submit].caution:not(:disabled):not([disabled])a:link, .dark input[type=submit].caution:not(:disabled):not([disabled])a:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]):link:hover, .dark input[type=submit].caution:not(:disabled):not([disabled]):visited:hover, .dark
       div.buttons a.caution:not(:disabled):not([disabled])a:link, .dark
       div.buttons a.caution:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.caution:not(:disabled):not([disabled]):link:hover, .dark
+      div.buttons a.caution:not(:disabled):not([disabled]):visited:hover, .dark
       span.buttons a.caution:not(:disabled):not([disabled])a:link, .dark
       span.buttons a.caution:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.caution:not(:disabled):not([disabled]):link:hover, .dark
+      span.buttons a.caution:not(:disabled):not([disabled]):visited:hover, .dark
       a.button.caution:not(:disabled):not([disabled])a:link, .dark
-      a.button.caution:not(:disabled):not([disabled])a:visited {
+      a.button.caution:not(:disabled):not([disabled])a:visited, .dark
+      a.button.caution:not(:disabled):not([disabled]):link:hover, .dark
+      a.button.caution:not(:disabled):not([disabled]):visited:hover {
         color: #ffffff; }
     button.caution:not(:disabled):not([disabled]):hover, button.caution:not(:disabled):not([disabled]):focus, input[type=button].caution:not(:disabled):not([disabled]):hover, input[type=button].caution:not(:disabled):not([disabled]):focus, input[type=color].caution:not(:disabled):not([disabled]):hover, input[type=color].caution:not(:disabled):not([disabled]):focus, input[type=image].caution:not(:disabled):not([disabled]):hover, input[type=image].caution:not(:disabled):not([disabled]):focus, input[type=reset].caution:not(:disabled):not([disabled]):hover, input[type=reset].caution:not(:disabled):not([disabled]):focus, input[type=submit].caution:not(:disabled):not([disabled]):hover, input[type=submit].caution:not(:disabled):not([disabled]):focus,
     div.buttons a.caution:not(:disabled):not([disabled]):hover,
@@ -1897,19 +2385,31 @@ a.button {
       background: #893211;
       color: #ffffff;
       transition: background 0s; }
-      button.caution:not(:disabled):not([disabled]):activea:link, button.caution:not(:disabled):not([disabled]):activea:visited, button.caution:not(:disabled):not([disabled]).ff-activea:link, button.caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].caution:not(:disabled):not([disabled]):activea:link, input[type=button].caution:not(:disabled):not([disabled]):activea:visited, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].caution:not(:disabled):not([disabled]):activea:link, input[type=color].caution:not(:disabled):not([disabled]):activea:visited, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].caution:not(:disabled):not([disabled]):activea:link, input[type=image].caution:not(:disabled):not([disabled]):activea:visited, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].caution:not(:disabled):not([disabled]):activea:link, input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].caution:not(:disabled):not([disabled]):activea:link, input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited,
+      button.caution:not(:disabled):not([disabled]):activea:link, button.caution:not(:disabled):not([disabled]):activea:visited, button.caution:not(:disabled):not([disabled]):active:link:hover, button.caution:not(:disabled):not([disabled]):active:visited:hover, button.caution:not(:disabled):not([disabled]).ff-activea:link, button.caution:not(:disabled):not([disabled]).ff-activea:visited, button.caution:not(:disabled):not([disabled]).ff-active:link:hover, button.caution:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=button].caution:not(:disabled):not([disabled]):activea:link, input[type=button].caution:not(:disabled):not([disabled]):activea:visited, input[type=button].caution:not(:disabled):not([disabled]):active:link:hover, input[type=button].caution:not(:disabled):not([disabled]):active:visited:hover, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].caution:not(:disabled):not([disabled]).ff-active:link:hover, input[type=button].caution:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=color].caution:not(:disabled):not([disabled]):activea:link, input[type=color].caution:not(:disabled):not([disabled]):activea:visited, input[type=color].caution:not(:disabled):not([disabled]):active:link:hover, input[type=color].caution:not(:disabled):not([disabled]):active:visited:hover, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].caution:not(:disabled):not([disabled]).ff-active:link:hover, input[type=color].caution:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=image].caution:not(:disabled):not([disabled]):activea:link, input[type=image].caution:not(:disabled):not([disabled]):activea:visited, input[type=image].caution:not(:disabled):not([disabled]):active:link:hover, input[type=image].caution:not(:disabled):not([disabled]):active:visited:hover, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].caution:not(:disabled):not([disabled]).ff-active:link:hover, input[type=image].caution:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=reset].caution:not(:disabled):not([disabled]):activea:link, input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, input[type=reset].caution:not(:disabled):not([disabled]):active:link:hover, input[type=reset].caution:not(:disabled):not([disabled]):active:visited:hover, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].caution:not(:disabled):not([disabled]).ff-active:link:hover, input[type=reset].caution:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=submit].caution:not(:disabled):not([disabled]):activea:link, input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, input[type=submit].caution:not(:disabled):not([disabled]):active:link:hover, input[type=submit].caution:not(:disabled):not([disabled]):active:visited:hover, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].caution:not(:disabled):not([disabled]).ff-active:link:hover, input[type=submit].caution:not(:disabled):not([disabled]).ff-active:visited:hover,
       div.buttons a.caution:not(:disabled):not([disabled]):activea:link,
       div.buttons a.caution:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.caution:not(:disabled):not([disabled]):active:link:hover,
+      div.buttons a.caution:not(:disabled):not([disabled]):active:visited:hover,
       div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link,
       div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.caution:not(:disabled):not([disabled]).ff-active:link:hover,
+      div.buttons a.caution:not(:disabled):not([disabled]).ff-active:visited:hover,
       span.buttons a.caution:not(:disabled):not([disabled]):activea:link,
       span.buttons a.caution:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.caution:not(:disabled):not([disabled]):active:link:hover,
+      span.buttons a.caution:not(:disabled):not([disabled]):active:visited:hover,
       span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link,
       span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.caution:not(:disabled):not([disabled]).ff-active:link:hover,
+      span.buttons a.caution:not(:disabled):not([disabled]).ff-active:visited:hover,
       a.button.caution:not(:disabled):not([disabled]):activea:link,
       a.button.caution:not(:disabled):not([disabled]):activea:visited,
+      a.button.caution:not(:disabled):not([disabled]):active:link:hover,
+      a.button.caution:not(:disabled):not([disabled]):active:visited:hover,
       a.button.caution:not(:disabled):not([disabled]).ff-activea:link,
-      a.button.caution:not(:disabled):not([disabled]).ff-activea:visited {
+      a.button.caution:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.caution:not(:disabled):not([disabled]).ff-active:link:hover,
+      a.button.caution:not(:disabled):not([disabled]).ff-active:visited:hover {
         color: #ffffff; }
       .dark button.caution:not(:disabled):not([disabled]):active, .dark button.caution:not(:disabled):not([disabled]).ff-active, .dark input[type=button].caution:not(:disabled):not([disabled]):active, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=color].caution:not(:disabled):not([disabled]):active, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=image].caution:not(:disabled):not([disabled]):active, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].caution:not(:disabled):not([disabled]):active, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].caution:not(:disabled):not([disabled]):active, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.caution:not(:disabled):not([disabled]):active, .dark
@@ -1920,19 +2420,31 @@ a.button {
       a.button.caution:not(:disabled):not([disabled]).ff-active {
         background: #893211;
         color: #ffffff; }
-        .dark button.caution:not(:disabled):not([disabled]):activea:link, .dark button.caution:not(:disabled):not([disabled]):activea:visited, .dark button.caution:not(:disabled):not([disabled]).ff-activea:link, .dark button.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        .dark button.caution:not(:disabled):not([disabled]):activea:link, .dark button.caution:not(:disabled):not([disabled]):activea:visited, .dark button.caution:not(:disabled):not([disabled]):active:link:hover, .dark button.caution:not(:disabled):not([disabled]):active:visited:hover, .dark button.caution:not(:disabled):not([disabled]).ff-activea:link, .dark button.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark button.caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark button.caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]):active:link:hover, .dark input[type=button].caution:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=button].caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]):active:link:hover, .dark input[type=color].caution:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=color].caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]):active:link:hover, .dark input[type=image].caution:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=image].caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]):active:link:hover, .dark input[type=reset].caution:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=reset].caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]):active:link:hover, .dark input[type=submit].caution:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=submit].caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         div.buttons a.caution:not(:disabled):not([disabled]):activea:link, .dark
         div.buttons a.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]):active:link:hover, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]):active:visited:hover, .dark
         div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
         div.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        div.buttons a.caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         span.buttons a.caution:not(:disabled):not([disabled]):activea:link, .dark
         span.buttons a.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]):active:link:hover, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]):active:visited:hover, .dark
         span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
         span.buttons a.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        span.buttons a.caution:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         a.button.caution:not(:disabled):not([disabled]):activea:link, .dark
         a.button.caution:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.caution:not(:disabled):not([disabled]):active:link:hover, .dark
+        a.button.caution:not(:disabled):not([disabled]):active:visited:hover, .dark
         a.button.caution:not(:disabled):not([disabled]).ff-activea:link, .dark
-        a.button.caution:not(:disabled):not([disabled]).ff-activea:visited {
+        a.button.caution:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.caution:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        a.button.caution:not(:disabled):not([disabled]).ff-active:visited:hover {
           color: #ffffff; }
   button.transparent:not(:disabled):not([disabled]), input[type=button].transparent:not(:disabled):not([disabled]), input[type=color].transparent:not(:disabled):not([disabled]), input[type=image].transparent:not(:disabled):not([disabled]), input[type=reset].transparent:not(:disabled):not([disabled]), input[type=submit].transparent:not(:disabled):not([disabled]),
   div.buttons a.transparent:not(:disabled):not([disabled]),
@@ -1940,13 +2452,19 @@ a.button {
   a.button.transparent:not(:disabled):not([disabled]) {
     background: transparent;
     color: #2755dd; }
-    button.transparent:not(:disabled):not([disabled])a:link, button.transparent:not(:disabled):not([disabled])a:visited, input[type=button].transparent:not(:disabled):not([disabled])a:link, input[type=button].transparent:not(:disabled):not([disabled])a:visited, input[type=color].transparent:not(:disabled):not([disabled])a:link, input[type=color].transparent:not(:disabled):not([disabled])a:visited, input[type=image].transparent:not(:disabled):not([disabled])a:link, input[type=image].transparent:not(:disabled):not([disabled])a:visited, input[type=reset].transparent:not(:disabled):not([disabled])a:link, input[type=reset].transparent:not(:disabled):not([disabled])a:visited, input[type=submit].transparent:not(:disabled):not([disabled])a:link, input[type=submit].transparent:not(:disabled):not([disabled])a:visited,
+    button.transparent:not(:disabled):not([disabled])a:link, button.transparent:not(:disabled):not([disabled])a:visited, button.transparent:not(:disabled):not([disabled]):link:hover, button.transparent:not(:disabled):not([disabled]):visited:hover, input[type=button].transparent:not(:disabled):not([disabled])a:link, input[type=button].transparent:not(:disabled):not([disabled])a:visited, input[type=button].transparent:not(:disabled):not([disabled]):link:hover, input[type=button].transparent:not(:disabled):not([disabled]):visited:hover, input[type=color].transparent:not(:disabled):not([disabled])a:link, input[type=color].transparent:not(:disabled):not([disabled])a:visited, input[type=color].transparent:not(:disabled):not([disabled]):link:hover, input[type=color].transparent:not(:disabled):not([disabled]):visited:hover, input[type=image].transparent:not(:disabled):not([disabled])a:link, input[type=image].transparent:not(:disabled):not([disabled])a:visited, input[type=image].transparent:not(:disabled):not([disabled]):link:hover, input[type=image].transparent:not(:disabled):not([disabled]):visited:hover, input[type=reset].transparent:not(:disabled):not([disabled])a:link, input[type=reset].transparent:not(:disabled):not([disabled])a:visited, input[type=reset].transparent:not(:disabled):not([disabled]):link:hover, input[type=reset].transparent:not(:disabled):not([disabled]):visited:hover, input[type=submit].transparent:not(:disabled):not([disabled])a:link, input[type=submit].transparent:not(:disabled):not([disabled])a:visited, input[type=submit].transparent:not(:disabled):not([disabled]):link:hover, input[type=submit].transparent:not(:disabled):not([disabled]):visited:hover,
     div.buttons a.transparent:not(:disabled):not([disabled])a:link,
     div.buttons a.transparent:not(:disabled):not([disabled])a:visited,
+    div.buttons a.transparent:not(:disabled):not([disabled]):link:hover,
+    div.buttons a.transparent:not(:disabled):not([disabled]):visited:hover,
     span.buttons a.transparent:not(:disabled):not([disabled])a:link,
     span.buttons a.transparent:not(:disabled):not([disabled])a:visited,
+    span.buttons a.transparent:not(:disabled):not([disabled]):link:hover,
+    span.buttons a.transparent:not(:disabled):not([disabled]):visited:hover,
     a.button.transparent:not(:disabled):not([disabled])a:link,
-    a.button.transparent:not(:disabled):not([disabled])a:visited {
+    a.button.transparent:not(:disabled):not([disabled])a:visited,
+    a.button.transparent:not(:disabled):not([disabled]):link:hover,
+    a.button.transparent:not(:disabled):not([disabled]):visited:hover {
       color: #2755dd; }
     .dark button.transparent:not(:disabled):not([disabled]), .dark input[type=button].transparent:not(:disabled):not([disabled]), .dark input[type=color].transparent:not(:disabled):not([disabled]), .dark input[type=image].transparent:not(:disabled):not([disabled]), .dark input[type=reset].transparent:not(:disabled):not([disabled]), .dark input[type=submit].transparent:not(:disabled):not([disabled]), .dark
     div.buttons a.transparent:not(:disabled):not([disabled]), .dark
@@ -1954,13 +2472,19 @@ a.button {
     a.button.transparent:not(:disabled):not([disabled]) {
       background: transparent;
       color: #91acff; }
-      .dark button.transparent:not(:disabled):not([disabled])a:link, .dark button.transparent:not(:disabled):not([disabled])a:visited, .dark input[type=button].transparent:not(:disabled):not([disabled])a:link, .dark input[type=button].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=color].transparent:not(:disabled):not([disabled])a:link, .dark input[type=color].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=image].transparent:not(:disabled):not([disabled])a:link, .dark input[type=image].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:link, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:link, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:visited, .dark
+      .dark button.transparent:not(:disabled):not([disabled])a:link, .dark button.transparent:not(:disabled):not([disabled])a:visited, .dark button.transparent:not(:disabled):not([disabled]):link:hover, .dark button.transparent:not(:disabled):not([disabled]):visited:hover, .dark input[type=button].transparent:not(:disabled):not([disabled])a:link, .dark input[type=button].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]):link:hover, .dark input[type=button].transparent:not(:disabled):not([disabled]):visited:hover, .dark input[type=color].transparent:not(:disabled):not([disabled])a:link, .dark input[type=color].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]):link:hover, .dark input[type=color].transparent:not(:disabled):not([disabled]):visited:hover, .dark input[type=image].transparent:not(:disabled):not([disabled])a:link, .dark input[type=image].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]):link:hover, .dark input[type=image].transparent:not(:disabled):not([disabled]):visited:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:link, .dark input[type=reset].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]):link:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]):visited:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:link, .dark input[type=submit].transparent:not(:disabled):not([disabled])a:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]):link:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]):visited:hover, .dark
       div.buttons a.transparent:not(:disabled):not([disabled])a:link, .dark
       div.buttons a.transparent:not(:disabled):not([disabled])a:visited, .dark
+      div.buttons a.transparent:not(:disabled):not([disabled]):link:hover, .dark
+      div.buttons a.transparent:not(:disabled):not([disabled]):visited:hover, .dark
       span.buttons a.transparent:not(:disabled):not([disabled])a:link, .dark
       span.buttons a.transparent:not(:disabled):not([disabled])a:visited, .dark
+      span.buttons a.transparent:not(:disabled):not([disabled]):link:hover, .dark
+      span.buttons a.transparent:not(:disabled):not([disabled]):visited:hover, .dark
       a.button.transparent:not(:disabled):not([disabled])a:link, .dark
-      a.button.transparent:not(:disabled):not([disabled])a:visited {
+      a.button.transparent:not(:disabled):not([disabled])a:visited, .dark
+      a.button.transparent:not(:disabled):not([disabled]):link:hover, .dark
+      a.button.transparent:not(:disabled):not([disabled]):visited:hover {
         color: #91acff; }
     button.transparent:not(:disabled):not([disabled]):hover, button.transparent:not(:disabled):not([disabled]):focus, input[type=button].transparent:not(:disabled):not([disabled]):hover, input[type=button].transparent:not(:disabled):not([disabled]):focus, input[type=color].transparent:not(:disabled):not([disabled]):hover, input[type=color].transparent:not(:disabled):not([disabled]):focus, input[type=image].transparent:not(:disabled):not([disabled]):hover, input[type=image].transparent:not(:disabled):not([disabled]):focus, input[type=reset].transparent:not(:disabled):not([disabled]):hover, input[type=reset].transparent:not(:disabled):not([disabled]):focus, input[type=submit].transparent:not(:disabled):not([disabled]):hover, input[type=submit].transparent:not(:disabled):not([disabled]):focus,
     div.buttons a.transparent:not(:disabled):not([disabled]):hover,
@@ -1989,19 +2513,31 @@ a.button {
       background: #adadad;
       color: #000000;
       transition: background 0s; }
-      button.transparent:not(:disabled):not([disabled]):activea:link, button.transparent:not(:disabled):not([disabled]):activea:visited, button.transparent:not(:disabled):not([disabled]).ff-activea:link, button.transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].transparent:not(:disabled):not([disabled]):activea:link, input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].transparent:not(:disabled):not([disabled]):activea:link, input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].transparent:not(:disabled):not([disabled]):activea:link, input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      button.transparent:not(:disabled):not([disabled]):activea:link, button.transparent:not(:disabled):not([disabled]):activea:visited, button.transparent:not(:disabled):not([disabled]):active:link:hover, button.transparent:not(:disabled):not([disabled]):active:visited:hover, button.transparent:not(:disabled):not([disabled]).ff-activea:link, button.transparent:not(:disabled):not([disabled]).ff-activea:visited, button.transparent:not(:disabled):not([disabled]).ff-active:link:hover, button.transparent:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=button].transparent:not(:disabled):not([disabled]):activea:link, input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, input[type=button].transparent:not(:disabled):not([disabled]):active:link:hover, input[type=button].transparent:not(:disabled):not([disabled]):active:visited:hover, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=button].transparent:not(:disabled):not([disabled]).ff-active:link:hover, input[type=button].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=color].transparent:not(:disabled):not([disabled]):activea:link, input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, input[type=color].transparent:not(:disabled):not([disabled]):active:link:hover, input[type=color].transparent:not(:disabled):not([disabled]):active:visited:hover, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=color].transparent:not(:disabled):not([disabled]).ff-active:link:hover, input[type=color].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=image].transparent:not(:disabled):not([disabled]):activea:link, input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, input[type=image].transparent:not(:disabled):not([disabled]):active:link:hover, input[type=image].transparent:not(:disabled):not([disabled]):active:visited:hover, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=image].transparent:not(:disabled):not([disabled]).ff-active:link:hover, input[type=image].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]):active:link:hover, input[type=reset].transparent:not(:disabled):not([disabled]):active:visited:hover, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=reset].transparent:not(:disabled):not([disabled]).ff-active:link:hover, input[type=reset].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]):active:link:hover, input[type=submit].transparent:not(:disabled):not([disabled]):active:visited:hover, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited, input[type=submit].transparent:not(:disabled):not([disabled]).ff-active:link:hover, input[type=submit].transparent:not(:disabled):not([disabled]).ff-active:visited:hover,
       div.buttons a.transparent:not(:disabled):not([disabled]):activea:link,
       div.buttons a.transparent:not(:disabled):not([disabled]):activea:visited,
+      div.buttons a.transparent:not(:disabled):not([disabled]):active:link:hover,
+      div.buttons a.transparent:not(:disabled):not([disabled]):active:visited:hover,
       div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link,
       div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      div.buttons a.transparent:not(:disabled):not([disabled]).ff-active:link:hover,
+      div.buttons a.transparent:not(:disabled):not([disabled]).ff-active:visited:hover,
       span.buttons a.transparent:not(:disabled):not([disabled]):activea:link,
       span.buttons a.transparent:not(:disabled):not([disabled]):activea:visited,
+      span.buttons a.transparent:not(:disabled):not([disabled]):active:link:hover,
+      span.buttons a.transparent:not(:disabled):not([disabled]):active:visited:hover,
       span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link,
       span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      span.buttons a.transparent:not(:disabled):not([disabled]).ff-active:link:hover,
+      span.buttons a.transparent:not(:disabled):not([disabled]).ff-active:visited:hover,
       a.button.transparent:not(:disabled):not([disabled]):activea:link,
       a.button.transparent:not(:disabled):not([disabled]):activea:visited,
+      a.button.transparent:not(:disabled):not([disabled]):active:link:hover,
+      a.button.transparent:not(:disabled):not([disabled]):active:visited:hover,
       a.button.transparent:not(:disabled):not([disabled]).ff-activea:link,
-      a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited {
+      a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited,
+      a.button.transparent:not(:disabled):not([disabled]).ff-active:link:hover,
+      a.button.transparent:not(:disabled):not([disabled]).ff-active:visited:hover {
         color: #000000; }
       .dark button.transparent:not(:disabled):not([disabled]):active, .dark button.transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=button].transparent:not(:disabled):not([disabled]):active, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=color].transparent:not(:disabled):not([disabled]):active, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=image].transparent:not(:disabled):not([disabled]):active, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=reset].transparent:not(:disabled):not([disabled]):active, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-active, .dark input[type=submit].transparent:not(:disabled):not([disabled]):active, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-active, .dark
       div.buttons a.transparent:not(:disabled):not([disabled]):active, .dark
@@ -2012,19 +2548,31 @@ a.button {
       a.button.transparent:not(:disabled):not([disabled]).ff-active {
         background: #888888;
         color: #f0f0f0; }
-        .dark button.transparent:not(:disabled):not([disabled]):activea:link, .dark button.transparent:not(:disabled):not([disabled]):activea:visited, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        .dark button.transparent:not(:disabled):not([disabled]):activea:link, .dark button.transparent:not(:disabled):not([disabled]):activea:visited, .dark button.transparent:not(:disabled):not([disabled]):active:link:hover, .dark button.transparent:not(:disabled):not([disabled]):active:visited:hover, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark button.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark button.transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark button.transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]):active:link:hover, .dark input[type=button].transparent:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=button].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]):active:link:hover, .dark input[type=color].transparent:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=color].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]):active:link:hover, .dark input[type=image].transparent:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=image].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]):active:link:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=reset].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]):activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]):active:link:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]):active:visited:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:link, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark input[type=submit].transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         div.buttons a.transparent:not(:disabled):not([disabled]):activea:link, .dark
         div.buttons a.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]):active:link:hover, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]):active:visited:hover, .dark
         div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
         div.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        div.buttons a.transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         span.buttons a.transparent:not(:disabled):not([disabled]):activea:link, .dark
         span.buttons a.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]):active:link:hover, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]):active:visited:hover, .dark
         span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
         span.buttons a.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        span.buttons a.transparent:not(:disabled):not([disabled]).ff-active:visited:hover, .dark
         a.button.transparent:not(:disabled):not([disabled]):activea:link, .dark
         a.button.transparent:not(:disabled):not([disabled]):activea:visited, .dark
+        a.button.transparent:not(:disabled):not([disabled]):active:link:hover, .dark
+        a.button.transparent:not(:disabled):not([disabled]):active:visited:hover, .dark
         a.button.transparent:not(:disabled):not([disabled]).ff-activea:link, .dark
-        a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited {
+        a.button.transparent:not(:disabled):not([disabled]).ff-activea:visited, .dark
+        a.button.transparent:not(:disabled):not([disabled]).ff-active:link:hover, .dark
+        a.button.transparent:not(:disabled):not([disabled]).ff-active:visited:hover {
           color: #f0f0f0; }
   button.transparent:disabled, button.transparent[disabled], input[type=button].transparent:disabled, input[type=button].transparent[disabled], input[type=color].transparent:disabled, input[type=color].transparent[disabled], input[type=image].transparent:disabled, input[type=image].transparent[disabled], input[type=reset].transparent:disabled, input[type=reset].transparent[disabled], input[type=submit].transparent:disabled, input[type=submit].transparent[disabled],
   div.buttons a.transparent:disabled,
@@ -2035,19 +2583,31 @@ a.button {
   a.button.transparent[disabled] {
     background: transparent;
     color: #808080; }
-    button.transparent:disableda:link, button.transparent:disableda:visited, button.transparent[disabled]a:link, button.transparent[disabled]a:visited, input[type=button].transparent:disableda:link, input[type=button].transparent:disableda:visited, input[type=button].transparent[disabled]a:link, input[type=button].transparent[disabled]a:visited, input[type=color].transparent:disableda:link, input[type=color].transparent:disableda:visited, input[type=color].transparent[disabled]a:link, input[type=color].transparent[disabled]a:visited, input[type=image].transparent:disableda:link, input[type=image].transparent:disableda:visited, input[type=image].transparent[disabled]a:link, input[type=image].transparent[disabled]a:visited, input[type=reset].transparent:disableda:link, input[type=reset].transparent:disableda:visited, input[type=reset].transparent[disabled]a:link, input[type=reset].transparent[disabled]a:visited, input[type=submit].transparent:disableda:link, input[type=submit].transparent:disableda:visited, input[type=submit].transparent[disabled]a:link, input[type=submit].transparent[disabled]a:visited,
+    button.transparent:disableda:link, button.transparent:disableda:visited, button.transparent:disabled:link:hover, button.transparent:disabled:visited:hover, button.transparent[disabled]a:link, button.transparent[disabled]a:visited, button.transparent[disabled]:link:hover, button.transparent[disabled]:visited:hover, input[type=button].transparent:disableda:link, input[type=button].transparent:disableda:visited, input[type=button].transparent:disabled:link:hover, input[type=button].transparent:disabled:visited:hover, input[type=button].transparent[disabled]a:link, input[type=button].transparent[disabled]a:visited, input[type=button].transparent[disabled]:link:hover, input[type=button].transparent[disabled]:visited:hover, input[type=color].transparent:disableda:link, input[type=color].transparent:disableda:visited, input[type=color].transparent:disabled:link:hover, input[type=color].transparent:disabled:visited:hover, input[type=color].transparent[disabled]a:link, input[type=color].transparent[disabled]a:visited, input[type=color].transparent[disabled]:link:hover, input[type=color].transparent[disabled]:visited:hover, input[type=image].transparent:disableda:link, input[type=image].transparent:disableda:visited, input[type=image].transparent:disabled:link:hover, input[type=image].transparent:disabled:visited:hover, input[type=image].transparent[disabled]a:link, input[type=image].transparent[disabled]a:visited, input[type=image].transparent[disabled]:link:hover, input[type=image].transparent[disabled]:visited:hover, input[type=reset].transparent:disableda:link, input[type=reset].transparent:disableda:visited, input[type=reset].transparent:disabled:link:hover, input[type=reset].transparent:disabled:visited:hover, input[type=reset].transparent[disabled]a:link, input[type=reset].transparent[disabled]a:visited, input[type=reset].transparent[disabled]:link:hover, input[type=reset].transparent[disabled]:visited:hover, input[type=submit].transparent:disableda:link, input[type=submit].transparent:disableda:visited, input[type=submit].transparent:disabled:link:hover, input[type=submit].transparent:disabled:visited:hover, input[type=submit].transparent[disabled]a:link, input[type=submit].transparent[disabled]a:visited, input[type=submit].transparent[disabled]:link:hover, input[type=submit].transparent[disabled]:visited:hover,
     div.buttons a.transparent:disableda:link,
     div.buttons a.transparent:disableda:visited,
+    div.buttons a.transparent:disabled:link:hover,
+    div.buttons a.transparent:disabled:visited:hover,
     div.buttons a.transparent[disabled]a:link,
     div.buttons a.transparent[disabled]a:visited,
+    div.buttons a.transparent[disabled]:link:hover,
+    div.buttons a.transparent[disabled]:visited:hover,
     span.buttons a.transparent:disableda:link,
     span.buttons a.transparent:disableda:visited,
+    span.buttons a.transparent:disabled:link:hover,
+    span.buttons a.transparent:disabled:visited:hover,
     span.buttons a.transparent[disabled]a:link,
     span.buttons a.transparent[disabled]a:visited,
+    span.buttons a.transparent[disabled]:link:hover,
+    span.buttons a.transparent[disabled]:visited:hover,
     a.button.transparent:disableda:link,
     a.button.transparent:disableda:visited,
+    a.button.transparent:disabled:link:hover,
+    a.button.transparent:disabled:visited:hover,
     a.button.transparent[disabled]a:link,
-    a.button.transparent[disabled]a:visited {
+    a.button.transparent[disabled]a:visited,
+    a.button.transparent[disabled]:link:hover,
+    a.button.transparent[disabled]:visited:hover {
       color: #808080; }
     .dark button.transparent:disabled, .dark button.transparent[disabled], .dark input[type=button].transparent:disabled, .dark input[type=button].transparent[disabled], .dark input[type=color].transparent:disabled, .dark input[type=color].transparent[disabled], .dark input[type=image].transparent:disabled, .dark input[type=image].transparent[disabled], .dark input[type=reset].transparent:disabled, .dark input[type=reset].transparent[disabled], .dark input[type=submit].transparent:disabled, .dark input[type=submit].transparent[disabled], .dark
     div.buttons a.transparent:disabled, .dark
@@ -2058,19 +2618,31 @@ a.button {
     a.button.transparent[disabled] {
       background: transparent;
       color: #a0a0a0; }
-      .dark button.transparent:disableda:link, .dark button.transparent:disableda:visited, .dark button.transparent[disabled]a:link, .dark button.transparent[disabled]a:visited, .dark input[type=button].transparent:disableda:link, .dark input[type=button].transparent:disableda:visited, .dark input[type=button].transparent[disabled]a:link, .dark input[type=button].transparent[disabled]a:visited, .dark input[type=color].transparent:disableda:link, .dark input[type=color].transparent:disableda:visited, .dark input[type=color].transparent[disabled]a:link, .dark input[type=color].transparent[disabled]a:visited, .dark input[type=image].transparent:disableda:link, .dark input[type=image].transparent:disableda:visited, .dark input[type=image].transparent[disabled]a:link, .dark input[type=image].transparent[disabled]a:visited, .dark input[type=reset].transparent:disableda:link, .dark input[type=reset].transparent:disableda:visited, .dark input[type=reset].transparent[disabled]a:link, .dark input[type=reset].transparent[disabled]a:visited, .dark input[type=submit].transparent:disableda:link, .dark input[type=submit].transparent:disableda:visited, .dark input[type=submit].transparent[disabled]a:link, .dark input[type=submit].transparent[disabled]a:visited, .dark
+      .dark button.transparent:disableda:link, .dark button.transparent:disableda:visited, .dark button.transparent:disabled:link:hover, .dark button.transparent:disabled:visited:hover, .dark button.transparent[disabled]a:link, .dark button.transparent[disabled]a:visited, .dark button.transparent[disabled]:link:hover, .dark button.transparent[disabled]:visited:hover, .dark input[type=button].transparent:disableda:link, .dark input[type=button].transparent:disableda:visited, .dark input[type=button].transparent:disabled:link:hover, .dark input[type=button].transparent:disabled:visited:hover, .dark input[type=button].transparent[disabled]a:link, .dark input[type=button].transparent[disabled]a:visited, .dark input[type=button].transparent[disabled]:link:hover, .dark input[type=button].transparent[disabled]:visited:hover, .dark input[type=color].transparent:disableda:link, .dark input[type=color].transparent:disableda:visited, .dark input[type=color].transparent:disabled:link:hover, .dark input[type=color].transparent:disabled:visited:hover, .dark input[type=color].transparent[disabled]a:link, .dark input[type=color].transparent[disabled]a:visited, .dark input[type=color].transparent[disabled]:link:hover, .dark input[type=color].transparent[disabled]:visited:hover, .dark input[type=image].transparent:disableda:link, .dark input[type=image].transparent:disableda:visited, .dark input[type=image].transparent:disabled:link:hover, .dark input[type=image].transparent:disabled:visited:hover, .dark input[type=image].transparent[disabled]a:link, .dark input[type=image].transparent[disabled]a:visited, .dark input[type=image].transparent[disabled]:link:hover, .dark input[type=image].transparent[disabled]:visited:hover, .dark input[type=reset].transparent:disableda:link, .dark input[type=reset].transparent:disableda:visited, .dark input[type=reset].transparent:disabled:link:hover, .dark input[type=reset].transparent:disabled:visited:hover, .dark input[type=reset].transparent[disabled]a:link, .dark input[type=reset].transparent[disabled]a:visited, .dark input[type=reset].transparent[disabled]:link:hover, .dark input[type=reset].transparent[disabled]:visited:hover, .dark input[type=submit].transparent:disableda:link, .dark input[type=submit].transparent:disableda:visited, .dark input[type=submit].transparent:disabled:link:hover, .dark input[type=submit].transparent:disabled:visited:hover, .dark input[type=submit].transparent[disabled]a:link, .dark input[type=submit].transparent[disabled]a:visited, .dark input[type=submit].transparent[disabled]:link:hover, .dark input[type=submit].transparent[disabled]:visited:hover, .dark
       div.buttons a.transparent:disableda:link, .dark
       div.buttons a.transparent:disableda:visited, .dark
+      div.buttons a.transparent:disabled:link:hover, .dark
+      div.buttons a.transparent:disabled:visited:hover, .dark
       div.buttons a.transparent[disabled]a:link, .dark
       div.buttons a.transparent[disabled]a:visited, .dark
+      div.buttons a.transparent[disabled]:link:hover, .dark
+      div.buttons a.transparent[disabled]:visited:hover, .dark
       span.buttons a.transparent:disableda:link, .dark
       span.buttons a.transparent:disableda:visited, .dark
+      span.buttons a.transparent:disabled:link:hover, .dark
+      span.buttons a.transparent:disabled:visited:hover, .dark
       span.buttons a.transparent[disabled]a:link, .dark
       span.buttons a.transparent[disabled]a:visited, .dark
+      span.buttons a.transparent[disabled]:link:hover, .dark
+      span.buttons a.transparent[disabled]:visited:hover, .dark
       a.button.transparent:disableda:link, .dark
       a.button.transparent:disableda:visited, .dark
+      a.button.transparent:disabled:link:hover, .dark
+      a.button.transparent:disabled:visited:hover, .dark
       a.button.transparent[disabled]a:link, .dark
-      a.button.transparent[disabled]a:visited {
+      a.button.transparent[disabled]a:visited, .dark
+      a.button.transparent[disabled]:link:hover, .dark
+      a.button.transparent[disabled]:visited:hover {
         color: #a0a0a0; }
   .ff-input-wrapper button, button.narrow, .ff-input-wrapper input[type=button], input[type=button].narrow, .ff-input-wrapper input[type=color], input[type=color].narrow, .ff-input-wrapper input[type=image], input[type=image].narrow, .ff-input-wrapper input[type=reset], input[type=reset].narrow, .ff-input-wrapper input[type=submit], input[type=submit].narrow, .ff-input-wrapper
   div.buttons a,
@@ -2087,6 +2659,31 @@ a.button {
   span.buttons a:not(.narrow) i:empty,
   a.button:not(.narrow) i:empty {
     margin-right: 3px; }
+
+button.link, input[type=button].link, input[type=color].link, input[type=image].link, input[type=reset].link, input[type=submit].link {
+  background: transparent;
+  color: #2755dd;
+  padding: 0;
+  min-width: unset; }
+  button.link:hover:not(:disabled):not([disabled]), button.link:focus:not(:disabled):not([disabled]), button.link:active:not(:disabled):not([disabled]), button.link.ff-active:not(:disabled):not([disabled]), input[type=button].link:hover:not(:disabled):not([disabled]), input[type=button].link:focus:not(:disabled):not([disabled]), input[type=button].link:active:not(:disabled):not([disabled]), input[type=button].link.ff-active:not(:disabled):not([disabled]), input[type=color].link:hover:not(:disabled):not([disabled]), input[type=color].link:focus:not(:disabled):not([disabled]), input[type=color].link:active:not(:disabled):not([disabled]), input[type=color].link.ff-active:not(:disabled):not([disabled]), input[type=image].link:hover:not(:disabled):not([disabled]), input[type=image].link:focus:not(:disabled):not([disabled]), input[type=image].link:active:not(:disabled):not([disabled]), input[type=image].link.ff-active:not(:disabled):not([disabled]), input[type=reset].link:hover:not(:disabled):not([disabled]), input[type=reset].link:focus:not(:disabled):not([disabled]), input[type=reset].link:active:not(:disabled):not([disabled]), input[type=reset].link.ff-active:not(:disabled):not([disabled]), input[type=submit].link:hover:not(:disabled):not([disabled]), input[type=submit].link:focus:not(:disabled):not([disabled]), input[type=submit].link:active:not(:disabled):not([disabled]), input[type=submit].link.ff-active:not(:disabled):not([disabled]) {
+    background: transparent;
+    color: #1d40a6; }
+  button.link:focus:not(:disabled):not([disabled]), input[type=button].link:focus:not(:disabled):not([disabled]), input[type=color].link:focus:not(:disabled):not([disabled]), input[type=image].link:focus:not(:disabled):not([disabled]), input[type=reset].link:focus:not(:disabled):not([disabled]), input[type=submit].link:focus:not(:disabled):not([disabled]) {
+    outline: dotted 1px #1d40a6; }
+  button.link:disabled, button.link[disabled], input[type=button].link:disabled, input[type=button].link[disabled], input[type=color].link:disabled, input[type=color].link[disabled], input[type=image].link:disabled, input[type=image].link[disabled], input[type=reset].link:disabled, input[type=reset].link[disabled], input[type=submit].link:disabled, input[type=submit].link[disabled] {
+    background: transparent;
+    color: #a0a0a0; }
+  .dark button.link, .dark input[type=button].link, .dark input[type=color].link, .dark input[type=image].link, .dark input[type=reset].link, .dark input[type=submit].link {
+    background: transparent;
+    color: #91acff; }
+    .dark button.link:hover:not(:disabled):not([disabled]), .dark button.link:focus:not(:disabled):not([disabled]), .dark button.link:active:not(:disabled):not([disabled]), .dark button.link.ff-active:not(:disabled):not([disabled]), .dark input[type=button].link:hover:not(:disabled):not([disabled]), .dark input[type=button].link:focus:not(:disabled):not([disabled]), .dark input[type=button].link:active:not(:disabled):not([disabled]), .dark input[type=button].link.ff-active:not(:disabled):not([disabled]), .dark input[type=color].link:hover:not(:disabled):not([disabled]), .dark input[type=color].link:focus:not(:disabled):not([disabled]), .dark input[type=color].link:active:not(:disabled):not([disabled]), .dark input[type=color].link.ff-active:not(:disabled):not([disabled]), .dark input[type=image].link:hover:not(:disabled):not([disabled]), .dark input[type=image].link:focus:not(:disabled):not([disabled]), .dark input[type=image].link:active:not(:disabled):not([disabled]), .dark input[type=image].link.ff-active:not(:disabled):not([disabled]), .dark input[type=reset].link:hover:not(:disabled):not([disabled]), .dark input[type=reset].link:focus:not(:disabled):not([disabled]), .dark input[type=reset].link:active:not(:disabled):not([disabled]), .dark input[type=reset].link.ff-active:not(:disabled):not([disabled]), .dark input[type=submit].link:hover:not(:disabled):not([disabled]), .dark input[type=submit].link:focus:not(:disabled):not([disabled]), .dark input[type=submit].link:active:not(:disabled):not([disabled]), .dark input[type=submit].link.ff-active:not(:disabled):not([disabled]) {
+      background: transparent;
+      color: #a7bdff; }
+    .dark button.link:focus:not(:disabled):not([disabled]), .dark input[type=button].link:focus:not(:disabled):not([disabled]), .dark input[type=color].link:focus:not(:disabled):not([disabled]), .dark input[type=image].link:focus:not(:disabled):not([disabled]), .dark input[type=reset].link:focus:not(:disabled):not([disabled]), .dark input[type=submit].link:focus:not(:disabled):not([disabled]) {
+      outline: dotted 1px #a7bdff; }
+    .dark button.link:disabled, .dark button.link[disabled], .dark input[type=button].link:disabled, .dark input[type=button].link[disabled], .dark input[type=color].link:disabled, .dark input[type=color].link[disabled], .dark input[type=image].link:disabled, .dark input[type=image].link[disabled], .dark input[type=reset].link:disabled, .dark input[type=reset].link[disabled], .dark input[type=submit].link:disabled, .dark input[type=submit].link[disabled] {
+      background: transparent;
+      color: #a0a0a0; }
 
 div.buttons,
 span.buttons {
@@ -2107,25 +2704,92 @@ span.buttons {
       margin-right: 0; }
   form div.buttons, form
   span.buttons {
-    padding-top: 20px; }
+    margin-top: 24px; }
 
 div.buttons > ul,
 span.buttons > ul {
   line-height: 1px; }
 
-.ff-input-wrapper button + button,
-div.buttons.narrow button + button {
+.ff-input-wrapper > button,
+.ff-input-wrapper > a,
+div.buttons.group > button,
+div.buttons.group > a,
+div.buttons span.group > button,
+div.buttons span.group > a,
+span.buttons.group > button,
+span.buttons.group > a {
+  margin-right: 0; }
+
+.ff-input-wrapper > button:not(:first-of-type),
+.ff-input-wrapper > a:not(:first-of-type),
+div.buttons.group > button:not(:first-of-type),
+div.buttons.group > a:not(:first-of-type),
+div.buttons span.group > button:not(:first-of-type),
+div.buttons span.group > a:not(:first-of-type),
+span.buttons.group > button:not(:first-of-type),
+span.buttons.group > a:not(:first-of-type) {
   margin-left: 0px;
   border-left: 1px solid #c7c7c7; }
-  .dark .ff-input-wrapper button + button, .dark
-  div.buttons.narrow button + button {
+  .dark .ff-input-wrapper > button:not(:first-of-type), .dark
+  .ff-input-wrapper > a:not(:first-of-type), .dark
+  div.buttons.group > button:not(:first-of-type), .dark
+  div.buttons.group > a:not(:first-of-type), .dark
+  div.buttons span.group > button:not(:first-of-type), .dark
+  div.buttons span.group > a:not(:first-of-type), .dark
+  span.buttons.group > button:not(:first-of-type), .dark
+  span.buttons.group > a:not(:first-of-type) {
     border-left-color: #737373; }
-  .ff-input-wrapper button + button:disabled,
-  div.buttons.narrow button + button:disabled {
+  .ff-input-wrapper > button:not(:first-of-type):disabled,
+  .ff-input-wrapper > a:not(:first-of-type):disabled,
+  div.buttons.group > button:not(:first-of-type):disabled,
+  div.buttons.group > a:not(:first-of-type):disabled,
+  div.buttons span.group > button:not(:first-of-type):disabled,
+  div.buttons span.group > a:not(:first-of-type):disabled,
+  span.buttons.group > button:not(:first-of-type):disabled,
+  span.buttons.group > a:not(:first-of-type):disabled {
     border-left-color: #dbdbdb; }
-    .dark .ff-input-wrapper button + button:disabled, .dark
-    div.buttons.narrow button + button:disabled {
+    .dark .ff-input-wrapper > button:not(:first-of-type):disabled, .dark
+    .ff-input-wrapper > a:not(:first-of-type):disabled, .dark
+    div.buttons.group > button:not(:first-of-type):disabled, .dark
+    div.buttons.group > a:not(:first-of-type):disabled, .dark
+    div.buttons span.group > button:not(:first-of-type):disabled, .dark
+    div.buttons span.group > a:not(:first-of-type):disabled, .dark
+    span.buttons.group > button:not(:first-of-type):disabled, .dark
+    span.buttons.group > a:not(:first-of-type):disabled {
       border-left-color: #565656; }
+
+div.buttons.group {
+  display: flex; }
+
+div.buttons span.group,
+span.buttons.group {
+  display: inline-flex; }
+
+div.buttons span.group:not(:last-child) {
+  margin-right: 10px; }
+
+button.toggle-button.active {
+  background: #6c6c6c;
+  color: #f0f0f0; }
+  .dark button.toggle-button.active {
+    background: #b0b0b0;
+    color: #000000; }
+  button.toggle-button.active.transparent {
+    background: #6c6c6c;
+    color: #f0f0f0; }
+    .dark button.toggle-button.active.transparent {
+      background: #b0b0b0;
+      color: #000000; }
+  button.toggle-button.active:hover:not(:disabled):not([disabled]), button.toggle-button.active:focus:not(:disabled):not([disabled]) {
+    background: #5b5b5b; }
+    .dark button.toggle-button.active:hover:not(:disabled):not([disabled]), .dark button.toggle-button.active:focus:not(:disabled):not([disabled]) {
+      background: #bcbcbc; }
+  button.toggle-button.active:active:not(:disabled):not([disabled]), button.toggle-button.active.ff-active:not(:disabled):not([disabled]) {
+    background: #494949;
+    color: #f0f0f0; }
+    .dark button.toggle-button.active:active:not(:disabled):not([disabled]), .dark button.toggle-button.active.ff-active:not(:disabled):not([disabled]) {
+      background: #c9c9c9;
+      color: #000000; }
 
 input[type=color] {
   height: 30px;
@@ -2394,13 +3058,16 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   flex-wrap: wrap;
   width: 100%; }
   .ff-tab-headers a {
-    color: black;
     text-decoration: none;
     border-top: 1px solid #d8d8d8;
     border-left: 1px solid #d8d8d8;
     border-right: 1px solid #d8d8d8;
     margin-right: -1px;
     padding: 2px 10px; }
+    .ff-tab-headers a:link, .ff-tab-headers a:visited {
+      color: black; }
+      .ff-tab-headers a:link:hover, .ff-tab-headers a:visited:hover {
+        color: black; }
     .ff-tab-headers a:focus {
       outline-offset: -3px; }
     .ff-tab-headers a:last-child {
@@ -2592,35 +3259,37 @@ input[type=radio].ff-checkbox:indeterminate + span::before {
   padding: 0;
   background: #f4f4f4;
   color: #000000; }
-  .ff-submenu li a {
-    display: block;
-    padding: 6px 10px;
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
-    .ff-submenu li a:hover, .ff-submenu li a:focus {
-      background: #e0e0e0;
+  .ff-submenu li {
+    text-align: left; }
+    .ff-submenu li a {
+      display: block;
+      padding: 6px 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease; }
+      .ff-submenu li a:hover, .ff-submenu li a:focus {
+        background: #e0e0e0;
+        color: #000000;
+        transition: background 0s, color 0s;
+        outline: none; }
+    .ff-submenu li a:active,
+    .ff-submenu li.active a,
+    .ff-submenu li.active a:hover {
+      background: #adadad;
       color: #000000;
-      transition: background 0s, color 0s;
-      outline: none; }
-  .ff-submenu li a:active,
-  .ff-submenu li.active a,
-  .ff-submenu li.active a:hover {
-    background: #adadad;
-    color: #000000;
-    transition: background 0s, color 0s; }
-  .ff-submenu li.text {
-    padding: 6px 10px; }
-  .ff-submenu li.separator {
-    margin: 3px 10px;
-    border-top: 1px solid #e0e0e0; }
-  .ff-submenu li[disabled] a,
-  .ff-submenu li[disabled] a:hover,
-  .ff-submenu li[disabled] a:focus,
-  .ff-submenu li[disabled] a:active {
-    background: #f4f4f4;
-    opacity: 0.4;
-    pointer-events: none; }
+      transition: background 0s, color 0s; }
+    .ff-submenu li.text {
+      padding: 6px 10px; }
+    .ff-submenu li.separator {
+      margin: 3px 10px;
+      border-top: 1px solid #e0e0e0; }
+    .ff-submenu li[disabled] a,
+    .ff-submenu li[disabled] a:hover,
+    .ff-submenu li[disabled] a:focus,
+    .ff-submenu li[disabled] a:active {
+      background: #f4f4f4;
+      opacity: 0.4;
+      pointer-events: none; }
 
 nav .menu {
   background: #505050;
@@ -2840,6 +3509,10 @@ nav .menu {
       height: 8px; }
 
 .ff-carousel {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   overflow-x: hidden;
   position: relative; }
 
@@ -2860,12 +3533,12 @@ nav .menu {
       width: 10px;
       height: 10px;
       border-radius: 100%;
-      background: rgba(0, 0, 0, 0.1);
-      transition: background 0.2s ease; }
+      background-color: rgba(0, 0, 0, 0.1);
+      transition: background-color 0.2s ease; }
     .ff-carousel-indicator > span:hover > span,
     .ff-carousel-indicator > span.active > span {
-      background: rgba(0, 0, 0, 0.3);
-      transition: background 0s; }
+      background-color: rgba(0, 0, 0, 0.3);
+      transition: background-color 0s; }
 
 .small-indicator .ff-carousel-indicator {
   line-height: 10px; }
@@ -2881,12 +3554,68 @@ nav .menu {
   margin-bottom: -24px;
   z-index: 200; }
 
-.dark-indicator .ff-carousel-indicator > span > span {
-  background: rgba(255, 255, 255, 0.15); }
+.dark .ff-carousel-indicator > span > span,
+.inverted-indicator .ff-carousel-indicator > span > span {
+  background-color: rgba(255, 255, 255, 0.15); }
 
-.dark-indicator .ff-carousel-indicator > span:hover > span,
-.dark-indicator .ff-carousel-indicator > span.active > span {
-  background: rgba(255, 255, 255, 0.5); }
+.dark .ff-carousel-indicator > span:hover > span,
+.dark .ff-carousel-indicator > span.active > span,
+.inverted-indicator .ff-carousel-indicator > span:hover > span,
+.inverted-indicator .ff-carousel-indicator > span.active > span {
+  background-color: rgba(255, 255, 255, 0.5); }
+
+.dark .inverted-indicator .ff-carousel-indicator > span > span {
+  background-color: rgba(0, 0, 0, 0.1); }
+
+.dark .inverted-indicator .ff-carousel-indicator > span:hover > span,
+.dark .inverted-indicator .ff-carousel-indicator > span.active > span {
+  background-color: rgba(0, 0, 0, 0.3); }
+
+.ff-gallery > * {
+  display: none; }
+
+.ff-gallery > .gallery-row {
+  display: flex;
+  justify-content: space-between; }
+  .ff-gallery > .gallery-row.incomplete {
+    justify-content: flex-start; }
+  .ff-gallery > .gallery-row img {
+    vertical-align: middle; }
+  .ff-gallery > .gallery-row a {
+    position: relative; }
+    .ff-gallery > .gallery-row a span {
+      opacity: 0;
+      display: block;
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0.2em 0.5em 0.25em;
+      background: rgba(255, 255, 255, 0.85);
+      color: black;
+      hyphens: auto;
+      font-size: 0.85em;
+      line-height: 130%;
+      text-align: center;
+      transition: opacity 0.2s ease; }
+      .dark .ff-gallery > .gallery-row a span {
+        background: rgba(0, 0, 0, 0.65);
+        color: white; }
+    .ff-gallery > .gallery-row a:hover span,
+    .ff-gallery > .gallery-row a:focus span {
+      opacity: 1;
+      transition: opacity 0s; }
+
+.ff-gallery.gallery-center > .gallery-row.incomplete {
+  justify-content: center; }
+
+.ff-gallery.gallery-right > .gallery-row.incomplete {
+  justify-content: flex-end; }
+
+.ff-gallery > .loading-row {
+  display: block;
+  text-align: center;
+  padding-top: 6px; }
 
 .off-canvas {
   visibility: hidden;

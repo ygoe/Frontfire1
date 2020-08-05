@@ -65,6 +65,8 @@ function carousel(options) {
 		var autoPlayTimeout;
 		var itemOffset, startItemOffset, prevItemOffset, dragDirection, itemOffsetMin, itemOffsetMax, itemWidth;
 		var currentTransition = "";
+		var clickLock = false;
+		var clickUnlockTimeout;
 
 		if (opt.dotsEach === -1) opt.dotsEach = opt.items;
 		opt.dotsEach = minmax(opt.dotsEach, 0, opt.items);
@@ -75,9 +77,20 @@ function carousel(options) {
 			maxItemHeight = Math.max(maxItemHeight, obj.outerHeight());
 			obj.detach().appendTo(stage);
 			itemIndex++;
+			
+			if (obj.attr("href")) {
+				obj.css("cursor", "pointer");
+				obj.attr("tabindex", "-1");
+				obj.click(event => {
+					if (!clickLock) {
+						location.href = obj.attr("href");
+					}
+				});
+			}
 		});
 		stage.appendTo(carousel);
 		stage.css("height", maxItemHeight);
+		stage.attr("tabindex", "-1");   // Would be tab-focusable otherwise (not sure why)
 
 		// Add controls
 		if (opt.indicator) {
@@ -121,6 +134,9 @@ function carousel(options) {
 			itemOffsetMin = -opt.active;
 			itemOffsetMax = lastPageFirstItem - opt.active;
 			opt._isDragging = true;
+			if (clickUnlockTimeout)
+				clearTimeout(clickUnlockTimeout);
+			clickLock = true;
 
 			// Disable transition and autoplay while dragging
 			removeTransition();
@@ -154,6 +170,7 @@ function carousel(options) {
 			addTransition();
 			resumeAutoplay();
 			opt._isDragging = false;
+			clickUnlockTimeout = setTimeout(() => clickLock = false, 100);
 
 			// Snap to item, consider last drag direction
 			var itemIndex = opt.active + itemOffset;

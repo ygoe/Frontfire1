@@ -1,0 +1,73 @@
+@import "../settings";
+
+.ff-gallery
+{
+	> *
+	{
+		display: none;   // Initially hidden, will be put where it's visible when loaded
+	}
+
+	> .gallery-row
+	{
+		display: flex;
+		justify-content: space-between;
+		&.incomplete
+		{
+			justify-content: flex-start;
+		}
+		
+		img
+		{
+			vertical-align: middle;
+		}
+		a
+		{
+			position: relative;
+			
+			span
+			{
+				opacity: 0;
+				display: block;
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				padding: 0.2em 0.5em 0.25em;
+				background: rgba(255, 255, 255, 0.85);
+				color: black;
+				hyphens: auto;
+				font-size: 0.85em;
+				line-height: 130%;
+				text-align: center;
+				transition: opacity $animationDuration $animationFunction;
+				.dark &
+				{
+					background: rgba(0, 0, 0, 0.65);
+					color: white;
+				}
+			}
+			&:hover span,
+			&:focus span
+			{
+				opacity: 1;
+				transition: opacity 0s;
+			}
+		}
+	}
+	
+	&.gallery-center > .gallery-row.incomplete
+	{
+		justify-content: center;
+	}
+	&.gallery-right > .gallery-row.incomplete
+	{
+		justify-content: flex-end;
+	}
+
+	> .loading-row
+	{
+		display: block;
+		text-align: center;
+		padding-top: 6px;
+	}
+}

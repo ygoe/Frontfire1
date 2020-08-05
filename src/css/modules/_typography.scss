@@ -27,8 +27,10 @@ code,
 tt,
 pre,
 samp,
+div.code,
 input.monospace,
-textarea.monospace
+textarea.monospace,
+.monospace
 {
 	font-family: $monospaceFontFamily;
 	font-size: $monospaceFontSize;
@@ -78,7 +80,13 @@ p,
 div.p,
 table.p
 {
-	margin: 1em 0;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	&.double-margin
+	{
+		margin-top: 2em;
+		margin-bottom: 2em;
+	}
 }
 
 p.left-align,
@@ -110,6 +118,25 @@ div.justify
 	font-size: round($defaultFontSize * 1.3) !important;
 	line-height: round($defaultFontSize * 1.3 * $defaultLineHeight) !important;
 }
+.smaller
+{
+	font-size: round($defaultFontSize * 0.8) !important;
+	line-height: round($defaultFontSize * 0.8 * $defaultLineHeight) !important;
+}
+
+.no-top-margin
+{
+	margin-top: 0 !important;
+}
+.no-bottom-margin
+{
+	margin-bottom: 0 !important;
+}
+.no-vertical-margin
+{
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
 
 // ========== Links ==========
 
@@ -133,7 +160,6 @@ a
 		&:visited
 		{
 			color: $darkLinkColor;
-			text-decoration: none;
 			&:hover
 			{
 				color: $darkLinkHoverColor;
@@ -193,6 +219,7 @@ table
 	}
 }
 
+// Remove outer border around table
 table.no-border
 {
 	border: none;
@@ -219,6 +246,7 @@ table.no-border
 	}
 }
 
+// Remove vertical/horizontal grid lines between cells
 table.no-vgrid,
 table.no-grid
 {
@@ -240,18 +268,22 @@ table.no-grid
 	}
 }
 
+// Remove cell padding at the outer table edges (left and right)
 table.no-outer-padding
 {
-	td:first-child
+	td:first-child,
+	td.first-column
 	{
 		padding-left: 0;
 	}
-	td:last-child
+	td:last-child,
+	td.last-column
 	{
 		padding-right: 0;
 	}
 }
 
+// Remove padding in table cells
 table.no-padding
 {
 	th,
@@ -261,11 +293,13 @@ table.no-padding
 	}
 }
 
+// Spread all columns across the entire available width instead of auto-width
 table.full-width
 {
 	width: 100%;
 }
 
+// Horizontal/vertical alignment in all table cells
 table.center
 {
 	th,
@@ -283,6 +317,7 @@ table.top
 	}
 }
 
+// Horizontal/vertical alignment in a table cell
 th.left,
 td.left
 {
@@ -304,12 +339,60 @@ td.top
 	vertical-align: top !important;
 }
 
+// Links in a table cell fill the entire cell, making a bigger click area especially for shorter link texts
 table.big-links tr td > a
 {
 	display: block;
 }
 
+// Rows as tall as if there would be a button in them (also more touch-friendly)
+table.tall-rows
+{
+	td
+	{
+		// button vertical padding + td vertical padding + td one vertical border side
+		height: calc(#{$_defaultLineHeight} + 17px);
+	}
+	&.no-border
+	{
+		tr:last-child > td
+		{
+			// one less for the last row
+			height: calc(#{$_defaultLineHeight} + 16px);
+		}
+	}
+	&.big-links tr td > a
+	{
+		// Same vertical padding as button
+		padding: 5px 0;
+	}
+}
+
+table.sticky-header thead th
+{
+	position: sticky;
+	top: 0px;
+	z-index: 2;
+}
+
 // ========== Others ==========
+
+// Adds a float break before and after the element
+// (also available as a reusable mixin for adding to other classes)
+@mixin clearfix
+{
+	&::before,
+	&::after
+	{
+		content: "";
+		display: table;
+		clear: both;
+	}
+}
+.clearfix
+{
+	@include clearfix;
+}
 
 hr
 {
@@ -327,14 +410,21 @@ hr
 	}
 }
 
-code
+code,
+div.code
 {
-	background-color: #eeeeee;
-	padding: 0 2px;
+	background-color: $codeBackground;
+	padding: $codeInlinePadding;
+	hyphens: none;
+	overflow-wrap: break-word;
 	.dark &
 	{
-		background-color: #484848;
+		background-color: $darkCodeBackground;
 	}
+}
+div.code
+{
+	padding: $codePadding;
 }
 
 kbd
@@ -421,6 +511,18 @@ i.loading
 	&.inverted::before
 	{
 		border-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15);
+	}
+
+	.dark &
+	{
+		&::before
+		{
+			border-color: rgba(255, 255, 255, 0.8) rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.15);
+		}
+		&.inverted::before
+		{
+			border-color: rgba(0, 0, 0, 0.6) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1);
+		}
 	}
 
 	&.small { font-size: 16px; }

@@ -59,9 +59,10 @@ function selectable(options) {
 					if (button.disabled()) return;
 					button.addClass("open");
 					let fixed = button.parentWhere(p => $(p).css("position") === "fixed").length > 0;
-					newSelect.dropdown(button, { fixed: fixed });
+					let cssClass = "";
 					if (button.closest(".dark").length > 0)
-						newSelect.parent().addClass("dark");   // Set dropdown container to dark
+						cssClass = "dark";   // Set dropdown container to dark
+					newSelect.dropdown(button, { fixed: fixed, cssClass: cssClass });
 					newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
 				});
 				newSelect.on("dropdownclose", function () {
@@ -144,13 +145,11 @@ function selectable(options) {
 					newSelect.disable();
 			}
 
-			// Apply nowrap class where appropriate
-			if (htmlSelect.hasClass("wrap")) {
-				if (useDropdown)
-					button.addClass("wrap");
-				else
-					newSelect.addClass("wrap");
-			}
+			// Copy some CSS classes to the replacement element (new list or button)
+			["wrap", "input-validation-error"].forEach(clsName => {
+				if (htmlSelect.hasClass(clsName))
+					htmlSelect.data("ff-replacement").addClass(clsName);
+			});
 
 			htmlSelect.change(function () {
 				if (!htmlSelectChanging) {

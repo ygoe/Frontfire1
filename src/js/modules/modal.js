@@ -18,7 +18,10 @@ var modalDefaults = {
 	closeTooltip: "",
 	
 	// Indicates whether the page background is dimmed while the modal is open. Default: true.
-	dimBackground: true
+	dimBackground: true,
+
+	// The action to execute when the Enter key was pressed. Default: none.
+	defaultAction: undefined
 };
 
 // Opens a modal with the selected element.
@@ -62,6 +65,12 @@ function modal(options) {
 				if (modalLevel === opt.level) {   // There might be another modal on top
 					event.preventDefault();
 					modal.modal.close();
+				}
+			}
+			if (event.keyCode === 13 && opt.defaultAction) {   // Enter
+				if (modalLevel === opt.level) {   // There might be another modal on top
+					event.preventDefault();
+					opt.defaultAction();
 				}
 			}
 		});

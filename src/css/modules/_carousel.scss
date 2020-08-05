@@ -2,6 +2,7 @@
 
 .ff-carousel
 {
+	@include user-select(none);
 	overflow-x: hidden;
 	position: relative;
 }
@@ -30,14 +31,14 @@
 			width: 10px;
 			height: 10px;
 			border-radius: 100%;
-			background: rgba(0, 0, 0, 0.1);
-			transition: background $animationDuration $animationFunction;
+			background-color: $carouselIndicatorBackground;
+			transition: background-color $animationDuration $animationFunction;
 		}
 		&:hover > span,
 		&.active > span
 		{
-			background: rgba(0, 0, 0, 0.3);
-			transition: background 0s;
+			background-color: $carouselIndicatorActiveBackground;
+			transition: background-color 0s;
 		}
 	}
 }
@@ -66,15 +67,37 @@
 	z-index: 200;
 }
 
-.dark-indicator .ff-carousel-indicator > span
+// Invert in dark theme or when explicitly set
+.dark,
+.inverted-indicator
 {
-	> span
+	.ff-carousel-indicator > span
 	{
-		background: rgba(255, 255, 255, 0.15);
+		> span
+		{
+			background-color: $darkCarouselIndicatorBackground;
+		}
+		&:hover > span,
+		&.active > span
+		{
+			background-color: $darkCarouselIndicatorActiveBackground;
+		}
 	}
-	&:hover > span,
-	&.active > span
+}
+
+// Invert back to normal
+.dark .inverted-indicator
+{
+	.ff-carousel-indicator > span
 	{
-		background: rgba(255, 255, 255, 0.5);
+		> span
+		{
+			background-color: $carouselIndicatorBackground;
+		}
+		&:hover > span,
+		&.active > span
+		{
+			background-color: $carouselIndicatorActiveBackground;
+		}
 	}
 }

@@ -44,18 +44,6 @@ html:not(.simple-dimmer)
 	}
 }
 
-// Adds a float break before and after the group
-.group:before,
-.group:after
-{
-	content: "";
-	display: table;
-}
-.group:after
-{
-	clear: both;
-}
-
 .print-only
 {
 	display: none;
@@ -86,6 +74,7 @@ html:not(.simple-dimmer)
 @import "modules/sortable";
 @import "modules/slider";
 @import "modules/carousel";
+@import "modules/gallery";
 @import "modules/offcanvas";
 @import "modules/accordion";
 @import "modules/progressbar";

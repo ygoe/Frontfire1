@@ -222,6 +222,7 @@
 				<button class="caution"><i class="fa fa-trash-alt"></i> Delete</button>
 				<button class="narrow"><i class="fa fa-phone"></i></button>
 				<button class="narrow"><i class="fa fa-eject"></i></button>
+				<a href="#">Link button</a>
 			</div>
 
 			<p><samp>
@@ -229,6 +230,56 @@
 				    &lt;button class="default"&gt;&lt;i class="fa fa-check"&gt;&lt;/i&gt; OK&lt;/button&gt;<br>
 				    &lt;button&gt;Cancel&lt;/button&gt;<br>
 				    ...<br>
+				&lt;/div&gt;
+			</samp></p>
+			
+			<p>
+				Buttons can be placed in a group without a gap between them:
+			</p>
+
+			<div class="buttons group no-top-margin">
+				<button><i class="fa fa-check"></i> OK</button>
+				<button>Cancel</button>
+				<button>What?</button>
+				<button class="narrow"><i class="fa fa-phone"></i></button>
+				<button class="narrow"><i class="fa fa-eject"></i></button>
+			</div>
+
+			<p><samp>
+				&lt;div class="buttons group"&gt;<br>
+				    &lt;button&gt;&lt;i class="fa fa-check"&gt;&lt;/i&gt; OK&lt;/button&gt;<br>
+				    &lt;button&gt;Cancel&lt;/button&gt;<br>
+				    ...<br>
+				&lt;/div&gt;
+			</samp></p>
+			
+			<p>
+				Note that only <code>&lt;button&gt;</code> or <code>&lt;a&gt;</code> buttons can be grouped together, they cannot be mixed.
+				You also should not disable individual buttons of a group or the separator bars will be inconsistent.
+			</p>
+
+			<p>
+				Only some of the buttons are grouped together:
+			</p>
+
+			<div class="buttons no-top-margin">
+				<button><i class="fa fa-check"></i> OK</button>
+				<button>Cancel</button>
+				<span class="group">
+					<button class="narrow"><i class="fas fa-phone"></i></button>
+					<button class="narrow"><i class="fas fa-eject"></i></button>
+					<button class="narrow"><i class="fas fa-thumbtack"></i></button>
+				</span>
+				<button>Other</button>
+			</div>
+
+			<p><samp>
+				&lt;div class="buttons"&gt;<br>
+				    &lt;button&gt;&lt;i class="fa fa-check"&gt;&lt;/i&gt; OK&lt;/button&gt;<br>
+				    &lt;span class="group"&gt;<br>
+				        &lt;button&gt;A&lt;/button&gt;<br>
+				        &lt;button&gt;B&lt;/button&gt;<br>
+				    &lt;/span&gt;<br>
 				&lt;/div&gt;
 			</samp></p>
 		</form>

@@ -75,11 +75,24 @@ export function installDisabledchangeHook() {
 		});
 }
 
+export function installReadonlychangeHook() {
+	installHook(
+		$.propHooks, "readonly", "readonlychange",
+		undefined,
+		function (elem, value, name) {
+			if (elem.readonly !== value) {
+				elem.readonly = value;   // Set before triggering change event
+				$(elem).trigger("readonlychange");
+			}
+		});
+}
+
 // Binds the disabled state of the input element to the associated buttons.
 export function bindInputButtonsDisabled(input, buttons) {
 	// When the input element was disabled or enabled, also update other elements
 	installDisabledchangeHook();
-	var handler = function () {
+	installReadonlychangeHook();
+	var disabledHandler = function () {
 		if (input.disabled()) {
 			input.disable();   // Disable everything related as well (label etc.)
 			buttons.forEach(button => button.disable());
@@ -89,12 +102,39 @@ export function bindInputButtonsDisabled(input, buttons) {
 			buttons.forEach(button => button.enable());
 		}
 	};
-	input.on("disabledchange", handler);
+	input.on("disabledchange", disabledHandler);
+
+	var readonlyHandler = function () {
+		if (input.readonly()) {
+			input.readonly(true);
+			buttons.forEach(button => {
+				if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
+					button.disable(false);   // Don't touch the label
+				}
+				else {
+					button.readonly(true);
+				}
+			});
+		}
+		else {
+			input.readonly(false);
+			buttons.forEach(button => {
+				if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
+					button.enable(false);   // Don't touch the label
+				}
+				else {
+					button.readonly(false);
+				}
+			});
+		}
+	};
+	input.on("readonlychange", readonlyHandler);
 
 	// Setup disabled state initially.
 	// Also enable elements. If they were disabled and the page is reloaded, their state
 	// may be restored halfway. This setup brings everything in the same state.
-	handler();
+	disabledHandler();
+	readonlyHandler();
 }
 
 // Scrolls the window so that the rectangle is fully visible.

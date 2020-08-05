@@ -276,12 +276,19 @@ a.button
 		color: $buttonColor;
 		text-decoration: none !important;
 	}
+	&:link:hover,
+	&:visited:hover
+	{
+		color: $buttonColor;
+	}
 	.dark &
 	{
 		background: $darkButtonBackground;
 		color: $darkButtonColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $darkButtonColor;
 		}
@@ -311,7 +318,9 @@ a.button
 		transition: background 0s;
 		color: $buttonPressedColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonPressedColor;
 		}
@@ -320,7 +329,9 @@ a.button
 			background: $darkButtonPressedBackground;
 			color: $darkButtonPressedColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonPressedColor;
 			}
@@ -333,7 +344,9 @@ a.button
 		color: $buttonDisabledColor;
 		cursor: default;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonDisabledColor;
 		}
@@ -342,7 +355,9 @@ a.button
 			background: $darkButtonDisabledBackground;
 			color: $darkButtonDisabledColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonDisabledColor;
 			}
@@ -354,7 +369,9 @@ a.button
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonDefaultColor;
 		}
@@ -363,7 +380,9 @@ a.button
 			background: $darkButtonDefaultBackground;
 			color: $darkButtonDefaultColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonDefaultColor;
 			}
@@ -386,7 +405,9 @@ a.button
 			color: $buttonDefaultPressedColor;
 			transition: background 0s;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $buttonDefaultPressedColor;
 			}
@@ -395,7 +416,9 @@ a.button
 				background: $darkButtonDefaultPressedBackground;
 				color: $darkButtonDefaultPressedColor;
 				&a:link,
-				&a:visited
+				&a:visited,
+				&:link:hover,
+				&:visited:hover
 				{
 					color: $darkButtonDefaultPressedColor;
 				}
@@ -408,7 +431,9 @@ a.button
 		background: $buttonCautionBackground;
 		color: $buttonCautionColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonCautionColor;
 		}
@@ -417,7 +442,9 @@ a.button
 			background: $darkButtonCautionBackground;
 			color: $darkButtonCautionColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonCautionColor;
 			}
@@ -440,7 +467,9 @@ a.button
 			color: $buttonCautionPressedColor;
 			transition: background 0s;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $buttonCautionPressedColor;
 			}
@@ -449,7 +478,9 @@ a.button
 				background: $darkButtonCautionPressedBackground;
 				color: $darkButtonCautionPressedColor;
 				&a:link,
-				&a:visited
+				&a:visited,
+				&:link:hover,
+				&:visited:hover
 				{
 					color: $darkButtonCautionPressedColor;
 				}
@@ -462,7 +493,9 @@ a.button
 		background: $buttonTransparentBackground;
 		color: $buttonTransparentColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonTransparentColor;
 		}
@@ -471,7 +504,9 @@ a.button
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonTransparentColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonTransparentColor;
 			}
@@ -494,7 +529,9 @@ a.button
 			color: $buttonTransparentPressedColor;
 			transition: background 0s;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $buttonTransparentPressedColor;
 			}
@@ -503,7 +540,9 @@ a.button
 				background: $darkButtonTransparentPressedBackground;
 				color: $darkButtonTransparentPressedColor;
 				&a:link,
-				&a:visited
+				&a:visited,
+				&:link:hover,
+				&:visited:hover
 				{
 					color: $darkButtonTransparentPressedColor;
 				}
@@ -516,7 +555,9 @@ a.button
 		background: $buttonTransparentBackground;
 		color: $buttonDisabledColor;
 		&a:link,
-		&a:visited
+		&a:visited,
+		&:link:hover,
+		&:visited:hover
 		{
 			color: $buttonDisabledColor;
 		}
@@ -525,7 +566,9 @@ a.button
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonDisabledColor;
 			&a:link,
-			&a:visited
+			&a:visited,
+			&:link:hover,
+			&:visited:hover
 			{
 				color: $darkButtonDisabledColor;
 			}
@@ -543,6 +586,59 @@ a.button
 	&:not(.narrow) i:empty
 	{
 		margin-right: 3px;
+	}
+}
+
+#{$buttonInputs}
+{
+	&.link
+	{
+		background: transparent;
+		color: $linkColor;
+		padding: 0;
+		min-width: unset;
+		&:hover:not(:disabled):not([disabled]),
+		&:focus:not(:disabled):not([disabled]),
+		&:active:not(:disabled):not([disabled]),
+		&.ff-active:not(:disabled):not([disabled])
+		{
+			background: transparent;
+			color: $linkHoverColor;
+		}
+		&:focus:not(:disabled):not([disabled])
+		{
+			outline: dotted 1px $linkHoverColor;
+		}
+		&:disabled,
+		&[disabled]
+		{
+			background: transparent;
+			color: $disabledLabelColor;
+		}
+
+		.dark &
+		{
+			background: transparent;
+			color: $darkLinkColor;
+			&:hover:not(:disabled):not([disabled]),
+			&:focus:not(:disabled):not([disabled]),
+			&:active:not(:disabled):not([disabled]),
+			&.ff-active:not(:disabled):not([disabled])
+			{
+				background: transparent;
+				color: $darkLinkHoverColor;
+			}
+			&:focus:not(:disabled):not([disabled])
+			{
+				outline: dotted 1px $darkLinkHoverColor;
+			}
+			&:disabled,
+			&[disabled]
+			{
+				background: transparent;
+				color: $darkDisabledLabelColor;
+			}
+		}
 	}
 }
 
@@ -564,7 +660,7 @@ span.buttons
 
 	form &
 	{
-		padding-top: 20px;
+		margin-top: 24px;
 	}
 }
 div.buttons > ul,
@@ -573,27 +669,87 @@ span.buttons > ul
 	line-height: 1px;
 }
 .ff-input-wrapper,
-div.buttons.narrow
+div.buttons.group,
+div.buttons span.group,
+span.buttons.group
 {
-	button
+	> button,
+	> a
 	{
-		+ button
+		margin-right: 0;
+	}
+
+	> button:not(:first-of-type),
+	> a:not(:first-of-type)
+	{
+		margin-left: 0px;
+		border-left: 1px solid $buttonGroupSeparatorColor;
+		.dark &
 		{
-			margin-left: 0px;
-			border-left: 1px solid $buttonGroupSeparatorColor;
+			border-left-color: $darkButtonGroupSeparatorColor;
+		}
+
+		&:disabled
+		{
+			border-left-color: $buttonGroupDisabledSeparatorColor;
 			.dark &
 			{
-				border-left-color: $darkButtonGroupSeparatorColor;
+				border-left-color: $darkButtonGroupDisabledSeparatorColor;
 			}
+		}
+	}
+}
+div.buttons.group
+{
+	display: flex;
+}
+div.buttons span.group,
+span.buttons.group
+{
+	display: inline-flex;
+}
+div.buttons span.group:not(:last-child)
+{
+	margin-right: 10px;
+}
 
-			&:disabled
-			{
-				border-left-color: $buttonGroupDisabledSeparatorColor;
-				.dark &
-				{
-					border-left-color: $darkButtonGroupDisabledSeparatorColor;
-				}
-			}
+button.toggle-button.active
+{
+	background: $buttonActiveBackground;
+	color: $buttonActiveColor;
+	.dark &
+	{
+		background: $darkButtonActiveBackground;
+		color: $darkButtonActiveColor;
+	}
+	&.transparent
+	{
+		background: $buttonActiveBackground;
+		color: $buttonActiveColor;
+		.dark &
+		{
+			background: $darkButtonActiveBackground;
+			color: $darkButtonActiveColor;
+		}
+	}
+	&:hover:not(:disabled):not([disabled]),
+	&:focus:not(:disabled):not([disabled])
+	{
+		background: $buttonActiveHoverBackground;
+		.dark &
+		{
+			background: $darkButtonActiveHoverBackground;
+		}
+	}
+	&:active:not(:disabled):not([disabled]),
+	&.ff-active:not(:disabled):not([disabled])
+	{
+		background: $buttonActivePressedBackground;
+		color: $buttonActivePressedColor;
+		.dark &
+		{
+			background: $darkButtonActivePressedBackground;
+			color: $darkButtonActivePressedColor;
 		}
 	}
 }

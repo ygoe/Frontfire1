@@ -1,11 +1,13 @@
 ﻿import { minmax, round, forceReflow, bindInputButtonsDisabled, scrollIntoView, preventScrolling, stackElements } from "../util";
 
+const replacementKey = "ff-replacement";
+
 // Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
 let origToggle = $.fn.toggle;
 $.fn.toggle = function () {
 	let args = arguments;
 	return this.each$(function (_, obj) {
-		origToggle.apply(obj.data("ff-replacement") || obj, args);
+		origToggle.apply(obj.data(replacementKey) || obj, args);
 	});
 };
 
@@ -13,7 +15,7 @@ let origShow = $.fn.show;
 $.fn.show = function () {
 	let args = arguments;
 	return this.each$(function (_, obj) {
-		origShow.apply(obj.data("ff-replacement") || obj, args);
+		origShow.apply(obj.data(replacementKey) || obj, args);
 	});
 };
 
@@ -21,7 +23,7 @@ let origHide = $.fn.hide;
 $.fn.hide = function () {
 	let args = arguments;
 	return this.each$(function (_, obj) {
-		origHide.apply(obj.data("ff-replacement") || obj, args);
+		origHide.apply(obj.data(replacementKey) || obj, args);
 	});
 };
 
@@ -58,7 +60,7 @@ $.fn.visible = function (value) {
 
 	// Getter
 	if (this.length === 0) return;
-	let el = this.data("ff-replacement") || this;
+	let el = this.data(replacementKey) || this;
 	return el.css("display") !== "none";
 };
 
@@ -94,8 +96,8 @@ $.fn.enable = function (includeLabel) {
 			// This automatically removes the HTML attribute as well.
 			obj.prop("disabled", false);
 			// Also update replacement elements of Frontfire controls
-			if (obj.data("ff-replacement"))
-				obj.data("ff-replacement").enable(false);
+			if (obj.data(replacementKey))
+				obj.data(replacementKey).enable(false);
 		}
 		else if (obj.attr("disabled") !== undefined) {
 			// Don't set the property or it will be added where not supported.
@@ -133,8 +135,8 @@ $.fn.disable = function (includeLabel) {
 			// This automatically sets the HTML attribute as well.
 			obj.prop("disabled", true);
 			// Also update replacement elements of Frontfire controls
-			if (obj.data("ff-replacement"))
-				obj.data("ff-replacement").disable(false);
+			if (obj.data(replacementKey))
+				obj.data(replacementKey).disable(false);
 		}
 		else if (obj.attr("disabled") === undefined) {
 			// Don't set the property or it will be added where not supported.
@@ -172,6 +174,56 @@ $.fn.toggleDisabled = function (includeLabel) {
 			obj.disable(includeLabel);
 	});
 };
+
+// Determines whether the selected element is readonly.
+//
+// value: Sets the readonly state of the selected elements. Unsupported elements are disabled instead.
+$.fn.readonly = function (value) {
+	// Setter
+	if (value !== undefined) {
+		return this.each(function (_, obj) {
+			let supportsReadonlyProp = "readonly" in obj;
+			let supportsDisabledProp = "disable" in obj;
+			obj = $(obj);
+			if (value) {
+				if (supportsReadonlyProp) {
+					obj.prop("readonly", true);
+					if (obj.data(replacementKey))
+						obj.data(replacementKey).readonly(true);
+				}
+				else if (supportsDisabledProp) {
+					obj.prop("disabled", true);
+					if (obj.data(replacementKey))
+						obj.data(replacementKey).readonly(true);
+				}
+				else if (obj.attr("readonly") === undefined) {
+					obj.attr("readonly", "");
+					obj.trigger("readonlychange");
+				}
+			}
+			else {
+				if (supportsReadonlyProp) {
+					obj.prop("readonly", false);
+					if (obj.data(replacementKey))
+						obj.data(replacementKey).readonly(false);
+				}
+				else if (supportsDisabledProp) {
+					obj.prop("disabled", false);
+					if (obj.data(replacementKey))
+						obj.data(replacementKey).readonly(false);
+				}
+				else if (obj.attr("readonly") !== undefined) {
+					obj.removeAttr("readonly");
+					obj.trigger("readonlychange");
+				}
+			}
+		});
+	}
+
+	// Getter
+	if (this.length === 0) return;
+	return this[0].readonly || this.attr("readonly") !== undefined;
+}
 
 // Returns the first child of each selected element, in the fastest possible way.
 $.fn.firstChild = function () {
@@ -214,6 +266,14 @@ $.fn.actualCursor = function () {
 	// "auto" is mostly used for inline text content. Ignore that and just return the default
 	// cursor that is shown over the empty areas of that element.
 	return "default";
+};
+
+// Scrolls the page so that the first selected element is at the top.
+// offset: The vertical offset to scroll the element to.
+$.fn.scrollToTop = function (offset) {
+	if (this.length) {
+		$(window).scrollTop(this.offset().top - (offset || 0));
+	}
 };
 
 // Determines whether the specified font exists on the client.

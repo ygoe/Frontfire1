@@ -10,6 +10,11 @@
 			max-width: calc(100% - #{2 * $pageWidthPadding});
 		}
 	}
+	.full-page-width
+	{
+		margin-left: $pageWidthPadding;
+		max-width: calc(100% - #{2 * $pageWidthPadding});
+	}
 
 	html.center
 	{
@@ -30,7 +35,8 @@
 }
 @if $pageWidth == 0
 {
-	.page-width
+	.page-width,
+	.full-page-width
 	{
 		margin-left: $pageWidthPadding;
 		max-width: calc(100% - #{2 * $pageWidthPadding});

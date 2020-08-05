@@ -88,6 +88,10 @@ form
 	{
 		justify-self: start;
 		align-self: center;
+		&.top
+		{
+			align-self: start;
+		}
 	}
 
 	// Responsive single-column fallbacks

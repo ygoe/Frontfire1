@@ -8,14 +8,22 @@
 
 	a
 	{
-		color: black;
 		text-decoration: none;
 		border-top: 1px solid $tabsBorderColor;
 		border-left: 1px solid $tabsBorderColor;
 		border-right: 1px solid $tabsBorderColor;
 		margin-right: -1px;
 		padding: 2px 10px;
-
+		
+		&:link,
+		&:visited
+		{
+			color: black;
+			&:hover
+			{
+				color: black;
+			}
+		}
 		&:focus
 		{
 			outline-offset: -3px;

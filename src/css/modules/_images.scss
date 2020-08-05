@@ -37,6 +37,12 @@ svg.circle
 	border-radius: 100%;
 }
 
+.dark img.dark-invert,
+.dark svg.dark-invert
+{
+	filter: invert(1);
+}
+
 @mixin img-left-right
 {
 	max-width: calc(50% - 1.5em);
@@ -60,6 +66,13 @@ svg.circle
 	{
 		margin-left: auto;
 		margin-right: auto;
+	}
+	&.narrow-full-width
+	{
+		margin-left: 0;
+		margin-right: 0;
+		width: 100%;
+		max-height: 100vh;
 	}
 }
 @mixin too-narrow-left
@@ -133,13 +146,17 @@ div.image-full-width
 	text-align: center;
 	padding: 0 2em;
 	color: $imageSubtitleColor;
+	.dark &
+	{
+		color: $darkImageSubtitleColor;
+	}
 
 	img,
 	svg
 	{
 		display: block;
 		margin: 0 -2em 0.5em;
-		width: calc(100% + 4em);
+		width: calc(100% + 4em) !important;
 		max-height: 100vh;
 	}
 }
@@ -152,6 +169,10 @@ div.image-center
 	text-align: center;
 	padding: 0 2em;
 	color: $imageSubtitleColor;
+	.dark &
+	{
+		color: $darkImageSubtitleColor;
+	}
 
 	img,
 	svg
@@ -170,6 +191,10 @@ div.image-center
 	font-size: 0.85em;
 	line-height: 130%;
 	color: $imageSubtitleColor;
+	.dark &
+	{
+		color: $darkImageSubtitleColor;
+	}
 
 	img,
 	svg
@@ -216,6 +241,17 @@ div.image-center
 		{
 			margin-left: auto;
 			margin-right: auto;
+		}
+	}
+	&.narrow-full-width
+	{
+		img,
+		svg
+		{
+			margin-left: 0;
+			margin-right: 0;
+			width: 100%;
+			max-height: 100vh;
 		}
 	}
 }
@@ -285,4 +321,210 @@ div.image-right
 	{
 		&.require-wide { @include div-too-narrow-right; }
 	}
+}
+
+div.image-overlay-text,
+a.image-overlay-text
+{
+	position: relative;
+	display: block;
+	
+	// Undo other 'image with subtitle' styles
+	font-size: 20px;
+	line-height: 28px;
+	text-align: left;
+	color: inherit;
+
+	// Place any child element over the image
+	> *
+	{
+		position: absolute;
+		top: 8%;
+		left: 8%;
+		right: 8%;
+		&.bottom
+		{
+			top: unset;
+			bottom: 8%;
+		}
+		&.center
+		{
+			text-align: center;
+		}
+		&.right
+		{
+			text-align: right;
+		}
+		> span
+		{
+			// This is a compromise style. It uses an opaque background to prevent increased opacity
+			// in the areas where the lines overlap slightly. This is replaced with an overall
+			// opacity value for the entire element. This also affects the text! Since the
+			// transparency is only little, it doesn't hurt much.
+			padding: 2px 7px;
+			background: #ffffff;
+			color: #000000;
+			opacity: 0.8;
+			hyphens: auto;
+			box-decoration-break: clone;
+			-webkit-box-decoration-break: clone;
+			&.dark
+			{
+				background: #000000;
+				color: #ffffff;
+			}
+		}
+		&.ff-background-only
+		{
+			// The above compromise is improved through a little piece of JavaScript that duplicates
+			// these spans and uses one for the background (with the opaque background and overall
+			// transparency) and another one for the text (with no transparency). The other element
+			// is set to transparent then.
+			> span
+			{
+				color: transparent;
+				&.dark
+				{
+					color: transparent;
+				}
+			}
+		}
+		&.ff-foreground-only
+		{
+			> span
+			{
+				opacity: 1;
+				background: transparent;
+				&.dark
+				{
+					background: transparent;
+				}
+			}
+		}
+	}
+	// Restore position for the image itself
+	> img
+	{
+		position: unset;
+		display: block;
+	}
+}
+a.image-overlay-text
+{
+	> * > span
+	{
+		color: $linkColor;
+		&.dark
+		{
+			background: $linkColor;
+		}
+	}
+	&:hover,
+	&:focus
+	{
+		// Intensify text background a little on hovering the image
+		> :not(.ff-foreground-only)
+		{
+			> span
+			{
+				opacity: 0.87;
+			}
+			> span.dark
+			{
+				background: darken($linkColor, 15%);
+			}
+		}
+		// Additional image outline (does not extend the bounding box or resize the image)
+		> img
+		{
+			//border: 3px solid $linkColor;
+			outline: 3px solid rgba($linkColor, 0.8);
+			outline-offset: -3px;
+		}
+	}
+}
+
+@mixin x-too-narrow
+{
+	grid-template-columns: 1fr !important;
+	&.narrow-left
+	{
+		justify-items: start;
+		> *
+		{
+			width: unset;
+		}
+	}
+	&.narrow-right
+	{
+		justify-items: end;
+		> *
+		{
+			width: unset;
+		}
+	}
+	&.narrow-center
+	{
+		> *
+		{
+			width: unset;
+		}
+	}
+	&.narrow-x2
+	{
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+}
+
+div.image-x2,
+div.image-x3,
+div.image-x4
+{
+	display: grid;
+	grid-gap: 2em;
+	justify-items: center;
+	align-items: center;
+	grid-auto-flow: row;
+	&.top
+	{
+		align-items: start;
+	}
+	&.bottom
+	{
+		align-items: end;
+	}
+	> * > img,
+	> *
+	{
+		width: 100%;
+	}
+
+	@media (max-width: $viewportWidthPhone)
+	{
+		&.require-minitab { @include x-too-narrow; }
+	}
+	@media (max-width: $viewportWidthMinitab)
+	{
+		&.require-tablet { @include x-too-narrow; }
+	}
+	@media (max-width: $viewportWidthTablet)
+	{
+		&.require-desktop { @include x-too-narrow; }
+	}
+	@media (max-width: $viewportWidthDesktop)
+	{
+		&.require-wide { @include x-too-narrow; }
+	}
+}
+div.image-x2
+{
+	grid-template-columns: repeat(2, 1fr);
+}
+div.image-x3
+{
+	grid-template-columns: repeat(3, 1fr);
+}
+div.image-x4
+{
+	grid-template-columns: repeat(4, 1fr);
 }

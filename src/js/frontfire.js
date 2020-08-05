@@ -11,6 +11,7 @@ import "./jquery-ui";
 // Import all modules
 import "./modules/accordion";
 import "./modules/carousel";
+import "./modules/gallery";
 import "./modules/color";
 import "./modules/dom";
 import "./modules/draggable";

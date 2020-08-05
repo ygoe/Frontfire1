@@ -1,6 +1,8 @@
 ﻿import { registerPlugin, initOptions, loadOptions } from "../plugin";
 import { minmax, round, forceReflow, bindInputButtonsDisabled, scrollIntoView, preventScrolling, stackElements } from "../util";
 
+const replacementKey = "ff-replacement";
+
 var inputWrapperClass = "ff-input-wrapper";
 var repeatButtonClass = "ff-repeat-button";
 var styleCheckboxClass = "ff-checkbox";
@@ -114,6 +116,61 @@ function spinner() {
 }
 
 registerPlugin("spinner", spinner);
+
+// Converts each selected checkbox input into a toggle button.
+function toggleButton() {
+	return this.each$(function (_, input) {
+		if (!input.is("input[type=checkbox]")) return;   // Wrong element
+		let content;
+		let isActive = input.prop("checked");
+		//let activeValue = input.attr("value");
+		let button;
+		if (input.parent().is("label")) {
+			let label = input.parent();
+			input.insertBefore(label);
+			content = label.html();
+			label.remove();
+		}
+		else if (input.attr("id")) {
+			let label = $("label[for='" + input.attr("id") + "']");
+			if (label.length > 0) {
+				content = label.html();
+				label.remove();
+			}
+		}
+		
+		//input.attr("type", "hidden");
+		input.hide();
+		button = $("<button/>")
+			.attr("type", "button")
+			.addClass("toggle-button")
+			.html(content)
+			.insertAfter(input);
+		input.data(replacementKey, button);
+		// Copy some CSS classes to the button
+		["narrow", "transparent", "input-validation-error"].forEach(clsName => {
+			if (input.hasClass(clsName))
+				button.addClass(clsName);
+		});
+
+		if (isActive)
+			button.addClass("active");
+		//else
+		//	input.val("");
+
+		button.click(() => {
+			button.toggleClass("active");
+			//input.val(button.hasClass("active") ? activeValue : "");
+			input.prop("checked", button.hasClass("active"));
+		});
+		
+		input.on("change", () => {
+			button.toggleClass("active", input.prop("checked"));
+		});
+	});
+}
+
+registerPlugin("toggleButton", toggleButton);
 
 // Converts each selected input[type=color] element into a text field with color picker button.
 function colorPicker() {
@@ -270,6 +327,7 @@ function styleCheckbox() {
 	return this.each$(function (_, input) {
 		if (input.hasClass(styleCheckboxClass)) return;   // Already done
 		if (!input.is("input[type=checkbox], input[type=radio]")) return;   // Wrong element
+		if (input.hasClass("toggle-button")) return;   // Hidden and replaced by a button
 
 		if (input.parents("label").length === 0) {
 			// Styled input needs a label around it to remain clickable

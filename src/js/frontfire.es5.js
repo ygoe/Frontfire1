@@ -170,11 +170,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		});
 	}
 
+	function installReadonlychangeHook() {
+		installHook($.propHooks, "readonly", "readonlychange", undefined, function (elem, value, name) {
+			if (elem.readonly !== value) {
+				elem.readonly = value; // Set before triggering change event
+				$(elem).trigger("readonlychange");
+			}
+		});
+	}
+
 	// Binds the disabled state of the input element to the associated buttons.
 	function bindInputButtonsDisabled(input, buttons) {
 		// When the input element was disabled or enabled, also update other elements
 		installDisabledchangeHook();
-		var handler = function handler() {
+		installReadonlychangeHook();
+		var disabledHandler = function disabledHandler() {
 			if (input.disabled()) {
 				input.disable(); // Disable everything related as well (label etc.)
 				buttons.forEach(function (button) {
@@ -187,12 +197,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			}
 		};
-		input.on("disabledchange", handler);
+		input.on("disabledchange", disabledHandler);
+
+		var readonlyHandler = function readonlyHandler() {
+			if (input.readonly()) {
+				input.readonly(true);
+				buttons.forEach(function (button) {
+					if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
+						button.disable(false); // Don't touch the label
+					} else {
+						button.readonly(true);
+					}
+				});
+			} else {
+				input.readonly(false);
+				buttons.forEach(function (button) {
+					if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
+						button.enable(false); // Don't touch the label
+					} else {
+						button.readonly(false);
+					}
+				});
+			}
+		};
+		input.on("readonlychange", readonlyHandler);
 
 		// Setup disabled state initially.
 		// Also enable elements. If they were disabled and the page is reloaded, their state
 		// may be restored halfway. This setup brings everything in the same state.
-		handler();
+		disabledHandler();
+		readonlyHandler();
 	}
 
 	// Scrolls the window so that the rectangle is fully visible.
@@ -803,6 +837,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var autoPlayTimeout;
 			var itemOffset, startItemOffset, prevItemOffset, dragDirection, itemOffsetMin, itemOffsetMax, itemWidth;
 			var currentTransition = "";
+			var clickLock = false;
+			var clickUnlockTimeout;
 
 			if (opt.dotsEach === -1) opt.dotsEach = opt.items;
 			opt.dotsEach = minmax(opt.dotsEach, 0, opt.items);
@@ -812,9 +848,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				obj.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
 				maxItemHeight = Math.max(maxItemHeight, obj.outerHeight());
 				obj.detach().appendTo(stage);
+
+				if (obj.attr("href")) {
+					obj.css("cursor", "pointer");
+					obj.attr("tabindex", "-1");
+					obj.click(function (event) {
+						if (!clickLock) {
+							location.href = obj.attr("href");
+						}
+					});
+				}
 			});
 			stage.appendTo(carousel);
 			stage.css("height", maxItemHeight);
+			stage.attr("tabindex", "-1"); // Would be tab-focusable otherwise (not sure why)
 
 			// Add controls
 			if (opt.indicator) {
@@ -864,6 +911,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemOffsetMin = -opt.active;
 				itemOffsetMax = lastPageFirstItem - opt.active;
 				opt._isDragging = true;
+				if (clickUnlockTimeout) clearTimeout(clickUnlockTimeout);
+				clickLock = true;
 
 				// Disable transition and autoplay while dragging
 				removeTransition();
@@ -895,6 +944,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				addTransition();
 				resumeAutoplay();
 				opt._isDragging = false;
+				clickUnlockTimeout = setTimeout(function () {
+					return clickLock = false;
+				}, 100);
 
 				// Snap to item, consider last drag direction
 				var itemIndex = opt.active + itemOffset;
@@ -1178,6 +1230,260 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.carousel.defaults = carouselDefaults;
 
+	var galleryClass = "ff-gallery";
+	var galleryRowClass = "gallery-row";
+
+	// Defines default options for the gallery plugin.
+	var galleryDefaults = {
+		// The desired image size (depending on sizeMode), in pixels. Default: 150.
+		desiredSize: 150,
+
+		// The allowed factor of exceeding the desired size in the last row before the row is left-aligned. Default: 1.2.
+		allowedOversize: 1.2,
+
+		// The layout size mode. Default: height.
+		// Possible values: height, area
+		// height: The desiredSize is the preferred row height.
+		// area: The square value of desiredSize is the preferred image area.
+		sizeMode: "height",
+
+		// The spacing between the images, in pixels. Default: 10.
+		gap: 10
+	};
+
+	// Shows a gallery layout for the element.
+	function gallery(options) {
+		return this.each$(function (_, gallery) {
+			if (gallery.hasClass(galleryClass)) return; // Already done
+			gallery.addClass(galleryClass);
+			var opt = initOptions("gallery", galleryDefaults, gallery, {}, options);
+			opt._relayout = relayout;
+
+			// Validate options
+			if (opt.desiredSize <= 0) opt.desiredSize = 150;
+			if (["height", "area"].indexOf(opt.sizeMode) === -1) opt.sizeMode = "height";
+			if (opt.gap < 0) opt.gap = 0;
+
+			var images = [];
+			var appendCount = 0;
+			var rowImages = [];
+			var rowWidthSum = 0;
+			var currentGalleryWidth = gallery.width();
+			var largeImages = [];
+
+			// Create loading indicator
+			var loadingRow = $("<div/>").addClass("loading-row").appendTo(gallery);
+			$("<i/>").addClass("loading small").appendTo(loadingRow);
+
+			// Finishes the layout of images in the current row. Scales images of a row exactly.
+			var createRow = function createRow(isLast) {
+				// Find the correct row height for the images in the row (and the gaps in between)
+				var normalisedWidthSum = 0;
+				for (var i = 0; i < rowImages.length; i++) {
+					var img = rowImages[i];
+					if (img.tagName.toLowerCase() !== "img") img = img.querySelector("img");
+					normalisedWidthSum += img.naturalWidth / img.naturalHeight;
+				}
+				var galleryWidth = gallery.width();
+				var galleryWidthWithoutGaps = galleryWidth - opt.gap * (rowImages.length - 1);
+				var rowHeight = galleryWidthWithoutGaps / normalisedWidthSum;
+
+				// Don't force-fill the row if the height would be too tall and it's the last row
+				var fullWidth = true;
+				if (isLast && opt.sizeMode === "height" && rowHeight > opt.desiredSize * opt.allowedOversize) {
+					rowHeight = opt.desiredSize;
+					fullWidth = false;
+				} else if (isLast && opt.sizeMode === "area" && rowHeight * galleryWidthWithoutGaps / rowImages.length > opt.desiredSize * opt.desiredSize * opt.allowedOversize * opt.allowedOversize) {
+					var avgAspectRatio = normalisedWidthSum / rowImages.length;
+					rowHeight = Math.sqrt(opt.desiredSize * opt.desiredSize / avgAspectRatio);
+					fullWidth = false;
+				}
+
+				// Create row
+				var rows = gallery.children("." + galleryRowClass);
+				var isFirstRow = rows.length === 0;
+				var row = $("<div/>").addClass(galleryRowClass);
+				if (!fullWidth) {
+					row.addClass("incomplete");
+				}
+
+				// Insert new rows at the beginning of the gallery, in order.
+				// This keeps new rows before all remaining images and thus all images of the gallery
+				// keep their order at all times (except for separated larger images).
+				if (isFirstRow) {
+					row.prependTo(gallery);
+				} else {
+					row.css("margin-top", opt.gap);
+					var lastRow = rows[rows.length - 1];
+					row.insertAfter(lastRow);
+				}
+
+				// Update loading indicator at the end of the gallery
+				if (!isLast) loadingRow.appendTo(gallery);else loadingRow.remove();
+
+				// Add all images with relative width (space is evenly distributed by flex layout, except in last row)
+				for (var _i = 0; _i < rowImages.length; _i++) {
+					var elem = rowImages[_i];
+					var _img = elem;
+					if (_img.tagName.toLowerCase() !== "img") _img = _img.querySelector("img");
+					// The scaled width of the image for the given row height
+					var scaledWidth = _img.naturalWidth / _img.naturalHeight * rowHeight;
+					// A single gap, corrected for one less = The average gap for each image in a row
+					var gap2 = opt.gap / rowImages.length * (rowImages.length - 1);
+					// The fractional width of the image including its average gap share
+					var swPercent = (scaledWidth + gap2) / galleryWidth * 100;
+					$(elem)
+					// Let the browser calculate back to the width, but for the actual total width, minus the fixed average gap share
+					.css("width", "calc(" + swPercent + "% - " + gap2 + "px)")
+					// Only the last row (which is not filled) needs explicit gaps
+					.css("margin-left", !fullWidth && _i > 0 ? opt.gap : 0).appendTo(row);
+					if (_img !== elem) {
+						$(_img).css("width", "100%");
+					}
+				}
+			};
+
+			// Appends an image to the layout. Assigns images to a row.
+			// If the <img> element is a direct child of the gallery, elem and img are the same.
+			// Otherwise, elem is the direct child and img is the <img> element therein.
+			var appendImage = function appendImage(elem, img, isLast) {
+				if (elem.dataset.gallerySize == "large") {
+					if (isLast) {
+						createRow(false);
+						for (var i = 0; i < largeImages.length; i++) {
+							rowImages = [largeImages[i]];
+							createRow(false);
+						}
+						largeImages = [];
+						rowImages = [elem];
+						createRow(true);
+						rowImages = [];
+						rowWidthSum = 0;
+					} else {
+						largeImages.push(elem);
+					}
+					return;
+				}
+
+				var scaledWidth = void 0;
+				if (opt.sizeMode === "height") {
+					scaledWidth = img.naturalWidth / img.naturalHeight * opt.desiredSize;
+				} else {
+					scaledWidth = Math.sqrt(opt.desiredSize * opt.desiredSize * img.naturalWidth / img.naturalHeight);
+				}
+
+				var galleryWidth = gallery.width();
+				var myGap = rowWidthSum > 0 ? opt.gap : 0;
+				var oldDist = Math.abs(galleryWidth - rowWidthSum);
+				var newDist = Math.abs(galleryWidth - (rowWidthSum + myGap + scaledWidth));
+				if (newDist < oldDist) {
+					// We're nearer to the total width with this image, so keep it in the row
+					rowImages.push(elem);
+					rowWidthSum += myGap + scaledWidth;
+				} else {
+					// We're futher away from the total width with this image, so put it on a new row
+					createRow(false);
+					// Insert rows of retained large images
+					for (var _i2 = 0; _i2 < largeImages.length; _i2++) {
+						rowImages = [largeImages[_i2]];
+						createRow(false);
+					}
+					largeImages = [];
+					// Continue next row with current image
+					rowImages = [elem];
+					rowWidthSum = scaledWidth;
+				}
+
+				if (isLast) {
+					if (largeImages.length > 0) {
+						createRow(false);
+						for (var _i3 = 0; _i3 < largeImages.length; _i3++) {
+							rowImages = [largeImages[_i3]];
+							createRow(_i3 === largeImages.length - 1);
+						}
+						largeImages = [];
+					} else {
+						createRow(true);
+					}
+					rowImages = [];
+					rowWidthSum = 0;
+				}
+			};
+
+			// Appends the next image if it's loaded, repeats for all subsequent loaded images.
+			var apendNextImages = function apendNextImages() {
+				while (true) {
+					if (appendCount >= images.length) {
+						// All images appended
+						return false;
+					}
+					var img = images[appendCount];
+					if (img.tagName.toLowerCase() !== "img") img = img.querySelector("img");
+					if (!img.complete || img.naturalWidth === 0) {
+						// Image is not loaded
+						return true;
+					}
+					var isLast = appendCount === images.length - 1;
+					appendImage(images[appendCount], img, isLast);
+					appendCount++;
+				}
+			};
+
+			// Removes an image from the list that won't load.
+			var removeImage = function removeImage(img) {
+				// Should only affect images after appendCount, so that need not be corrected
+				console.error("Removed image from gallery due to load error:", img.src);
+				images = images.filter(function (i) {
+					return i !== img;
+				});
+			};
+
+			// Scan all child elements and collect images, set up load event handlers
+			gallery.children("img, a").each$(function (_, child) {
+				images.push(child[0]);
+				var img = child;
+				if (!img.is("img")) img = img.find("img");
+				img.on("load", function () {
+					return apendNextImages();
+				});
+				img.on("error", function () {
+					removeImage(child[0]);apendNextImages();
+				});
+			});
+			apendNextImages();
+
+			// Relayout on window resize
+			$(window).on("resize", function () {
+				var newGalleryWidth = gallery.width();
+				if (newGalleryWidth !== currentGalleryWidth) {
+					currentGalleryWidth = newGalleryWidth;
+					relayout();
+				}
+			});
+
+			function relayout() {
+				gallery.children("." + galleryRowClass).remove();
+				appendCount = 0;
+				rowImages = [];
+				rowWidthSum = 0;
+				apendNextImages();
+			}
+		});
+	}
+
+	// Updates the layout of the gallery after a size change.
+	function relayout() {
+		return this.each$(function (_, gallery) {
+			var opt = loadOptions("gallery", gallery);
+			opt._relayout();
+		});
+	}
+
+	registerPlugin("gallery", gallery, {
+		relayout: relayout
+	});
+	$.fn.gallery.defaults = galleryDefaults;
+
 	// This file uses its own scope to keep its helper functions private and make it reusable independently.
 	// There are a few places where jQuery is used but they can easily be replaced with DOM calls if necessary.
 	(function (undefined) {
@@ -1433,12 +1739,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 	})();
 
+	var replacementKey = "ff-replacement";
+
 	// Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
 	var origToggle = $.fn.toggle;
 	$.fn.toggle = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origToggle.apply(obj.data("ff-replacement") || obj, args);
+			origToggle.apply(obj.data(replacementKey) || obj, args);
 		});
 	};
 
@@ -1446,7 +1754,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.show = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origShow.apply(obj.data("ff-replacement") || obj, args);
+			origShow.apply(obj.data(replacementKey) || obj, args);
 		});
 	};
 
@@ -1454,7 +1762,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.hide = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origHide.apply(obj.data("ff-replacement") || obj, args);
+			origHide.apply(obj.data(replacementKey) || obj, args);
 		});
 	};
 
@@ -1488,7 +1796,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Getter
 		if (this.length === 0) return;
-		var el = this.data("ff-replacement") || this;
+		var el = this.data(replacementKey) || this;
 		return el.css("display") !== "none";
 	};
 
@@ -1521,7 +1829,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically removes the HTML attribute as well.
 				obj.prop("disabled", false);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data("ff-replacement")) obj.data("ff-replacement").enable(false);
+				if (obj.data(replacementKey)) obj.data(replacementKey).enable(false);
 			} else if (obj.attr("disabled") !== undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only remove HTML attribute to allow CSS styling other elements than inputs
@@ -1556,7 +1864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically sets the HTML attribute as well.
 				obj.prop("disabled", true);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data("ff-replacement")) obj.data("ff-replacement").disable(false);
+				if (obj.data(replacementKey)) obj.data(replacementKey).disable(false);
 			} else if (obj.attr("disabled") === undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only set HTML attribute to allow CSS styling other elements than inputs
@@ -1587,6 +1895,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.each$(function (_, obj) {
 			if (obj.disabled()) obj.enable(includeLabel);else obj.disable(includeLabel);
 		});
+	};
+
+	// Determines whether the selected element is readonly.
+	//
+	// value: Sets the readonly state of the selected elements. Unsupported elements are disabled instead.
+	$.fn.readonly = function (value) {
+		// Setter
+		if (value !== undefined) {
+			return this.each(function (_, obj) {
+				var supportsReadonlyProp = "readonly" in obj;
+				var supportsDisabledProp = "disable" in obj;
+				obj = $(obj);
+				if (value) {
+					if (supportsReadonlyProp) {
+						obj.prop("readonly", true);
+						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(true);
+					} else if (supportsDisabledProp) {
+						obj.prop("disabled", true);
+						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(true);
+					} else if (obj.attr("readonly") === undefined) {
+						obj.attr("readonly", "");
+						obj.trigger("readonlychange");
+					}
+				} else {
+					if (supportsReadonlyProp) {
+						obj.prop("readonly", false);
+						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(false);
+					} else if (supportsDisabledProp) {
+						obj.prop("disabled", false);
+						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(false);
+					} else if (obj.attr("readonly") !== undefined) {
+						obj.removeAttr("readonly");
+						obj.trigger("readonlychange");
+					}
+				}
+			});
+		}
+
+		// Getter
+		if (this.length === 0) return;
+		return this[0].readonly || this.attr("readonly") !== undefined;
 	};
 
 	// Returns the first child of each selected element, in the fastest possible way.
@@ -1628,6 +1977,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// "auto" is mostly used for inline text content. Ignore that and just return the default
 		// cursor that is shown over the empty areas of that element.
 		return "default";
+	};
+
+	// Scrolls the page so that the first selected element is at the top.
+	// offset: The vertical offset to scroll the element to.
+	$.fn.scrollToTop = function (offset) {
+		if (this.length) {
+			$(window).scrollTop(this.offset().top - (offset || 0));
+		}
 	};
 
 	// Determines whether the specified font exists on the client.
@@ -2050,7 +2407,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		maxHeight: 0,
 
 		// Indicates whether the dropdown has fixed position instead of absolute. Default: false.
-		fixed: false
+		fixed: false,
+
+		// Additional CSS classes to add to the dropdown container. Default: None.
+		cssClass: undefined
 	};
 
 	// Opens a dropdown with the selected element and places it at the specified target element.
@@ -2091,6 +2451,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var isHorizontallyCentered = false;
 
 		var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
+		if (opt.cssClass) {
+			container.addClass(opt.cssClass);
+		}
 		if (opt.fixed) {
 			container.css("position", "fixed");
 		}
@@ -2299,6 +2662,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.dropdown.defaults = dropdownDefaults;
 
+	var replacementKey$1 = "ff-replacement";
+
 	var inputWrapperClass = "ff-input-wrapper";
 	var repeatButtonClass = "ff-repeat-button";
 	var styleCheckboxClass = "ff-checkbox";
@@ -2412,6 +2777,54 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	registerPlugin("spinner", spinner);
+
+	// Converts each selected checkbox input into a toggle button.
+	function toggleButton() {
+		return this.each$(function (_, input) {
+			if (!input.is("input[type=checkbox]")) return; // Wrong element
+			var content = void 0;
+			var isActive = input.prop("checked");
+			//let activeValue = input.attr("value");
+			var button = void 0;
+			if (input.parent().is("label")) {
+				var label = input.parent();
+				input.insertBefore(label);
+				content = label.html();
+				label.remove();
+			} else if (input.attr("id")) {
+				var _label = $("label[for='" + input.attr("id") + "']");
+				if (_label.length > 0) {
+					content = _label.html();
+					_label.remove();
+				}
+			}
+
+			//input.attr("type", "hidden");
+			input.hide();
+			button = $("<button/>").attr("type", "button").addClass("toggle-button").html(content).insertAfter(input);
+			input.data(replacementKey$1, button);
+			// Copy some CSS classes to the button
+			["narrow", "transparent", "input-validation-error"].forEach(function (clsName) {
+				if (input.hasClass(clsName)) button.addClass(clsName);
+			});
+
+			if (isActive) button.addClass("active");
+			//else
+			//	input.val("");
+
+			button.click(function () {
+				button.toggleClass("active");
+				//input.val(button.hasClass("active") ? activeValue : "");
+				input.prop("checked", button.hasClass("active"));
+			});
+
+			input.on("change", function () {
+				button.toggleClass("active", input.prop("checked"));
+			});
+		});
+	}
+
+	registerPlugin("toggleButton", toggleButton);
 
 	// Converts each selected input[type=color] element into a text field with color picker button.
 	function colorPicker() {
@@ -2575,6 +2988,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.each$(function (_, input) {
 			if (input.hasClass(styleCheckboxClass)) return; // Already done
 			if (!input.is("input[type=checkbox], input[type=radio]")) return; // Wrong element
+			if (input.hasClass("toggle-button")) return; // Hidden and replaced by a button
 
 			if (input.parents("label").length === 0) {
 				// Styled input needs a label around it to remain clickable
@@ -2799,7 +3213,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		closeTooltip: "",
 
 		// Indicates whether the page background is dimmed while the modal is open. Default: true.
-		dimBackground: true
+		dimBackground: true,
+
+		// The action to execute when the Enter key was pressed. Default: none.
+		defaultAction: undefined
 	};
 
 	// Opens a modal with the selected element.
@@ -2843,6 +3260,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						// There might be another modal on top
 						event.preventDefault();
 						modal.modal.close();
+					}
+				}
+				if (event.keyCode === 13 && opt.defaultAction) {
+					// Enter
+					if (modalLevel === opt.level) {
+						// There might be another modal on top
+						event.preventDefault();
+						opt.defaultAction();
 					}
 				}
 			});
@@ -3509,8 +3934,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var fixed = button.parentWhere(function (p) {
 							return $(p).css("position") === "fixed";
 						}).length > 0;
-						newSelect.dropdown(button, { fixed: fixed });
-						if (button.closest(".dark").length > 0) newSelect.parent().addClass("dark"); // Set dropdown container to dark
+						var cssClass = "";
+						if (button.closest(".dark").length > 0) cssClass = "dark"; // Set dropdown container to dark
+						newSelect.dropdown(button, { fixed: fixed, cssClass: cssClass });
 						newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
 					});
 					newSelect.on("dropdownclose", function () {
@@ -3594,10 +4020,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (useDropdown) button.disable();else newSelect.disable();
 				}
 
-				// Apply nowrap class where appropriate
-				if (htmlSelect.hasClass("wrap")) {
-					if (useDropdown) button.addClass("wrap");else newSelect.addClass("wrap");
-				}
+				// Copy some CSS classes to the replacement element (new list or button)
+				["wrap", "input-validation-error"].forEach(function (clsName) {
+					if (htmlSelect.hasClass(clsName)) htmlSelect.data("ff-replacement").addClass(clsName);
+				});
 
 				htmlSelect.change(function () {
 					if (!htmlSelectChanging) {
@@ -4998,13 +5424,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var match = re.exec(text);
 					var newPartData = {};
 					if (match) {
-						for (var _i = 0; _i < matchParts.length; _i++) {
-							var value = +match[_i + 1];
+						for (var _i4 = 0; _i4 < matchParts.length; _i4++) {
+							var value = +match[_i4 + 1];
 							if (isNaN(value)) {
-								value = matchParts[_i].options.indexOf(match[_i + 1]) + matchParts[_i].min;
+								value = matchParts[_i4].options.indexOf(match[_i4 + 1]) + matchParts[_i4].min;
 							}
-							if (value < matchParts[_i].min || value > matchParts[_i].max) return; // Invalid value
-							newPartData[matchParts[_i].name] = value;
+							if (value < matchParts[_i4].min || value > matchParts[_i4].max) return; // Invalid value
+							newPartData[matchParts[_i4].name] = value;
 						}
 						partData = newPartData;
 						input.val(getValue()); // Update native field for validation/fixing
@@ -5221,8 +5647,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var optionSearchTimeout;
 
 			function findPart(name) {
-				for (var _i2 = 0; _i2 < parts.length; _i2++) {
-					if (parts[_i2].name === name) return parts[_i2];
+				for (var _i5 = 0; _i5 < parts.length; _i5++) {
+					if (parts[_i5].name === name) return parts[_i5];
 				}
 				return null;
 			}
@@ -5247,9 +5673,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function selectPart(name) {
-				for (var _i3 = 0; _i3 < parts.length; _i3++) {
-					if (parts[_i3].name === name) {
-						selectedPart = _i3;
+				for (var _i6 = 0; _i6 < parts.length; _i6++) {
+					if (parts[_i6].name === name) {
+						selectedPart = _i6;
 						appendInput = false;
 						inputLength = 0;
 						break;
@@ -5259,8 +5685,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function updateText() {
 				var text = "";
-				for (var _i4 = 0; _i4 < parts.length; _i4++) {
-					var part = parts[_i4];
+				for (var _i7 = 0; _i7 < parts.length; _i7++) {
+					var part = parts[_i7];
 					if ($.isSet(part.text)) {
 						text += part.text;
 					} else if (part.name) {
@@ -5604,9 +6030,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					//console.log("optionSearch:", optionSearch);
 					var _part2 = parts[selectedPart];
 					if (_part2.options) {
-						for (var _i5 = 0; _i5 < _part2.options.length; _i5++) {
-							if (_part2.options[_i5].toLowerCase().startsWith(optionSearch)) {
-								partData[_part2.name] = _i5 + _part2.min;
+						for (var _i8 = 0; _i8 < _part2.options.length; _i8++) {
+							if (_part2.options[_i8].toLowerCase().startsWith(optionSearch)) {
+								partData[_part2.name] = _i8 + _part2.min;
 								updateText();
 								break;
 							}
@@ -5675,9 +6101,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function prevPart() {
 				//console.log("selectedPart:", selectedPart);
-				for (var _i6 = selectedPart - 1; _i6 >= 0; _i6--) {
-					if (parts[_i6].name) {
-						selectedPart = _i6;
+				for (var _i9 = selectedPart - 1; _i9 >= 0; _i9--) {
+					if (parts[_i9].name) {
+						selectedPart = _i9;
 						//console.log("new selectedPart:", selectedPart);
 						appendInput = false;
 						inputLength = 0;
@@ -5689,9 +6115,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function nextPart() {
 				//console.log("selectedPart:", selectedPart);
-				for (var _i7 = selectedPart + 1; _i7 < parts.length; _i7++) {
-					if (parts[_i7].name) {
-						selectedPart = _i7;
+				for (var _i10 = selectedPart + 1; _i10 < parts.length; _i10++) {
+					if (parts[_i10].name) {
+						selectedPart = _i10;
 						//console.log("new selectedPart:", selectedPart);
 						appendInput = false;
 						inputLength = 0;
@@ -5704,10 +6130,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function fixSelection() {
 				var selStart = newInput[0].selectionStart;
 				//console.log("selectionStart:", selStart);
-				for (var _i8 = 0; _i8 < parts.length; _i8++) {
-					var part = parts[_i8];
+				for (var _i11 = 0; _i11 < parts.length; _i11++) {
+					var part = parts[_i11];
 					if (part.name && selStart <= part.end) {
-						selectedPart = _i8;
+						selectedPart = _i11;
 						//console.log("New selected part:", i);
 						appendInput = false;
 						inputLength = 0;
@@ -6602,8 +7028,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		findInclSelf(prefix + ".accordion").accordion();
 		findInclSelf(prefix + ".carousel").carousel();
+		findInclSelf(prefix + ".gallery").gallery();
 		// TODO: dropdown
 		findInclSelf(prefix + "input[type=number]").spinner();
+		findInclSelf(prefix + "input[type=checkbox].toggle-button").toggleButton();
 		findInclSelf(prefix + "input[type=color]").colorPicker();
 		// type=color has serious restrictions on acceptable values, ff-color is a workaround
 		findInclSelf(prefix + "input[type=ff-color]").colorPicker();
@@ -6620,6 +7048,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		findInclSelf(prefix + ".tabs").tabs();
 		findInclSelf(prefix + ".selectable").selectable();
 		findInclSelf(prefix + "select").selectable();
+
+		// Duplicate all overlay texts to separate background and foreground opacity.
+		// This effect cannot be achieved with a single element and rgba() background
+		// because the semitransparent backgrounds of each text line overlap a bit and
+		// reduce transparency in these areas. The line gap cannot be determined reliably
+		// so a bit overlap is necessary to avoid empty space between the lines.
+		findInclSelf(prefix + "div.image-overlay-text, " + prefix + "a.image-overlay-text").each$(function (_, el) {
+			// Skip images (they're styled differently) and already marked elements
+			el.children(":not(img):not(.ff-foreground-only):not(.ff-background-only)").each$(function (_, el) {
+				// The second (duplicate) will show only the text.
+				el.clone().addClass("ff-foreground-only").insertAfter(el);
+				// The first (original) will show only the background and have a
+				// fully opaque background, but the entire element's opacity is reduced.
+				// Also exclude it from screen reading, one is enough.
+				el.addClass("ff-background-only").attr("aria-hidden", "true");
+			});
+		});
+
 		return this;
 	};
 

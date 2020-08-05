@@ -303,6 +303,28 @@
 			</div>
 		</p>
 		
+		<h2>Toggle button</h2>
+		
+		<p>
+			A toggle button is a button that can be set to an active state.
+			It can either toggle on each click, or be controlled by code.
+			Toggle buttons can also be grouped without a gap like normal buttons.
+		</p>
+		
+		<p class="toggleButtonSamples">
+			<label><input type="checkbox" name="toggle1" value="1" class="toggle-button"> First</label>
+			<span class="buttons group">
+				<label><input type="checkbox" name="toggle2" value="1" class="toggle-button"> Second</label>
+				<input id="toggle-box" type="checkbox" name="toggle3" value="1" class="toggle-button narrow"> <label for="toggle-box"><i class="fas fa-thumbtack"></i></label>
+			</span>
+			<label><input type="checkbox" name="toggle4" value="1" class="toggle-button transparent"> Transparent</label>
+		</p>
+		
+		<p>
+			<label><input type="checkbox" data-target="toggleButtonSamples"> Disabled</label> &nbsp;
+			<button type="button" id="change-toggles"> Toggle</button>
+		</p>
+		
 		<h2>Color button</h2>
 		
 		<p>
@@ -343,6 +365,12 @@
 		
 		$("#list1-select-none-button").click(function () {
 			$("#list1").selectable.selectNone();
+		});
+		
+		$("#change-toggles").click(function () {
+			$(".toggleButtonSamples input[type=checkbox]").each$(function (_, obj) {
+				obj.prop("checked", !obj.prop("checked")).change();
+			});
 		});
 	</script>
 </body>
