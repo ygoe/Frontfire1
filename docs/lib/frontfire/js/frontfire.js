@@ -426,6 +426,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 	};
 
+	// Determines whether the browser is Brave.
+	$.isBrave = function () {
+		return navigator.brave && !!navigator.brave.isBrave;
+	};
+
 	// Determines whether the browser is Safari. (Not functional for iOS/iPadOS 13)
 	$.isSafari = function () {
 		return (/constructor/i.test(window.HTMLElement) || function (p) {
@@ -662,7 +667,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function collapse(indexOrItem) {
 		return this.each(function (_, obj) {
 			var accordion = $(obj);
-			var opt = loadOptions("accordion", accordion);
+			loadOptions("accordion", accordion);
 
 			var items = accordion.children("div");
 			if (indexOrItem === undefined) {
@@ -894,7 +899,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			stage.draggable({
 				axis: "x",
-				dragCursor: opt.dragCursor
+				dragCursor: opt.dragCursor,
+				cancel: stage.find("input, button, textarea, label")
 			});
 			stage.on("draggablestart", function (event) {
 				var dx = Math.abs(event.dragPoint.left - event.newPoint.left);
@@ -1485,8 +1491,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.gallery.defaults = galleryDefaults;
 
 	// This file uses its own scope to keep its helper functions private and make it reusable independently.
-	// There are a few places where jQuery is used but they can easily be replaced with DOM calls if necessary.
-	(function (undefined) {
+	(function (undefined$1) {
+
+		var canvasContext;
 
 		// Parses any color value understood by a browser into an object with r, g, b, a properties.
 		function Color(value) {
@@ -1506,21 +1513,31 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (value.match(/^\s*[0-9A-Fa-f]{3}([0-9A-Fa-f]{3}([0-9A-Fa-f]{2})?)?\s*$/)) value = "#" + value.trim();
 
 				// Let the browser do the work
-				var color = $("<div/>").css("color", value).css("color");
+				var div = document.createElement("div");
+				div.style.display = "none";
+				document.body.appendChild(div); // required for getComputedStyle
+				div.style.color = value;
+				var color = getComputedStyle(div).color;
 				var match = color.match(/rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*(?:,\s*([0-9.]+)\s*)?\)/);
 				if (match) {
 					this.r = keep255(Number(match[1]));
 					this.g = keep255(Number(match[2]));
 					this.b = keep255(Number(match[3]));
-					this.a = match[4] !== undefined ? keep1(Number(match[4])) : 1;
+					this.a = match[4] !== undefined$1 ? keep1(Number(match[4])) : 1;
 					return;
 				}
 
 				// Browser wasn't in the mood (probably Chrome with a named color), try harder
-				var context = $("<canvas width='1' height='1'/>")[0].getContext("2d");
-				context.fillStyle = value;
-				context.fillRect(0, 0, 1, 1);
-				var data = context.getImageData(0, 0, 1, 1).data;
+				if (!canvasContext) {
+					var canvas = document.createElement("canvas");
+					canvas.setAttribute("width", "1");
+					canvas.setAttribute("height", "1");
+					canvasContext = canvas.getContext("2d");
+					canvasContext.globalCompositeOperation = "copy"; // required for alpha channel
+				}
+				canvasContext.fillStyle = value;
+				canvasContext.fillRect(0, 0, 1, 1);
+				var data = canvasContext.getImageData(0, 0, 1, 1).data;
 				this.r = data[0];
 				this.g = data[1];
 				this.b = data[2];
@@ -1540,11 +1557,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object") {
-				this.format = value.format !== undefined ? value.format : "Object";
-				this.r = keep255(value.r);
-				this.g = keep255(value.g);
-				this.b = keep255(value.b);
-				this.a = value.a !== undefined ? keep1(value.a) : 1;
+				if (Array.isArray(value)) {
+					this.format = "Array";
+					this.r = keep255(value[0]);
+					this.g = keep255(value[1]);
+					this.b = keep255(value[2]);
+					this.a = value.length > 3 ? keep1(value[3]) : 1;
+				} else {
+					this.format = value.format !== undefined$1 ? value.format : "Object";
+					this.r = keep255(value.r);
+					this.g = keep255(value.g);
+					this.b = keep255(value.b);
+					this.a = value.a !== undefined$1 ? keep1(value.a) : 1;
+					if (value.h !== undefined$1 && value.s !== undefined$1 && value.l !== undefined$1) {
+						this.h = keep360(value.h);
+						this.s = keep1(value.s);
+						this.l = keep1(value.l);
+					}
+				}
 				return;
 			}
 			console.error("Invalid color:", value);
@@ -1556,39 +1586,49 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Now add object methods
 		var Color_prototype = Color.prototype;
 
-		// Formats the color in the format it was originally parsed from.
+		// Formats the color in the format it was originally parsed from. If the format is HTML and a
+		// non-opaque alpha value is set, the result is in CSS rgba() format instead.
 		Color_prototype.toString = function () {
 			switch (this.format) {
 				case "IntARGB":
 					return this.toIntARGB();
 				case "HTML":
-					return this.toHTML();
+					if (this.a === undefined$1 || this.a === 1) return this.toHTML();
+					return this.toCSS(); // Need CSS format for alpha value
 				case "CSS":
 				default:
 					return this.toCSS();
 			}
 		};
 
-		// Formats a color object into a CSS rgb() string.
+		// Formats a color object into a CSS rgb() or rgba() string.
 		Color_prototype.toCSS = function () {
-			if (this.a === undefined || this.a === 1) return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
+			if (this.a === undefined$1 || this.a === 1) return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
 			return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
 		};
 
-		// Formats a color object into an HTML hexadecimal string.
-		Color_prototype.toHTML = function () {
+		// Formats a color object into an HTML hexadecimal string. If requested, a non-opaque alpha
+		// value is printed as a fourth hex digit pair, which is not valid HTML.
+		Color_prototype.toHTML = function (withAlpha) {
 			function conv(number) {
 				return (number < 16 ? "0" : "") + round(keep255(number)).toString(16).toLowerCase();
 			}
 
 			var str = "#" + conv(this.r) + conv(this.g) + conv(this.b);
-			if (this.a !== undefined && this.a !== 1) str += conv(this.a * 255);
+			if (withAlpha && this.a !== undefined$1 && this.a !== 1) str += conv(this.a * 255);
 			return str;
 		};
 
 		// Converts a color object into an integer number like 0xAARRGGBB.
 		Color_prototype.toIntARGB = function () {
-			return (this.a !== undefined ? round(keep1(this.a) * 255) : 255) << 24 | round(keep255(this.r)) << 16 | round(keep255(this.g)) << 8 | round(keep255(this.b));
+			return (this.a !== undefined$1 ? round(keep1(this.a) * 255) : 255) << 24 | round(keep255(this.r)) << 16 | round(keep255(this.g)) << 8 | round(keep255(this.b));
+		};
+
+		// Converts a color object into an array with [r, g, b, a].
+		Color_prototype.toArray = function () {
+			var arr = [this.r, this.g, this.b];
+			if (this.a !== undefined$1 && this.a !== 1) arr.push[this.a * 255];
+			return arr;
 		};
 
 		// Calculates the HSL components from the RGB components in the color object.
@@ -1616,7 +1656,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Calculates the RGB components from the HSL components in the color object.
 		Color_prototype.updateRGB = function () {
-			this.h = minmax(this.h, 0, 366);
+			this.h = keep360(this.h);
 			this.s = keep1(this.s);
 			this.l = keep1(this.l);
 
@@ -1632,13 +1672,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (t[c] < 1 / 6) that[c] = p + (q - p) * 6 * t[c];else if (t[c] < 1 / 2) that[c] = q;else if (t[c] < 2 / 3) that[c] = p + (q - p) * 6 * (2 / 3 - t[c]);else that[c] = p;
 				that[c] = round(that[c] * 255);
 			});
-			if (this.a === undefined) this.a = 1;
+			if (this.a === undefined$1) this.a = 1;
 			return this;
 		};
 
 		// Returns a blended color with the specified ratio from 0 (no change) to 1 (only other color).
+		// All R/G/B/A channels are blended separately.
 		Color_prototype.blendWith = function (other, ratio, includeAlpha) {
-			var isHSL = this.h !== undefined || other.h !== undefined;
+			var isHSL = this.h !== undefined$1 || other.h !== undefined$1;
 			var color = Color(this);
 			other = Color(other);
 			ratio = keep1(ratio);
@@ -1647,6 +1688,50 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 			if (includeAlpha) color.a = round(color.a + (other.a - color.a) * ratio, 3);
 			if (isHSL) color.updateHSL();
+			return color;
+		};
+
+		// Returns a blended color with the specified ratio from 0 (no change) to 1 (only other color).
+		// The H channel is blended on the short path around the circle, S/L/A channels are blended normally.
+		Color_prototype.blendByHueWith = function (other, ratio, includeAlpha, largeArc) {
+			var color = Color(this);
+			if (!(other instanceof Color)) other = Color(other);
+			if (color.h === undefined$1) color.updateHSL();
+			if (other.h === undefined$1) other.updateHSL();
+			ratio = keep1(ratio);
+
+			// If either color has no saturation, set its hue to the other's
+			if (color.s === 0 && other.s !== 0) color.h = other.h;
+			if (other.s === 0 && color.s !== 0) other.h = color.h;
+
+			// Blend hue on the short path around the circle
+			if (color.h < other.h) {
+				if (!largeArc && other.h - color.h < 180 || largeArc && other.h - color.h >= 180) {
+					// Clockwise
+					color.h = round(color.h + (other.h - color.h) * ratio, 3);
+				} else {
+					// Counter-clockwise with overflow
+					var h = other.h - 360;
+					color.h = round(color.h + (h - color.h) * ratio, 3);
+					if (color.h < 0) color.h += 360;
+				}
+			} else {
+				if (!largeArc && color.h - other.h < 180 || largeArc && color.h - other.h >= 180) {
+					// Counter-clockwise
+					color.h = round(color.h + (other.h - color.h) * ratio, 3);
+				} else {
+					// Clockwise with overflow
+					var _h = color.h - 360;
+					color.h = round(_h + (other.h - _h) * ratio, 3);
+					if (color.h < 0) color.h += 360;
+				}
+			}
+
+			["s", "l"].forEach(function (c) {
+				color[c] = keep1(round(color[c] + (other[c] - color[c]) * ratio, 3));
+			});
+			if (includeAlpha) color.a = round(color.a + (other.a - color.a) * ratio, 3);
+			color.updateRGB();
 			return color;
 		};
 
@@ -1718,6 +1803,75 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		};
 
+		var colorNames = {
+			de: {
+				transparent: "transparent",
+				black: "schwarz",
+				gray: "grau",
+				white: "weiß",
+				red: "rot",
+				orange: "orange",
+				yellow: "gelb",
+				green: "grün",
+				cyan: "türkis",
+				blue: "blau",
+				purple: "lila",
+				pink: "pink",
+				brown: "braun",
+				dark: "dunkel",
+				light: "hell",
+				pale: "blass"
+			},
+			en: {
+				transparent: "transparent",
+				black: "black",
+				gray: "gray",
+				white: "white",
+				red: "red",
+				orange: "orange",
+				yellow: "yellow",
+				green: "green",
+				cyan: "cyan",
+				blue: "blue",
+				purple: "purple",
+				pink: "pink",
+				brown: "brown",
+				dark: "dark ",
+				light: "light ",
+				pale: "pale "
+			}
+		};
+
+		// Returns a simple description of the color.
+		Color_prototype.description = function (language) {
+			var color = Color(this);
+			if (color.h === undefined$1) color.updateHSL();
+			if (color.h === undefined$1 || isNaN(color.h)) return null;
+			if (!(language in colorNames)) language = "en";
+			var names = colorNames[language];
+			if (color.a < 0.02) return names.transparent;
+			// Normalise values for development with a color tool
+			var h = color.h / 360 * 255;
+			var s = color.s * 255;
+			var l = color.l * 255;
+			if (l < 30) return names.black;
+			if (l > 240) return names.white;
+
+			var colorName = h < 15 ? names.red : h < 33 ? names.orange : h < 49 ? names.yellow : h < 111 ? names.green : h < 138 ? names.cyan : h < 180 ? names.blue : h < 207 ? names.purple : h < 238 ? names.pink : names.red;
+			// Determines the saturation up to which the colour is grey (depending on the lightness)
+			var graySaturation = function graySaturation(l) {
+				if (l < 128) return 90 + (30 - 90) * (l - 30) / (128 - 30);else return 30 + (90 - 30) * (l - 128) / (240 - 128);
+			};
+			if (l < 100) {
+				if (s < graySaturation(l)) return names.dark + names.gray;else if (colorName === names.orange) return names.brown;else return names.dark + colorName;
+			}
+			if (l > 190) {
+				if (s < graySaturation(l)) return names.light + names.gray;else return names.light + colorName;
+			}
+			if (s > 170) return colorName;
+			if (s < graySaturation(l)) return names.gray;else return names.pale + colorName;
+		};
+
 		function processColor(color, hslMode, fn) {
 			color = Color(color); // Make a copy
 			if (hslMode) color.updateHSL();
@@ -1737,16 +1891,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		function keep255(value) {
 			return minmax(value, 0, 255);
 		}
+
+		function keep360(value) {
+			return minmax(value, 0, 360);
+		}
+
+		// Returns the value in the range between min and max.
+		function minmax(value, min, max) {
+			return Math.max(min, Math.min(value, max));
+		}
+
+		// Returns the value rounded to the specified number of decimals.
+		function round(value, decimals) {
+			if (decimals === undefined$1) decimals = 0;
+			var precision = Math.pow(10, decimals);
+			return Math.round(value * precision) / precision;
+		}
 	})();
 
-	var replacementKey = "ff-replacement";
+	var replacementKey$1 = "ff-replacement";
 
 	// Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
 	var origToggle = $.fn.toggle;
 	$.fn.toggle = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origToggle.apply(obj.data(replacementKey) || obj, args);
+			origToggle.apply(obj.data(replacementKey$1) || obj, args);
 		});
 	};
 
@@ -1754,7 +1924,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.show = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origShow.apply(obj.data(replacementKey) || obj, args);
+			origShow.apply(obj.data(replacementKey$1) || obj, args);
 		});
 	};
 
@@ -1762,7 +1932,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.hide = function () {
 		var args = arguments;
 		return this.each$(function (_, obj) {
-			origHide.apply(obj.data(replacementKey) || obj, args);
+			origHide.apply(obj.data(replacementKey$1) || obj, args);
 		});
 	};
 
@@ -1796,8 +1966,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Getter
 		if (this.length === 0) return;
-		var el = this.data(replacementKey) || this;
-		return el.css("display") !== "none";
+		var el = this.data(replacementKey$1) || this;
+		return el.css("display") !== "none" && el.css("visibility") !== "collapse";
 	};
 
 	// Determines whether the selected element is disabled.
@@ -1829,7 +1999,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically removes the HTML attribute as well.
 				obj.prop("disabled", false);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data(replacementKey)) obj.data(replacementKey).enable(false);
+				if (obj.data(replacementKey$1)) obj.data(replacementKey$1).enable(false);
 			} else if (obj.attr("disabled") !== undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only remove HTML attribute to allow CSS styling other elements than inputs
@@ -1864,7 +2034,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically sets the HTML attribute as well.
 				obj.prop("disabled", true);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data(replacementKey)) obj.data(replacementKey).disable(false);
+				if (obj.data(replacementKey$1)) obj.data(replacementKey$1).disable(false);
 			} else if (obj.attr("disabled") === undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only set HTML attribute to allow CSS styling other elements than inputs
@@ -1910,10 +2080,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (value) {
 					if (supportsReadonlyProp) {
 						obj.prop("readonly", true);
-						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(true);
+						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(true);
 					} else if (supportsDisabledProp) {
 						obj.prop("disabled", true);
-						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(true);
+						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(true);
 					} else if (obj.attr("readonly") === undefined) {
 						obj.attr("readonly", "");
 						obj.trigger("readonlychange");
@@ -1921,10 +2091,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				} else {
 					if (supportsReadonlyProp) {
 						obj.prop("readonly", false);
-						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(false);
+						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(false);
 					} else if (supportsDisabledProp) {
 						obj.prop("disabled", false);
-						if (obj.data(replacementKey)) obj.data(replacementKey).readonly(false);
+						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(false);
 					} else if (obj.attr("readonly") !== undefined) {
 						obj.removeAttr("readonly");
 						obj.trigger("readonlychange");
@@ -1945,6 +2115,52 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			ret = ret.add(obj.firstElementChild);
 		});
 		return ret;
+	};
+
+	// Sets the last-column class to the last visible column in a table, if following columns are hidden.
+	// This ensures (together with CSS rules) that the border and padding of the last visible column is
+	// correct.
+	$.fn.updateLastColumn = function () {
+		return this.each$(function (_, table) {
+			var lastColumn = void 0,
+			    lastVisibleColumn = void 0;
+			// TODO: Ignore nested tables
+			// TODO: This looks strange, is it per-row?
+			table.find("th, td").each$(function (_, td) {
+				td.removeClass("last-column");
+				lastColumn = td;
+				if (td.visible()) lastVisibleColumn = td;
+			});
+			if (lastColumn && lastVisibleColumn && lastColumn !== lastVisibleColumn) lastVisibleColumn.addClass("last-column");
+		});
+	};
+
+	// Sets the first-row and last-row class to the first/last visible row in a table, if
+	// preceding/following rows are hidden. This ensures (together with CSS rules) that the border and
+	// padding of the first and last visible row is correct.
+	$.fn.updateFirstLastRow = function () {
+		return this.each$(function (_, table) {
+			var lastRow = void 0,
+			    lastVisibleRow = void 0,
+			    seenFirstRow = void 0;
+			// TODO: Ignore nested tables
+			table.find("tr").each$(function (_, tr) {
+				tr.removeClass("first-row");
+				tr.removeClass("last-row");
+				tr.removeClass("hidden-row");
+				lastRow = tr;
+				if (tr.visible()) {
+					if (!seenFirstRow) {
+						seenFirstRow = true;
+						tr.addClass("first-row");
+					}
+					lastVisibleRow = tr;
+				} else {
+					tr.addClass("hidden-row");
+				}
+			});
+			if (lastRow && lastVisibleRow && lastRow !== lastVisibleRow) lastVisibleRow.addClass("last-row");
+		});
 	};
 
 	// Returns the closest parent of each selected element that matches the predicate function.
@@ -1979,11 +2195,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return "default";
 	};
 
-	// Scrolls the page so that the first selected element is at the top.
+	// Immediately scrolls the page so that the first selected element is at the top.
 	// offset: The vertical offset to scroll the element to.
 	$.fn.scrollToTop = function (offset) {
 		if (this.length) {
 			$(window).scrollTop(this.offset().top - (offset || 0));
+		}
+	};
+
+	var scrollAnimationTimeout;
+
+	// Smoothly scrolls the page so that the first selected element is at the top.
+	// offset: The vertical offset to scroll the element to.
+	$.fn.animateScrollToTop = function (offset) {
+		if (this.length) {
+			var animate = function animate() {
+				if (++animationPosition <= animationCount) {
+					var r = Math.sin(animationPosition / animationCount * Math.PI / 2);
+					var pos = scrollStart + (scrollEnd - scrollStart) * r;
+					$(window).scrollTop(pos);
+					scrollAnimationTimeout = setTimeout(animate, animationDelay);
+				}
+			};
+
+			if (scrollAnimationTimeout) clearTimeout(scrollAnimationTimeout);
+
+			var scrollStart = window.scrollY;
+			var scrollEnd = this.offset().top - (offset || 0);
+
+			var animationDelay = 10;
+			var animationCount = 40;
+			var animationPosition = 0;
+			animate();
 		}
 	};
 
@@ -2022,7 +2265,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	// type: The event type ("down", "move", "up", "cancel"). Multiple types can be space-delimited.
 	// handler: The event handler function.
-	// capture: Specifies the capture option. If true, DOM addEventListener ist used instead of jQuery.
+	// capture: Specifies the capture option. If true, DOM addEventListener is used instead of jQuery.
 	// Returns a function that removes the event handler. Keep it and call it, there is no other way to remove it.
 	$.fn.pointer = function (type, handler, capture) {
 		var add,
@@ -2131,7 +2374,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	var draggableClass = "ff-draggable";
-	var resetAllCursorsClass = "reset-all-cursors";
+	var resetAllCursorsClass$1 = "reset-all-cursors";
 
 	// Defines default options for the draggable plugin.
 	var draggableDefaults = {
@@ -2200,7 +2443,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (opt.cancel) {
 				opt.eventRemovers.push($elem.find(opt.cancel).pointer("down", function (event) {
-					event.preventDefault();
 					event.stopImmediatePropagation();
 				}));
 			}
@@ -2237,12 +2479,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					dragging = true;
 					opt.dragClass && $elem.addClass(opt.dragClass);
 					elem.setCapture && elem.setCapture(); // Firefox only (set cursor over entire desktop)
-					$("html").addClass(resetAllCursorsClass); // All browsers (set cursor at least within page)
+					$("html").addClass(resetAllCursorsClass$1); // All browsers (set cursor at least within page)
 					if (opt.stack) {
 						stackElements($(opt.stack), elem);
 					}
-					htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-					document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
+					htmlCursor = elem.ownerDocument.documentElement.style.getPropertyValue("cursor");
+					elem.ownerDocument.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
 				} else {
 					draggingCancelled = true;
 				}
@@ -2341,6 +2583,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (event.pointerId !== pointerId) return; // Not my pointer
 
 				if (event.button === 0) {
+					// Attention:
+					// If event.type is "pointerup", a click event may follow somewhere!
+					// It cannot be stopped, deal with it otherwise.
+
 					var wasDragging = dragging;
 					dragPoint = undefined;
 					dragging = false;
@@ -2354,8 +2600,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (wasDragging) {
 						elem.releaseCapture && elem.releaseCapture();
-						$("html").removeClass(resetAllCursorsClass);
-						document.documentElement.style.setProperty("cursor", htmlCursor);
+						$("html").removeClass(resetAllCursorsClass$1);
+						elem.ownerDocument.documentElement.style.setProperty("cursor", htmlCursor);
 
 						var event2 = $.Event("draggableend");
 						event2.revert = function () {
@@ -2369,7 +2615,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Removes the draggable features from the elements.
-	function remove() {
+	function remove$1() {
 		return this.each(function (_, elem) {
 			var $elem = $(elem);
 			if (!$elem.hasClass(draggableClass)) return;
@@ -2383,7 +2629,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	registerPlugin("draggable", draggable, {
-		remove: remove
+		remove: remove$1
 	});
 	$.fn.draggable.defaults = draggableDefaults;
 
@@ -2410,7 +2656,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		fixed: false,
 
 		// Additional CSS classes to add to the dropdown container. Default: None.
-		cssClass: undefined
+		cssClass: undefined,
+
+		// Additional CSS styles to add to the dropdown container. Default: None.
+		style: undefined
 	};
 
 	// Opens a dropdown with the selected element and places it at the specified target element.
@@ -2453,6 +2702,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
 		if (opt.cssClass) {
 			container.addClass(opt.cssClass);
+		}
+		if (opt.style) {
+			container.css(opt.style);
 		}
 		if (opt.fixed) {
 			container.css("position", "fixed");
@@ -2592,11 +2844,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Auto-close the dropdown when clicking outside of it
 		if (opt.autoClose === undefined || opt.autoClose) {
 			setTimeout(function () {
-				$(document).on("click.dropdown-close", function (event) {
+				// Close on mousedown instead of click because it's more targeted. A click event is also
+				// triggered when the mouse button was pressed inside the dropdown and released outside
+				// of it. This is considered "expected behaviour" of the click event.
+				$(document).on("mousedown.dropdown-close", function (event) {
 					tryClose();
 				});
 			}, 20);
-			container.click(function (event) {
+			container.on("mousedown", function (event) {
 				// Don't close the dropdown when clicking inside of it
 				event.stopImmediatePropagation();
 			});
@@ -2641,7 +2896,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (!container.hasClass(dropdownContainerClass)) return this; // Dropdown is not open
 		//var opt = loadOptions("dropdown", dropdown);
 
-		$(document).off("click.dropdown-close");
+		$(document).off("mousedown.dropdown-close");
 		container.removeClass("open").addClass("closed");
 		container.on("transitionend", function () {
 			dropdown.appendTo("body");
@@ -2662,9 +2917,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.dropdown.defaults = dropdownDefaults;
 
-	var replacementKey$1 = "ff-replacement";
+	var replacementKey = "ff-replacement";
 
-	var inputWrapperClass = "ff-input-wrapper";
+	var inputWrapperClass$1 = "ff-input-wrapper";
 	var repeatButtonClass = "ff-repeat-button";
 	var styleCheckboxClass = "ff-checkbox";
 	var treeStateClass = "ff-threestate";
@@ -2709,16 +2964,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Adds buttons to each selected input[type=number] element to decrement or increment the value.
 	function spinner() {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
 
 			// Put a wrapper between the input and its parent
-			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
+			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
 			input.before(wrapper).appendTo(wrapper);
 			input.attr("autocomplete", "off");
 
 			// Add control buttons
 			var buttons = [];
-			var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text('\u2212'); // &minus;
+			var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text('\u2212'); // &minus;
 			buttons.push(decButton);
 			decButton.on("repeatclick", function () {
 				if (input.disabled()) return;
@@ -2726,13 +2981,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var min = input.attr("min");
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? +min : 0;
-				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+				var stepAttr = "";
+				if (input.data("step")) stepAttr = input.data("step") + "";else if (input.attr("step")) stepAttr = input.attr("step");
+				var match = stepAttr.match(/^\s*\*(.*)/);
 				if (match) {
 					var factor = +match[1] || 10;
 					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
 				} else {
 					if (max !== undefined && value > +max) value = +max + 1;
-					var step = +input.attr("step") || 1;
+					var step = +stepAttr || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
 					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase; // Set to next-smaller valid step
 					if (min !== undefined && value < +min) value = +min;
@@ -2745,7 +3002,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				input.trigger("input").change();
 			});
 			decButton.repeatButton();
-			var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
+			var incButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("+");
 			buttons.push(incButton);
 			incButton.on("repeatclick", function () {
 				if (input.disabled()) return;
@@ -2753,14 +3010,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var min = input.attr("min");
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? +min : 0;
-				var match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+				var stepAttr = "";
+				if (input.data("step")) stepAttr = input.data("step") + "";else if (input.attr("step")) stepAttr = input.attr("step");
+				var match = stepAttr.match(/^\s*\*(.*)/);
 				if (match) {
 					var factor = +match[1] || 10;
 					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
 				} else {
 					if (max !== undefined && value > +max) value = +max + 1;
-					var step = +input.attr("step") || 1;
+					var step = +stepAttr || 1;
 					var corr = step / 1000; // Correct JavaScript's imprecise numbers
+					// TODO: With max=100 and step=0.1, incrementing from 100 results in 99.9 again. JavaScript double precision is still broken here!
 					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase; // Set to next-greater valid step
 					if (min !== undefined && value < +min) value = +min;
 					while (max !== undefined && value > +max) {
@@ -2799,10 +3059,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			}
 
+			button = $("<button/>").attr("type", "button").attr("title", input.attr("title")).attr("style", input.attr("style")).addClass("button toggle-button").html(content).insertAfter(input);
 			//input.attr("type", "hidden");
 			input.hide();
-			button = $("<button/>").attr("type", "button").addClass("toggle-button").html(content).insertAfter(input);
-			input.data(replacementKey$1, button);
+			input.data(replacementKey, button);
 			// Copy some CSS classes to the button
 			["narrow", "transparent", "input-validation-error"].forEach(function (clsName) {
 				if (input.hasClass(clsName)) button.addClass(clsName);
@@ -2815,7 +3075,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			button.click(function () {
 				button.toggleClass("active");
 				//input.val(button.hasClass("active") ? activeValue : "");
-				input.prop("checked", button.hasClass("active"));
+				input.prop("checked", button.hasClass("active")).change();
 			});
 
 			input.on("change", function () {
@@ -2829,13 +3089,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Converts each selected input[type=color] element into a text field with color picker button.
 	function colorPicker() {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
 			var lastColor;
 
 			input.attr("type", "text").attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false");
 
 			// Put a wrapper between the input and its parent
-			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
+			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
 			input.before(wrapper).appendTo(wrapper);
 
 			// Create picker dropdown
@@ -2857,7 +3117,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Add control buttons
 			var buttons = [];
-			var pickButton = $("<button type='button'/>").addClass("ff-colorbutton").appendTo(wrapper);
+			var pickButton = $("<button type='button'/>").addClass("button ff-colorbutton").appendTo(wrapper);
 			buttons.push(pickButton);
 			var colorBox = $("<div/>").appendTo(pickButton).text('\u2026'); // &hellip;
 			input.on("input change", function () {
@@ -2899,7 +3159,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				color = Color(color);
 				color.format = "HTML";
 				if (index % 7 === 0) buttonRow = $("<div/>").appendTo(dropdown);
-				var button = $("<button type='button'/>").css("background", color).data("color", String(color)).appendTo(buttonRow);
+				var button = $("<button type='button'/>").addClass("button").css("background", color).data("color", String(color)).appendTo(buttonRow);
 				if (color.isDark()) button.addClass("dark");
 				button.click(function (event) {
 					setColor(lastColor = color, true);
@@ -3053,6 +3313,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			textarea.on("input.autoheight", updateShadow);
 			updateShadow();
 
+			// The autofocus option often gets lost after this, so redo it explicitly
+			if (textarea.prop("autofocus")) textarea.focus();
+
 			function updateShadow() {
 				// Copy textarea contents; browser will calculate correct height of shadow copy,
 				// which will make overall wrapper taller, which will make textarea taller.
@@ -3073,6 +3336,95 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	registerPlugin("autoHeight", autoHeight);
+
+	// Defines default options for the submitLock plugin.
+	var submitLockDefaults = {
+		// The lock timeout in seconds. Default: 30.
+		timeout: 30
+	};
+
+	// Locks form submit buttons for a moment to avoid accidental double-submit.
+	function submitLock(options) {
+		return this.each$(function (_, button) {
+			if (button.data("hasSubmitLock")) return; // Already done
+			button.data("hasSubmitLock", true);
+
+			var opt = initOptions("submitLock", submitLockDefaults, button, {}, options);
+			opt._lock = lockButton;
+			opt._unlock = unlockButton;
+
+			button.on("click", function () {
+				button.data("submitLockClicked", true);
+				setTimeout(function () {
+					button.data("submitLockClicked", null);
+				}, 500);
+			});
+
+			var icon = button.find("i:empty");
+			var loading = void 0;
+
+			// Connect with form submit event if there is a form; otherwise, only explicit locking
+			// available for this button
+			var form = button[0].form;
+			if (form) {
+				$(form).on("submit", function (event) {
+					//event.preventDefault();   // DEBUG
+					if (button.disabled()) return; // Nothing to do for this button
+					lockButton(opt.timeout);
+				});
+			}
+
+			function lockButton(timeout) {
+				// Lock the button and replace the icon with a loading indicator
+				button.disable();
+				if (icon.length > 0) {
+					if (button.data("submitLockClicked")) {
+						var iconWidth = icon.width();
+						var iconMarginLeft = parseFloat(icon.css("margin-left"));
+						var iconMarginRight = parseFloat(icon.css("margin-right"));
+						icon.hide();
+						loading = $("<i/>").addClass("loading thick").css("font-size", "1em").css("vertical-align", "-2px").insertAfter(icon);
+						var loadingWidth = loading.width();
+						var dx = loadingWidth - iconWidth;
+						loading.css("margin-left", -dx / 2 + iconMarginLeft).css("margin-right", -dx / 2 + iconMarginRight);
+					}
+				}
+
+				// Unlock the button and restore the icon after a timeout if the page is still alive
+				setTimeout(unlockButton, timeout * 1000);
+			}
+
+			function unlockButton() {
+				button.enable();
+				if (loading) {
+					loading.remove();
+					icon.show();
+				}
+			}
+		});
+	}
+
+	// Locks the button immediately.
+	function submitLockLock(timeout) {
+		return this.each$(function (_, button) {
+			var opt = loadOptions("submitLock", button);
+			opt._lock(timeout || opt.timeout);
+		});
+	}
+
+	// Unlocks the button immediately.
+	function submitLockUnlock() {
+		return this.each$(function (_, button) {
+			var opt = loadOptions("submitLock", button);
+			opt._unlock();
+		});
+	}
+
+	registerPlugin("submitLock", submitLock, {
+		lock: submitLockLock,
+		unlock: submitLockUnlock
+	});
+	$.fn.submitLock.defaults = submitLockDefaults;
 
 	// Converts each selected list element into a menu. Submenus are opened for nested lists.
 	function menu() {
@@ -3271,7 +3623,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 			});
-			container.click(function (event) {
+			// Close on mousedown instead of click because it's more targeted. A click event is also
+			// triggered when the mouse button was pressed inside the modal and released outside of it.
+			// This is considered "expected behaviour" of the click event.
+			container.on("mousedown", function (event) {
 				if (event.button === 0 && event.target === this) {
 					modal.modal.close();
 				}
@@ -3329,17 +3684,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// options.buttons[].className: (String) Additional CSS classes for the button.
 	// options.buttons[].result: The result value of the button.
 	// options.resultHandler: (Function) The modal response handler. It is passed the button handler's return value, or false if cancelled.
+	// options.className: (String) Additional CSS class names for the modal element.
 	//
 	// If a string is passed as first argument, it is displayed as text with an OK button.
-	$.modal = function (options) {
+	// Only then, closeHandler is also regarded as options.resultHandler.
+	$.modal = function (options, closeHandler) {
 		if (typeof options === "string") {
 			options = {
 				text: options,
-				buttons: "OK"
+				buttons: "OK",
+				resultHandler: closeHandler
 			};
 		}
 
 		var modal = $("<div/>").addClass("modal");
+		if (options.className) modal.addClass(options.className);
 		var content = $("<div/>").css("overflow", "auto").css("max-height", "calc(100vh - 80px - 5em)") // padding of modal, height of buttons
 		.appendTo(modal);
 		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text).css("white-space", "pre-wrap");
@@ -3370,7 +3729,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (buttons && buttons.length > 0) {
 			buttonsElement = $("<div/>").addClass("buttons").appendTo(modal);
 			buttons.forEach(function (button) {
-				var buttonElement = $("<button/>").addClass(button.className).appendTo(buttonsElement);
+				var buttonElement = $("<button/>").addClass("button").addClass(button.className).appendTo(buttonsElement);
 				if (button.icon) buttonElement.append($("<i/>").addClass(button.icon));
 				if (button.icon && button.text) buttonElement.append(" ");
 				if (button.text) buttonElement.append(button.text);
@@ -3403,7 +3762,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Push the page content to the side when showing the off-canvas panel. Default: 1.
 		// 0 doesn't push, 1 pushes the full panel width.
-		push: 1
+		push: 1,
+
+		// Close the panel when the window size has changed. Default: false.
+		closeOnResize: false
 	};
 
 	// Opens an off-canvas with the selected element.
@@ -3427,14 +3789,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			overflowX: html.css("overflow-x")
 		};
 
-		$(window).on("resize" + offCanvasEventNamespace, function () {
-			offCanvas.offCanvas.close();
-		});
-
-		//$(window).on("resize" + offCanvasEventNamespace, function () {   // TODO Failing workaround for Chrome/Android, see https://bugs.chromium.org/p/chromium/issues/detail?id=801621
-		//	offCanvas.css("height", $(window).height());
-		//});
-		//offCanvas.css("height", $(window).height());
+		if (opt.closeOnResize) {
+			$(window).on("resize" + offCanvasEventNamespace, function () {
+				offCanvas.offCanvas.close();
+			});
+		}
 
 		// Initialise position
 		offCanvas.css(opt.edge, -width);
@@ -3490,6 +3849,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		}
 
+		offCanvas.addClass("open");
 		offCanvas.trigger("offcanvasopen");
 		return this;
 	}
@@ -3520,6 +3880,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			offCanvas.removeClass(offCanvasClass);
 			html.css(opt._htmlStyle);
 		});
+		offCanvas.removeClass("open");
 		offCanvas.trigger("offcanvasclose");
 		return this;
 	}
@@ -3683,7 +4044,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.each$(function (_, elem) {
 			if (elem.hasClass(resizableClass)) return; // Already done
 			elem.addClass(resizableClass);
-			var htmlCursor;
 			var handleElements = $();
 			var opt = initOptions("resizable", resizableDefaults, elem, {}, options);
 			var $window = $(window);
@@ -3741,7 +4101,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var handle = $("<div/>").addClass("ff-resizable-handle " + opt.handleAddClass).css(style).css("position", "absolute").css("cursor", cursor);
 				elem.append(handle);
 				handleElements = handleElements.add(handle);
-				handle.draggable({ scroll: opt.scroll });
+				handle.draggable({ scroll: opt.scroll, dragCursor: cursor });
 				handle.on("draggablestart", function (event) {
 					event.stopPropagation(); // Don't trigger for the resized (parent) element
 					var event2 = $.Event("resizablestart");
@@ -3749,10 +4109,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					event2.negative = negative;
 					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
 					elem.trigger(event2);
-					if (!event2.isDefaultPrevented()) {
-						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-						document.documentElement.style.setProperty("cursor", cursor, "important");
-					} else {
+					if (event2.isDefaultPrevented()) {
 						event.preventDefault();
 					}
 				});
@@ -3764,7 +4121,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 				handle.on("draggableend", function (event) {
 					event.stopPropagation(); // Don't trigger for the resized (parent) element
-					document.documentElement.style.setProperty("cursor", htmlCursor);
 					var event2 = $.Event("resizableend");
 					event2.vertical = vertical;
 					event2.negative = negative;
@@ -3862,7 +4218,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Removes the resizing features from the elements.
-	function remove$1() {
+	function remove() {
 		return this.each$(function (_, elem) {
 			if (!elem.hasClass(resizableClass)) return;
 			elem.removeClass(resizableClass);
@@ -3874,7 +4230,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	registerPlugin("resizable", resizable, {
-		remove: remove$1
+		remove: remove
 	});
 	$.fn.resizable.defaults = resizableDefaults;
 
@@ -3997,7 +4353,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					onDisabledchange();
 
 					// Close the dropdown when leaving the field with the Tab key
-					// (but not when clicking an item in the dropdown)
+					// (but not when clicking into the dropdown)
 					button.on("blur", function () {
 						if (button.hasClass("open") && !blurCloseTimeout) {
 							blurCloseTimeout = setTimeout(function () {
@@ -4085,6 +4441,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}
 			});
 
+			// Also don't close the dropdown if clicked on a disabled item or empty space (if there are no items)
+			if (useDropdown) {
+				var isMouseDown = false;
+				elem.on("mousedown", function (event) {
+					if (event.originalEvent.button === 0) {
+						isMouseDown = true;
+						setTimeout(function () {
+							button.focus();
+						}, 0);
+					} else {
+						isMouseDown = false;
+					}
+				});
+				elem.on("mouseup", function (event) {
+					if (!isMouseDown) return;
+					isMouseDown = false;
+					button.focus();
+				});
+			}
+
 			// Sets up event handlers on a selection child (passed as this).
 			function prepareChild() {
 				var child = $(this);
@@ -4092,6 +4468,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var isMouseDown = false;
 				child.on("mousedown", function (event) {
 					if (event.originalEvent.button === 0) {
+						event.stopPropagation(); // No need to handle events on elem itself
 						isMouseDown = true;
 						setTimeout(function () {
 							if (useDropdown) button.focus();else elem.focus();
@@ -4102,6 +4479,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 				child.on("mouseup", function (event) {
 					if (!isMouseDown) return;
+					event.stopPropagation(); // No need to handle events on elem itself
 					isMouseDown = false;
 					if (useDropdown) button.focus();else elem.focus();
 					var ctrlKey = !!event.originalEvent.ctrlKey;
@@ -4185,7 +4563,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// state.
 			function updateFromHtmlSelect() {
 				elem.children().remove();
+				var haveOptions = false;
 				htmlSelect.children("option").each$(function (_, option) {
+					haveOptions = true;
 					var newOption = $("<div/>").text(option.text()).data("value", option.prop("value")).appendTo(elem);
 					if (option.data("html")) newOption.html(option.data("html"));
 					if (option.data("summary")) newOption.data("summary", option.data("summary"));
@@ -4193,6 +4573,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (option.prop("selected")) newOption.addClass("selected");
 					if (option.prop("disabled")) newOption.addClass("disabled");
 				});
+				if (!haveOptions) elem.css("height", "4em");else elem.css("height", "");
 			}
 
 			// Updates the dropdown list button's text from the current selection.
@@ -4282,7 +4663,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Notifies the selectable plugin about a new child that needs to be initialized.
-	function addChild(child) {
+	function addChild$1(child) {
 		var selectable = $(this);
 		var opt = loadOptions("selectable", selectable);
 		opt._prepareChild.call(child);
@@ -4326,7 +4707,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	registerPlugin("selectable", selectable, {
-		addChild: addChild,
+		addChild: addChild$1,
 		removeChild: removeChild,
 		getSelection: getSelection,
 		selectAll: selectAll,
@@ -4335,10 +4716,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.selectable.defaults = selectableDefaults;
 
+	var sliderClass = "ff-slider";
+	var backgroundClass = "ff-background";
 	var rangeClass = "ff-range";
 	var ticksClass = "ff-ticks";
 	var handleClass = "ff-handle";
-	var resetAllCursorsClass$1 = "reset-all-cursors";
+	var resetAllCursorsClass = "reset-all-cursors";
 
 	// Defines default options for the slider plugin.
 	var sliderDefaults = {
@@ -4390,6 +4773,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Overflow the range if the two handles have the same value. Default: false.
 		rangeOverflowEqual: false,
 
+		// Hide ranges when the end is less than the start. Default: false.
+		hideWrapping: false,
+
 		// Individual ranges. Overrides the rangeBase option and two-handle range behaviour. Default: null.
 		// Each range object has the properties: start, end, overflowEqual, color, className.
 		// start and end can be fixed values, "min"/"max", or zero-based handle references prefixed with "#".
@@ -4405,7 +4791,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Creates a slider widget.
 	function slider(options) {
 		return this.each$(function (_, slider) {
-			if (slider.children("div." + handleClass).length !== 0) return; // Already done
+			if (slider.hasClass(sliderClass)) return; // Already done
+			slider.addClass(sliderClass);
 			var opt = initOptions("slider", sliderDefaults, slider, {}, options);
 			var htmlCursor, draggedHandleCursor;
 			var dragHandleOffset = [],
@@ -4420,6 +4807,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (!opt.values) opt.values = [opt.value];
 			if (opt.max < opt.min) opt.max = opt.min;
 			if (opt.handleCount < 1) opt.handleCount = 1;
+
+			$("<div/>").addClass(backgroundClass).appendTo(slider);
 
 			// Create 1 pair of ranges by default; more only if individually specified
 			var ranges = [];
@@ -4519,7 +4908,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var handle = $(event.target).closest("." + handleClass);
 				var index = $.inArray(handle[0], $handles);
 				if (index === -1) {
-					console.warn("Clicked handle not found");
+					console.warn("Clicked slider handle not found");
 					return; // Should not happen: handle not found
 				}
 
@@ -4565,7 +4954,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					if (isFirstDrag) {
 						slider.setCapture && slider.setCapture(); // Firefox only (set cursor over entire desktop)
-						$("html").addClass(resetAllCursorsClass$1); // All browsers (set cursor at least within page)
+						$("html").addClass(resetAllCursorsClass); // All browsers (set cursor at least within page)
 						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
 						document.documentElement.style.setProperty("cursor", opt.dragCursor || draggedHandleCursor || slider.actualCursor(), "important");
 
@@ -4641,7 +5030,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					});
 					if (isLastDrag) {
 						slider.releaseCapture && slider.releaseCapture();
-						$("html").removeClass(resetAllCursorsClass$1);
+						$("html").removeClass(resetAllCursorsClass);
 						document.documentElement.style.setProperty("cursor", htmlCursor);
 
 						eventRemovers.forEach(function (eventRemover) {
@@ -4733,6 +5122,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							startHandleIndex = Number(start.substr(1));
 							start = startHandleIndex === index ? value : opt.values[startHandleIndex];
 						}
+						if (start < opt.min) start = opt.min;
+						if (start > opt.max) start = opt.max;
+
 						var end = rangeItem.end,
 						    endHandleIndex;
 						if (end === "min") {
@@ -4743,34 +5135,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							endHandleIndex = Number(end.substr(1));
 							end = endHandleIndex === index ? value : opt.values[endHandleIndex];
 						}
+						if (end < opt.min) end = opt.min;
+						if (end > opt.max) end = opt.max;
+
 						var startPos = getPosFromValue(start);
 						var endPos = getPosFromValue(end);
 						var overflowEqual = rangeItem.overflowEqual || startHandleIndex !== undefined && endHandleIndex !== undefined && endHandleIndex < startHandleIndex;
-						setRange(rangeIndex, startPos, endPos, overflowEqual);
+						setRange(rangeIndex, startPos, endPos, overflowEqual, opt.hideWrapping);
 					});
 				} else if (opt.handleCount === 1) {
-					if (pos < rangeBasePos) setRange(0, pos, rangeBasePos);else setRange(0, rangeBasePos, pos);
+					if (pos < rangeBasePos) setRange(0, pos, rangeBasePos, false, opt.hideWrapping);else setRange(0, rangeBasePos, pos, false, opt.hideWrapping);
 				} else if (opt.handleCount === 2) {
 					var pos0 = index === 0 ? pos : getPosFromValue(opt.values[0]);
 					var pos1 = index === 1 ? pos : getPosFromValue(opt.values[1]);
-					setRange(0, pos0, pos1, opt.rangeOverflowEqual);
+					setRange(0, pos0, pos1, opt.rangeOverflowEqual, opt.hideWrapping);
 				}
 			}
 
 			// Sets the size of a range element for a start and end value, supporting overflow.
-			function setRange(index, start, end, overflowEqual) {
+			function setRange(index, start, end, overflowEqual, hideWrapping) {
 				if (start < end || start === end && !overflowEqual) {
 					// Only one contiguous range, hide the second element
 					ranges[index * 2].css(startAttr, start + "%");
 					ranges[index * 2].css(endAttr, 100 - end + "%");
 					ranges[index * 2 + 1].css(startAttr, "0%");
 					ranges[index * 2 + 1].css(endAttr, "100%");
-				} else {
+				} else if (!hideWrapping) {
 					// Overflow range, split in two elements from either end of the slider
 					ranges[index * 2].css(startAttr, "0%");
 					ranges[index * 2].css(endAttr, 100 - end + "%");
 					ranges[index * 2 + 1].css(startAttr, start + "%");
 					ranges[index * 2 + 1].css(endAttr, "0%");
+				} else {
+					// Overflow range, hidden
+					ranges[index * 2].css(startAttr, start + "%");
+					ranges[index * 2].css(endAttr, 100 - start + "%");
+					ranges[index * 2 + 1].css(startAttr, "0%");
+					ranges[index * 2 + 1].css(endAttr, "100%");
 				}
 			}
 
@@ -4904,7 +5305,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					// Fix the size of table row cells while dragging
 					if (child[0].nodeName === "TR") {
-						var table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+						child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
 							obj.data("width-before-drag", obj[0].style.width || "");
 							obj.css("width", obj.outerWidth());
 						});
@@ -5000,7 +5401,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 					// Reset the size of table row cells
 					if (child[0].nodeName === "TR") {
-						var table = child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
+						child.closest("table").find("tr").first().children("td, th").each$(function (_, obj) {
 							obj.css("width", obj.data("width-before-drag"));
 							obj.data("width-before-drag", null);
 						});
@@ -5126,14 +5527,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Notifies the sortable plugin about a new child that needs to be initialized.
-	function addChild$1(child) {
+	function addChild(child) {
 		var sortable = $(this);
 		var opt = loadOptions("sortable", sortable);
 		opt._prepareChild.call(child);
 	}
 
 	registerPlugin("sortable", sortable, {
-		addChild: addChild$1
+		addChild: addChild
 	});
 	$.fn.sortable.defaults = sortableDefaults;
 
@@ -5300,7 +5701,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 		var headersChildren = headers.children();
 		var pagesChildren = pages.children();
-		var count = pagesChildren.length;
+		pagesChildren.length;
 		var header = headersChildren.eq(index);
 		var page = pagesChildren.eq(index);
 		var destHeader = headersChildren.eq(newIndex);
@@ -5338,7 +5739,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Encoding: UTF-8 without BOM (auto-detect: °°°°°) for built-in message texts
 
-	var inputWrapperClass$1 = "ff-input-wrapper";
+	var inputWrapperClass = "ff-input-wrapper";
 
 	// Defines default options for the timePicker plugin.
 	var timePickerDefaults = {
@@ -5349,13 +5750,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		monthFormatter: undefined,
 
 		// A function that changes the format of a day item. Default: None.
-		dayFormatter: undefined
+		dayFormatter: undefined,
+
+		// Indicates whether the ISO date and time format is used instead of the local format. Default: false.
+		isoFormat: false,
+
+		// The separator between date and time for ISO format. Default: Comma and space. Can be set to "T".
+		isoFormatSeparator: ", "
 	};
 
 	// Converts each selected date/time input element into a masked text field with time picker button.
 	function timePicker(options) {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
 			var opt = initOptions("timePicker", timePickerDefaults, input, {}, options);
 			var originalType = input.attr("type").trim().toLowerCase();
 			var dateSelection = originalType === "date" || originalType === "datetime-local" || originalType === "month" || originalType === "week";
@@ -5369,7 +5776,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.prop("required", false); // We have no way to show a browser-generated message on the original hidden and new readonly field
 
 			// Put a wrapper between the input and its parent
-			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
+			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
 			input.before(wrapper).appendTo(wrapper);
 
 			// Hide original input and add a new one, synchronise (and convert) values
@@ -5380,6 +5787,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var newInput = $("<input/>").attr("type", "text").prop("readonly", true).attr("inputmode", "none").attr("enterkeyhint", "done") // Enter key is handled separately to close dropdown/keyboard but prevent submit
 			.attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false").insertAfter(input);
 			input.data("ff-replacement", newInput);
+			// Copy some CSS classes to the replacement element
+			["input-validation-error"].forEach(function (clsName) {
+				if (input.hasClass(clsName)) newInput.addClass(clsName);
+			});
+
 			newInput.change(function () {
 				inputChanging = true;
 				input.valChange(getValue());
@@ -5534,53 +5946,77 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// All data and text parts of the masked input
 			var parts = [];
 			if (!weekSelection) {
-				var formatParts = format.formatToParts(new Date());
-				var _iteratorNormalCompletion = true;
-				var _didIteratorError = false;
-				var _iteratorError = undefined;
-
-				try {
-					for (var _iterator = formatParts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-						var f = _step.value;
-
-						switch (f.type) {
-							case "literal":
-								parts.push({ text: f.value });break;
-							case "year":
-								parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });break;
-							case "month":
-								if (formatOptions.month === "numeric") {
-									parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
-								} else {
-									// Collect all localised month names
-									var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
-									var monthNames = [];
-									for (var m = 0; m < 12; m++) {
-										monthNames.push(monthFormat.format(new Date(2000, m, 1)));
-									}parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
-								}
-								break;
-							case "day":
-								parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });break;
-							case "hour":
-								parts.push({ name: "h", min: 0, max: 23, length: 2 });break;
-							case "minute":
-								parts.push({ name: "min", min: 0, max: 59, length: 2 });break;
-							case "second":
-								parts.push({ name: "s", min: 0, max: 59, length: 2 });break;
+				if (opt.isoFormat) {
+					if (dateSelection) {
+						parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });
+						parts.push({ text: "-" });
+						parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+						if (daySelection) {
+							parts.push({ text: "-" });
+							parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });
 						}
 					}
-				} catch (err) {
-					_didIteratorError = true;
-					_iteratorError = err;
-				} finally {
-					try {
-						if (!_iteratorNormalCompletion && _iterator.return) {
-							_iterator.return();
+					if (timeSelection) {
+						if (dateSelection) parts.push({ text: opt.isoFormatSeparator });
+						parts.push({ name: "h", min: 0, max: 23, length: 2 });
+						if (minuteSelection) {
+							parts.push({ text: ":" });
+							parts.push({ name: "min", min: 0, max: 59, length: 2 });
+							if (secondSelection) {
+								parts.push({ text: ":" });
+								parts.push({ name: "s", min: 0, max: 59, length: 2 });
+							}
 						}
+					}
+				} else {
+					var formatParts = format.formatToParts(new Date());
+					var _iteratorNormalCompletion = true;
+					var _didIteratorError = false;
+					var _iteratorError = undefined;
+
+					try {
+						for (var _iterator = formatParts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+							var f = _step.value;
+
+							switch (f.type) {
+								case "literal":
+									parts.push({ text: f.value });break;
+								case "year":
+									parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });break;
+								case "month":
+									if (formatOptions.month === "numeric") {
+										parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+									} else {
+										// Collect all localised month names
+										var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+										var monthNames = [];
+										for (var m = 0; m < 12; m++) {
+											monthNames.push(monthFormat.format(new Date(2000, m, 1)));
+										}parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
+									}
+									break;
+								case "day":
+									parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });break;
+								case "hour":
+									parts.push({ name: "h", min: 0, max: 23, length: 2 });break;
+								case "minute":
+									parts.push({ name: "min", min: 0, max: 59, length: 2 });break;
+								case "second":
+									parts.push({ name: "s", min: 0, max: 59, length: 2 });break;
+							}
+						}
+					} catch (err) {
+						_didIteratorError = true;
+						_iteratorError = err;
 					} finally {
-						if (_didIteratorError) {
-							throw _iteratorError;
+						try {
+							if (!_iteratorNormalCompletion && _iterator.return) {
+								_iterator.return();
+							}
+						} finally {
+							if (_didIteratorError) {
+								throw _iteratorError;
+							}
 						}
 					}
 				}
@@ -5774,13 +6210,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Add control buttons
 			//var buttons = [];
-			//var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
+			//var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 			//buttons.push(decButton);
 			//decButton.on("repeatclick", function () {
 			//	changeValue(-1, 1);
 			//});
 			//decButton.repeatButton();
-			//var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
+			//var incButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("+");
 			//buttons.push(incButton);
 			//incButton.on("repeatclick", function () {
 			//	changeValue(1, 1);
@@ -5803,7 +6239,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								isOverflow = false;
 								if (direction > 0 && partData[myPart.name] > getPartMax(myPart)) {
 									isOverflow = true;
-									partData[myPart.name] = getPartMin(myPart, direction); // min of next overflow state
+									partData[myPart.name] = getPartMin(myPart); // min of next overflow state
 								} else if (direction < 0 && partData[myPart.name] < getPartMin(myPart)) {
 									isOverflow = true;
 									partData[myPart.name] = getPartMax(myPart, direction); // max of next overflow state
@@ -6241,23 +6677,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 			}
 
-			var backButton = $("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>').attr("title", translate("back")).appendTo(dropdownButtons).click(function (event) {
+			var backButton = $("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>').attr("title", translate("back")).appendTo(dropdownButtons).click(function (event) {
 				selectPart(findGreaterPartName(parts[selectedPart].name));
 				updateViewVisibilities();
 				updateText();
 				cancelSearchTimeout();
 			});
-			$("<button type='button'/>").text(timeSelection ? translate("now") : translate("today")).appendTo(dropdownButtons).click(setNow);
-			$("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>').attr("title", translate("keyboard")).appendTo(dropdownButtons).click(function (event) {
+			$("<button type='button'/>").addClass("button").text(timeSelection ? translate("now") : translate("today")).appendTo(dropdownButtons).click(setNow);
+			$("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>').attr("title", translate("keyboard")).appendTo(dropdownButtons).click(function (event) {
 				isKeyboardMode = true;
 				dropdown.dropdown.close();
 				newInput.prop("readonly", false).attr("inputmode", "decimal");
 				// https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
 			});
 			if (!required) {
-				$("<button type='button'/>").addClass("narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>').attr("title", translate("clear")).appendTo(dropdownButtons).click(function (event) {
+				$("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>').attr("title", translate("clear")).appendTo(dropdownButtons).click(function (event) {
 					dropdown.dropdown.close();
 					setValue("");
+					newInput.trigger("input").change();
 				});
 				dropdownButtons.addClass("four-buttons");
 			}
@@ -6419,7 +6856,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					updateHandler && updateHandler();
 					doneHandler && doneHandler();
 				});
-				var text = $("<span/>").text(monthFormat.format(new Date(2000, n - 1, 1))).appendTo(item);
+				$("<span/>").text(monthFormat.format(new Date(2000, n - 1, 1))).appendTo(item);
 				opt.monthFormatter && opt.monthFormatter(item, new Date(year, n - 1, 1));
 			};
 
@@ -6520,7 +6957,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var dayFormat = new Intl.DateTimeFormat(opt.localeCode, { weekday: "short" });
 		var weekdays = $("<div/>").addClass("weekdays").appendTo(innerDiv);
 		for (var n = 1; n <= 7; n++) {
-			var item = $("<div/>").css("height", weekdayHeight).text(dayFormat.format(new Date(2018, 0, n)).toUpperCase()).appendTo(weekdays);
+			$("<div/>").css("height", weekdayHeight).text(dayFormat.format(new Date(2018, 0, n)).toUpperCase()).appendTo(weekdays);
 		}
 
 		var weeks = $("<div/>").addClass("weeks").addClass(partName === "d" ? "day-selection" : "week-selection").appendTo(innerDiv);
@@ -6595,7 +7032,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 					}
 					if (month > 1 || year > 1) {
-						var text = $("<span/>").text(_n).appendTo(item);
+						$("<span/>").text(_n).appendTo(item);
 					} else {
 						item.disable();
 					}
@@ -6624,7 +7061,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							doneHandler && doneHandler();
 						});
 					}
-					var text = $("<span/>").text(_n2).appendTo(item);
+					$("<span/>").text(_n2).appendTo(item);
 					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 1, _n2));
 					daysCount++;
 				};
@@ -6655,7 +7092,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 					}
 					if (month < 12 || year < 9999) {
-						var text = $("<span/>").text(_n3).appendTo(item);
+						$("<span/>").text(_n3).appendTo(item);
 					} else {
 						item.disable();
 					}
@@ -6748,16 +7185,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var radius = n <= 12 ? outerRadius : innerRadius;
 				var top = clockSize / 2 - Math.cos(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
 				var left = clockSize / 2 + Math.sin(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
-				var item = $("<span/>").css("top", top).css("left", left).appendTo(clockInner);
-				var text = $("<span/>").text(n % 24).appendTo(item);
-				if (n > 12) item.addClass("inner-circle");
+				var _item = $("<span/>").css("top", top).css("left", left).appendTo(clockInner);
+				$("<span/>").text(n % 24).appendTo(_item);
+				if (n > 12) _item.addClass("inner-circle");
 			}
 		} else {
 			for (var _n4 = 0; _n4 < 60; _n4 += 5) {
 				var _top = clockSize / 2 - Math.cos(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
 				var _left = clockSize / 2 + Math.sin(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
-				var _item = $("<span/>").css("top", _top).css("left", _left).appendTo(clockInner);
-				var _text = $("<span/>").text(_n4).appendTo(_item);
+				var _item2 = $("<span/>").css("top", _top).css("left", _left).appendTo(clockInner);
+				$("<span/>").text(_n4).appendTo(_item2);
 			}
 		}
 		clockInner.children().addClass("item").css("width", itemSize).css("height", itemSize);
@@ -7037,6 +7474,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		findInclSelf(prefix + "input[type=ff-color]").colorPicker();
 		findInclSelf(prefix + "input[type=checkbox], input[type=radio]").styleCheckbox();
 		findInclSelf(prefix + "input[type=checkbox].three-state").threeState();
+		findInclSelf(prefix + "input[type=submit].submit-lock, button[type=submit].submit-lock").submitLock();
 		findInclSelf(prefix + "input[type=date],input[type=datetime-local],input[type=month],input[type=time],input[type=week]").timePicker();
 		findInclSelf(prefix + "textarea.auto-height").autoHeight();
 		findInclSelf(prefix + ".menu").menu();
@@ -7070,8 +7508,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	};
 
 	$(document).frontfire(":not(.no-autostart)");
-
-	/*! frontfire.js v0.1 | @license MIT | unclassified.software/source/frontfire */
 })(jQuery, window, document);
 //# sourceMappingURL=frontfire.bundle.js.map
 

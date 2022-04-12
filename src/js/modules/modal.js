@@ -74,7 +74,10 @@ function modal(options) {
 				}
 			}
 		});
-		container.click(function (event) {
+		// Close on mousedown instead of click because it's more targeted. A click event is also
+		// triggered when the mouse button was pressed inside the modal and released outside of it.
+		// This is considered "expected behaviour" of the click event.
+		container.on("mousedown", function (event) {
 			if (event.button === 0 && event.target === this) {
 				modal.modal.close();
 			}
@@ -136,18 +139,23 @@ $.fn.modal.defaults = modalDefaults;
 // options.buttons[].className: (String) Additional CSS classes for the button.
 // options.buttons[].result: The result value of the button.
 // options.resultHandler: (Function) The modal response handler. It is passed the button handler's return value, or false if cancelled.
+// options.className: (String) Additional CSS class names for the modal element.
 //
 // If a string is passed as first argument, it is displayed as text with an OK button.
-$.modal = function (options) {
+// Only then, closeHandler is also regarded as options.resultHandler.
+$.modal = function (options, closeHandler) {
 	if (typeof options === "string") {
 		options = {
 			text: options,
-			buttons: "OK"
+			buttons: "OK",
+			resultHandler: closeHandler
 		};
 	}
 	
 	let modal = $("<div/>")
 		.addClass("modal");
+	if (options.className)
+		modal.addClass(options.className);
 	let content = $("<div/>")
 		.css("overflow", "auto")
 		.css("max-height", "calc(100vh - 80px - 5em)")   // padding of modal, height of buttons
@@ -199,6 +207,7 @@ $.modal = function (options) {
 			.appendTo(modal);
 		buttons.forEach(function (button) {
 			let buttonElement = $("<button/>")
+				.addClass("button")
 				.addClass(button.className)
 				.appendTo(buttonsElement);
 			if (button.icon)

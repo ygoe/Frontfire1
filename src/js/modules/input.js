@@ -57,7 +57,7 @@ function spinner() {
 
 		// Add control buttons
 		var buttons = [];
-		var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
+		var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 		buttons.push(decButton);
 		decButton.on("repeatclick", function () {
 			if (input.disabled()) return;
@@ -65,7 +65,12 @@ function spinner() {
 			var min = input.attr("min");
 			var max = input.attr("max");
 			var stepBase = min !== undefined ? +min : 0;
-			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+			var stepAttr = "";
+			if (input.data("step"))
+				stepAttr = input.data("step") + ""
+			else if (input.attr("step"))
+				stepAttr = input.attr("step")
+			let match = stepAttr.match(/^\s*\*(.*)/);
 			if (match) {
 				let factor = +match[1] || 10;
 				if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max))
@@ -73,7 +78,7 @@ function spinner() {
 			}
 			else {
 				if (max !== undefined && value > +max) value = +max + 1;
-				var step = +input.attr("step") || 1;
+				var step = +stepAttr || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 				value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
 				if (min !== undefined && value < +min) value = +min;
@@ -84,7 +89,7 @@ function spinner() {
 			input.trigger("input").change();
 		});
 		decButton.repeatButton();
-		var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
+		var incButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("+");
 		buttons.push(incButton);
 		incButton.on("repeatclick", function () {
 			if (input.disabled()) return;
@@ -92,7 +97,12 @@ function spinner() {
 			var min = input.attr("min");
 			var max = input.attr("max");
 			var stepBase = min !== undefined ? +min : 0;
-			let match = input.attr("step") ? input.attr("step").match(/^\s*\*(.*)/) : false;
+			var stepAttr = "";
+			if (input.data("step"))
+				stepAttr = input.data("step") + ""
+			else if (input.attr("step"))
+				stepAttr = input.attr("step")
+			let match = stepAttr.match(/^\s*\*(.*)/);
 			if (match) {
 				let factor = +match[1] || 10;
 				if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max))
@@ -100,8 +110,9 @@ function spinner() {
 			}
 			else {
 				if (max !== undefined && value > +max) value = +max + 1;
-				var step = +input.attr("step") || 1;
+				var step = +stepAttr || 1;
 				var corr = step / 1000;   // Correct JavaScript's imprecise numbers
+				// TODO: With max=100 and step=0.1, incrementing from 100 results in 99.9 again. JavaScript double precision is still broken here!
 				value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase;   // Set to next-greater valid step
 				if (min !== undefined && value < +min) value = +min;
 				while (max !== undefined && value > +max) value -= step;
@@ -139,13 +150,15 @@ function toggleButton() {
 			}
 		}
 		
-		//input.attr("type", "hidden");
-		input.hide();
 		button = $("<button/>")
 			.attr("type", "button")
-			.addClass("toggle-button")
+			.attr("title", input.attr("title"))
+			.attr("style", input.attr("style"))
+			.addClass("button toggle-button")
 			.html(content)
 			.insertAfter(input);
+		//input.attr("type", "hidden");
+		input.hide();
 		input.data(replacementKey, button);
 		// Copy some CSS classes to the button
 		["narrow", "transparent", "input-validation-error"].forEach(clsName => {
@@ -161,7 +174,7 @@ function toggleButton() {
 		button.click(() => {
 			button.toggleClass("active");
 			//input.val(button.hasClass("active") ? activeValue : "");
-			input.prop("checked", button.hasClass("active"));
+			input.prop("checked", button.hasClass("active")).change();
 		});
 		
 		input.on("change", () => {
@@ -205,7 +218,7 @@ function colorPicker() {
 
 		// Add control buttons
 		var buttons = [];
-		var pickButton = $("<button type='button'/>").addClass("ff-colorbutton").appendTo(wrapper);
+		var pickButton = $("<button type='button'/>").addClass("button ff-colorbutton").appendTo(wrapper);
 		buttons.push(pickButton);
 		var colorBox = $("<div/>").appendTo(pickButton).text("\u2026");   // &hellip;
 		input.on("input change", () => setColor(lastColor = input.val()));
@@ -243,7 +256,7 @@ function colorPicker() {
 			color.format = "HTML";
 			if (index % 7 === 0)
 				buttonRow = $("<div/>").appendTo(dropdown);
-			var button = $("<button type='button'/>").css("background", color).data("color", String(color)).appendTo(buttonRow);
+			var button = $("<button type='button'/>").addClass("button").css("background", color).data("color", String(color)).appendTo(buttonRow);
 			if (color.isDark()) button.addClass("dark");
 			button.click(function (event) {
 				setColor(lastColor = color, true);
@@ -393,6 +406,10 @@ function autoHeight(minRows, maxRows, extraRows) {
 		textarea.on("input.autoheight", updateShadow);
 		updateShadow();
 
+		// The autofocus option often gets lost after this, so redo it explicitly
+		if (textarea.prop("autofocus"))
+			textarea.focus();
+
 		function updateShadow() {
 			// Copy textarea contents; browser will calculate correct height of shadow copy,
 			// which will make overall wrapper taller, which will make textarea taller.
@@ -425,3 +442,98 @@ function autoHeight(minRows, maxRows, extraRows) {
 }
 
 registerPlugin("autoHeight", autoHeight);
+
+// Defines default options for the submitLock plugin.
+var submitLockDefaults = {
+	// The lock timeout in seconds. Default: 30.
+	timeout: 30
+};
+
+// Locks form submit buttons for a moment to avoid accidental double-submit.
+function submitLock(options) {
+	return this.each$(function (_, button) {
+		if (button.data("hasSubmitLock")) return;   // Already done
+		button.data("hasSubmitLock", true);
+
+		var opt = initOptions("submitLock", submitLockDefaults, button, {}, options);
+		opt._lock = lockButton;
+		opt._unlock = unlockButton;
+
+		button.on("click", function () {
+			button.data("submitLockClicked", true);
+			setTimeout(function () {
+				button.data("submitLockClicked", null);
+			}, 500);
+		});
+
+		let icon = button.find("i:empty");
+		let loading;
+
+		// Connect with form submit event if there is a form; otherwise, only explicit locking
+		// available for this button
+		let form = button[0].form;
+		if (form) {
+			$(form).on("submit", function (event) {
+				//event.preventDefault();   // DEBUG
+				if (button.disabled()) return;   // Nothing to do for this button
+				lockButton(opt.timeout);
+			});
+		}
+
+		function lockButton(timeout) {
+			// Lock the button and replace the icon with a loading indicator
+			button.disable();
+			if (icon.length > 0) {
+				if (button.data("submitLockClicked")) {
+					let iconWidth = icon.width();
+					let iconMarginLeft = parseFloat(icon.css("margin-left"));
+					let iconMarginRight = parseFloat(icon.css("margin-right"));
+					icon.hide();
+					loading = $("<i/>")
+						.addClass("loading thick")
+						.css("font-size", "1em")
+						.css("vertical-align", "-2px")
+						.insertAfter(icon);
+					let loadingWidth = loading.width();
+					let dx = loadingWidth - iconWidth;
+					loading
+						.css("margin-left", -dx / 2 + iconMarginLeft)
+						.css("margin-right", -dx / 2 + iconMarginRight);
+				}
+			}
+
+			// Unlock the button and restore the icon after a timeout if the page is still alive
+			setTimeout(unlockButton, timeout * 1000);
+		}
+
+		function unlockButton() {
+			button.enable();
+			if (loading) {
+				loading.remove();
+				icon.show();
+			}
+		}
+	});
+}
+
+// Locks the button immediately.
+function submitLockLock(timeout) {
+	return this.each$(function (_, button) {
+		var opt = loadOptions("submitLock", button);
+		opt._lock(timeout || opt.timeout);
+	});
+}
+
+// Unlocks the button immediately.
+function submitLockUnlock() {
+	return this.each$(function (_, button) {
+		var opt = loadOptions("submitLock", button);
+		opt._unlock();
+	});
+}
+
+registerPlugin("submitLock", submitLock, {
+	lock: submitLockLock,
+	unlock: submitLockUnlock
+});
+$.fn.submitLock.defaults = submitLockDefaults;

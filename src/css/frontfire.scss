@@ -4,9 +4,16 @@
 @import "settings";
 @import "normalize";
 
-*
+// Sources:
+// https://www.paulirish.com/2012/box-sizing-border-box-ftw/
+// https://css-tricks.com/inheriting-box-sizing-probably-slightly-better-best-practice/
+html
 {
 	box-sizing: border-box;
+}
+*, *:before, *:after
+{
+	box-sizing: inherit;
 }
 
 html.reset-all-cursors *
@@ -22,7 +29,7 @@ html:not(.simple-dimmer)
 	}
 	& > body.ff-dimming.ff-dimmed > *:not(.ff-background-dimmer):not(.ff-modal-container):not(.ff-off-canvas):not(.no-dim)
 	{
-		filter: blur(2px) grayscale(0.5);
+		filter: blur(4px) grayscale(0.5);
 	}
 }
 .ff-background-dimmer
@@ -44,17 +51,22 @@ html:not(.simple-dimmer)
 	}
 }
 
+.no-transitions *
+{
+	transition: none;
+}
+
 .print-only
 {
 	display: none;
-	@media (print)
+	@media print
 	{
 		display: inherit;
 	}
 }
 .not-print
 {
-	@media (print)
+	@media print
 	{
 		display: none;
 	}

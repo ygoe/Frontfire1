@@ -1,6 +1,8 @@
 ﻿import { registerPlugin, initOptions, loadOptions } from "../plugin";
 import { minmax, round, installDisabledchangeHook } from "../util";
 
+var sliderClass = "ff-slider";
+var backgroundClass = "ff-background";
 var rangeClass = "ff-range";
 var ticksClass = "ff-ticks";
 var handleClass = "ff-handle";
@@ -56,6 +58,9 @@ var sliderDefaults = {
 	// Overflow the range if the two handles have the same value. Default: false.
 	rangeOverflowEqual: false,
 
+	// Hide ranges when the end is less than the start. Default: false.
+	hideWrapping: false,
+
 	// Individual ranges. Overrides the rangeBase option and two-handle range behaviour. Default: null.
 	// Each range object has the properties: start, end, overflowEqual, color, className.
 	// start and end can be fixed values, "min"/"max", or zero-based handle references prefixed with "#".
@@ -71,7 +76,8 @@ var sliderDefaults = {
 // Creates a slider widget.
 function slider(options) {
 	return this.each$(function (_, slider) {
-		if (slider.children("div." + handleClass).length !== 0) return;   // Already done
+		if (slider.hasClass(sliderClass)) return;   // Already done
+		slider.addClass(sliderClass);
 		var opt = initOptions("slider", sliderDefaults, slider, {}, options);
 		var htmlCursor, draggedHandleCursor;
 		var dragHandleOffset = [], dragHandlePointerId = [];
@@ -85,6 +91,8 @@ function slider(options) {
 		if (!opt.values) opt.values = [opt.value];
 		if (opt.max < opt.min) opt.max = opt.min;
 		if (opt.handleCount < 1) opt.handleCount = 1;
+
+		$("<div/>").addClass(backgroundClass).appendTo(slider);
 
 		// Create 1 pair of ranges by default; more only if individually specified
 		var ranges = [];
@@ -184,7 +192,7 @@ function slider(options) {
 			var handle = $(event.target).closest("." + handleClass);
 			var index = $.inArray(handle[0], $handles);
 			if (index === -1) {
-				console.warn("Clicked handle not found");
+				console.warn("Clicked slider handle not found");
 				return;   // Should not happen: handle not found
 			}
 
@@ -404,6 +412,9 @@ function slider(options) {
 						startHandleIndex = Number(start.substr(1));
 						start = startHandleIndex === index ? value : opt.values[startHandleIndex];
 					}
+					if (start < opt.min) start = opt.min;
+					if (start > opt.max) start = opt.max;
+
 					var end = rangeItem.end, endHandleIndex;
 					if (end === "min") {
 						end = opt.min;
@@ -415,28 +426,31 @@ function slider(options) {
 						endHandleIndex = Number(end.substr(1));
 						end = endHandleIndex === index ? value : opt.values[endHandleIndex];
 					}
+					if (end < opt.min) end = opt.min;
+					if (end > opt.max) end = opt.max;
+
 					var startPos = getPosFromValue(start);
 					var endPos = getPosFromValue(end);
 					var overflowEqual = rangeItem.overflowEqual ||
 						startHandleIndex !== undefined && endHandleIndex !== undefined && endHandleIndex < startHandleIndex;
-					setRange(rangeIndex, startPos, endPos, overflowEqual);
+					setRange(rangeIndex, startPos, endPos, overflowEqual, opt.hideWrapping);
 				});
 			}
 			else if (opt.handleCount === 1) {
 				if (pos < rangeBasePos)
-					setRange(0, pos, rangeBasePos);
+					setRange(0, pos, rangeBasePos, false, opt.hideWrapping);
 				else
-					setRange(0, rangeBasePos, pos);
+					setRange(0, rangeBasePos, pos, false, opt.hideWrapping);
 			}
 			else if (opt.handleCount === 2) {
 				var pos0 = index === 0 ? pos : getPosFromValue(opt.values[0]);
 				var pos1 = index === 1 ? pos : getPosFromValue(opt.values[1]);
-				setRange(0, pos0, pos1, opt.rangeOverflowEqual);
+				setRange(0, pos0, pos1, opt.rangeOverflowEqual, opt.hideWrapping);
 			}
 		}
 
 		// Sets the size of a range element for a start and end value, supporting overflow.
-		function setRange(index, start, end, overflowEqual) {
+		function setRange(index, start, end, overflowEqual, hideWrapping) {
 			if (start < end || start === end && !overflowEqual) {
 				// Only one contiguous range, hide the second element
 				ranges[index * 2].css(startAttr, start + "%");
@@ -444,12 +458,19 @@ function slider(options) {
 				ranges[index * 2 + 1].css(startAttr, "0%");
 				ranges[index * 2 + 1].css(endAttr, "100%");
 			}
-			else {
+			else if (!hideWrapping) {
 				// Overflow range, split in two elements from either end of the slider
 				ranges[index * 2].css(startAttr, "0%");
 				ranges[index * 2].css(endAttr, (100 - end) + "%");
 				ranges[index * 2 + 1].css(startAttr, start + "%");
 				ranges[index * 2 + 1].css(endAttr, "0%");
+			}
+			else {
+				// Overflow range, hidden
+				ranges[index * 2].css(startAttr, start + "%");
+				ranges[index * 2].css(endAttr, (100 - start) + "%");
+				ranges[index * 2 + 1].css(startAttr, "0%");
+				ranges[index * 2 + 1].css(endAttr, "100%");
 			}
 		}
 

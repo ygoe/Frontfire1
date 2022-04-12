@@ -36,7 +36,7 @@ label
 	color: $textboxColor;
 	padding: 4px 8px;
 	box-shadow: rgba(0, 0, 0, 0.05) 0 1px 2px inset;
-	transition: border $animationDuration $animationFunction, color $animationDuration $animationFunction;
+	transition: border $animationDuration $animationFunction, background-color $animationDuration $animationFunction, color $animationDuration $animationFunction;
 	.dark &
 	{
 		border-color: $darkTextboxBorder;
@@ -103,21 +103,28 @@ label
 		}
 	}
 
+	// Remove all borders around the text field
 	&.no-border
 	{
 		border: none;
 		box-shadow: none;
 		padding: 2px 0px;
 	}
+	// Remove all but the bottom border around the text field
 	&.underline
 	{
 		border-top: none;
 		border-left: none;
 		border-right: none;
 		box-shadow: none;
-		padding-left: 0px;
-		padding-right: 0px;
+		// Also remove the horizontal padding, use when the background of the text field is not different from the parent
+		&.no-padding
+		{
+			padding-left: 0px;
+			padding-right: 0px;
+		}
 	}
+	// Clear the background from the text field
 	&.transparent
 	{
 		background-color: transparent;
@@ -199,6 +206,14 @@ input[type=number]
 			&:first-child { border-left-color: $darkTextboxBorder; }
 			&:last-child { border-right-color: $darkTextboxBorder; }
 		}
+
+		&.no-background
+		{
+			border: none;
+			background: none;
+			padding-top: 5px;
+			padding-bottom: 5px;
+		}
 	}
 	&[disabled] > .label
 	{
@@ -217,6 +232,7 @@ input[type=number]
 		align-self: center;
 		pointer-events: none;
 	}
+	// Place an icon at the left end of the text field
 	&.icon-left
 	{
 		> i:empty
@@ -225,22 +241,45 @@ input[type=number]
 			margin-right: -25px;
 			padding-left: 9px;
 		}
+		// class "no-padding" must also be applied to the "segmented-input" element to position the icon correctly
+		&.no-padding > i:empty
+		{
+			padding-left: 0;
+			width: 16px;
+			margin-right: -16px;
+		}
 		> input
 		{
 			padding-left: 32px;
+			&.underline.no-padding
+			{
+				padding-left: 23px;
+			}
 		}
 	}
+	// Place an icon at the right end of the text field
 	&.icon-right
 	{
 		> input
 		{
 			padding-right: 32px;
+			&.underline.no-padding
+			{
+				padding-right: 23px;
+			}
 		}
 		> i:empty
 		{
 			@extend %textbox-icon;
 			margin-left: -25px;
 			padding-right: 9px;
+		}
+		// class "no-padding" must also be applied to the "segmented-input" element to position the icon correctly
+		&.no-padding > i:empty
+		{
+			padding-right: 0;
+			width: 16px;
+			margin-left: -16px;
 		}
 	}
 
@@ -270,8 +309,8 @@ a.button
 	line-height: $_defaultLineHeight;   // override div.buttons line-height (variable from typography file)
 	cursor: pointer;
 	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction, border $animationDuration $animationFunction;
-	&a:link,
-	&a:visited
+	&:link,
+	&:visited
 	{
 		color: $buttonColor;
 		text-decoration: none !important;
@@ -285,8 +324,8 @@ a.button
 	{
 		background: $darkButtonBackground;
 		color: $darkButtonColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -317,8 +356,8 @@ a.button
 		background: $buttonPressedBackground;
 		transition: background 0s;
 		color: $buttonPressedColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -328,8 +367,8 @@ a.button
 		{
 			background: $darkButtonPressedBackground;
 			color: $darkButtonPressedColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -343,8 +382,8 @@ a.button
 		background: $buttonDisabledBackground;
 		color: $buttonDisabledColor;
 		cursor: default;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -354,8 +393,8 @@ a.button
 		{
 			background: $darkButtonDisabledBackground;
 			color: $darkButtonDisabledColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -368,8 +407,8 @@ a.button
 	{
 		background: $buttonDefaultBackground;
 		color: $buttonDefaultColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -379,8 +418,8 @@ a.button
 		{
 			background: $darkButtonDefaultBackground;
 			color: $darkButtonDefaultColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -430,8 +469,8 @@ a.button
 	{
 		background: $buttonCautionBackground;
 		color: $buttonCautionColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -441,8 +480,8 @@ a.button
 		{
 			background: $darkButtonCautionBackground;
 			color: $darkButtonCautionColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -492,8 +531,8 @@ a.button
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonTransparentColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -503,8 +542,8 @@ a.button
 		{
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonTransparentColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -554,8 +593,8 @@ a.button
 	{
 		background: $buttonTransparentBackground;
 		color: $buttonDisabledColor;
-		&a:link,
-		&a:visited,
+		&:link,
+		&:visited,
 		&:link:hover,
 		&:visited:hover
 		{
@@ -565,8 +604,8 @@ a.button
 		{
 			background: $darkButtonTransparentBackground;
 			color: $darkButtonDisabledColor;
-			&a:link,
-			&a:visited,
+			&:link,
+			&:visited,
 			&:link:hover,
 			&:visited:hover
 			{
@@ -583,14 +622,19 @@ a.button
 		padding-right: 4px;
 	}
 
-	&:not(.narrow) i:empty
+	&:not(.narrow.icon-right) i:empty
 	{
 		margin-right: 3px;
+	}
+	&:not(.narrow).icon-right i:empty
+	{
+		margin-left: 3px;
 	}
 }
 
 #{$buttonInputs}
 {
+	// TODO: This requires HTML like <button class="button link">. The "button" class should not be used here.
 	&.link
 	{
 		background: transparent;
@@ -1001,7 +1045,8 @@ input[type=radio].ff-checkbox
 {
 	padding-left: 26px;
 }
-.field.indent-checkbox > input.ff-checkbox
+.field.indent-checkbox > input.ff-checkbox,
+.field.indent-checkbox > label > input.ff-checkbox
 {
 	margin-left: -26px;
 }

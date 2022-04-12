@@ -41,7 +41,6 @@ function resizable(options) {
 	return this.each$(function (_, elem) {
 		if (elem.hasClass(resizableClass)) return;   // Already done
 		elem.addClass(resizableClass);
-		var htmlCursor;
 		var handleElements = $();
 		var opt = initOptions("resizable", resizableDefaults, elem, {}, options);
 		let $window = $(window);
@@ -123,7 +122,7 @@ function resizable(options) {
 				.css("cursor", cursor);
 			elem.append(handle);
 			handleElements = handleElements.add(handle);
-			handle.draggable({ scroll: opt.scroll });
+			handle.draggable({ scroll: opt.scroll, dragCursor: cursor });
 			handle.on("draggablestart", function (event) {
 				event.stopPropagation();   // Don't trigger for the resized (parent) element
 				let event2 = $.Event("resizablestart");
@@ -131,11 +130,7 @@ function resizable(options) {
 				event2.negative = negative;
 				event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
 				elem.trigger(event2);
-				if (!event2.isDefaultPrevented()) {
-					htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-					document.documentElement.style.setProperty("cursor", cursor, "important");
-				}
-				else {
+				if (event2.isDefaultPrevented()) {
 					event.preventDefault();
 				}
 			});
@@ -148,7 +143,6 @@ function resizable(options) {
 			});
 			handle.on("draggableend", function (event) {
 				event.stopPropagation();   // Don't trigger for the resized (parent) element
-				document.documentElement.style.setProperty("cursor", htmlCursor);
 				let event2 = $.Event("resizableend");
 				event2.vertical = vertical;
 				event2.negative = negative;

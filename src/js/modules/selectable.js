@@ -119,7 +119,7 @@ function selectable(options) {
 				onDisabledchange();
 
 				// Close the dropdown when leaving the field with the Tab key
-				// (but not when clicking an item in the dropdown)
+				// (but not when clicking into the dropdown)
 				button.on("blur", function () {
 					if (button.hasClass("open") && !blurCloseTimeout) {
 						blurCloseTimeout = setTimeout(function () {
@@ -207,6 +207,27 @@ function selectable(options) {
 			}
 		});
 
+		// Also don't close the dropdown if clicked on a disabled item or empty space (if there are no items)
+		if (useDropdown) {
+			let isMouseDown = false;
+			elem.on("mousedown", function (event) {
+				if (event.originalEvent.button === 0) {
+					isMouseDown = true;
+					setTimeout(() => {
+						button.focus();
+					}, 0);
+				}
+				else {
+					isMouseDown = false;
+				}
+			});
+			elem.on("mouseup", function (event) {
+				if (!isMouseDown) return;
+				isMouseDown = false;
+				button.focus();
+			});
+		}
+
 		// Sets up event handlers on a selection child (passed as this).
 		function prepareChild() {
 			var child = $(this);
@@ -215,6 +236,7 @@ function selectable(options) {
 			var isMouseDown = false;
 			child.on("mousedown", function (event) {
 				if (event.originalEvent.button === 0) {
+					event.stopPropagation();   // No need to handle events on elem itself
 					isMouseDown = true;
 					setTimeout(() => {
 						if (useDropdown)
@@ -229,6 +251,7 @@ function selectable(options) {
 			});
 			child.on("mouseup", function (event) {
 				if (!isMouseDown) return;
+				event.stopPropagation();   // No need to handle events on elem itself
 				isMouseDown = false;
 				if (useDropdown)
 					button.focus();
@@ -320,7 +343,9 @@ function selectable(options) {
 		// state.
 		function updateFromHtmlSelect() {
 			elem.children().remove();
+			let haveOptions = false;
 			htmlSelect.children("option").each$(function (_, option) {
+				haveOptions = true;
 				let newOption = $("<div/>")
 					.text(option.text())
 					.data("value", option.prop("value"))
@@ -336,6 +361,10 @@ function selectable(options) {
 				if (option.prop("disabled"))
 					newOption.addClass("disabled");
 			});
+			if (!haveOptions)
+				elem.css("height", "4em");
+			else
+				elem.css("height", "");
 		}
 
 		// Updates the dropdown list button's text from the current selection.

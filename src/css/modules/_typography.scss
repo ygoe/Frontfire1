@@ -1,6 +1,7 @@
 @import "../settings";
 
 $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
+$_monospaceLineHeight: round($monospaceFontSize * $monospaceLineHeight);
 
 .dark
 {
@@ -34,6 +35,7 @@ textarea.monospace,
 {
 	font-family: $monospaceFontFamily;
 	font-size: $monospaceFontSize;
+	line-height: $_monospaceLineHeight;
 }
 
 // ========== Headers ==========
@@ -115,13 +117,13 @@ div.justify
 
 .larger
 {
-	font-size: round($defaultFontSize * 1.3) !important;
-	line-height: round($defaultFontSize * 1.3 * $defaultLineHeight) !important;
+	font-size: $largerFontSize !important;
+	line-height: $largerLineHeight !important;
 }
 .smaller
 {
-	font-size: round($defaultFontSize * 0.8) !important;
-	line-height: round($defaultFontSize * 0.8 * $defaultLineHeight) !important;
+	font-size: $smallerFontSize !important;
+	line-height: $smallerLineHeight !important;
 }
 
 .no-top-margin
@@ -193,6 +195,13 @@ table
 		{
 			border-color: $darkTableGridColor;
 		}
+
+		// Compensate padding for nested tables
+		> table
+		{
+			margin-top: -3px;
+			margin-bottom: -3px;
+		}
 	}
 	th
 	{
@@ -203,6 +212,14 @@ table
 			background-color: $darkTableHeaderBackground;
 		}
 	}
+	tr.hidden-row
+	{
+		th,
+		td
+		{
+			border: none;   // it would collapse into the other visible rows (if hidden with visibility: collapse)
+		}
+	}
 
 	&.compact
 	{
@@ -211,8 +228,16 @@ table
 		{
 			border: none;
 			padding: 0 6px 0 0;
+
+			// Un-compensate padding for nested tables
+			> table
+			{
+				margin-top: 0;
+				margin-bottom: 0;
+			}
 		}
-		td:last-child
+		td:last-child,
+		td.last-column
 		{
 			padding-right: 0;
 		}
@@ -225,24 +250,34 @@ table.no-border
 	border: none;
 
 	th:first-child,
-	td:first-child
+	td:first-child,
+	td.first-column
 	{
 		border-left: none;
 	}
 	th:last-child,
-	td:last-child
+	td:last-child,
+	td.last-column
 	{
 		border-right: none;
 	}
-	tr:first-child > th,
-	tr:first-child > td
+	tr:first-child,
+	tr.first-row
 	{
-		border-top: none;
+		> th,
+		> td
+		{
+			border-top: none;
+		}
 	}
-	tr:last-child > th,
-	tr:last-child > td
+	tr:last-child,
+	tr.last-row
 	{
-		border-bottom: none;
+		> th,
+		> td
+		{
+			border-bottom: none;
+		}
 	}
 }
 
@@ -355,7 +390,8 @@ table.tall-rows
 	}
 	&.no-border
 	{
-		tr:last-child > td
+		tr:last-child > td,
+		tr.last-row > td
 		{
 			// one less for the last row
 			height: calc(#{$_defaultLineHeight} + 16px);
@@ -417,6 +453,7 @@ div.code
 	padding: $codeInlinePadding;
 	hyphens: none;
 	overflow-wrap: break-word;
+	transition: background-color $animationDuration $animationFunction;
 	.dark &
 	{
 		background-color: $darkCodeBackground;
@@ -523,6 +560,15 @@ i.loading
 		{
 			border-color: rgba(0, 0, 0, 0.6) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1);
 		}
+	}
+
+	&.thin::before
+	{
+		border-width: 0.08em;
+	}
+	&.thick::before
+	{
+		border-width: 0.25em;
 	}
 
 	&.small { font-size: 16px; }

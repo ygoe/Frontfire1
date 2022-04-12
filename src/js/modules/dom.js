@@ -61,7 +61,7 @@ $.fn.visible = function (value) {
 	// Getter
 	if (this.length === 0) return;
 	let el = this.data(replacementKey) || this;
-	return el.css("display") !== "none";
+	return el.css("display") !== "none" && el.css("visibility") !== "collapse";
 };
 
 // Determines whether the selected element is disabled.
@@ -234,6 +234,53 @@ $.fn.firstChild = function () {
 	return ret;
 };
 
+// Sets the last-column class to the last visible column in a table, if following columns are hidden.
+// This ensures (together with CSS rules) that the border and padding of the last visible column is
+// correct.
+$.fn.updateLastColumn = function () {
+	return this.each$(function (_, table) {
+		let lastColumn, lastVisibleColumn;
+		// TODO: Ignore nested tables
+		// TODO: This looks strange, is it per-row?
+		table.find("th, td").each$(function (_, td) {
+			td.removeClass("last-column");
+			lastColumn = td;
+			if (td.visible())
+				lastVisibleColumn = td;
+		});
+		if (lastColumn && lastVisibleColumn && lastColumn !== lastVisibleColumn)
+			lastVisibleColumn.addClass("last-column");
+	});
+};
+
+// Sets the first-row and last-row class to the first/last visible row in a table, if
+// preceding/following rows are hidden. This ensures (together with CSS rules) that the border and
+// padding of the first and last visible row is correct.
+$.fn.updateFirstLastRow = function () {
+	return this.each$(function (_, table) {
+		let lastRow, lastVisibleRow, seenFirstRow;
+		// TODO: Ignore nested tables
+		table.find("tr").each$(function (_, tr) {
+			tr.removeClass("first-row");
+			tr.removeClass("last-row");
+			tr.removeClass("hidden-row");
+			lastRow = tr;
+			if (tr.visible()) {
+				if (!seenFirstRow) {
+					seenFirstRow = true;
+					tr.addClass("first-row");
+				}
+				lastVisibleRow = tr;
+			}
+			else {
+				tr.addClass("hidden-row");
+			}
+		});
+		if (lastRow && lastVisibleRow && lastRow !== lastVisibleRow)
+			lastVisibleRow.addClass("last-row");
+	});
+};
+
 // Returns the closest parent of each selected element that matches the predicate function.
 //
 // predicate: A function that is called with each parent as first argument and the starting element
@@ -268,11 +315,39 @@ $.fn.actualCursor = function () {
 	return "default";
 };
 
-// Scrolls the page so that the first selected element is at the top.
+// Immediately scrolls the page so that the first selected element is at the top.
 // offset: The vertical offset to scroll the element to.
 $.fn.scrollToTop = function (offset) {
 	if (this.length) {
 		$(window).scrollTop(this.offset().top - (offset || 0));
+	}
+};
+
+var scrollAnimationTimeout;
+
+// Smoothly scrolls the page so that the first selected element is at the top.
+// offset: The vertical offset to scroll the element to.
+$.fn.animateScrollToTop = function (offset) {
+	if (this.length) {
+		if (scrollAnimationTimeout)
+			clearTimeout(scrollAnimationTimeout);
+
+		const scrollStart = window.scrollY;
+		const scrollEnd = this.offset().top - (offset || 0);
+
+		const animationDelay = 10;
+		const animationCount = 40;
+		let animationPosition = 0;
+		animate();
+		
+		function animate() {
+			if (++animationPosition <= animationCount) {
+				const r = Math.sin(animationPosition / animationCount * Math.PI / 2);
+				const pos = scrollStart + (scrollEnd - scrollStart) * r;
+				$(window).scrollTop(pos);
+				scrollAnimationTimeout = setTimeout(animate, animationDelay);
+			}
+		}
 	}
 };
 
@@ -311,7 +386,7 @@ $.fontExists = function (font) {
 //
 // type: The event type ("down", "move", "up", "cancel"). Multiple types can be space-delimited.
 // handler: The event handler function.
-// capture: Specifies the capture option. If true, DOM addEventListener ist used instead of jQuery.
+// capture: Specifies the capture option. If true, DOM addEventListener is used instead of jQuery.
 // Returns a function that removes the event handler. Keep it and call it, there is no other way to remove it.
 $.fn.pointer = function (type, handler, capture) {
 	var add, remove, pointer, mouse, touch, touchType = type, mouseHandler, touchHandler;

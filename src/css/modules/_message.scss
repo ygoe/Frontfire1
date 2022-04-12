@@ -6,6 +6,7 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 {
 	padding: 6px 10px;
 	position: relative;
+	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction;
 
 	&.closable
 	{
@@ -23,7 +24,8 @@ $_defaultLineHeight: round($defaultFontSize * $defaultLineHeight);
 	{
 		padding-left: 35px;
 
-		i:empty
+		> i:empty,
+		> .icon
 		{
 			display: block;
 			float: left;
@@ -184,7 +186,7 @@ div.message
 	opacity: 0.6;
 	text-align: center;
 	font-size: 19px;
-	transition: opacity 0.2s;
+	transition: opacity $animationDuration $animationFunction;
 
 	&::after
 	{

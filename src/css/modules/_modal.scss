@@ -16,6 +16,11 @@
 		max-width: 100%;
 		margin: 10px;
 	}
+	.dark &
+	{
+		background: $darkBackground;
+		color: $darkTextColor;
+	}
 
 	.buttons
 	{
@@ -53,7 +58,7 @@
 	text-align: center;
 	font-size: 19px;
 	line-height: 19px;
-	transition: background 0.2s, color 0.2s;
+	transition: background $animationDuration $animationFunction, color $animationDuration $animationFunction;
 	&:link,
 	&:visited
 	{

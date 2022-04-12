@@ -117,7 +117,8 @@ function carousel(options) {
 
 		stage.draggable({
 			axis: "x",
-			dragCursor: opt.dragCursor
+			dragCursor: opt.dragCursor,
+			cancel: stage.find("input, button, textarea, label")
 		});
 		stage.on("draggablestart", function (event) {
 			var dx = Math.abs(event.dragPoint.left - event.newPoint.left);

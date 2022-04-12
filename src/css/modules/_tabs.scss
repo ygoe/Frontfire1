@@ -1,5 +1,13 @@
 @import "../settings";
 
+// Use flexbox for the tab page contents to allow stretching and scrolling
+.tabs.flex
+{
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;   // Required all the way through the hierarchy to not extend all containers to the scroll size
+}
+
 .ff-tab-headers
 {
 	display: flex;
@@ -12,6 +20,7 @@
 		border-top: 1px solid $tabsBorderColor;
 		border-left: 1px solid $tabsBorderColor;
 		border-right: 1px solid $tabsBorderColor;
+		margin-top: 1px;   // Don't extend outside the tabs container for the overflow:hidden
 		margin-right: -1px;
 		padding: 2px 10px;
 		
@@ -34,7 +43,7 @@
 		}
 		&.active
 		{
-			margin-top: -1px;
+			margin-top: 0;
 			padding-top: 3px;
 			background: $tabsActiveHeaderBackground;
 			z-index: 10;
@@ -80,7 +89,22 @@
 	}
 }
 
-.tabs.same-height .ff-tab-pages
+.tabs.flex > .ff-tab-pages
+{
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+
+	> div.active
+	{
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+	}
+}
+
+.tabs.same-height > .ff-tab-pages
 {
 	display: -ms-grid;
 	display: grid;

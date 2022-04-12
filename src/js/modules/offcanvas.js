@@ -15,7 +15,10 @@ var offCanvasDefaults = {
 
 	// Push the page content to the side when showing the off-canvas panel. Default: 1.
 	// 0 doesn't push, 1 pushes the full panel width.
-	push: 1
+	push: 1,
+
+	// Close the panel when the window size has changed. Default: false.
+	closeOnResize: false
 };
 
 // Opens an off-canvas with the selected element.
@@ -41,14 +44,11 @@ function offCanvas(options) {
 		overflowX: html.css("overflow-x")
 	};
 
-	$(window).on("resize" + offCanvasEventNamespace, function () {
-		offCanvas.offCanvas.close();
-	});
-
-	//$(window).on("resize" + offCanvasEventNamespace, function () {   // TODO Failing workaround for Chrome/Android, see https://bugs.chromium.org/p/chromium/issues/detail?id=801621
-	//	offCanvas.css("height", $(window).height());
-	//});
-	//offCanvas.css("height", $(window).height());
+	if (opt.closeOnResize) {
+		$(window).on("resize" + offCanvasEventNamespace, function () {
+			offCanvas.offCanvas.close();
+		});
+	}
 
 	// Initialise position
 	offCanvas.css(opt.edge, -width);
@@ -103,6 +103,7 @@ function offCanvas(options) {
 		});
 	}
 
+	offCanvas.addClass("open");
 	offCanvas.trigger("offcanvasopen");
 	return this;
 }
@@ -133,6 +134,7 @@ function closeOffCanvas() {
 		offCanvas.removeClass(offCanvasClass);
 		html.css(opt._htmlStyle);
 	});
+	offCanvas.removeClass("open");
 	offCanvas.trigger("offcanvasclose");
 	return this;
 }

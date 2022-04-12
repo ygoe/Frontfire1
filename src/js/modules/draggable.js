@@ -76,7 +76,6 @@ function draggable(options) {
 
 		if (opt.cancel) {
 			opt.eventRemovers.push($elem.find(opt.cancel).pointer("down", function (event) {
-				event.preventDefault();
 				event.stopImmediatePropagation();
 			}));
 		}
@@ -117,8 +116,8 @@ function draggable(options) {
 				if (opt.stack) {
 					stackElements($(opt.stack), elem);
 				}
-				htmlCursor = document.documentElement.style.getPropertyValue("cursor");
-				document.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
+				htmlCursor = elem.ownerDocument.documentElement.style.getPropertyValue("cursor");
+				elem.ownerDocument.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
 			}
 			else {
 				draggingCancelled = true;
@@ -214,6 +213,10 @@ function draggable(options) {
 			if (event.pointerId !== pointerId) return;   // Not my pointer
 
 			if (event.button === 0) {
+				// Attention:
+				// If event.type is "pointerup", a click event may follow somewhere!
+				// It cannot be stopped, deal with it otherwise.
+
 				var wasDragging = dragging;
 				dragPoint = undefined;
 				dragging = false;
@@ -226,7 +229,7 @@ function draggable(options) {
 				if (wasDragging) {
 					elem.releaseCapture && elem.releaseCapture();
 					$("html").removeClass(resetAllCursorsClass);
-					document.documentElement.style.setProperty("cursor", htmlCursor);
+					elem.ownerDocument.documentElement.style.setProperty("cursor", htmlCursor);
 
 					let event2 = $.Event("draggableend");
 					event2.revert = function () {

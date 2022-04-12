@@ -26,11 +26,11 @@
 	&.vertical
 	{
 		flex-direction: column;
-		width: inherit;
+		width: unset;
 	}
 	&.inline
 	{
-		width: inherit;
+		width: unset;
 	}
 
 	li

@@ -1,6 +1,6 @@
 @import "../settings";
 
-.slider
+.ff-slider
 {
 	position: relative;
 	border: solid $sliderMargin transparent;
@@ -10,10 +10,8 @@
 		border-color: rgba(0, 0, 0, 0.04);
 	}
 
-	&::before
+	.ff-background
 	{
-		display: block;
-		content: '';
 		position: absolute;
 		width: 100%;
 		height: 100%;
@@ -107,8 +105,8 @@
 	&:not(.vertical)
 	{
 		height: $sliderWidth + $sliderMargin * 2;
-		border-left-width: $sliderHandleLength / 2;
-		border-right-width: $sliderHandleLength / 2;
+		border-left-width: $sliderHandleLength * 0.5;
+		border-right-width: $sliderHandleLength * 0.5;
 
 		.ff-range
 		{
@@ -156,7 +154,7 @@
 		}
 		.ff-handle
 		{
-			top: -($sliderHandleWidth - $sliderWidth) / 2;
+			top: -($sliderHandleWidth - $sliderWidth) * 0.5;
 			width: $sliderHandleLength;
 			height: $sliderHandleWidth;
 		}
@@ -164,8 +162,8 @@
 	&.vertical
 	{
 		width: $sliderWidth + $sliderMargin * 2;
-		border-top-width: $sliderHandleLength / 2;
-		border-bottom-width: $sliderHandleLength / 2;
+		border-top-width: $sliderHandleLength * 0.5;
+		border-bottom-width: $sliderHandleLength * 0.5;
 
 		.ff-range
 		{
@@ -215,7 +213,7 @@
 		}
 		.ff-handle
 		{
-			left: -($sliderHandleWidth - $sliderWidth) / 2;
+			left: -($sliderHandleWidth - $sliderWidth) * 0.5;
 			width: $sliderHandleWidth;
 			height: $sliderHandleLength;
 		}

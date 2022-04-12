@@ -92,5 +92,8 @@ $.isInternetExplorer = () => /*@cc_on!@*/false || !!document.documentMode;
 // Determines whether the browser is Opera.
 $.isOpera = () => (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 
+// Determines whether the browser is Brave.
+$.isBrave = () => navigator.brave && !!navigator.brave.isBrave;
+
 // Determines whether the browser is Safari. (Not functional for iOS/iPadOS 13)
 $.isSafari = () => /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));

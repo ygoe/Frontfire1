@@ -14,7 +14,13 @@ var timePickerDefaults = {
 	monthFormatter: undefined,
 
 	// A function that changes the format of a day item. Default: None.
-	dayFormatter: undefined
+	dayFormatter: undefined,
+
+	// Indicates whether the ISO date and time format is used instead of the local format. Default: false.
+	isoFormat: false,
+
+	// The separator between date and time for ISO format. Default: Comma and space. Can be set to "T".
+	isoFormatSeparator: ", "
 };
 
 // Converts each selected date/time input element into a masked text field with time picker button.
@@ -53,6 +59,12 @@ function timePicker(options) {
 			.attr("spellcheck", "false")
 			.insertAfter(input);
 		input.data("ff-replacement", newInput);
+		// Copy some CSS classes to the replacement element
+		["input-validation-error"].forEach(clsName => {
+			if (input.hasClass(clsName))
+				newInput.addClass(clsName);
+		});
+
 		newInput.change(function () {
 			inputChanging = true;
 			input.valChange(getValue());
@@ -213,28 +225,54 @@ function timePicker(options) {
 		// All data and text parts of the masked input
 		var parts = [];
 		if (!weekSelection) {
-			let formatParts = format.formatToParts(new Date());
-			for (let f of formatParts) {
-				switch (f.type) {
-					case "literal": parts.push({ text: f.value }); break;
-					case "year": parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") }); break;
-					case "month":
-						if (formatOptions.month === "numeric") {
-							parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+			if (opt.isoFormat) {
+				if (dateSelection) {
+					parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });
+					parts.push({ text: "-" });
+					parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+					if (daySelection) {
+						parts.push({ text: "-" });
+						parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });
+					}
+				}
+				if (timeSelection) {
+					if (dateSelection)
+						parts.push({ text: opt.isoFormatSeparator });
+					parts.push({ name: "h", min: 0, max: 23, length: 2 });
+					if (minuteSelection) {
+						parts.push({ text: ":" });
+						parts.push({ name: "min", min: 0, max: 59, length: 2 });
+						if (secondSelection) {
+							parts.push({ text: ":" });
+							parts.push({ name: "s", min: 0, max: 59, length: 2 });
 						}
-						else {
-							// Collect all localised month names
-							let monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
-							let monthNames = [];
-							for (let m = 0; m < 12; m++)
-								monthNames.push(monthFormat.format(new Date(2000, m, 1)));
-							parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
-						}
-						break;
-					case "day": parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") }); break;
-					case "hour": parts.push({ name: "h", min: 0, max: 23, length: 2 }); break;
-					case "minute": parts.push({ name: "min", min: 0, max: 59, length: 2 }); break;
-					case "second": parts.push({ name: "s", min: 0, max: 59, length: 2 }); break;
+					}
+				}
+			}
+			else {
+				let formatParts = format.formatToParts(new Date());
+				for (let f of formatParts) {
+					switch (f.type) {
+						case "literal": parts.push({ text: f.value }); break;
+						case "year": parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") }); break;
+						case "month":
+							if (formatOptions.month === "numeric") {
+								parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+							}
+							else {
+								// Collect all localised month names
+								let monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+								let monthNames = [];
+								for (let m = 0; m < 12; m++)
+									monthNames.push(monthFormat.format(new Date(2000, m, 1)));
+								parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
+							}
+							break;
+						case "day": parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") }); break;
+						case "hour": parts.push({ name: "h", min: 0, max: 23, length: 2 }); break;
+						case "minute": parts.push({ name: "min", min: 0, max: 59, length: 2 }); break;
+						case "second": parts.push({ name: "s", min: 0, max: 59, length: 2 }); break;
+					}
 				}
 			}
 		}
@@ -440,13 +478,13 @@ function timePicker(options) {
 
 		// Add control buttons
 		//var buttons = [];
-		//var decButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
+		//var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 		//buttons.push(decButton);
 		//decButton.on("repeatclick", function () {
 		//	changeValue(-1, 1);
 		//});
 		//decButton.repeatButton();
-		//var incButton = $("<button type='button'/>").appendTo(wrapper).attr("tabindex", "-1").text("+");
+		//var incButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("+");
 		//buttons.push(incButton);
 		//incButton.on("repeatclick", function () {
 		//	changeValue(1, 1);
@@ -920,7 +958,7 @@ function timePicker(options) {
 		}
 
 		let backButton = $("<button type='button'/>")
-			.addClass("narrow")
+			.addClass("button narrow")
 			.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>')
 			.attr("title", translate("back"))
 			.appendTo(dropdownButtons)
@@ -931,11 +969,12 @@ function timePicker(options) {
 				cancelSearchTimeout();
 			});
 		$("<button type='button'/>")
+			.addClass("button")
 			.text(timeSelection ? translate("now") : translate("today"))
 			.appendTo(dropdownButtons)
 			.click(setNow);
 		$("<button type='button'/>")
-			.addClass("narrow")
+			.addClass("button narrow")
 			.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>')
 			.attr("title", translate("keyboard"))
 			.appendTo(dropdownButtons)
@@ -948,13 +987,14 @@ function timePicker(options) {
 			});
 		if (!required) {
 			$("<button type='button'/>")
-				.addClass("narrow")
+				.addClass("button narrow")
 				.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>')
 				.attr("title", translate("clear"))
 				.appendTo(dropdownButtons)
 				.click(event => {
 					dropdown.dropdown.close();
 					setValue("");
+					newInput.trigger("input").change();
 				});
 			dropdownButtons.addClass("four-buttons");
 		}

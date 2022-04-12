@@ -33,12 +33,22 @@
 		}
 	}
 }
-@if $pageWidth == 0
+@if $pageWidth <= 0   // '== 0' does something else and won't work!
 {
 	.page-width,
 	.full-page-width
 	{
 		margin-left: $pageWidthPadding;
 		max-width: calc(100% - #{2 * $pageWidthPadding});
+	}
+}
+
+@media print
+{
+	.page-width,
+	.full-page-width
+	{
+		margin-left: 0;
+		max-width: 100%;
 	}
 }

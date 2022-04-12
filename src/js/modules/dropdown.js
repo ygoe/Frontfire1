@@ -24,7 +24,10 @@ var dropdownDefaults = {
 	fixed: false,
 
 	// Additional CSS classes to add to the dropdown container. Default: None.
-	cssClass: undefined
+	cssClass: undefined,
+
+	// Additional CSS styles to add to the dropdown container. Default: None.
+	style: undefined
 };
 
 // Opens a dropdown with the selected element and places it at the specified target element.
@@ -69,6 +72,9 @@ function createDropdown(target, options) {
 	var container = $("<div/>").addClass(dropdownContainerClass).appendTo("body");
 	if (opt.cssClass) {
 		container.addClass(opt.cssClass);
+	}
+	if (opt.style) {
+		container.css(opt.style);
 	}
 	if (opt.fixed) {
 		container.css("position", "fixed");
@@ -224,11 +230,14 @@ function createDropdown(target, options) {
 	// Auto-close the dropdown when clicking outside of it
 	if (opt.autoClose === undefined || opt.autoClose) {
 		setTimeout(function () {
-			$(document).on("click.dropdown-close", function (event) {
+			// Close on mousedown instead of click because it's more targeted. A click event is also
+			// triggered when the mouse button was pressed inside the dropdown and released outside
+			// of it. This is considered "expected behaviour" of the click event.
+			$(document).on("mousedown.dropdown-close", function (event) {
 				tryClose();
 			});
 		}, 20);
-		container.click(function (event) {
+		container.on("mousedown", function (event) {
 			// Don't close the dropdown when clicking inside of it
 			event.stopImmediatePropagation();
 		});
@@ -274,7 +283,7 @@ function closeDropdown(closeEventTriggered) {
 	if (!container.hasClass(dropdownContainerClass)) return this;   // Dropdown is not open
 	//var opt = loadOptions("dropdown", dropdown);
 
-	$(document).off("click.dropdown-close");
+	$(document).off("mousedown.dropdown-close");
 	container.removeClass("open").addClass("closed");
 	container.on("transitionend", function () {
 		dropdown.appendTo("body");

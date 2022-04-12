@@ -9,11 +9,20 @@
 }
 @function mix($color1, $color2, $amount)
 {
-	$amount: strip-unit($amount) / 100;
+	$amount: strip-unit($amount) * 0.01;
 	@return rgb(
 		red($color1) * (1 - $amount) + red($color2) * $amount,
 		green($color1) * (1 - $amount) + green($color2) * $amount,
 		blue($color1) * (1 - $amount) + blue($color2) * $amount);
+}
+@function mixa($color1, $color2, $amount)
+{
+	$amount: strip-unit($amount) / 100;
+	@return rgba(
+		red($color1) * (1 - $amount) + red($color2) * $amount,
+		green($color1) * (1 - $amount) + green($color2) * $amount,
+		blue($color1) * (1 - $amount) + blue($color2) * $amount,
+		alpha($color1) * (1 - $amount) + alpha($color2) * $amount);
 }
 @function lighten($color, $amount)
 {

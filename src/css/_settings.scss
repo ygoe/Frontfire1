@@ -26,6 +26,11 @@ $monospaceFontFamily: Consolas, monospace;
 $defaultFontSize: 14px;
 $monospaceFontSize: 13px;
 $defaultLineHeight: 1.4;
+$monospaceLineHeight: 1.3;
+$largerFontSize: round($defaultFontSize * 1.3);
+$largerLineHeight: round($defaultFontSize * 1.3 * $defaultLineHeight);
+$smallerFontSize: round($defaultFontSize * 0.8);
+$smallerLineHeight: round($defaultFontSize * 0.8 * $defaultLineHeight);
 
 $headingWeight: 600;   // Semibold is better for Segoe UI; effectively 700 on Android
 
@@ -188,7 +193,7 @@ $checkboxPressedBackground: $buttonBackground;
 $darkCheckboxPressedBackground: $darkButtonBackground;
 
 $textInputs: "input:not([type]), input[type^=date], input[type=email], input[type=month], input[type=number], input[type=password], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], textarea, select";
-$buttonInputs: "button, input[type=button], input[type=color], input[type=image], input[type=reset], input[type=submit]";
+$buttonInputs: "button.button, input[type=button].button, input[type=color].button, input[type=image].button, input[type=reset].button, input[type=submit].button";
 
 // ========== Layout ==========
 
