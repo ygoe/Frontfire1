@@ -1,7 +1,9 @@
 Frontfire Web Frontend Framework
 ================================
 
-<img src="https://ygoe.github.io/Frontfire/images/frontfire.svg" width="150">
+**Note: This repository contains Frontfire version 1 which is being replaced by [version 2](https://github.com/ygoe/Frontfire2).**
+
+<img src="https://ygoe.github.io/Frontfire1/images/frontfire.svg" width="150">
 
 The Frontfire Web Frontend Framework offers essential styles and effects combined with a consistent set of interactive widgets and layout utilities.
 It is suitable for web pages and web applications that need a modern and consistent look and feel and use responsive design to work on all devices and screen sizes.
@@ -23,8 +25,8 @@ When building your own version, you can also leave out certain modules that you 
 
 Demo
 ----
-[Open the demo page](https://ygoe.github.io/Frontfire) to get an impression of how Frontfire looks and see it live and in action.
+[Open the demo page](https://ygoe.github.io/Frontfire1) to get an impression of how Frontfire looks and see it live and in action.
 
 License
 -------
-[MIT license](https://github.com/ygoe/Frontfire/blob/master/LICENSE)
+[MIT license](LICENSE)
