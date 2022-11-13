@@ -121,8 +121,8 @@ function carousel(options) {
 			cancel: stage.find("input, button, textarea, label")
 		});
 		stage.on("draggablestart", function (event) {
-			var dx = Math.abs(event.dragPoint.left - event.newPoint.left);
-			var dy = Math.abs(event.dragPoint.top - event.newPoint.top);
+			var dx = Math.abs(event.originalEvent.dragPoint.left - event.originalEvent.newPoint.left);
+			var dy = Math.abs(event.originalEvent.dragPoint.top - event.originalEvent.newPoint.top);
 			if (dy > dx) {
 				// Movement was mostly vertical, don't drag in that direction but leave scrolling intact
 				event.preventDefault();
@@ -144,13 +144,13 @@ function carousel(options) {
 			suspendAutoplay();
 		});
 		stage.on("draggablemove", function (event) {
-			itemOffset = startItemOffset - (event.newPoint.left - event.elemRect.left) / itemWidth;
+			itemOffset = startItemOffset - (event.originalEvent.newPoint.left - event.originalEvent.elemRect.left) / itemWidth;
 			dragDirection = itemOffset - prevItemOffset;
 			prevItemOffset = itemOffset;
 
 			// Don't move the stage anywhere! Just tell me how far the pointer is dragged and we'll
 			// move something else (the items within the stage) to provide the expected visual feedback.
-			event.newPoint = event.elemRect;
+			event.originalEvent.newPoint = event.originalEvent.elemRect;
 
 			// Restrict dragging at start/end
 			if (itemOffset < itemOffsetMin)
@@ -469,7 +469,7 @@ function activeItem(indexOrItem) {
 		opt._layout(0);
 		var dots = carousel.find("." + carouselIndicatorClass).children();
 		dots.removeClass("active").eq(Math.ceil(index / opt.dotsEach)).addClass("active");
-		carousel.trigger("activeItemChange");
+		carousel.triggerNative("activeItemChange");
 	});
 }
 

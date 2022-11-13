@@ -171,7 +171,7 @@
 
 		$("#resizableCb").resizable({ containment: "#container4", scroll: true });
 		$("#resizableCb").on("resizablestart", function (event) {
-			if (event.edge === "top") {
+			if (event.originalEvent.edge === "top") {
 				event.preventDefault();
 			}
 			else {
@@ -179,10 +179,10 @@
 			}
 		});
 		$("#resizableCb").on("resizing", function (event) {
-			if (!event.vertical && !event.negative) {
-				if (event.newLength < 120)
-					event.newLength = 120;
-				event.newLength = Math.round(event.newLength / 20) * 20;
+			if (!event.originalEvent.vertical && !event.originalEvent.negative) {
+				if (event.originalEvent.newLength < 120)
+					event.originalEvent.newLength = 120;
+				event.originalEvent.newLength = Math.round(event.originalEvent.newLength / 20) * 20;
 			}
 		});
 		$("#resizableCb").on("resizableend", function (event) {

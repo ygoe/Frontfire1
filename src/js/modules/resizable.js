@@ -125,29 +125,29 @@ function resizable(options) {
 			handle.draggable({ scroll: opt.scroll, dragCursor: cursor });
 			handle.on("draggablestart", function (event) {
 				event.stopPropagation();   // Don't trigger for the resized (parent) element
-				let event2 = $.Event("resizablestart");
-				event2.vertical = vertical;
-				event2.negative = negative;
-				event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
-				elem.trigger(event2);
-				if (event2.isDefaultPrevented()) {
+				let event2 = elem.triggerNative("resizablestart", {
+					vertical: vertical,
+					negative: negative,
+					edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right")
+				});
+				if (event2.defaultPrevented) {
 					event.preventDefault();
 				}
 			});
 			handle.on("draggablemove", function (event) {
 				event.stopPropagation();   // Don't trigger for the resized (parent) element
 				event.preventDefault();   // The handles already move with the element, don't touch their position
-				resize(handle, event.newPoint, vertical, negative);
+				resize(handle, event.originalEvent.newPoint, vertical, negative);
 				if (vertical2 !== undefined)
-					resize(handle, event.newPoint, vertical2, negative2);
+					resize(handle, event.originalEvent.newPoint, vertical2, negative2);
 			});
 			handle.on("draggableend", function (event) {
 				event.stopPropagation();   // Don't trigger for the resized (parent) element
-				let event2 = $.Event("resizableend");
-				event2.vertical = vertical;
-				event2.negative = negative;
-				event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
-				elem.trigger(event2);
+				elem.triggerNative("resizableend", {
+					vertical: vertical,
+					negative: negative,
+					edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right")
+				});
 			});
 			return handle;
 		}
@@ -226,14 +226,14 @@ function resizable(options) {
 				}
 			}
 
-			let event2 = $.Event("resizing");
-			event2.vertical = vertical;
-			event2.negative = negative;
-			event2.edge = vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right");
-			event2.newLength = newLength;
-			event2.newPosition = newElemOffset[side];
-			elem.trigger(event2);
-			if (!event2.isDefaultPrevented()) {
+			let event2 = elem.triggerNative("resizing", {
+				vertical: vertical,
+				negative: negative,
+				edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right"),
+				newLength: newLength,
+				newPosition: newElemOffset[side]
+			});
+			if (!event2.defaultPrevented) {
 				elem["outer" + extent](event2.newLength);
 				newElemOffset[side] = event2.newPosition;
 				if (negative) elem.offset(newElemOffset);

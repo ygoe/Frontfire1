@@ -91,7 +91,7 @@ function draggable(options) {
 					eventRemovers.push($window.pointer("move", onMove, true));
 					eventRemovers.push($window.pointer("up cancel", onEnd, true));
 					// Start dragging mode immediately when catching.
-					tryStartDragging();
+					tryStartDragging(event);
 					if (dragging) {
 						// Move the draggable element directly under the pointer initially
 						elemRect.top = dragPoint.top - elemRect.height / 2;
@@ -102,13 +102,13 @@ function draggable(options) {
 			}));
 		}
 		
-		function tryStartDragging() {
+		function tryStartDragging(event) {
 			elemRect = $elem.rect();
-			let event2 = $.Event("draggablestart");
-			event2.dragPoint = dragPoint;
-			event2.newPoint = { left: event.pageX, top: event.pageY };
-			$elem.trigger(event2);
-			if (!event2.isDefaultPrevented()) {
+			let event2 = $elem.triggerNative("draggablestart", {
+				dragPoint: dragPoint,
+				newPoint: { left: event.pageX, top: event.pageY }
+			});
+			if (!event2.defaultPrevented) {
 				dragging = true;
 				opt.dragClass && $elem.addClass(opt.dragClass);
 				elem.setCapture && elem.setCapture();   // Firefox only (set cursor over entire desktop)
@@ -177,11 +177,11 @@ function draggable(options) {
 			}
 
 			// Move element
-			let event2 = $.Event("draggablemove");
-			event2.elemRect = elemRect;
-			event2.newPoint = newPoint;
-			$elem.trigger(event2);
-			if (!event2.isDefaultPrevented()) {
+			let event2 = $elem.triggerNative("draggablemove", {
+				elemRect: elemRect,
+				newPoint: newPoint
+			});
+			if (!event2.defaultPrevented) {
 				$elem.offset(event2.newPoint);
 			}
 
@@ -199,7 +199,7 @@ function draggable(options) {
 			if (dragPoint && !dragging && !$elem.disabled()) {
 				let distance = Math.sqrt(Math.pow(event.pageX - dragPoint.left, 2) + Math.pow(event.pageY - dragPoint.top, 2));
 				if (distance >= minDragDistance) {
-					tryStartDragging();
+					tryStartDragging(event);
 				}
 			}
 
@@ -231,11 +231,11 @@ function draggable(options) {
 					$("html").removeClass(resetAllCursorsClass);
 					elem.ownerDocument.documentElement.style.setProperty("cursor", htmlCursor);
 
-					let event2 = $.Event("draggableend");
-					event2.revert = function () {
-						$elem.offset(elemRect);
-					};
-					$elem.trigger(event2);
+					$elem.triggerNative("draggableend", {
+						revert: function () {
+							$elem.offset(elemRect);
+						}
+					});
 				}
 			}
 		}

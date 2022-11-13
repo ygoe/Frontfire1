@@ -256,9 +256,8 @@ function createDropdown(target, options) {
 	return this;
 
 	function tryClose() {
-		var event = $.Event("dropdownclose");
-		dropdown.trigger(event);
-		if (!event.isDefaultPrevented()) {
+		var event = dropdown.triggerNative("dropdownclose");
+		if (!event.defaultPrevented) {
 			dropdown.dropdown.close(true);
 		}
 	}
@@ -290,8 +289,7 @@ function closeDropdown(closeEventTriggered) {
 		container.remove();
 	});
 	if (!closeEventTriggered) {
-		var event = $.Event("dropdownclose");
-		dropdown.trigger(event);
+		dropdown.triggerNative("dropdownclose");
 	}
 	$(window).off("resize.dropdown");
 	$(document).off("visibilitychange.dropdown");

@@ -101,9 +101,7 @@ function collapse(indexOrItem) {
 			content.addClass("ff-fixed-height");
 			item.removeClass("expanded");
 
-			let event = $.Event("itemCollapse");
-			event.item = item;
-			accordion.trigger(event);
+			accordion.triggerNative("itemCollapse", { item: item });
 		}
 
 		var id = item.attr("id");
@@ -150,9 +148,7 @@ function expand(indexOrItem) {
 		content.on("transitionend", onTransitionEnd);
 		item.addClass("expanded");
 
-		let event = $.Event("itemExpand");
-		event.item = item;
-		accordion.trigger(event);
+		accordion.triggerNative("itemExpand", { item: item });
 
 		var previousItemCollapsedHeight = 0;
 		if (opt.exclusive) {

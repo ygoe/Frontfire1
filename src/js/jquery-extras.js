@@ -23,8 +23,26 @@ $.fn.valChange = function (value) {
 		isEqual = oldValue.length === value.length && oldValue.every((v, index) => v === value[index]);
 	}
 	if (!isEqual) {
-		this.val(value).change();
+		this.val(value).triggerNative("change");
 	}
+};
+
+// Triggers a native event. This will also be visible for native event listeners,
+// unlike jQuery events. The native event will bubble and be (formally) cancelable.
+// Returns the event object triggered for the first selected Node.
+//
+// type: (String) The event type name.
+// data: (Object) An object containing additional event properties to be set. (Optional)
+$.fn.triggerNative = function (type, data) {
+	let event;
+	this.each(function() {
+		let thisEvent = new CustomEvent(type, { bubbles: true, cancelable: true });
+		if (!event)
+			event = thisEvent;
+		Object.assign(thisEvent, data);
+		this.dispatchEvent(thisEvent);
+	});
+	return event;
 };
 
 // Variable tests
@@ -84,7 +102,9 @@ $.isEdge = () => !$.isInternetExplorer() && !!window.StyleMedia;
 $.isEdgeChromium = () => $.isChrome() && (navigator.userAgent.indexOf("Edg") != -1);
 
 // Determines whether the browser is Firefox.
-$.isFirefox = () => typeof InstallTrigger !== 'undefined';
+// The CSS property -moz-user-focus is supported from Firefox 1 and nowhere else and not deprecated.
+// NOTE: Referencing InstallTrigger prints a warning to the console.
+$.isFirefox = () => "MozUserFocus" in document.body.style || typeof InstallTrigger !== 'undefined';
 
 // Determines whether the browser is Internet Explorer.
 $.isInternetExplorer = () => /*@cc_on!@*/false || !!document.documentMode;

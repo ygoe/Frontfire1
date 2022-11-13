@@ -46,7 +46,7 @@ function progressbar(options) {
 			
 			if (value !== opt.value) {
 				opt.value = value;
-				elem.trigger("valuechange");
+				elem.triggerNative("valuechange");
 			}
 		}
 	});

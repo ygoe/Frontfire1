@@ -60,7 +60,7 @@ function selectable(options) {
 					button.addClass("open");
 					let fixed = button.parentWhere(p => $(p).css("position") === "fixed").length > 0;
 					let cssClass = "";
-					if (button.closest(".dark").length > 0)
+					if (button.closest(".dark .not-dark").hasClass("dark"))
 						cssClass = "dark";   // Set dropdown container to dark
 					newSelect.dropdown(button, { fixed: fixed, cssClass: cssClass });
 					newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
@@ -298,7 +298,7 @@ function selectable(options) {
 				}
 				lastSelectedItem = child;
 				if (changed) {
-					elem.trigger("selectionchange");
+					elem.triggerNative("selectionchange");
 				}
 				
 				if (replaceHtmlSelect) {
@@ -335,7 +335,7 @@ function selectable(options) {
 				let selected = selectedValues.indexOf(option.prop("value")) !== -1;
 				option.prop("selected", selected);
 			});
-			htmlSelect.change();
+			htmlSelect.triggerNative("change");
 			htmlSelectChanging = false;
 		}
 
@@ -464,7 +464,7 @@ function selectable(options) {
 		function selectItem(item) {
 			elem.children().removeClass("selected");
 			item.addClass("selected");
-			elem.trigger("selectionchange");
+			elem.triggerNative("selectionchange");
 			if (replaceHtmlSelect)
 				updateHtmlSelect();
 		}
@@ -483,7 +483,7 @@ function addChild(child) {
 function removeChild(child) {
 	var selectable = $(this);
 	if (child.hasClass("selected")) {
-		selectable.trigger("selectionchange");
+		selectable.triggerNative("selectionchange");
 	}
 	// TODO: Need to update HTML select, too?
 }

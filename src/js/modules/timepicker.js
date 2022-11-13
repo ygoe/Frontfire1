@@ -50,6 +50,7 @@ function timePicker(options) {
 		var isKeyboardMode = false;
 		var newInput = $("<input/>")
 			.attr("type", "text")
+			.addClass("ff-timepicker-input")
 			.prop("readonly", true)
 			.attr("inputmode", "none")
 			.attr("enterkeyhint", "done")   // Enter key is handled separately to close dropdown/keyboard but prevent submit
@@ -75,7 +76,8 @@ function timePicker(options) {
 		input.change(function () {
 			if (!inputChanging) {
 				setValue(input.val());
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			}
 		});
 
@@ -121,7 +123,8 @@ function timePicker(options) {
 					input.val(getValue());   // Update native field for validation/fixing
 					fixValue(true);
 					updateText();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
 			}
 		});
@@ -174,7 +177,8 @@ function timePicker(options) {
 				}
 				if (!noChangeEvent) {
 					updateText();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
 			}
 		}
@@ -373,6 +377,7 @@ function timePicker(options) {
 
 		function updateText() {
 			let text = "";
+			let anyValueSet = false;
 			for (let i = 0; i < parts.length; i++) {
 				let part = parts[i];
 				if ($.isSet(part.text)) {
@@ -383,6 +388,7 @@ function timePicker(options) {
 					let value = partData[part.name];
 					if ($.isSet(value)) {
 						// Display value
+						anyValueSet = true;
 						if (part.options) {
 							text += part.options[value - part.min];
 						}
@@ -402,6 +408,7 @@ function timePicker(options) {
 				}
 			}
 			newInput.val(text);
+			newInput.toggleClass("empty", !anyValueSet);
 			if (parts[selectedPart] && parts[selectedPart].end) {
 				newInput[0].setSelectionRange(parts[selectedPart].start, parts[selectedPart][isFocused ? "end" : "start"]);
 				// Setting a non-empty selection always shows the selection background, even if not
@@ -532,7 +539,8 @@ function timePicker(options) {
 				}
 				updateText();
 				cancelSearchTimeout();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 				newInput[0].focus();
 				appendInput = false;
 				inputLength = 0;
@@ -698,7 +706,8 @@ function timePicker(options) {
 				if (!required) {
 					delete partData[parts[selectedPart].name];
 					updateText();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
 				cancelSearchTimeout();
 			}
@@ -727,7 +736,8 @@ function timePicker(options) {
 				}
 				updateText();
 				cancelSearchTimeout();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			}
 			else if (separatorChars.indexOf(event.originalEvent.key) !== -1) {   // Separator
 				event.preventDefault();
@@ -760,10 +770,14 @@ function timePicker(options) {
 			else {
 				// Whatever it was, reset the text
 				updateText();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			}
 		});
+		let newInputInInputEvent = false;
 		newInput.on("input", function (event) {
+			if (newInputInInputEvent) return;   // Recursion
+			newInputInInputEvent = true;
 			if (event.originalEvent) {
 				// Something was typed in, reset the text
 				// (Generated input events have no originalEvent)
@@ -774,8 +788,10 @@ function timePicker(options) {
 					cancelSearchTimeout();
 				}
 				updateText();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			}
+			newInputInInputEvent = false;
 		});
 
 		function startSearchTimeout() {
@@ -878,7 +894,8 @@ function timePicker(options) {
 
 		let updateHandler = () => {
 			updateText();
-			newInput.trigger("input").change();
+			newInput.triggerNative("input");
+			newInput.triggerNative("change");
 		};
 
 		let yearView;
@@ -994,7 +1011,8 @@ function timePicker(options) {
 				.click(event => {
 					dropdown.dropdown.close();
 					setValue("");
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				});
 			dropdownButtons.addClass("four-buttons");
 		}
@@ -1058,7 +1076,7 @@ function timePicker(options) {
 			updateViews();
 			newInput.addClass("open");
 			dropdown.dropdown(newInput, { autoClose: false });
-			if (newInput.closest(".dark").length > 0)
+			if (newInput.closest(".dark .not-dark").hasClass("dark"))
 				dropdown.parent().addClass("dark");   // Set dropdown container to dark
 		}
 
@@ -1078,7 +1096,8 @@ function timePicker(options) {
 			if (minuteSelection) partData.min = now.getMinutes();
 			if (secondSelection) partData.s = now.getSeconds();
 			updateText();
-			newInput.trigger("input").change();
+			newInput.triggerNative("input");
+			newInput.triggerNative("change");
 		}
 
 		var isMouseDown = false;
@@ -1636,11 +1655,11 @@ function ClockView(container, boxSize, darkMode, translate, partName, partDataAc
 		let clockRect = clockInner.rect();
 		let clockRadius = clockRect.width / 2;
 		let angle = Math.atan2(
-			(event.newPoint.left + draggableRadius) - (clockRect.left + clockRadius),
-			(clockRect.top + clockRadius) - (event.newPoint.top + draggableRadius));
+			(event.originalEvent.newPoint.left + draggableRadius) - (clockRect.left + clockRadius),
+			(clockRect.top + clockRadius) - (event.originalEvent.newPoint.top + draggableRadius));
 		let distance = Math.sqrt(
-			Math.pow((event.newPoint.left + draggableRadius) - (clockRect.left + clockRadius), 2) +
-			Math.pow((event.newPoint.top + draggableRadius) - (clockRect.top + clockRadius), 2));
+			Math.pow((event.originalEvent.newPoint.left + draggableRadius) - (clockRect.left + clockRadius), 2) +
+			Math.pow((event.originalEvent.newPoint.top + draggableRadius) - (clockRect.top + clockRadius), 2));
 
 		if (partName === "h") {
 			// Closer to inner or outer hours circle?
@@ -1660,7 +1679,7 @@ function ClockView(container, boxSize, darkMode, translate, partName, partDataAc
 			updateHandler && updateHandler();
 
 			// Calculate point for determined hour (not really displayed...)
-			event.newPoint = {
+			event.originalEvent.newPoint = {
 				top: -Math.cos(angle) * radius + clockRect.top + clockRadius - draggableRadius,
 				left: Math.sin(angle) * radius + clockRect.left + clockRadius - draggableRadius
 			};
@@ -1685,7 +1704,7 @@ function ClockView(container, boxSize, darkMode, translate, partName, partDataAc
 			updateHandler && updateHandler();
 
 			// Calculate point for determined minute/second (not really displayed...)
-			event.newPoint = {
+			event.originalEvent.newPoint = {
 				top: -Math.cos(angle) * outerRadius + clockRect.top + clockRadius - draggableRadius,
 				left: Math.sin(angle) * outerRadius + clockRect.left + clockRadius - draggableRadius
 			};

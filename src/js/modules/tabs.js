@@ -140,7 +140,7 @@ function activeTab(indexOrPage) {
 			headers.children().eq(index).addClass("active").removeAttr("tabindex");
 			pages.children(".active").removeClass("active");
 			page.addClass("active");
-			container.trigger("activeTabChange");
+			container.triggerNative("activeTabChange");
 		}
 	});
 }

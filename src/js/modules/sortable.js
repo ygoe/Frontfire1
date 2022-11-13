@@ -71,9 +71,8 @@ function sortable(options) {
 			});
 			child.on("draggablestart", function (event) {
 				event.stopImmediatePropagation();
-				let event2 = $.Event("sortablestart");
-				child.trigger(event2);
-				if (event2.isDefaultPrevented()) {
+				let event2 = child.triggerNative("sortablestart");
+				if (event2.defaultPrevented) {
 					event.preventDefault();
 					return;
 				}
@@ -119,9 +118,8 @@ function sortable(options) {
 			});
 			child.on("draggablemove", function (event) {
 				event.stopImmediatePropagation();
-				let event2 = $.Event("sortablemove");
-				child.trigger(event2);
-				if (event2.isDefaultPrevented()) {
+				let event2 = child.triggerNative("sortablemove");
+				if (event2.defaultPrevented) {
 					event.preventDefault();
 					return;
 				}
@@ -167,10 +165,10 @@ function sortable(options) {
 				if (newPlaceholderAfterElement !== undefined) {
 					var eventCancelled = false;
 					if (placeholderAfterElement !== undefined) {
-						let event2 = $.Event("sortablechange");
-						event2.after = newPlaceholderAfterElement;
-						child.trigger(event2);
-						eventCancelled = event2.isDefaultPrevented();
+						let event2 = child.triggerNative("sortablechange", {
+							after: newPlaceholderAfterElement
+						});
+						eventCancelled = event2.defaultPrevented;
 					}
 					if (!eventCancelled) {
 						if (!newPlaceholderAfterElement)
@@ -201,12 +199,12 @@ function sortable(options) {
 					child.css("width", "");
 				}
 
-				let event2 = $.Event("sortableend");
-				event2.initialIndex = initialChildIndex;
-				event2.newIndex = child.index();
-				event2.after = placeholderAfterElement;
-				child.trigger(event2);
-				if (event2.isDefaultPrevented()) {
+				let event2 = child.triggerNative("sortableend", {
+					initialIndex: initialChildIndex,
+					newIndex: child.index(),
+					after: placeholderAfterElement
+				});
+				if (event2.defaultPrevented) {
 					if (!initialChildAfterElement)
 						child.detach().insertBefore(elem.firstChild());
 					else

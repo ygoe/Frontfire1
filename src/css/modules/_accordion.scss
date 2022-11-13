@@ -41,6 +41,16 @@
 			background: $accordionExpandedHeaderPressedBackground;
 		}
 	}
+
+	.no-background > div > &
+	{
+		background: transparent;
+		&:hover,
+		&:active
+		{
+			background: transparent;
+		}
+	}
 }
 
 // ----- Plus/minus icons -----

@@ -1,5 +1,22 @@
 @import "../settings";
 
+// The new visible text input field
+.ff-timepicker-input
+{
+	// No time value set, same as placeholder style
+	&.empty
+	{
+		font-style: italic;
+		color: rgb($textboxColor, 0.33);
+		
+		.dark &
+		{
+			color: rgb($darkTextboxColor, 0.33);
+		}
+	}
+}
+
+// The time picker dropdown content
 .ff-timepicker
 {
 	@include user-select(none);

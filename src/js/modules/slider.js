@@ -216,7 +216,7 @@ function slider(options) {
 					if (item !== undefined) isFirstDrag = false;
 				});
 				if (isFirstDrag)
-					slider.trigger("firstdragstart");
+					slider.triggerNative("firstdragstart");
 
 				// Select touched or nearest handle and remember by pointerId
 				var handle = $(event.target).closest("." + handleClass);
@@ -330,7 +330,7 @@ function slider(options) {
 					eventRemovers.forEach(function (eventRemover) { eventRemover(); });
 					eventRemovers = [];
 
-					slider.trigger("lastdragend");
+					slider.triggerNative("lastdragend");
 				}
 			}
 		}
@@ -389,7 +389,7 @@ function slider(options) {
 			moveHandle(index, value);
 			if (value !== opt.values[index]) {
 				opt.values[index] = value;
-				slider.trigger("valuechange");   // TODO: Indicate the changed value index
+				slider.triggerNative("valuechange");   // TODO: Indicate the changed value index
 			}
 		}
 

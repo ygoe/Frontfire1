@@ -104,7 +104,7 @@ $.fn.enable = function (includeLabel) {
 			// Only remove HTML attribute to allow CSS styling other elements than inputs
 			obj.removeAttr("disabled");
 			// Trigger the event manually
-			obj.trigger("disabledchange");
+			obj.triggerNative("disabledchange");
 		}
 
 		obj.parents("label").enable();
@@ -143,7 +143,7 @@ $.fn.disable = function (includeLabel) {
 			// Only set HTML attribute to allow CSS styling other elements than inputs
 			obj.attr("disabled", "");
 			// Trigger the event manually
-			obj.trigger("disabledchange");
+			obj.triggerNative("disabledchange");
 		}
 
 		obj.parents("label").disable();
@@ -198,7 +198,7 @@ $.fn.readonly = function (value) {
 				}
 				else if (obj.attr("readonly") === undefined) {
 					obj.attr("readonly", "");
-					obj.trigger("readonlychange");
+					obj.triggerNative("readonlychange");
 				}
 			}
 			else {
@@ -214,7 +214,7 @@ $.fn.readonly = function (value) {
 				}
 				else if (obj.attr("readonly") !== undefined) {
 					obj.removeAttr("readonly");
-					obj.trigger("readonlychange");
+					obj.triggerNative("readonlychange");
 				}
 			}
 		});

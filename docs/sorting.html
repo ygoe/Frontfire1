@@ -291,11 +291,11 @@
 		});
 		$("#sortable1").on("sortablechange", function (event) {
 			$("#sortable1Status").text("Element \"" + $(event.target).text() + "\" placed " +
-				(event.after ? "after \"" + $(event.after).text() + "\"" : "at start"));
+				(event.originalEvent.after ? "after \"" + $(event.originalEvent.after).text() + "\"" : "at start"));
 		});
 		$("#sortable1").on("sortableend", function (event) {
 			$("#sortable1Status").text("Element \"" + $(event.target).text() + "\" dropped " +
-				(event.after ? "after \"" + $(event.after).text() + "\"" : "at start"));
+				(event.originalEvent.after ? "after \"" + $(event.originalEvent.after).text() + "\"" : "at start"));
 			if ($("#sortable1Checkbox").prop("checked"))
 				event.preventDefault();
 		});

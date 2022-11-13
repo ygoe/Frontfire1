@@ -1,6 +1,7 @@
 {
   "projectName": "Frontfire",
   "keepUnminifiedFiles": true,
+  "keepIntermediaryFiles": true,
   "files": [
     {
       "name": "css/frontfire.scss"
