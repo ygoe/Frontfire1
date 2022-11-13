@@ -1,7 +1,3 @@
-'use strict';
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 /*! frontfire.js v0.1 | @license MIT | unclassified.software/source/frontfire */
 (function ($, window, document) {
 	'use strict';
@@ -9,7 +5,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Bring older browsers to a usable level
 
 	// Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#Polyfill
-
 	if (!String.prototype.includes) {
 		String.prototype.includes = function (search, start) {
 			if (typeof start !== "number") start = 0;
@@ -40,7 +35,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			padString = String(padString || ' ');
 			if (this.length > targetLength) return String(this);
 			targetLength = targetLength - this.length;
-			if (targetLength > padString.length) padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+			if (targetLength > padString.length)
+				padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
 			return String(this) + padString.slice(0, targetLength);
 		};
 	}
@@ -52,14 +48,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			padString = String(padString || ' ');
 			if (this.length > targetLength) return String(this);
 			targetLength = targetLength - this.length;
-			if (targetLength > padString.length) padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
+			if (targetLength > padString.length)
+				padString += padString.repeat(targetLength / padString.length); //append to original to ensure we are longer than needed
 			return padString.slice(0, targetLength) + String(this);
 		};
 	}
 
 	// Source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/repeat#Polyfill
 	if (!String.prototype.repeat) {
-		String.prototype.repeat = function (count) {
+		String.prototype.repeat = function(count) {
 			if (this == null) {
 				throw new TypeError('can\'t convert ' + this + ' to object');
 			}
@@ -93,14 +90,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	// Source: https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/trunc#Polyfill
-	Math.trunc = Math.trunc || function (x) {
-		return x - x % 1;
-	};
+	Math.trunc = Math.trunc || (x => x - x % 1);
 
 	// Source: https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Math/log10#Polyfill
-	Math.log10 = Math.log10 || function (x) {
-		return Math.log(x) * Math.LOG10E;
-	};
+	Math.log10 = Math.log10 || (x => Math.log(x) * Math.LOG10E);
 
 	// Returns the value in the range between min and max.
 	function minmax(value, min, max) {
@@ -134,27 +127,33 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// id: The internal ID with which an already installed hook can be recognised
 	// get: The get function (optional)
 	// set: The set function (optional)
-	function installHook(hooks, name, id, _get, _set) {
+	function installHook(hooks, name, id, get, set) {
 		// Explanation: https://blog.rodneyrehm.de/archives/11-jQuery-Hooks.html
-		var hookInstalled = name in hooks && "ffId" in hooks[name] && hooks[name].ffId === id;
+		var hookInstalled = name in hooks &&
+			"ffId" in hooks[name] &&
+			hooks[name].ffId === id;
 		if (!hookInstalled) {
 			var prevHook = hooks[name];
 			hooks[name] = {
 				ffId: id,
-				get: function get(a, b, c) {
-					if (_get) {
-						var result = _get(a, b, c);
-						if (result !== null) return result;
+				get: function (a, b, c) {
+					if (get) {
+						var result = get(a, b, c);
+						if (result !== null)
+							return result;
 					}
-					if (prevHook && prevHook.get) return prevHook.get(a, b, c);
+					if (prevHook && prevHook.get)
+						return prevHook.get(a, b, c);
 					return null;
 				},
-				set: function set(a, b, c) {
-					if (_set) {
-						var result = _set(a, b, c);
-						if (result !== undefined) return result;
+				set: function (a, b, c) {
+					if (set) {
+						var result = set(a, b, c);
+						if (result !== undefined)
+							return result;
 					}
-					if (prevHook && prevHook.set) return prevHook.set(a, b, c);
+					if (prevHook && prevHook.set)
+						return prevHook.set(a, b, c);
 				}
 			};
 		}
@@ -162,21 +161,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// Installs a hook that triggers the "disabledchange" event for input elements.
 	function installDisabledchangeHook() {
-		installHook($.propHooks, "disabled", "disabledchange", undefined, function (elem, value, name) {
-			if (elem.disabled !== value) {
-				elem.disabled = value; // Set before triggering change event
-				$(elem).trigger("disabledchange");
-			}
-		});
+		installHook(
+			$.propHooks, "disabled", "disabledchange",
+			undefined,
+			function (elem, value, name) {
+				if (elem.disabled !== value) {
+					elem.disabled = value;   // Set before triggering change event
+					$(elem).trigger("disabledchange");
+				}
+			});
 	}
 
 	function installReadonlychangeHook() {
-		installHook($.propHooks, "readonly", "readonlychange", undefined, function (elem, value, name) {
-			if (elem.readonly !== value) {
-				elem.readonly = value; // Set before triggering change event
-				$(elem).trigger("readonlychange");
-			}
-		});
+		installHook(
+			$.propHooks, "readonly", "readonlychange",
+			undefined,
+			function (elem, value, name) {
+				if (elem.readonly !== value) {
+					elem.readonly = value;   // Set before triggering change event
+					$(elem).trigger("readonlychange");
+				}
+			});
 	}
 
 	// Binds the disabled state of the input element to the associated buttons.
@@ -184,37 +189,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// When the input element was disabled or enabled, also update other elements
 		installDisabledchangeHook();
 		installReadonlychangeHook();
-		var disabledHandler = function disabledHandler() {
+		var disabledHandler = function () {
 			if (input.disabled()) {
-				input.disable(); // Disable everything related as well (label etc.)
-				buttons.forEach(function (button) {
-					return button.disable();
-				});
-			} else {
-				input.enable(); // Enable everything related as well (label etc.)
-				buttons.forEach(function (button) {
-					return button.enable();
-				});
+				input.disable();   // Disable everything related as well (label etc.)
+				buttons.forEach(button => button.disable());
+			}
+			else {
+				input.enable();   // Enable everything related as well (label etc.)
+				buttons.forEach(button => button.enable());
 			}
 		};
 		input.on("disabledchange", disabledHandler);
 
-		var readonlyHandler = function readonlyHandler() {
+		var readonlyHandler = function () {
 			if (input.readonly()) {
 				input.readonly(true);
-				buttons.forEach(function (button) {
+				buttons.forEach(button => {
 					if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
-						button.disable(false); // Don't touch the label
-					} else {
+						button.disable(false);   // Don't touch the label
+					}
+					else {
 						button.readonly(true);
 					}
 				});
-			} else {
+			}
+			else {
 				input.readonly(false);
-				buttons.forEach(function (button) {
+				buttons.forEach(button => {
 					if (button[0].localName === "button" || button[0].localName === "select" || !("readonly" in button)) {
-						button.enable(false); // Don't touch the label
-					} else {
+						button.enable(false);   // Don't touch the label
+					}
+					else {
 						button.readonly(false);
 					}
 				});
@@ -255,8 +260,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	// state: Enable or disable the scrolling prevention.
 	function preventScrolling(state) {
-		var $document = $(document),
-		    $html = $("html");
+		var $document = $(document), $html = $("html");
 		if (state || state === undefined) {
 			var scrollTop = $document.scrollTop();
 			var scrollLeft = $document.scrollLeft();
@@ -265,7 +269,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				$document.scrollLeft(scrollLeft);
 			});
 			$html.css("touch-action", "none");
-		} else {
+		}
+		else {
 			$document.off("scroll.ff-prevent-scrolling");
 			$html.css("touch-action", "");
 		}
@@ -276,19 +281,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Find all selected stackable elements and sort them by:
 		//   currently dragging, then z-index, then DOM index
 		// and assign their new z-index
-		stackedElems = stackedElems.map(function (index, el) {
-			var zIndex = parseInt($(el).css("z-index"));
-			if (!$.isNumeric(zIndex)) zIndex = stackedElems.length;
-			return { elem: el, dragElem: el === topElem ? 1 : 0, index: index, zIndex: zIndex };
-		}).sort(function (a, b) {
-			if (a.dragElem !== b.dragElem) return a.dragElem - b.dragElem;
-			if (a.zIndex !== b.zIndex) return a.zIndex - b.zIndex;
-			return a.index - b.index;
-		});
+		stackedElems = stackedElems
+			.map(function (index, el) {
+				var zIndex = parseInt($(el).css("z-index"));
+				if (!$.isNumeric(zIndex))
+					zIndex = stackedElems.length;
+				return { elem: el, dragElem: el === topElem ? 1 : 0, index: index, zIndex: zIndex };
+			})
+			.sort(function (a, b) {
+				if (a.dragElem !== b.dragElem) return a.dragElem - b.dragElem;
+				if (a.zIndex !== b.zIndex) return a.zIndex - b.zIndex;
+				return a.index - b.index;
+			});
 		if (stackedElems.length !== 0) {
-			var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(function (o) {
-				return o.zIndex;
-			}));
+			var maxZIndex = Math.max.apply(Math, stackedElems.toArray().map(o => o.zIndex));
 			stackedElems.each(function (index, item) {
 				$(item.elem).css("z-index", maxZIndex - (stackedElems.length - 1) + index);
 			});
@@ -312,76 +318,70 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	// A variant of $.val that also triggers the change event if the value has actually changed.
 	$.fn.valChange = function (value) {
-		var oldValue = this.val();
-		var isEqual = oldValue === value;
+		let oldValue = this.val();
+		let isEqual = oldValue === value;
 		if (!isEqual && Array.isArray(oldValue) && Array.isArray(value)) {
-			isEqual = oldValue.length === value.length && oldValue.every(function (v, index) {
-				return v === value[index];
-			});
+			isEqual = oldValue.length === value.length && oldValue.every((v, index) => v === value[index]);
 		}
 		if (!isEqual) {
-			this.val(value).change();
+			this.val(value).triggerNative("change");
 		}
+	};
+
+	// Triggers a native event. This will also be visible for native event listeners,
+	// unlike jQuery events. The native event will bubble and be (formally) cancelable.
+	// Returns the event object triggered for the first selected Node.
+	//
+	// type: (String) The event type name.
+	// data: (Object) An object containing additional event properties to be set. (Optional)
+	$.fn.triggerNative = function (type, data) {
+		let event;
+		this.each(function() {
+			let thisEvent = new CustomEvent(type, { bubbles: true, cancelable: true });
+			if (!event)
+				event = thisEvent;
+			Object.assign(thisEvent, data);
+			this.dispatchEvent(thisEvent);
+		});
+		return event;
 	};
 
 	// Variable tests
 
 	// Determines whether the value is set (i. e. not undefined or null).
-	$.isSet = function (value) {
-		return typeof value !== "undefined" && value !== null;
-	};
+	$.isSet = value => typeof value !== "undefined" && value !== null;
 
 	// Determines whether the value is boolean.
-	$.isBoolean = function (value) {
-		return typeof value === "boolean";
-	};
+	$.isBoolean = value => typeof value === "boolean";
 
 	// Determines whether the value is a number.
-	$.isNumber = function (value) {
-		return typeof value === "number";
-	};
+	$.isNumber = value => typeof value === "number";
 
 	// Determines whether the value is a string.
-	$.isString = function (value) {
-		return typeof value === "string";
-	};
+	$.isString = value => typeof value === "string";
 
 	// Determines whether the value is an even number.
-	$.isEven = function (value) {
-		return $.isNumber(value) && value % 2 === 0;
-	};
+	$.isEven = value => $.isNumber(value) && value % 2 === 0;
 
 	// Determines whether the value is an odd number.
-	$.isOdd = function (value) {
-		return $.isNumber(value) && value % 2 === 1;
-	};
+	$.isOdd = value => $.isNumber(value) && value % 2 === 1;
 
 	// Operating system tests
 
 	// Determines whether the client operating system is Android.
-	$.isAndroid = function () {
-		return !!navigator.userAgent.match(/Android/);
-	};
+	$.isAndroid = () => !!navigator.userAgent.match(/Android/);
 
 	// Determines whether the client operating system is iOS.
-	$.isIos = function () {
-		return !!navigator.platform.match(/iPhone|iPad|iPod/);
-	};
+	$.isIos = () => !!navigator.platform.match(/iPhone|iPad|iPod/);
 
 	// Determines whether the client operating system is Linux (not Android).
-	$.isLinux = function () {
-		return !!navigator.platform.match(/Linux/) && !$.isAndroid();
-	};
+	$.isLinux = () => !!navigator.platform.match(/Linux/) && !$.isAndroid();
 
 	// Determines whether the client operating system is macOS.
-	$.isMac = function () {
-		return !!navigator.platform.match(/Mac/);
-	};
+	$.isMac = () => !!navigator.platform.match(/Mac/);
 
 	// Determines whether the client operating system is Windows.
-	$.isWindows = function () {
-		return !!navigator.platform.match(/Win/);
-	};
+	$.isWindows = () => !!navigator.platform.match(/Win/);
 
 	if ($.isAndroid()) {
 		$("html").addClass("simple-dimmer");
@@ -391,58 +391,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Source (sometimes updated): https://stackoverflow.com/a/9851769
 
 	// Determines whether the browser has a Blink engine.
-	$.isBlink = function () {
-		return ($.isChrome() || $.isOpera()) && !!window.CSS;
-	};
+	$.isBlink = () => ($.isChrome() || $.isOpera()) && !!window.CSS;
 
 	// Determines whether the browser is Chrome. (Not functional for v80/81)
-	$.isChrome = function () {
-		return !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
-	};
+	$.isChrome = () => !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
 
 	// Determines whether the browser is original Edge.
-	$.isEdge = function () {
-		return !$.isInternetExplorer() && !!window.StyleMedia;
-	};
+	$.isEdge = () => !$.isInternetExplorer() && !!window.StyleMedia;
 
 	// Determines whether the browser is Chromium-based Edge.
-	$.isEdgeChromium = function () {
-		return $.isChrome() && navigator.userAgent.indexOf("Edg") != -1;
-	};
+	$.isEdgeChromium = () => $.isChrome() && (navigator.userAgent.indexOf("Edg") != -1);
 
 	// Determines whether the browser is Firefox.
-	$.isFirefox = function () {
-		return typeof InstallTrigger !== 'undefined';
-	};
+	// The CSS property -moz-user-focus is supported from Firefox 1 and nowhere else and not deprecated.
+	// NOTE: Referencing InstallTrigger prints a warning to the console.
+	$.isFirefox = () => "MozUserFocus" in document.body.style || typeof InstallTrigger !== 'undefined';
 
 	// Determines whether the browser is Internet Explorer.
-	$.isInternetExplorer = function () {
-		return (/*@cc_on!@*/!!document.documentMode
-		);
-	};
+	$.isInternetExplorer = () => /*@cc_on!@*/!!document.documentMode;
 
 	// Determines whether the browser is Opera.
-	$.isOpera = function () {
-		return !!window.opr && !!opr.addons || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
-	};
+	$.isOpera = () => (!!window.opr && !!opr.addons) || !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
 
 	// Determines whether the browser is Brave.
-	$.isBrave = function () {
-		return navigator.brave && !!navigator.brave.isBrave;
-	};
+	$.isBrave = () => navigator.brave && !!navigator.brave.isBrave;
 
 	// Determines whether the browser is Safari. (Not functional for iOS/iPadOS 13)
-	$.isSafari = function () {
-		return (/constructor/i.test(window.HTMLElement) || function (p) {
-				return p.toString() === "[object SafariRemoteNotification]";
-			}(!window['safari'] || typeof safari !== 'undefined' && safari.pushNotification)
-		);
-	};
+	$.isSafari = () => /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || (typeof safari !== 'undefined' && safari.pushNotification));
 
 	/*! jQuery UI - v1.12.1 - 2017-12-25
- * http://jqueryui.com
- * Includes: focusable.js
- * Copyright jQuery Foundation and other contributors; Licensed MIT */
+	* http://jqueryui.com
+	* Includes: focusable.js
+	* Copyright jQuery Foundation and other contributors; Licensed MIT */
 
 	// NOTE: This file was modified to not include unnecessary jQuery UI stuff.
 	// IE8 support removed, which was introduced in
@@ -450,13 +430,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// * https://github.com/jquery/jquery-ui/commit/d3025968f349c37a8ca41bfc63ee1b37d9d7354f
 
 	/*
-  * jQuery UI Focusable 1.12.1
-  * http://jqueryui.com
-  *
-  * Copyright jQuery Foundation and other contributors
-  * Released under the MIT license.
-  * http://jquery.org/license
-  */
+	 * jQuery UI Focusable 1.12.1
+	 * http://jqueryui.com
+	 *
+	 * Copyright jQuery Foundation and other contributors
+	 * Released under the MIT license.
+	 * http://jquery.org/license
+	 */
 
 	//>>label: :focusable Selector
 	//>>group: Core
@@ -464,53 +444,50 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//>>docs: http://api.jqueryui.com/focusable-selector/
 
 
-	// Selectors
-	var _focusable = function _focusable(element, hasTabindex) {
-		var map,
-		    mapName,
-		    img,
-		    focusableIfVisible,
-		    fieldset,
-		    nodeName = element.nodeName.toLowerCase();
 
-		if ("area" === nodeName) {
+	// Selectors
+	var focusable = function( element, hasTabindex ) {
+		var map, mapName, img, focusableIfVisible, fieldset,
+			nodeName = element.nodeName.toLowerCase();
+
+		if ( "area" === nodeName ) {
 			map = element.parentNode;
 			mapName = map.name;
-			if (!element.href || !mapName || map.nodeName.toLowerCase() !== "map") {
+			if ( !element.href || !mapName || map.nodeName.toLowerCase() !== "map" ) {
 				return false;
 			}
-			img = $("img[usemap='#" + mapName + "']");
-			return img.length > 0 && img.is(":visible");
+			img = $( "img[usemap='#" + mapName + "']" );
+			return img.length > 0 && img.is( ":visible" );
 		}
 
-		if (/^(input|select|textarea|button|object)$/.test(nodeName)) {
+		if ( /^(input|select|textarea|button|object)$/.test( nodeName ) ) {
 			focusableIfVisible = !element.disabled;
 
-			if (focusableIfVisible) {
+			if ( focusableIfVisible ) {
 
 				// Form controls within a disabled fieldset are disabled.
 				// However, controls within the fieldset's legend do not get disabled.
 				// Since controls generally aren't placed inside legends, we skip
 				// this portion of the check.
-				fieldset = $(element).closest("fieldset")[0];
-				if (fieldset) {
+				fieldset = $( element ).closest( "fieldset" )[ 0 ];
+				if ( fieldset ) {
 					focusableIfVisible = !fieldset.disabled;
 				}
 			}
-		} else if ("a" === nodeName) {
+		} else if ( "a" === nodeName ) {
 			focusableIfVisible = element.href || hasTabindex;
 		} else {
 			focusableIfVisible = hasTabindex;
 		}
 
-		return focusableIfVisible && $(element).is(":visible") && $(element).css("visibility") === "visible";
+		return focusableIfVisible && $( element ).is( ":visible" ) && $( element ).css( "visibility" ) === "visible";
 	};
 
-	$.extend($.expr[":"], {
-		focusable: function focusable(element) {
-			return _focusable(element, $.attr(element, "tabindex") !== undefined);
+	$.extend( $.expr[ ":" ], {
+		focusable: function( element ) {
+			return focusable( element, $.attr( element, "tabindex" ) !== undefined );
 		}
-	});
+	} );
 
 	// Registers a jQuery plugin.
 	//
@@ -521,14 +498,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Define a new property for each jQuery object in which the plugin is accessible.
 		// This property getter is called whenever the plugin or one of its additional functions is called.
 		Object.defineProperty($.fn, name, {
-			get: function get() {
+			get: function () {
 				// Plugin default function
 				// Returned to make this property callable
 				var ret = create;
 
 				// Plugin additional functions, added to the returned function
 				// Bound to whoever has called this property to pass on "this" to the next function
-				for (var key in obj) {
+				for (let key in obj) {
 					if ($.isFunction(obj[key])) {
 						ret[key] = obj[key].bind(this);
 					}
@@ -555,22 +532,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		var optValue = $(elem).data("opt");
 		if (optValue !== undefined) {
 			try {
-				optValue = new Function("return " + optValue + ";")();
+				optValue = (new Function("return " + optValue + ";"))();
 				opts = $.extend(opts, optValue);
-			} catch (err) {
+			}
+			catch (err) {
 				console.error("ERROR: data-opt value for " + name + " cannot be parsed:", optValue, err);
 			}
 		}
 
 		// Then overwrite with individual HTML data attributes
-		for (var key in defaults) {
+		for (let key in defaults) {
 			// Only do the work if it's not overridden again by params
 			if (params[key] === undefined) {
-				var elemDataValue = $(elem).data("opt-" + key);
+				let elemDataValue = $(elem).data("opt-" + key);
 				if (elemDataValue !== undefined) {
 					if ($.isFunction(converters[key])) {
 						opts[key] = converters[key](elemDataValue);
-					} else {
+					}
+					else {
 						opts[key] = elemDataValue;
 					}
 				}
@@ -610,7 +589,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function accordion(options) {
 		return this.each(function (_, obj) {
 			var accordion = $(obj);
-			if (accordion.hasClass(accordionClass)) return; // Already done
+			if (accordion.hasClass(accordionClass)) return;   // Already done
 			var opt = initOptions("accordion", accordionDefaults, accordion, {}, options);
 
 			accordion.addClass(accordionClass);
@@ -626,7 +605,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				header.attr("tabindex", "0");
 
 				content.addClass("ff-accordion-content");
-
+				
 				header.click(function () {
 					if (content[0].clientHeight) {
 						accordion.accordion.collapse(item);
@@ -635,8 +614,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				});
 				header.keydown(function (event) {
-					if (event.which === 13) {
-						// Enter
+					if (event.which === 13) {   // Enter
 						event.preventDefault();
 						header.click();
 					}
@@ -647,14 +625,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					// Manually set item expanded
 					item.addClass("expanded");
 					content.css("height", "auto");
-					$(function () {
-						var offset = opt.scrollOffset || 0;
+					$(function() {
+						let offset = opt.scrollOffset || 0;
 						if (opt.scrollOffsetElement) {
 							offset += $(opt.scrollOffsetElement).height();
 						}
 						$("html,body").animate({ scrollTop: item.offset().top - offset });
 					});
-				} else {
+				}
+				else {
 					content.css("transition", "none");
 					accordion.accordion.collapse(item);
 					forceReflow();
@@ -681,21 +660,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var item;
 			if ($.isNumeric(indexOrItem)) {
 				item = items.eq(+indexOrItem);
-			} else {
+			}
+			else {
 				item = $(indexOrItem);
 			}
 
 			var content = item.children("div.ff-accordion-content").first();
 			if (!content.hasClass("ff-fixed-height")) {
-				content.css("height", content[0].scrollHeight); // explicitly set to current value
+				content.css("height", content[0].scrollHeight);   // explicitly set to current value
 				forceReflow();
-				content.css("height", 0); // now animate to 0
+				content.css("height", 0);   // now animate to 0
 				content.addClass("ff-fixed-height");
 				item.removeClass("expanded");
 
-				var _event = $.Event("itemCollapse");
-				_event.item = item;
-				accordion.trigger(_event);
+				accordion.triggerNative("itemCollapse", { item: item });
 			}
 
 			var id = item.attr("id");
@@ -722,18 +700,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var item;
 			if ($.isNumeric(indexOrItem)) {
 				item = items.eq(+indexOrItem);
-			} else {
+			}
+			else {
 				item = $(indexOrItem);
 			}
 
 			var content = item.children("div.ff-accordion-content").first();
 			if (content[0].clientHeight) {
-				return; // Already expanded
+				return;   // Already expanded
 			}
-			content.css("height", content[0].scrollHeight); // animate to desired height
+			content.css("height", content[0].scrollHeight);   // animate to desired height
 			function onTransitionEnd(event) {
 				if (event.originalEvent.propertyName == "height") {
-					content.css("height", "auto"); // allow free layout again after animation has completed
+					content.css("height", "auto");   // allow free layout again after animation has completed
 					content.off("transitionend", onTransitionEnd);
 					content.removeClass("ff-fixed-height");
 				}
@@ -741,18 +720,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			content.on("transitionend", onTransitionEnd);
 			item.addClass("expanded");
 
-			var event = $.Event("itemExpand");
-			event.item = item;
-			accordion.trigger(event);
+			accordion.triggerNative("itemExpand", { item: item });
 
 			var previousItemCollapsedHeight = 0;
 			if (opt.exclusive) {
-				var passedExpandedItem = false;
+				let passedExpandedItem = false;
 				items.each(function (_, obj) {
 					if (obj !== item[0]) {
-						if (!passedExpandedItem) previousItemCollapsedHeight += $(obj).children("div.ff-accordion-content").height();
+						if (!passedExpandedItem)
+							previousItemCollapsedHeight += $(obj).children("div.ff-accordion-content").height();
 						accordion.accordion.collapse(obj);
-					} else {
+					}
+					else {
 						passedExpandedItem = true;
 					}
 				});
@@ -762,7 +741,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			//if (previousItemCollapsedHeight) {
 			//	$("html,body").animate({ scrollTop: "-=" + previousItemCollapsedHeight }, 200);
 			//}
-
+			
 			// TODO: At least keep the expanded header visible if a previous item was collapsed
 
 			// TODO: Maybe also scroll to make the new content section visible as much as possible, while not pushing out its header (option)
@@ -826,7 +805,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function carousel(options) {
 		return this.each(function (_, obj) {
 			var carousel = $(obj);
-			if (carousel.find("." + carouselClass).length) return; // Already done
+			if (carousel.find("." + carouselClass).length) return;   // Already done
 			var opt = initOptions("carousel", carouselDefaults, carousel, {}, options);
 
 			if (opt.items > 1 || opt.gutter > 0) opt.animation = "slide-all";
@@ -853,11 +832,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				obj.css("width", "calc(" + opt._itemWidthPercent + "% - " + opt._gutterWidth + "px)");
 				maxItemHeight = Math.max(maxItemHeight, obj.outerHeight());
 				obj.detach().appendTo(stage);
-
+				
 				if (obj.attr("href")) {
 					obj.css("cursor", "pointer");
 					obj.attr("tabindex", "-1");
-					obj.click(function (event) {
+					obj.click(event => {
 						if (!clickLock) {
 							location.href = obj.attr("href");
 						}
@@ -866,32 +845,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 			stage.appendTo(carousel);
 			stage.css("height", maxItemHeight);
-			stage.attr("tabindex", "-1"); // Would be tab-focusable otherwise (not sure why)
+			stage.attr("tabindex", "-1");   // Would be tab-focusable otherwise (not sure why)
 
 			// Add controls
 			if (opt.indicator) {
 				var indicator = $("<div/>").addClass(carouselIndicatorClass).appendTo(carousel);
 				var indicatorCount = Math.ceil(items.length / opt.dotsEach) - (opt.items - opt.dotsEach);
-
-				var _loop = function _loop(i) {
-					var dot = $("<span tabindex='0'><span/></span>").appendTo(indicator);
-					var fn = function fn() {
+				for (let i = 0; i < indicatorCount; i++) {
+					let dot = $("<span tabindex='0'><span/></span>").appendTo(indicator);
+					let fn = function () {
 						carousel.carousel.activeItem(i * opt.dotsEach);
 						suspendAutoplay();
 						resumeAutoplay();
 					};
 					dot.click(fn);
 					dot.keydown(function (event) {
-						if (event.which === 13) {
-							// Enter
+						if (event.which === 13) {   // Enter
 							event.preventDefault();
 							fn();
 						}
 					});
-				};
-
-				for (var i = 0; i < indicatorCount; i++) {
-					_loop(i);
 				}
 			}
 
@@ -903,8 +876,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				cancel: stage.find("input, button, textarea, label")
 			});
 			stage.on("draggablestart", function (event) {
-				var dx = Math.abs(event.dragPoint.left - event.newPoint.left);
-				var dy = Math.abs(event.dragPoint.top - event.newPoint.top);
+				var dx = Math.abs(event.originalEvent.dragPoint.left - event.originalEvent.newPoint.left);
+				var dy = Math.abs(event.originalEvent.dragPoint.top - event.originalEvent.newPoint.top);
 				if (dy > dx) {
 					// Movement was mostly vertical, don't drag in that direction but leave scrolling intact
 					event.preventDefault();
@@ -917,7 +890,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				itemOffsetMin = -opt.active;
 				itemOffsetMax = lastPageFirstItem - opt.active;
 				opt._isDragging = true;
-				if (clickUnlockTimeout) clearTimeout(clickUnlockTimeout);
+				if (clickUnlockTimeout)
+					clearTimeout(clickUnlockTimeout);
 				clickLock = true;
 
 				// Disable transition and autoplay while dragging
@@ -925,17 +899,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				suspendAutoplay();
 			});
 			stage.on("draggablemove", function (event) {
-				itemOffset = startItemOffset - (event.newPoint.left - event.elemRect.left) / itemWidth;
+				itemOffset = startItemOffset - (event.originalEvent.newPoint.left - event.originalEvent.elemRect.left) / itemWidth;
 				dragDirection = itemOffset - prevItemOffset;
 				prevItemOffset = itemOffset;
 
 				// Don't move the stage anywhere! Just tell me how far the pointer is dragged and we'll
 				// move something else (the items within the stage) to provide the expected visual feedback.
-				event.newPoint = event.elemRect;
+				event.originalEvent.newPoint = event.originalEvent.elemRect;
 
 				// Restrict dragging at start/end
-				if (itemOffset < itemOffsetMin) itemOffset = itemOffsetMin - elastic(itemOffsetMin - itemOffset);
-				if (itemOffset > itemOffsetMax) itemOffset = itemOffsetMax + elastic(itemOffset - itemOffsetMax);
+				if (itemOffset < itemOffsetMin)
+					itemOffset = itemOffsetMin - elastic(itemOffsetMin - itemOffset);
+				if (itemOffset > itemOffsetMax)
+					itemOffset = itemOffsetMax + elastic(itemOffset - itemOffsetMax);
 
 				function elastic(exceeding) {
 					var max = 0.25;
@@ -950,14 +926,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				addTransition();
 				resumeAutoplay();
 				opt._isDragging = false;
-				clickUnlockTimeout = setTimeout(function () {
-					return clickLock = false;
-				}, 100);
+				clickUnlockTimeout = setTimeout(() => clickLock = false, 100);
 
 				// Snap to item, consider last drag direction
 				var itemIndex = opt.active + itemOffset;
 				var newDot = itemIndex / opt.dotsEach;
-				if (dragDirection > 0) newDot = Math.ceil(newDot);else newDot = Math.floor(newDot);
+				if (dragDirection > 0)
+					newDot = Math.ceil(newDot);
+				else
+					newDot = Math.floor(newDot);
 				carousel.carousel.activeItem(newDot * opt.dotsEach);
 			});
 
@@ -1001,8 +978,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function addTransition() {
-				var opacityTime = "0.4s";
-				if (opt.animation === "fade") opacityTime = "0.8s";
+				let opacityTime = "0.4s";
+				if (opt.animation === "fade")
+					opacityTime = "0.8s";
 				currentTransition = "left 0.4s ease-in-out, opacity " + opacityTime + " ease-in-out";
 				items.css("transition", currentTransition);
 			}
@@ -1038,15 +1016,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function layout(itemOffset) {
 				// Getter
 				if (itemOffset === undefined) {
-					var pos = [];
-					var allSame = true;
+					let pos = [];
+					let allSame = true;
 					switch (opt.animation) {
 						case "fade":
-							var z1 = void 0,
-							    z2 = void 0,
-							    z2Opacity = void 0;
+							let z1, z2, z2Opacity;
 							items.each$(function (index, obj) {
-								if (obj.css("z-index") == 1) z1 = index;
+								if (obj.css("z-index") == 1)
+									z1 = index;
 								if (obj.css("z-index") == 2) {
 									z2 = index;
 									z2Opacity = parseFloat(obj.css("opacity"));
@@ -1054,31 +1031,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							});
 							//console.log("get layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
 							if (z2 !== undefined) {
-								if (z1 > z2) // Moving forward (a higher item index is in layer 1, becoming visible)
-									return z1 + (1 - z2Opacity) - opt.active - 1;else // Moving backward
+								if (z1 > z2)   // Moving forward (a higher item index is in layer 1, becoming visible)
+									return z1 + (1 - z2Opacity) - opt.active - 1;
+								else   // Moving backward
 									return z1 + z2Opacity - opt.active;
 							}
 							if (z1 !== undefined) return z1 - opt.active;
 							return 0;
 						case "slide-in":
-							var anyZero = false;
-							var firstGtZero = -1;
+							let anyZero = false;
+							let firstGtZero = -1;
 							items.each$(function (index, obj) {
-								var left = parseFloat(obj.css("left"));
+								let left = parseFloat(obj.css("left"));
 								pos.push(left);
 								if (left !== pos[0]) allSame = false;
 								if (left === 0) anyZero = true;
 								if (left > 0 && firstGtZero === -1) firstGtZero = index;
 							});
-							if (allSame && pos[0] < 0) return items.length - 1 - pos[0] / itemWidth - opt.active;
+							if (allSame && pos[0] < 0) return items.length - 1 -pos[0] / itemWidth - opt.active;
 							if (!anyZero) return -pos[0] / itemWidth - opt.active;
 							if (firstGtZero > 0) return firstGtZero - pos[firstGtZero] / itemWidth - opt.active;
 							return 0;
 						case "slide-out":
-							var anyPositive = false;
-							var firstZero = -1;
+							let anyPositive = false;
+							let firstZero = -1;
 							items.each$(function (index, obj) {
-								var left = parseFloat(obj.css("left"));
+								let left = parseFloat(obj.css("left"));
 								pos.push(left);
 								if (left !== pos[0]) allSame = false;
 								if (left >= 0) anyPositive = true;
@@ -1089,11 +1067,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							if (firstZero > 0) return firstZero - 1 + -pos[firstZero - 1] / itemWidth - opt.active;
 							return 0;
 						case "slide-fade":
-							var activeItemLeft2 = parseFloat(items.eq(opt.active).css("left"));
+							let activeItemLeft2 = parseFloat(items.eq(opt.active).css("left"));
 							return -activeItemLeft2 / (itemWidth / 10);
 						case "slide-all":
 						default:
-							var activeItemLeft = parseFloat(items.eq(opt.active).css("left"));
+							let activeItemLeft = parseFloat(items.eq(opt.active).css("left"));
 							return -activeItemLeft / itemWidth;
 					}
 				}
@@ -1102,59 +1080,66 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				switch (opt.animation) {
 					case "fade":
 						if (itemOffset !== 0) {
-							var fullyVisible = opt.active + Math.trunc(itemOffset);
-							var partiallyVisible = opt.active + Math.trunc(itemOffset) + Math.sign(itemOffset);
+							let fullyVisible = opt.active + Math.trunc(itemOffset);
+							let partiallyVisible = opt.active + Math.trunc(itemOffset) + Math.sign(itemOffset);
 							//console.log(fullyVisible, partiallyVisible);
 							items.each$(function (index, obj) {
 								if (index === fullyVisible) {
 									obj.css("z-index", 1).css("opacity", 1);
-								} else if (index === partiallyVisible) {
+								}
+								else if (index === partiallyVisible) {
 									obj.css("z-index", 2).css("opacity", Math.abs(itemOffset) - Math.trunc(Math.abs(itemOffset)));
-								} else {
+								}
+								else {
 									obj.css("z-index", 0).css("opacity", 0);
 								}
 							});
-						} else {
-							var _z = void 0,
-							    _z2 = void 0,
-							    _z2Opacity = void 0;
+						}
+						else {
+							let z1, z2, z2Opacity;
 							items.each$(function (index, obj) {
-								if (obj.css("z-index") == 1) _z = index;
+								if (obj.css("z-index") == 1)
+									z1 = index;
 								if (obj.css("z-index") == 2) {
-									_z2 = index;
-									_z2Opacity = parseFloat(obj.css("opacity"));
+									z2 = index;
+									z2Opacity = parseFloat(obj.css("opacity"));
 								}
 							});
 							//console.log("set layout: z1=" + z1 + " z2=" + z2 + " z2Opacity=" + z2Opacity + " active=" + opt.active);
-							if (opt.active === _z) {
-								items.eq(_z2).css("opacity", 0).css("pointer-events", "none");
-							} else if (opt.active === _z2) {
+							if (opt.active === z1) {
+								items.eq(z2).css("opacity", 0).css("pointer-events", "none");
+							}
+							else if (opt.active === z2) {
 								removeTransition();
-								items.eq(_z).css("z-index", 2).css("opacity", 1 - _z2Opacity);
-								items.eq(_z2).css("z-index", 1).css("opacity", 1).css("pointer-events", "");
+								items.eq(z1).css("z-index", 2).css("opacity", 1 - z2Opacity);
+								items.eq(z2).css("z-index", 1).css("opacity", 1).css("pointer-events", "");
 								forceReflow();
 								if (!opt._isDragging) addTransition();
-								items.eq(_z).css("opacity", 0).css("pointer-events", "none");
-							} else {
-								var currentVisible = void 0;
+								items.eq(z1).css("opacity", 0).css("pointer-events", "none");
+							}
+							else {
+								let currentVisible;
 								items.each$(function (index, obj) {
-									if (obj.css("z-index") == 1) currentVisible = index;
+									if (obj.css("z-index") == 1)
+										currentVisible = index;
 								});
 								removeTransition();
 								items.eq(opt.active).css("z-index", 1).css("opacity", 1).css("pointer-events", "");
 								forceReflow();
 								if (!opt._isDragging) addTransition();
 								items.each$(function (index, obj) {
-									if (index === opt.active) ;else if (index === currentVisible) {
+									if (index === opt.active) ;
+									else if (index === currentVisible) {
 										obj.css("z-index", 2).css("opacity", 0).css("pointer-events", "none");
-									} else {
+									}
+									else {
 										obj.css("z-index", 0).css("opacity", 0).css("pointer-events", "");
 									}
 								});
 							}
 						}
 
-						var status = "";
+						let status = "";
 						items.each$(function (index, obj) {
 							status += index + ": z=" + obj.css("z-index") + " op=" + obj.css("opacity") + (index === opt.active ? " active" : "") + "\n";
 						});
@@ -1162,32 +1147,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						break;
 					case "slide-in":
 						items.each$(function (index, obj) {
-							var left = opt.active + itemOffset <= items.length - 1 ? minmax((index - opt.active - itemOffset) * 100, 0, 100) : (items.length - 1 - opt.active - itemOffset) * 100;
+							let left = opt.active + itemOffset <= items.length - 1 ?
+								minmax((index - opt.active - itemOffset) * 100, 0, 100) :
+								(items.length - 1 - opt.active - itemOffset) * 100;
 							obj.css("left", left + "%");
 							obj.css("z-index", index);
 						});
 						break;
 					case "slide-out":
 						items.each$(function (index, obj) {
-							var left = opt.active + itemOffset >= 0 ? minmax((index - opt.active - itemOffset) * 100, -100, 0) : (-opt.active - itemOffset) * 100;
+							let left = opt.active + itemOffset >= 0 ?
+								minmax((index - opt.active - itemOffset) * 100, -100, 0) :
+								(-opt.active - itemOffset) * 100;
 							obj.css("left", left + "%");
 							obj.css("z-index", items.length - 1 - index);
 						});
 						break;
 					case "slide-fade":
 						items.each$(function (index, obj) {
-							var percent = (index - opt.active) * 100 / 10;
-							var left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / 10;
+							let percent = (index - opt.active) * 100 / 10;
+							let left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / 10;
 							obj.css("left", "calc(" + percent + "% + " + left + "px)");
-							var opacity = 1 - minmax(Math.abs(index - (opt.active + itemOffset)), 0, 1);
+							let opacity = 1 - minmax(Math.abs(index - (opt.active + itemOffset)), 0, 1);
 							obj.css("opacity", opacity);
 						});
 						break;
 					case "slide-all":
 					default:
 						items.each$(function (index, obj) {
-							var percent = (index - opt.active) * opt._itemWidthPercent;
-							var left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / opt.items;
+							let percent = (index - opt.active) * opt._itemWidthPercent;
+							let left = (index - opt.active) * opt._gutterOffset - itemOffset * stage.width() / opt.items;
 							obj.css("left", "calc(" + percent + "% + " + left + "px)");
 						});
 						break;
@@ -1203,7 +1192,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (indexOrItem === undefined) {
 			var carousel = this.first();
-			if (carousel.length === 0) return; // Nothing to do
+			if (carousel.length === 0) return;   // Nothing to do
 			var opt = loadOptions("carousel", carousel);
 			return opt.active;
 		}
@@ -1212,13 +1201,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		return this.each(function (_, obj) {
 			var carousel = $(obj);
 			var opt = loadOptions("carousel", carousel);
-			if (opt._isDragging) return; // Ignore request while dragging
+			if (opt._isDragging) return;   // Ignore request while dragging
 			var items = carousel.find("." + carouselClass).children();
-			if (indexOrItem === Infinity) indexOrItem = items.length; // Infinity can't be handled by Math.min
+			if (indexOrItem === Infinity) indexOrItem = items.length;   // Infinity can't be handled by Math.min
 			var index;
 			if ($.isNumeric(indexOrItem)) {
 				index = +indexOrItem;
-			} else {
+			}
+			else {
 				index = indexOrItem.index();
 			}
 
@@ -1227,7 +1217,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			opt._layout(0);
 			var dots = carousel.find("." + carouselIndicatorClass).children();
 			dots.removeClass("active").eq(Math.ceil(index / opt.dotsEach)).addClass("active");
-			carousel.trigger("activeItemChange");
+			carousel.triggerNative("activeItemChange");
 		});
 	}
 
@@ -1243,10 +1233,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var galleryDefaults = {
 		// The desired image size (depending on sizeMode), in pixels. Default: 150.
 		desiredSize: 150,
-
+		
 		// The allowed factor of exceeding the desired size in the last row before the row is left-aligned. Default: 1.2.
 		allowedOversize: 1.2,
-
+		
 		// The layout size mode. Default: height.
 		// Possible values: height, area
 		// height: The desiredSize is the preferred row height.
@@ -1260,55 +1250,61 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Shows a gallery layout for the element.
 	function gallery(options) {
 		return this.each$(function (_, gallery) {
-			if (gallery.hasClass(galleryClass)) return; // Already done
+			if (gallery.hasClass(galleryClass)) return;   // Already done
 			gallery.addClass(galleryClass);
 			var opt = initOptions("gallery", galleryDefaults, gallery, {}, options);
 			opt._relayout = relayout;
-
+			
 			// Validate options
-			if (opt.desiredSize <= 0) opt.desiredSize = 150;
-			if (["height", "area"].indexOf(opt.sizeMode) === -1) opt.sizeMode = "height";
-			if (opt.gap < 0) opt.gap = 0;
+			if (opt.desiredSize <= 0)
+				opt.desiredSize = 150;
+			if (["height", "area"].indexOf(opt.sizeMode) === -1)
+				opt.sizeMode = "height";
+			if (opt.gap < 0)
+				opt.gap = 0;
 
-			var images = [];
-			var appendCount = 0;
-			var rowImages = [];
-			var rowWidthSum = 0;
-			var currentGalleryWidth = gallery.width();
-			var largeImages = [];
-
+			let images = [];
+			let appendCount = 0;
+			let rowImages = [];
+			let rowWidthSum = 0;
+			let currentGalleryWidth = gallery.width();
+			let largeImages = [];
+			
 			// Create loading indicator
-			var loadingRow = $("<div/>").addClass("loading-row").appendTo(gallery);
+			let loadingRow = $("<div/>").addClass("loading-row").appendTo(gallery);
 			$("<i/>").addClass("loading small").appendTo(loadingRow);
 
 			// Finishes the layout of images in the current row. Scales images of a row exactly.
-			var createRow = function createRow(isLast) {
+			let createRow = isLast => {
 				// Find the correct row height for the images in the row (and the gaps in between)
-				var normalisedWidthSum = 0;
-				for (var i = 0; i < rowImages.length; i++) {
-					var img = rowImages[i];
-					if (img.tagName.toLowerCase() !== "img") img = img.querySelector("img");
+				let normalisedWidthSum = 0;
+				for (let i = 0; i < rowImages.length; i++) {
+					let img = rowImages[i];
+					if (img.tagName.toLowerCase() !== "img")
+						img = img.querySelector("img");
 					normalisedWidthSum += img.naturalWidth / img.naturalHeight;
 				}
-				var galleryWidth = gallery.width();
-				var galleryWidthWithoutGaps = galleryWidth - opt.gap * (rowImages.length - 1);
-				var rowHeight = galleryWidthWithoutGaps / normalisedWidthSum;
+				let galleryWidth = gallery.width();
+				let galleryWidthWithoutGaps = galleryWidth - (opt.gap * (rowImages.length - 1));
+				let rowHeight = galleryWidthWithoutGaps / normalisedWidthSum;
 
 				// Don't force-fill the row if the height would be too tall and it's the last row
-				var fullWidth = true;
+				let fullWidth = true;
 				if (isLast && opt.sizeMode === "height" && rowHeight > opt.desiredSize * opt.allowedOversize) {
 					rowHeight = opt.desiredSize;
 					fullWidth = false;
-				} else if (isLast && opt.sizeMode === "area" && rowHeight * galleryWidthWithoutGaps / rowImages.length > opt.desiredSize * opt.desiredSize * opt.allowedOversize * opt.allowedOversize) {
-					var avgAspectRatio = normalisedWidthSum / rowImages.length;
+				}
+				else if (isLast && opt.sizeMode === "area" && rowHeight * galleryWidthWithoutGaps / rowImages.length > opt.desiredSize * opt.desiredSize * opt.allowedOversize * opt.allowedOversize) {
+					let avgAspectRatio = normalisedWidthSum / rowImages.length;
 					rowHeight = Math.sqrt(opt.desiredSize * opt.desiredSize / avgAspectRatio);
 					fullWidth = false;
 				}
 
 				// Create row
-				var rows = gallery.children("." + galleryRowClass);
-				var isFirstRow = rows.length === 0;
-				var row = $("<div/>").addClass(galleryRowClass);
+				let rows = gallery.children("." + galleryRowClass);
+				let isFirstRow = rows.length === 0;
+				let row = $("<div/>")
+					.addClass(galleryRowClass);
 				if (!fullWidth) {
 					row.addClass("incomplete");
 				}
@@ -1318,33 +1314,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// keep their order at all times (except for separated larger images).
 				if (isFirstRow) {
 					row.prependTo(gallery);
-				} else {
+				}
+				else {
 					row.css("margin-top", opt.gap);
-					var lastRow = rows[rows.length - 1];
+					let lastRow = rows[rows.length - 1];
 					row.insertAfter(lastRow);
 				}
 
 				// Update loading indicator at the end of the gallery
-				if (!isLast) loadingRow.appendTo(gallery);else loadingRow.remove();
-
+				if (!isLast)
+					loadingRow.appendTo(gallery);
+				else
+					loadingRow.remove();
+				
 				// Add all images with relative width (space is evenly distributed by flex layout, except in last row)
-				for (var _i = 0; _i < rowImages.length; _i++) {
-					var elem = rowImages[_i];
-					var _img = elem;
-					if (_img.tagName.toLowerCase() !== "img") _img = _img.querySelector("img");
+				for (let i = 0; i < rowImages.length; i++) {
+					let elem = rowImages[i];
+					let img = elem;
+					if (img.tagName.toLowerCase() !== "img")
+						img = img.querySelector("img");
 					// The scaled width of the image for the given row height
-					var scaledWidth = _img.naturalWidth / _img.naturalHeight * rowHeight;
+					let scaledWidth = img.naturalWidth / img.naturalHeight * rowHeight;
 					// A single gap, corrected for one less = The average gap for each image in a row
-					var gap2 = opt.gap / rowImages.length * (rowImages.length - 1);
+					let gap2 = opt.gap / rowImages.length * (rowImages.length - 1);
 					// The fractional width of the image including its average gap share
-					var swPercent = (scaledWidth + gap2) / galleryWidth * 100;
+					let swPercent = (scaledWidth + gap2) / galleryWidth * 100;
 					$(elem)
-					// Let the browser calculate back to the width, but for the actual total width, minus the fixed average gap share
-					.css("width", "calc(" + swPercent + "% - " + gap2 + "px)")
-					// Only the last row (which is not filled) needs explicit gaps
-					.css("margin-left", !fullWidth && _i > 0 ? opt.gap : 0).appendTo(row);
-					if (_img !== elem) {
-						$(_img).css("width", "100%");
+						// Let the browser calculate back to the width, but for the actual total width, minus the fixed average gap share
+						.css("width", "calc(" + swPercent + "% - " + gap2 + "px)")
+						// Only the last row (which is not filled) needs explicit gaps
+						.css("margin-left", !fullWidth && i > 0 ? opt.gap : 0)
+						.appendTo(row);
+					if (img !== elem) {
+						$(img).css("width", "100%");
 					}
 				}
 			};
@@ -1352,11 +1354,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// Appends an image to the layout. Assigns images to a row.
 			// If the <img> element is a direct child of the gallery, elem and img are the same.
 			// Otherwise, elem is the direct child and img is the <img> element therein.
-			var appendImage = function appendImage(elem, img, isLast) {
+			let appendImage = (elem, img, isLast) => {
 				if (elem.dataset.gallerySize == "large") {
 					if (isLast) {
 						createRow(false);
-						for (var i = 0; i < largeImages.length; i++) {
+						for (let i = 0; i < largeImages.length; i++) {
 							rowImages = [largeImages[i]];
 							createRow(false);
 						}
@@ -1365,33 +1367,36 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						createRow(true);
 						rowImages = [];
 						rowWidthSum = 0;
-					} else {
+					}
+					else {
 						largeImages.push(elem);
 					}
 					return;
 				}
-
-				var scaledWidth = void 0;
+				
+				let scaledWidth;
 				if (opt.sizeMode === "height") {
 					scaledWidth = img.naturalWidth / img.naturalHeight * opt.desiredSize;
-				} else {
+				}
+				else {
 					scaledWidth = Math.sqrt(opt.desiredSize * opt.desiredSize * img.naturalWidth / img.naturalHeight);
 				}
-
-				var galleryWidth = gallery.width();
-				var myGap = rowWidthSum > 0 ? opt.gap : 0;
-				var oldDist = Math.abs(galleryWidth - rowWidthSum);
-				var newDist = Math.abs(galleryWidth - (rowWidthSum + myGap + scaledWidth));
+				
+				let galleryWidth = gallery.width();
+				let myGap = rowWidthSum > 0 ? opt.gap : 0;
+				let oldDist = Math.abs(galleryWidth - rowWidthSum);
+				let newDist = Math.abs(galleryWidth - (rowWidthSum + myGap + scaledWidth));
 				if (newDist < oldDist) {
 					// We're nearer to the total width with this image, so keep it in the row
 					rowImages.push(elem);
 					rowWidthSum += myGap + scaledWidth;
-				} else {
+				}
+				else {
 					// We're futher away from the total width with this image, so put it on a new row
 					createRow(false);
 					// Insert rows of retained large images
-					for (var _i2 = 0; _i2 < largeImages.length; _i2++) {
-						rowImages = [largeImages[_i2]];
+					for (let i = 0; i < largeImages.length; i++) {
+						rowImages = [largeImages[i]];
 						createRow(false);
 					}
 					largeImages = [];
@@ -1399,16 +1404,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					rowImages = [elem];
 					rowWidthSum = scaledWidth;
 				}
-
+				
 				if (isLast) {
 					if (largeImages.length > 0) {
 						createRow(false);
-						for (var _i3 = 0; _i3 < largeImages.length; _i3++) {
-							rowImages = [largeImages[_i3]];
-							createRow(_i3 === largeImages.length - 1);
+						for (let i = 0; i < largeImages.length; i++) {
+							rowImages = [largeImages[i]];
+							createRow(i === largeImages.length - 1);
 						}
 						largeImages = [];
-					} else {
+					}
+					else {
 						createRow(true);
 					}
 					rowImages = [];
@@ -1417,50 +1423,46 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			};
 
 			// Appends the next image if it's loaded, repeats for all subsequent loaded images.
-			var apendNextImages = function apendNextImages() {
+			let apendNextImages = () => {
 				while (true) {
 					if (appendCount >= images.length) {
 						// All images appended
 						return false;
 					}
-					var img = images[appendCount];
-					if (img.tagName.toLowerCase() !== "img") img = img.querySelector("img");
+					let img = images[appendCount];
+					if (img.tagName.toLowerCase() !== "img")
+						img = img.querySelector("img");
 					if (!img.complete || img.naturalWidth === 0) {
 						// Image is not loaded
 						return true;
 					}
-					var isLast = appendCount === images.length - 1;
+					let isLast = appendCount === images.length - 1;
 					appendImage(images[appendCount], img, isLast);
 					appendCount++;
 				}
 			};
-
+			
 			// Removes an image from the list that won't load.
-			var removeImage = function removeImage(img) {
+			let removeImage = img => {
 				// Should only affect images after appendCount, so that need not be corrected
 				console.error("Removed image from gallery due to load error:", img.src);
-				images = images.filter(function (i) {
-					return i !== img;
-				});
+				images = images.filter(i => i !== img);
 			};
 
 			// Scan all child elements and collect images, set up load event handlers
-			gallery.children("img, a").each$(function (_, child) {
+			gallery.children("img, a").each$((_, child) => {
 				images.push(child[0]);
-				var img = child;
-				if (!img.is("img")) img = img.find("img");
-				img.on("load", function () {
-					return apendNextImages();
-				});
-				img.on("error", function () {
-					removeImage(child[0]);apendNextImages();
-				});
+				let img = child;
+				if (!img.is("img"))
+					img = img.find("img");
+				img.on("load", () => apendNextImages());
+				img.on("error", () => { removeImage(child[0]); apendNextImages(); });
 			});
 			apendNextImages();
 
 			// Relayout on window resize
-			$(window).on("resize", function () {
-				var newGalleryWidth = gallery.width();
+			$(window).on("resize", () => {
+				let newGalleryWidth = gallery.width();
 				if (newGalleryWidth !== currentGalleryWidth) {
 					currentGalleryWidth = newGalleryWidth;
 					relayout();
@@ -1498,7 +1500,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Parses any color value understood by a browser into an object with r, g, b, a properties.
 		function Color(value) {
 			// Allow calling without "new" keyword
-			if (!(this instanceof Color)) return new Color(value);
+			if (!(this instanceof Color))
+				return new Color(value);
 
 			if (typeof value === "string") {
 				if (value === "") {
@@ -1506,19 +1509,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					this.r = this.g = this.b = this.a = 0;
 					return;
 				}
-
+				
 				this.format = value.match(/^rgba?\(/) ? "CSS" : "HTML";
 
 				// Add "#" prefix if missing and the data is otherwise looking good (3/6/8 hex digits)
 				if (value.match(/^\s*[0-9A-Fa-f]{3}([0-9A-Fa-f]{3}([0-9A-Fa-f]{2})?)?\s*$/)) value = "#" + value.trim();
 
 				// Let the browser do the work
-				var div = document.createElement("div");
+				const div = document.createElement("div");
 				div.style.display = "none";
-				document.body.appendChild(div); // required for getComputedStyle
+				document.body.appendChild(div);   // required for getComputedStyle
 				div.style.color = value;
-				var color = getComputedStyle(div).color;
-				var match = color.match(/rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*(?:,\s*([0-9.]+)\s*)?\)/);
+				const color = getComputedStyle(div).color;
+				const match = color.match(/rgba?\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*,\s*([0-9.]+)\s*(?:,\s*([0-9.]+)\s*)?\)/);
 				if (match) {
 					this.r = keep255(Number(match[1]));
 					this.g = keep255(Number(match[2]));
@@ -1529,11 +1532,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				// Browser wasn't in the mood (probably Chrome with a named color), try harder
 				if (!canvasContext) {
-					var canvas = document.createElement("canvas");
+					const canvas = document.createElement("canvas");
 					canvas.setAttribute("width", "1");
 					canvas.setAttribute("height", "1");
 					canvasContext = canvas.getContext("2d");
-					canvasContext.globalCompositeOperation = "copy"; // required for alpha channel
+					canvasContext.globalCompositeOperation = "copy";   // required for alpha channel
 				}
 				canvasContext.fillStyle = value;
 				canvasContext.fillRect(0, 0, 1, 1);
@@ -1548,22 +1551,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			if (typeof value === "number") {
 				this.format = "IntARGB";
-				this.r = value >> 16 & 0xff;
-				this.g = value >> 8 & 0xff;
+				this.r = (value >> 16) & 0xff;
+				this.g = (value >> 8) & 0xff;
 				this.b = value & 0xff;
-				var a = value >> 24 & 0xff;
+				const a = (value >> 24) & 0xff;
 				this.a = a !== 0 ? round(a / 255, 3) : 1;
 				return;
 			}
 
-			if ((typeof value === 'undefined' ? 'undefined' : _typeof(value)) === "object") {
+			if (typeof value === "object") {
 				if (Array.isArray(value)) {
 					this.format = "Array";
 					this.r = keep255(value[0]);
 					this.g = keep255(value[1]);
 					this.b = keep255(value[2]);
 					this.a = value.length > 3 ? keep1(value[3]) : 1;
-				} else {
+				}
+				else {
 					this.format = value.format !== undefined$1 ? value.format : "Object";
 					this.r = keep255(value.r);
 					this.g = keep255(value.g);
@@ -1584,7 +1588,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		window.Color = Color;
 
 		// Now add object methods
-		var Color_prototype = Color.prototype;
+		const Color_prototype = Color.prototype;
 
 		// Formats the color in the format it was originally parsed from. If the format is HTML and a
 		// non-opaque alpha value is set, the result is in CSS rgba() format instead.
@@ -1593,8 +1597,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				case "IntARGB":
 					return this.toIntARGB();
 				case "HTML":
-					if (this.a === undefined$1 || this.a === 1) return this.toHTML();
-					return this.toCSS(); // Need CSS format for alpha value
+					if (this.a === undefined$1 || this.a === 1)
+						return this.toHTML();
+					return this.toCSS();   // Need CSS format for alpha value
 				case "CSS":
 				default:
 					return this.toCSS();
@@ -1603,7 +1608,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Formats a color object into a CSS rgb() or rgba() string.
 		Color_prototype.toCSS = function () {
-			if (this.a === undefined$1 || this.a === 1) return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
+			if (this.a === undefined$1 || this.a === 1)
+				return "rgb(" + this.r + ", " + this.g + ", " + this.b + ")";
 			return "rgba(" + this.r + ", " + this.g + ", " + this.b + ", " + this.a + ")";
 		};
 
@@ -1611,23 +1617,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// value is printed as a fourth hex digit pair, which is not valid HTML.
 		Color_prototype.toHTML = function (withAlpha) {
 			function conv(number) {
-				return (number < 16 ? "0" : "") + round(keep255(number)).toString(16).toLowerCase();
+				return (number < 16 ? "0" : "") +
+					round(keep255(number)).toString(16).toLowerCase();
 			}
 
-			var str = "#" + conv(this.r) + conv(this.g) + conv(this.b);
-			if (withAlpha && this.a !== undefined$1 && this.a !== 1) str += conv(this.a * 255);
+			let str = "#" + conv(this.r) + conv(this.g) + conv(this.b);
+			if (withAlpha && this.a !== undefined$1 && this.a !== 1)
+				str += conv(this.a * 255);
 			return str;
 		};
 
 		// Converts a color object into an integer number like 0xAARRGGBB.
 		Color_prototype.toIntARGB = function () {
-			return (this.a !== undefined$1 ? round(keep1(this.a) * 255) : 255) << 24 | round(keep255(this.r)) << 16 | round(keep255(this.g)) << 8 | round(keep255(this.b));
+			return (this.a !== undefined$1 ? round(keep1(this.a) * 255) : 255) << 24 |
+				round(keep255(this.r)) << 16 |
+				round(keep255(this.g)) << 8 |
+				round(keep255(this.b));
 		};
 
 		// Converts a color object into an array with [r, g, b, a].
 		Color_prototype.toArray = function () {
-			var arr = [this.r, this.g, this.b];
-			if (this.a !== undefined$1 && this.a !== 1) arr.push[this.a * 255];
+			const arr = [this.r, this.g, this.b];
+			if (this.a !== undefined$1 && this.a !== 1)
+				arr.push[this.a * 255];
 			return arr;
 		};
 
@@ -1637,20 +1649,32 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.g = keep255(this.g);
 			this.b = keep255(this.b);
 
-			var r = this.r / 255;
-			var g = this.g / 255;
-			var b = this.b / 255;
-			var min = Math.min(r, g, b);
-			var max = Math.max(r, g, b);
+			const r = this.r / 255;
+			const g = this.g / 255;
+			const b = this.b / 255;
+			const min = Math.min(r, g, b);
+			const max = Math.max(r, g, b);
 
-			if (max === min) this.h = 0;else if (max === r) this.h = 60 * (g - b) / (max - min) % 360;else if (max === g) this.h = (60 * (b - r) / (max - min) + 120) % 360;else // if (max === b)
+			if (max === min)
+				this.h = 0;
+			else if (max === r)
+				this.h = (60 * (g - b) / (max - min)) % 360;
+			else if (max === g)
+				this.h = (60 * (b - r) / (max - min) + 120) % 360;
+			else // if (max === b)
 				this.h = (60 * (r - g) / (max - min) + 240) % 360;
-			if (this.h < 0) this.h += 360;
+			if (this.h < 0)
+				this.h += 360;
 
-			this.s = 0; // Just for the order of the properties
+			this.s = 0;   // Just for the order of the properties
 			this.l = (max + min) / 2;
 
-			if (max === min) this.s = 0;else if (this.l <= 0.5) this.s = (max - min) / (2 * this.l);else this.s = (max - min) / (2 - 2 * this.l);
+			if (max === min)
+				this.s = 0;
+			else if (this.l <= 0.5)
+				this.s = (max - min) / (2 * this.l);
+			else
+				this.s = (max - min) / (2 - 2 * this.l);
 			return this;
 		};
 
@@ -1660,16 +1684,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			this.s = keep1(this.s);
 			this.l = keep1(this.l);
 
-			var q = this.l < 0.5 ? this.l * (1 + this.s) : this.l + this.s - this.l * this.s;
-			var p = 2 * this.l - q;
-			var h = this.h / 360; // Normalise hue to 0..1
-			var t = { r: h + 1 / 3, g: h, b: h - 1 / 3 };
+			const q = this.l < 0.5 ?
+				this.l * (1 + this.s) :
+				this.l + this.s - this.l * this.s;
+			const p = 2 * this.l - q;
+			const h = this.h / 360;   // Normalise hue to 0..1
+			const t = { r: h + 1 / 3, g: h, b: h - 1 / 3 };
 
 			var that = this;
 			["r", "g", "b"].forEach(function (c) {
 				if (t[c] < 0) t[c]++;
 				if (t[c] > 1) t[c]--;
-				if (t[c] < 1 / 6) that[c] = p + (q - p) * 6 * t[c];else if (t[c] < 1 / 2) that[c] = q;else if (t[c] < 2 / 3) that[c] = p + (q - p) * 6 * (2 / 3 - t[c]);else that[c] = p;
+				if (t[c] < 1 / 6)
+					that[c] = p + ((q - p) * 6 * t[c]);
+				else if (t[c] < 1 / 2)
+					that[c] = q;
+				else if (t[c] < 2 / 3)
+					that[c] = p + ((q - p) * 6 * (2 / 3 - t[c]));
+				else
+					that[c] = p;
 				that[c] = round(that[c] * 255);
 			});
 			if (this.a === undefined$1) this.a = 1;
@@ -1679,58 +1712,73 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Returns a blended color with the specified ratio from 0 (no change) to 1 (only other color).
 		// All R/G/B/A channels are blended separately.
 		Color_prototype.blendWith = function (other, ratio, includeAlpha) {
-			var isHSL = this.h !== undefined$1 || other.h !== undefined$1;
-			var color = Color(this);
+			const isHSL = this.h !== undefined$1 || other.h !== undefined$1;
+			const color = Color(this);
 			other = Color(other);
 			ratio = keep1(ratio);
-			["r", "g", "b"].forEach(function (c) {
+			["r", "g", "b"].forEach(c => {
 				color[c] = keep255(round(extendFF(color[c]) + (extendFF(other[c]) - extendFF(color[c])) * ratio));
 			});
-			if (includeAlpha) color.a = round(color.a + (other.a - color.a) * ratio, 3);
-			if (isHSL) color.updateHSL();
+			if (includeAlpha)
+				color.a = round(color.a + (other.a - color.a) * ratio, 3);
+			if (isHSL)
+				color.updateHSL();
 			return color;
 		};
 
 		// Returns a blended color with the specified ratio from 0 (no change) to 1 (only other color).
 		// The H channel is blended on the short path around the circle, S/L/A channels are blended normally.
 		Color_prototype.blendByHueWith = function (other, ratio, includeAlpha, largeArc) {
-			var color = Color(this);
-			if (!(other instanceof Color)) other = Color(other);
-			if (color.h === undefined$1) color.updateHSL();
-			if (other.h === undefined$1) other.updateHSL();
+			const color = Color(this);
+			if (!(other instanceof Color))
+				other = Color(other);
+			if (color.h === undefined$1)
+				color.updateHSL();
+			if (other.h === undefined$1)
+				other.updateHSL();
 			ratio = keep1(ratio);
 
 			// If either color has no saturation, set its hue to the other's
-			if (color.s === 0 && other.s !== 0) color.h = other.h;
-			if (other.s === 0 && color.s !== 0) other.h = color.h;
+			if (color.s === 0 && other.s !== 0)
+				color.h = other.h;
+			if (other.s === 0 && color.s !== 0)
+				other.h = color.h;
 
 			// Blend hue on the short path around the circle
 			if (color.h < other.h) {
-				if (!largeArc && other.h - color.h < 180 || largeArc && other.h - color.h >= 180) {
+				if (!largeArc && other.h - color.h < 180 ||
+					largeArc && other.h - color.h >= 180) {
 					// Clockwise
 					color.h = round(color.h + (other.h - color.h) * ratio, 3);
-				} else {
-					// Counter-clockwise with overflow
-					var h = other.h - 360;
-					color.h = round(color.h + (h - color.h) * ratio, 3);
-					if (color.h < 0) color.h += 360;
 				}
-			} else {
-				if (!largeArc && color.h - other.h < 180 || largeArc && color.h - other.h >= 180) {
+				else {
+					// Counter-clockwise with overflow
+					const h = other.h - 360;
+					color.h = round(color.h + (h - color.h) * ratio, 3);
+					if (color.h < 0)
+						color.h += 360;
+				}
+			}
+			else {
+				if (!largeArc && color.h - other.h < 180 ||
+					largeArc && color.h - other.h >= 180) {
 					// Counter-clockwise
 					color.h = round(color.h + (other.h - color.h) * ratio, 3);
-				} else {
+				}
+				else {
 					// Clockwise with overflow
-					var _h = color.h - 360;
-					color.h = round(_h + (other.h - _h) * ratio, 3);
-					if (color.h < 0) color.h += 360;
+					const h = color.h - 360;
+					color.h = round(h + (other.h - h) * ratio, 3);
+					if (color.h < 0)
+						color.h += 360;
 				}
 			}
 
 			["s", "l"].forEach(function (c) {
 				color[c] = keep1(round(color[c] + (other[c] - color[c]) * ratio, 3));
 			});
-			if (includeAlpha) color.a = round(color.a + (other.a - color.a) * ratio, 3);
+			if (includeAlpha)
+				color.a = round(color.a + (other.a - color.a) * ratio, 3);
 			color.updateRGB();
 			return color;
 		};
@@ -1779,7 +1827,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Returns the grayscale color by perceived brightness.
 		Color_prototype.gray = function () {
 			return processColor(this, false, function () {
-				var value = round(keep255(this.r) * 0.3 + keep255(this.g) * 0.59 + keep255(this.b) * 0.11);
+				const value = round(keep255(this.r) * 0.3 + keep255(this.g) * 0.59 + keep255(this.b) * 0.11);
 				this.r = value;
 				this.g = value;
 				this.b = value;
@@ -1795,7 +1843,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Returns white or black as suitable for the text color over the background color.
 		Color_prototype.text = function () {
 			return processColor(this, false, function () {
-				var value = this.isDark() ? 255 : 0;
+				const value = this.isDark() ? 255 : 0;
 				this.r = value;
 				this.g = value;
 				this.b = value;
@@ -1803,7 +1851,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 		};
 
-		var colorNames = {
+		const colorNames = {
 			de: {
 				transparent: "transparent",
 				black: "schwarz",
@@ -1844,36 +1892,66 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Returns a simple description of the color.
 		Color_prototype.description = function (language) {
-			var color = Color(this);
-			if (color.h === undefined$1) color.updateHSL();
-			if (color.h === undefined$1 || isNaN(color.h)) return null;
-			if (!(language in colorNames)) language = "en";
-			var names = colorNames[language];
-			if (color.a < 0.02) return names.transparent;
+			const color = Color(this);
+			if (color.h === undefined$1)
+				color.updateHSL();
+			if (color.h === undefined$1 || isNaN(color.h))
+				return null;
+			if (!(language in colorNames))
+				language = "en";
+			const names = colorNames[language];
+			if (color.a < 0.02)
+				return names.transparent;
 			// Normalise values for development with a color tool
-			var h = color.h / 360 * 255;
-			var s = color.s * 255;
-			var l = color.l * 255;
-			if (l < 30) return names.black;
-			if (l > 240) return names.white;
+			const h = color.h / 360 * 255;
+			const s = color.s * 255;
+			const l = color.l * 255;
+			if (l < 30)
+				return names.black;
+			if (l > 240)
+				return names.white;
 
-			var colorName = h < 15 ? names.red : h < 33 ? names.orange : h < 49 ? names.yellow : h < 111 ? names.green : h < 138 ? names.cyan : h < 180 ? names.blue : h < 207 ? names.purple : h < 238 ? names.pink : names.red;
+			const colorName =
+				h < 15 ? names.red :
+				h < 33 ? names.orange :
+				h < 49 ? names.yellow :
+				h < 111 ? names.green :
+				h < 138 ? names.cyan :
+				h < 180 ? names.blue :
+				h < 207 ? names.purple :
+				h < 238 ? names.pink :
+				names.red;
 			// Determines the saturation up to which the colour is grey (depending on the lightness)
-			var graySaturation = function graySaturation(l) {
-				if (l < 128) return 90 + (30 - 90) * (l - 30) / (128 - 30);else return 30 + (90 - 30) * (l - 128) / (240 - 128);
+			const graySaturation = l => {
+				if (l < 128)
+					return 90 + (30 - 90) * (l - 30) / (128 - 30);
+				else
+					return 30 + (90 - 30) * (l - 128) / (240 - 128);
 			};
 			if (l < 100) {
-				if (s < graySaturation(l)) return names.dark + names.gray;else if (colorName === names.orange) return names.brown;else return names.dark + colorName;
+				if (s < graySaturation(l))
+					return names.dark + names.gray;
+				else if (colorName === names.orange)
+					return names.brown;
+				else
+					return names.dark + colorName;
 			}
 			if (l > 190) {
-				if (s < graySaturation(l)) return names.light + names.gray;else return names.light + colorName;
+				if (s < graySaturation(l))
+					return names.light + names.gray;
+				else
+					return names.light + colorName;
 			}
-			if (s > 170) return colorName;
-			if (s < graySaturation(l)) return names.gray;else return names.pale + colorName;
+			if (s > 170)
+				return colorName;
+			if (s < graySaturation(l))
+				return names.gray;
+			else
+				return names.pale + colorName;
 		};
 
 		function processColor(color, hslMode, fn) {
-			color = Color(color); // Make a copy
+			color = Color(color);   // Make a copy
 			if (hslMode) color.updateHSL();
 			fn.call(color);
 			if (hslMode) color.updateRGB();
@@ -1904,33 +1982,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Returns the value rounded to the specified number of decimals.
 		function round(value, decimals) {
 			if (decimals === undefined$1) decimals = 0;
-			var precision = Math.pow(10, decimals);
+			const precision = Math.pow(10, decimals);
 			return Math.round(value * precision) / precision;
 		}
+
 	})();
 
-	var replacementKey$1 = "ff-replacement";
+	const replacementKey$1 = "ff-replacement";
 
 	// Add support for jQuery DOM functions with replaced elements by Frontfire (like selectable)
-	var origToggle = $.fn.toggle;
+	let origToggle = $.fn.toggle;
 	$.fn.toggle = function () {
-		var args = arguments;
+		let args = arguments;
 		return this.each$(function (_, obj) {
 			origToggle.apply(obj.data(replacementKey$1) || obj, args);
 		});
 	};
 
-	var origShow = $.fn.show;
+	let origShow = $.fn.show;
 	$.fn.show = function () {
-		var args = arguments;
+		let args = arguments;
 		return this.each$(function (_, obj) {
 			origShow.apply(obj.data(replacementKey$1) || obj, args);
 		});
 	};
 
-	var origHide = $.fn.hide;
+	let origHide = $.fn.hide;
 	$.fn.hide = function () {
-		var args = arguments;
+		let args = arguments;
 		return this.each$(function (_, obj) {
 			origHide.apply(obj.data(replacementKey$1) || obj, args);
 		});
@@ -1960,13 +2039,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Setter
 		if (value !== undefined) {
 			return this.each(function (_, obj) {
-				if (value) $(obj).show();else $(obj).hide();
+				if (value)
+					$(obj).show();
+				else
+					$(obj).hide();
 			});
 		}
 
 		// Getter
 		if (this.length === 0) return;
-		var el = this.data(replacementKey$1) || this;
+		let el = this.data(replacementKey$1) || this;
 		return el.css("display") !== "none" && el.css("visibility") !== "collapse";
 	};
 
@@ -1978,7 +2060,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Setter
 		if (value !== undefined) {
 			return this.each(function (_, obj) {
-				if (value) $(obj).disable(includeLabel);else $(obj).enable(includeLabel);
+				if (value)
+					$(obj).disable(includeLabel);
+				else
+					$(obj).enable(includeLabel);
 			});
 		}
 
@@ -1999,26 +2084,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically removes the HTML attribute as well.
 				obj.prop("disabled", false);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data(replacementKey$1)) obj.data(replacementKey$1).enable(false);
-			} else if (obj.attr("disabled") !== undefined) {
+				if (obj.data(replacementKey$1))
+					obj.data(replacementKey$1).enable(false);
+			}
+			else if (obj.attr("disabled") !== undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only remove HTML attribute to allow CSS styling other elements than inputs
 				obj.removeAttr("disabled");
 				// Trigger the event manually
-				obj.trigger("disabledchange");
+				obj.triggerNative("disabledchange");
 			}
 
 			obj.parents("label").enable();
 			var id = obj.attr("id");
-			if (id) $("label[for='" + id + "']").enable();
-
+			if (id)
+				$("label[for='" + id + "']").enable();
+			
 			if (includeLabel !== false) {
 				// Find previous .label sibling up on the .form-row level
-				var refNode = obj;
-				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+				let refNode = obj;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
 					refNode = refNode.parent();
-				}var label = refNode.prev();
-				if (label.hasClass("label")) label.enable();
+				let label = refNode.prev();
+				if (label.hasClass("label"))
+					label.enable();
 			}
 		});
 	};
@@ -2034,26 +2123,30 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// This automatically sets the HTML attribute as well.
 				obj.prop("disabled", true);
 				// Also update replacement elements of Frontfire controls
-				if (obj.data(replacementKey$1)) obj.data(replacementKey$1).disable(false);
-			} else if (obj.attr("disabled") === undefined) {
+				if (obj.data(replacementKey$1))
+					obj.data(replacementKey$1).disable(false);
+			}
+			else if (obj.attr("disabled") === undefined) {
 				// Don't set the property or it will be added where not supported.
 				// Only set HTML attribute to allow CSS styling other elements than inputs
 				obj.attr("disabled", "");
 				// Trigger the event manually
-				obj.trigger("disabledchange");
+				obj.triggerNative("disabledchange");
 			}
 
 			obj.parents("label").disable();
 			var id = obj.attr("id");
-			if (id) $("label[for='" + id + "']").disable();
-
+			if (id)
+				$("label[for='" + id + "']").disable();
+			
 			if (includeLabel !== false) {
 				// Find previous .label sibling up on the .form-row level
-				var refNode = obj;
-				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row")) {
+				let refNode = obj;
+				while (refNode.parent().length > 0 && !refNode.parent().hasClass("form-row"))
 					refNode = refNode.parent();
-				}var label = refNode.prev();
-				if (label.hasClass("label")) label.disable();
+				let label = refNode.prev();
+				if (label.hasClass("label"))
+					label.disable();
 			}
 		});
 	};
@@ -2063,7 +2156,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// includeLabel: Also updates the parent form row label, if there is one. Default: true.
 	$.fn.toggleDisabled = function (includeLabel) {
 		return this.each$(function (_, obj) {
-			if (obj.disabled()) obj.enable(includeLabel);else obj.disable(includeLabel);
+			if (obj.disabled())
+				obj.enable(includeLabel);
+			else
+				obj.disable(includeLabel);
 		});
 	};
 
@@ -2074,30 +2170,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Setter
 		if (value !== undefined) {
 			return this.each(function (_, obj) {
-				var supportsReadonlyProp = "readonly" in obj;
-				var supportsDisabledProp = "disable" in obj;
+				let supportsReadonlyProp = "readonly" in obj;
+				let supportsDisabledProp = "disable" in obj;
 				obj = $(obj);
 				if (value) {
 					if (supportsReadonlyProp) {
 						obj.prop("readonly", true);
-						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(true);
-					} else if (supportsDisabledProp) {
-						obj.prop("disabled", true);
-						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(true);
-					} else if (obj.attr("readonly") === undefined) {
-						obj.attr("readonly", "");
-						obj.trigger("readonlychange");
+						if (obj.data(replacementKey$1))
+							obj.data(replacementKey$1).readonly(true);
 					}
-				} else {
+					else if (supportsDisabledProp) {
+						obj.prop("disabled", true);
+						if (obj.data(replacementKey$1))
+							obj.data(replacementKey$1).readonly(true);
+					}
+					else if (obj.attr("readonly") === undefined) {
+						obj.attr("readonly", "");
+						obj.triggerNative("readonlychange");
+					}
+				}
+				else {
 					if (supportsReadonlyProp) {
 						obj.prop("readonly", false);
-						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(false);
-					} else if (supportsDisabledProp) {
+						if (obj.data(replacementKey$1))
+							obj.data(replacementKey$1).readonly(false);
+					}
+					else if (supportsDisabledProp) {
 						obj.prop("disabled", false);
-						if (obj.data(replacementKey$1)) obj.data(replacementKey$1).readonly(false);
-					} else if (obj.attr("readonly") !== undefined) {
+						if (obj.data(replacementKey$1))
+							obj.data(replacementKey$1).readonly(false);
+					}
+					else if (obj.attr("readonly") !== undefined) {
 						obj.removeAttr("readonly");
-						obj.trigger("readonlychange");
+						obj.triggerNative("readonlychange");
 					}
 				}
 			});
@@ -2122,16 +2227,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// correct.
 	$.fn.updateLastColumn = function () {
 		return this.each$(function (_, table) {
-			var lastColumn = void 0,
-			    lastVisibleColumn = void 0;
+			let lastColumn, lastVisibleColumn;
 			// TODO: Ignore nested tables
 			// TODO: This looks strange, is it per-row?
 			table.find("th, td").each$(function (_, td) {
 				td.removeClass("last-column");
 				lastColumn = td;
-				if (td.visible()) lastVisibleColumn = td;
+				if (td.visible())
+					lastVisibleColumn = td;
 			});
-			if (lastColumn && lastVisibleColumn && lastColumn !== lastVisibleColumn) lastVisibleColumn.addClass("last-column");
+			if (lastColumn && lastVisibleColumn && lastColumn !== lastVisibleColumn)
+				lastVisibleColumn.addClass("last-column");
 		});
 	};
 
@@ -2140,9 +2246,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// padding of the first and last visible row is correct.
 	$.fn.updateFirstLastRow = function () {
 		return this.each$(function (_, table) {
-			var lastRow = void 0,
-			    lastVisibleRow = void 0,
-			    seenFirstRow = void 0;
+			let lastRow, lastVisibleRow, seenFirstRow;
 			// TODO: Ignore nested tables
 			table.find("tr").each$(function (_, tr) {
 				tr.removeClass("first-row");
@@ -2155,11 +2259,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						tr.addClass("first-row");
 					}
 					lastVisibleRow = tr;
-				} else {
+				}
+				else {
 					tr.addClass("hidden-row");
 				}
 			});
-			if (lastRow && lastVisibleRow && lastRow !== lastVisibleRow) lastVisibleRow.addClass("last-row");
+			if (lastRow && lastVisibleRow && lastRow !== lastVisibleRow)
+				lastVisibleRow.addClass("last-row");
 		});
 	};
 
@@ -2171,14 +2277,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	$.fn.parentWhere = function (predicate) {
 		var ret = $();
 		this.each(function (_, obj) {
-			var parent = obj;
-			do {
+			let parent = obj;
+			do
+			{
 				if (predicate(parent, obj)) {
 					ret = ret.add(parent);
 					break;
 				}
 				parent = parent.parentElement;
-			} while (parent);
+			}
+			while (parent);
 		});
 		return ret;
 	};
@@ -2209,24 +2317,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// offset: The vertical offset to scroll the element to.
 	$.fn.animateScrollToTop = function (offset) {
 		if (this.length) {
-			var animate = function animate() {
+			if (scrollAnimationTimeout)
+				clearTimeout(scrollAnimationTimeout);
+
+			const scrollStart = window.scrollY;
+			const scrollEnd = this.offset().top - (offset || 0);
+
+			const animationDelay = 10;
+			const animationCount = 40;
+			let animationPosition = 0;
+			animate();
+			
+			function animate() {
 				if (++animationPosition <= animationCount) {
-					var r = Math.sin(animationPosition / animationCount * Math.PI / 2);
-					var pos = scrollStart + (scrollEnd - scrollStart) * r;
+					const r = Math.sin(animationPosition / animationCount * Math.PI / 2);
+					const pos = scrollStart + (scrollEnd - scrollStart) * r;
 					$(window).scrollTop(pos);
 					scrollAnimationTimeout = setTimeout(animate, animationDelay);
 				}
-			};
-
-			if (scrollAnimationTimeout) clearTimeout(scrollAnimationTimeout);
-
-			var scrollStart = window.scrollY;
-			var scrollEnd = this.offset().top - (offset || 0);
-
-			var animationDelay = 10;
-			var animationCount = 40;
-			var animationPosition = 0;
-			animate();
+			}
 		}
 	};
 
@@ -2241,7 +2350,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		for (var i = 0; i < probes.length; i++) {
 			// Extend the probe to make small differences more easily measured, using a prime factor :)
-			var probe = "";
+			let probe = "";
 			for (var k = 0; k < 7; k++) {
 				probe += probes[i];
 			}
@@ -2268,28 +2377,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// capture: Specifies the capture option. If true, DOM addEventListener is used instead of jQuery.
 	// Returns a function that removes the event handler. Keep it and call it, there is no other way to remove it.
 	$.fn.pointer = function (type, handler, capture) {
-		var add,
-		    remove,
-		    pointer,
-		    mouse,
-		    touch,
-		    touchType = type,
-		    mouseHandler,
-		    touchHandler;
+		var add, remove, pointer, mouse, touch, touchType = type, mouseHandler, touchHandler;
 		var types = type.trim().split(/\s+/);
 
 		// Handle multiple types
 		if (types.length > 1) {
 			// Call self for each type and combine all event remover functions in a new function to return
-			var eventRemovers = [];
-			var that = this;
+			let eventRemovers = [];
+			let that = this;
 			types.forEach(function (type) {
 				eventRemovers.push($(that).pointer(type, handler, capture));
 			});
 			return function () {
-				eventRemovers.forEach(function (eventRemover) {
-					eventRemover();
-				});
+				eventRemovers.forEach(function (eventRemover) { eventRemover(); });
 			};
 		}
 
@@ -2298,19 +2398,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// Handle multiple selected elements
 			if (this.length > 1) {
 				// Call self for each element and combine all event remover functions in a new function to return
-				var _eventRemovers = [];
+				let eventRemovers = [];
 				this.each$(function (_, obj) {
-					_eventRemovers.push(obj.pointer(type, handler, capture));
+					eventRemovers.push(obj.pointer(type, handler, capture));
 				});
 				return function () {
-					_eventRemovers.forEach(function (eventRemover) {
-						eventRemover();
-					});
+					eventRemovers.forEach(function (eventRemover) { eventRemover(); });
 				};
 			}
 			add = this[0].addEventListener.bind(this[0]);
 			remove = this[0].removeEventListener.bind(this[0]);
-		} else {
+		}
+		else {
 			add = this.on.bind(this);
 			remove = this.off.bind(this);
 			capture = undefined;
@@ -2318,10 +2417,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Fix touch event type names that are a little different
 		switch (type) {
-			case "down":
-				touchType = "start";break;
-			case "up":
-				touchType = "end";break;
+			case "down": touchType = "start"; break;
+			case "up": touchType = "end"; break;
 		}
 
 		// Determine the supported (and necessary) event types
@@ -2332,12 +2429,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		}
 
 		// Prepare adapted handlers for fallback event types
-		if (mouse) mouseHandler = function mouseHandler(event) {
-			return handleMouseEvent(handler, event);
-		};
-		if (touch) touchHandler = function touchHandler(event) {
-			return handleTouchEvent(handler, event);
-		};
+		if (mouse) mouseHandler = event => handleMouseEvent(handler, event);
+		if (touch) touchHandler = event => handleTouchEvent(handler, event);
 
 		// Add event handlers
 		if (pointer) add("pointer" + type, handler, capture);
@@ -2404,7 +2497,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Indicates whether the window should scroll to keep the dragged element visible. Default: false.
 		scroll: false,
-
+		
 		// An element that catches all pointer input and moves the draggable to that point. Default: None.
 		catchElement: undefined
 	};
@@ -2413,18 +2506,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function draggable(options) {
 		return this.each(function (_, elem) {
 			var $elem = $(elem);
-			if ($elem.hasClass(draggableClass)) return; // Already done
+			if ($elem.hasClass(draggableClass)) return;   // Already done
 			$elem.addClass(draggableClass);
 			var dragging, draggingCancelled, dragPoint, elemRect, minDragDistance, pointerId, htmlCursor;
 			var opt = initOptions("draggable", draggableDefaults, $elem, {}, options);
-			var $window = $(window);
+			let $window = $(window);
 
 			var handle = opt.handle ? $elem.find(opt.handle) : $elem;
 			opt.handleElem = handle;
 
 			// Allow Pointer API to work properly in Edge
 			opt.originalTouchAction = handle.css("touch-action");
-			if (opt.axis === "x") handle.css("touch-action", "pan-y pinch-zoom");else if (opt.axis === "y") handle.css("touch-action", "pan-x pinch-zoom");else handle.css("touch-action", "pinch-zoom");
+			if (opt.axis === "x")
+				handle.css("touch-action", "pan-y pinch-zoom");
+			else if (opt.axis === "y")
+				handle.css("touch-action", "pan-x pinch-zoom");
+			else
+				handle.css("touch-action", "pinch-zoom");
 
 			opt.eventRemovers = [];
 			var eventRemovers = [];
@@ -2446,7 +2544,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					event.stopImmediatePropagation();
 				}));
 			}
-
+			
 			if (opt.catchElement) {
 				opt.eventRemovers.push($(opt.catchElement).pointer("down", function (event) {
 					if (event.button === 0) {
@@ -2458,7 +2556,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						eventRemovers.push($window.pointer("move", onMove, true));
 						eventRemovers.push($window.pointer("up cancel", onEnd, true));
 						// Start dragging mode immediately when catching.
-						tryStartDragging();
+						tryStartDragging(event);
 						if (dragging) {
 							// Move the draggable element directly under the pointer initially
 							elemRect.top = dragPoint.top - elemRect.height / 2;
@@ -2468,28 +2566,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}));
 			}
-
-			function tryStartDragging() {
+			
+			function tryStartDragging(event) {
 				elemRect = $elem.rect();
-				var event2 = $.Event("draggablestart");
-				event2.dragPoint = dragPoint;
-				event2.newPoint = { left: event.pageX, top: event.pageY };
-				$elem.trigger(event2);
-				if (!event2.isDefaultPrevented()) {
+				let event2 = $elem.triggerNative("draggablestart", {
+					dragPoint: dragPoint,
+					newPoint: { left: event.pageX, top: event.pageY }
+				});
+				if (!event2.defaultPrevented) {
 					dragging = true;
 					opt.dragClass && $elem.addClass(opt.dragClass);
-					elem.setCapture && elem.setCapture(); // Firefox only (set cursor over entire desktop)
-					$("html").addClass(resetAllCursorsClass$1); // All browsers (set cursor at least within page)
+					elem.setCapture && elem.setCapture();   // Firefox only (set cursor over entire desktop)
+					$("html").addClass(resetAllCursorsClass$1);   // All browsers (set cursor at least within page)
 					if (opt.stack) {
 						stackElements($(opt.stack), elem);
 					}
 					htmlCursor = elem.ownerDocument.documentElement.style.getPropertyValue("cursor");
 					elem.ownerDocument.documentElement.style.setProperty("cursor", opt.dragCursor || $elem.actualCursor(), "important");
-				} else {
+				}
+				else {
 					draggingCancelled = true;
 				}
 			}
-
+			
 			function handleMove(event) {
 				// Start with the default drag movement position
 				var newPoint = {
@@ -2499,7 +2598,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				// Consider constraints
 				if (opt.grid) {
-					var gridBase = $elem.parent().offset();
+					let gridBase = $elem.parent().offset();
 					newPoint = {
 						top: Math.round((newPoint.top - gridBase.top) / opt.grid[1]) * opt.grid[1] + gridBase.top,
 						left: Math.round((newPoint.left - gridBase.left) / opt.grid[0]) * opt.grid[0] + gridBase.left
@@ -2512,46 +2611,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					newPoint.left = elemRect.left;
 				}
 				if (opt.containment) {
-					var cont = void 0,
-					    contRect = void 0;
+					let cont, contRect;
 					if (opt.containment === "parent") {
 						cont = $elem.parent();
-					} else if (opt.containment === "viewport") {
-						var scrollTop = $window.scrollTop();
-						var scrollLeft = $window.scrollLeft();
+					}
+					else if (opt.containment === "viewport") {
+						let scrollTop = $window.scrollTop();
+						let scrollLeft = $window.scrollLeft();
 						contRect = {
 							top: 0 + scrollTop,
 							left: 0 + scrollLeft,
 							bottom: $window.height() + scrollTop,
 							right: $window.width() + scrollLeft
 						};
-					} else {
+					}
+					else {
 						cont = $(opt.containment);
 					}
 					if (cont && cont.length > 0) {
 						contRect = cont.rect();
 					}
 					if (contRect) {
-						var stepX = opt.grid ? opt.grid[0] : 1;
-						var stepY = opt.grid ? opt.grid[1] : 1;
-						while (newPoint.left < contRect.left) {
-							newPoint.left += stepX;
-						}while (newPoint.left + elemRect.width > contRect.right) {
-							newPoint.left -= stepX;
-						}while (newPoint.top < contRect.top) {
-							newPoint.top += stepY;
-						}while (newPoint.top + elemRect.height > contRect.bottom) {
-							newPoint.top -= stepY;
-						}
+						let stepX = opt.grid ? opt.grid[0] : 1;
+						let stepY = opt.grid ? opt.grid[1] : 1;
+						while (newPoint.left < contRect.left) newPoint.left += stepX;
+						while (newPoint.left + elemRect.width > contRect.right) newPoint.left -= stepX;
+						while (newPoint.top < contRect.top) newPoint.top += stepY;
+						while (newPoint.top + elemRect.height > contRect.bottom) newPoint.top -= stepY;
 					}
 				}
 
 				// Move element
-				var event2 = $.Event("draggablemove");
-				event2.elemRect = elemRect;
-				event2.newPoint = newPoint;
-				$elem.trigger(event2);
-				if (!event2.isDefaultPrevented()) {
+				let event2 = $elem.triggerNative("draggablemove", {
+					elemRect: elemRect,
+					newPoint: newPoint
+				});
+				if (!event2.defaultPrevented) {
 					$elem.offset(event2.newPoint);
 				}
 
@@ -2562,14 +2657,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function onMove(event) {
-				if (event.pointerId !== pointerId) return; // Not my pointer
-				if (draggingCancelled) return; // Don't try again until the button was released
+				if (event.pointerId !== pointerId) return;   // Not my pointer
+				if (draggingCancelled) return;   // Don't try again until the button was released
 
 				// Consider starting a drag operation
 				if (dragPoint && !dragging && !$elem.disabled()) {
-					var distance = Math.sqrt(Math.pow(event.pageX - dragPoint.left, 2) + Math.pow(event.pageY - dragPoint.top, 2));
+					let distance = Math.sqrt(Math.pow(event.pageX - dragPoint.left, 2) + Math.pow(event.pageY - dragPoint.top, 2));
 					if (distance >= minDragDistance) {
-						tryStartDragging();
+						tryStartDragging(event);
 					}
 				}
 
@@ -2580,7 +2675,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function onEnd(event) {
-				if (event.pointerId !== pointerId) return; // Not my pointer
+				if (event.pointerId !== pointerId) return;   // Not my pointer
 
 				if (event.button === 0) {
 					// Attention:
@@ -2593,9 +2688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					pointerId = undefined;
 					opt.dragClass && $elem.removeClass(opt.dragClass);
 
-					eventRemovers.forEach(function (eventRemover) {
-						return eventRemover();
-					});
+					eventRemovers.forEach(eventRemover => eventRemover());
 					eventRemovers = [];
 
 					if (wasDragging) {
@@ -2603,11 +2696,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						$("html").removeClass(resetAllCursorsClass$1);
 						elem.ownerDocument.documentElement.style.setProperty("cursor", htmlCursor);
 
-						var event2 = $.Event("draggableend");
-						event2.revert = function () {
-							$elem.offset(elemRect);
-						};
-						$elem.trigger(event2);
+						$elem.triggerNative("draggableend", {
+							revert: function () {
+								$elem.offset(elemRect);
+							}
+						});
 					}
 				}
 			}
@@ -2622,9 +2715,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			$elem.removeClass(draggableClass);
 			var opt = loadOptions("draggable", $elem);
 			opt.handleElem.css("touch-action", opt.originalTouchAction);
-			opt.eventRemovers.forEach(function (eventRemover) {
-				return eventRemover();
-			});
+			opt.eventRemovers.forEach(eventRemover => eventRemover());
 		});
 	}
 
@@ -2642,13 +2733,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Indicates whether the dropdown is closed when clicking anywhere outside of it. Default: true.
 		autoClose: true,
-
+		
 		// Indicates whether the dropdown is closed when the window is resized. Default: true.
 		closeOnResize: true,
-
+		
 		// Indicates whether the dropdown is closed when the document is hidden. Default: true.
 		closeOnHide: true,
-
+		
 		// The maximum height of the dropdown, in pixels. Default: 0 (no limit).
 		maxHeight: 0,
 
@@ -2665,15 +2756,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Opens a dropdown with the selected element and places it at the specified target element.
 	function createDropdown(target, options) {
 		var dropdown = this.first();
-		if (dropdown.length === 0) return this; // Nothing to do
+		if (dropdown.length === 0) return this;   // Nothing to do
 		if (dropdown.parent().hasClass(dropdownContainerClass)) {
-			var oldContainer = dropdown.parent();
+			let oldContainer = dropdown.parent();
 			if (oldContainer.hasClass("closed")) {
 				// Already closed but the transition hasn't completed yet. Bring it to an end right now.
 				dropdown.appendTo("body");
 				oldContainer.remove();
-			} else {
-				return; // Already open
+			}
+			else {
+				return;   // Already open
 			}
 		}
 		var opt = initOptions("dropdown", dropdownDefaults, dropdown, {}, options);
@@ -2682,7 +2774,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (!opt.placement) {
 			opt.placement = "bottom-left";
 			autoPlacement = true;
-		} else if (opt.placement === "right") {
+		}
+		else if (opt.placement === "right") {
 			opt.placement = "bottom-right";
 			autoPlacement = true;
 		}
@@ -2731,39 +2824,46 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Place at bottom side, align left, by default
 		var top = targetRect.bottom,
-		    left = targetRect.left,
-		    direction = "bottom";
+			left = targetRect.left,
+			direction = "bottom";
 
 		if (optPlacement.startsWith("top")) {
 			top = targetRect.top - dropdownHeight;
 			direction = "top";
-		} else if (optPlacement.startsWith("bottom")) {
+		}
+		else if (optPlacement.startsWith("bottom")) {
 			top = targetRect.bottom;
 			direction = "bottom";
-		} else if (optPlacement.startsWith("left")) {
+		}
+		else if (optPlacement.startsWith("left")) {
 			left = targetRect.left - dropdownWidth;
 			direction = "left";
 			isRightAligned = true;
-		} else if (optPlacement.startsWith("right")) {
+		}
+		else if (optPlacement.startsWith("right")) {
 			left = targetRect.right;
 			direction = "right";
 		}
 
 		if (optPlacement.endsWith("left")) {
 			left = targetRect.left;
-		} else if (optPlacement.endsWith("right")) {
+		}
+		else if (optPlacement.endsWith("right")) {
 			left = targetRect.right - dropdownWidth;
 			isRightAligned = true;
-		} else if (optPlacement.endsWith("top")) {
+		}
+		else if (optPlacement.endsWith("top")) {
 			top = targetRect.top;
-		} else if (optPlacement.endsWith("bottom")) {
+		}
+		else if (optPlacement.endsWith("bottom")) {
 			top = targetRect.bottom - dropdownHeight;
 		}
 
 		if (optPlacement === "top-center" || optPlacement === "bottom-center") {
 			left = (targetRect.left + targetRect.right) / 2 - dropdownWidth / 2;
 			isHorizontallyCentered = true;
-		} else if (optPlacement === "left-center" || optPlacement === "right-center") {
+		}
+		else if (optPlacement === "left-center" || optPlacement === "right-center") {
 			top = (targetRect.top + targetRect.bottom) / 2 - dropdownHeight / 2;
 		}
 
@@ -2771,45 +2871,51 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			left = viewportWidth - dropdownWidth;
 		}
 		if (autoPlacement && top + dropdownHeight > viewportHeight + scrollTop) {
-			var topSpace = targetRect.top - scrollTop;
-			var bottomSpace = viewportHeight + scrollTop - targetRect.bottom;
+			let topSpace = targetRect.top - scrollTop;
+			let bottomSpace = viewportHeight + scrollTop - targetRect.bottom;
 			if (topSpace > bottomSpace) {
 				top = targetRect.top - dropdownHeight;
 				direction = "top";
 			}
 		}
-
-		var availableHeight = void 0;
+		
+		let availableHeight;
 		if (direction === "top") {
 			availableHeight = targetRect.top - scrollTop;
-		} else if (direction === "bottom") {
+		}
+		else if (direction === "bottom") {
 			availableHeight = viewportHeight + scrollTop - targetRect.bottom;
-		} else {
+		}
+		else {
 			availableHeight = viewportHeight;
 		}
 		if (dropdownHeight > availableHeight) {
 			dropdownHeight = availableHeight;
 			container.outerHeight(dropdownHeight);
 			isReducedHeight = true;
-			if (direction === "top") top = targetRect.top - dropdownHeight;
+			if (direction === "top")
+				top = targetRect.top - dropdownHeight;
 		}
 
 		if (direction === "left" || direction === "right") {
 			if (top + dropdownHeight > viewportHeight + scrollTop) {
 				top = viewportHeight + scrollTop - dropdownHeight;
-			} else if (top < scrollTop) {
+			}
+			else if (top < scrollTop) {
 				top = scrollTop;
 			}
-		} else if (direction === "top" || direction === "bottom") {
+		}
+		else if (direction === "top" || direction === "bottom") {
 			if (left + dropdownWidth > viewportWidth + scrollLeft) {
 				left = viewportWidth + scrollLeft - dropdownWidth;
-			} else if (left < scrollLeft) {
+			}
+			else if (left < scrollLeft) {
 				left = scrollLeft;
 			}
 		}
-
+		
 		if (isReducedHeight) {
-			var scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
+			let scrollbarWidth = container[0].offsetWidth - container[0].clientWidth;
 			if (scrollbarWidth > 0) {
 				dropdownWidth += scrollbarWidth;
 				if (dropdownWidth > viewportWidth) {
@@ -2818,26 +2924,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				container.outerWidth(dropdownWidth);
 				if (isRightAligned) {
 					left -= scrollbarWidth;
-				} else if (isHorizontallyCentered) {
+				}
+				else if (isHorizontallyCentered) {
 					left -= scrollbarWidth / 2;
 				}
 
 				if (left + dropdownWidth > viewportWidth + scrollLeft) {
 					left = viewportWidth + scrollLeft - dropdownWidth;
-				} else if (left < scrollLeft) {
+				}
+				else if (left < scrollLeft) {
 					left = scrollLeft;
 				}
 			}
 		}
 
 		// Scroll to the first selected item in the dropdown (used for selectable)
-		var selectedChild = dropdown.children(".selected").first();
+		let selectedChild = dropdown.children(".selected").first();
 		if (selectedChild.length > 0) {
-			var selectedTop = selectedChild.position().top;
+			let selectedTop = selectedChild.position().top;
 			container.scrollTop(selectedTop + selectedChild.height() / 2 - dropdownHeight / 2);
 		}
 
-		container.offset({ top: top, left: left }).addClass("animate-" + direction);
+		container.offset({ top: top, left: left })
+			.addClass("animate-" + direction);
 		forceReflow();
 		container.addClass("open");
 
@@ -2856,22 +2965,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				event.stopImmediatePropagation();
 			});
 		}
-
+		
 		if (opt.closeOnResize === undefined || opt.closeOnResize) {
 			$window.on("resize.dropdown", tryClose);
 		}
-
+		
 		if (opt.closeOnHide === undefined || opt.closeOnHide) {
 			$(document).on("visibilitychange.dropdown", function () {
-				if (document.hidden) tryClose();
+				if (document.hidden)
+					tryClose();
 			});
 		}
 		return this;
 
 		function tryClose() {
-			var event = $.Event("dropdownclose");
-			dropdown.trigger(event);
-			if (!event.isDefaultPrevented()) {
+			var event = dropdown.triggerNative("dropdownclose");
+			if (!event.defaultPrevented) {
 				dropdown.dropdown.close(true);
 			}
 		}
@@ -2881,7 +2990,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	//
 	function isDropdownOpen() {
 		var dropdown = this.first();
-		if (dropdown.length === 0) return this; // Nothing to do
+		if (dropdown.length === 0) return this;   // Nothing to do
 		var container = dropdown.parent();
 		return container.hasClass(dropdownContainerClass);
 	}
@@ -2891,9 +3000,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// closeEventTriggered: For internal use.
 	function closeDropdown(closeEventTriggered) {
 		var dropdown = this.first();
-		if (dropdown.length === 0) return this; // Nothing to do
+		if (dropdown.length === 0) return this;   // Nothing to do
 		var container = dropdown.parent();
-		if (!container.hasClass(dropdownContainerClass)) return this; // Dropdown is not open
+		if (!container.hasClass(dropdownContainerClass)) return this;   // Dropdown is not open
 		//var opt = loadOptions("dropdown", dropdown);
 
 		$(document).off("mousedown.dropdown-close");
@@ -2903,8 +3012,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			container.remove();
 		});
 		if (!closeEventTriggered) {
-			var event = $.Event("dropdownclose");
-			dropdown.trigger(event);
+			dropdown.triggerNative("dropdownclose");
 		}
 		$(window).off("resize.dropdown");
 		$(document).off("visibilitychange.dropdown");
@@ -2917,7 +3025,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	});
 	$.fn.dropdown.defaults = dropdownDefaults;
 
-	var replacementKey = "ff-replacement";
+	const replacementKey = "ff-replacement";
 
 	var inputWrapperClass$1 = "ff-input-wrapper";
 	var repeatButtonClass = "ff-repeat-button";
@@ -2929,12 +3037,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// The button will not trigger a click event anymore but instead repeatclick events.
 	function repeatButton() {
 		return this.each$(function (_, button) {
-			if (button.hasClass(repeatButtonClass)) return; // Already done
+			if (button.hasClass(repeatButtonClass)) return;   // Already done
 			button.addClass(repeatButtonClass);
 			var timeout, ms;
 			button.on("mousedown touchstart", function (event) {
 				event.preventDefault();
-				button.addClass("ff-active"); // CSS :active doesn't trigger, do it manually with an alternate class
+				button.addClass("ff-active");   // CSS :active doesn't trigger, do it manually with an alternate class
 				ms = 500;
 				click();
 			});
@@ -2964,7 +3072,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Adds buttons to each selected input[type=number] element to decrement or increment the value.
 	function spinner() {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass$1)) return;   // Already done
 
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
@@ -2973,7 +3081,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Add control buttons
 			var buttons = [];
-			var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text('\u2212'); // &minus;
+			var decButton = $("<button type='button'/>").addClass("button").appendTo(wrapper).attr("tabindex", "-1").text("\u2212");   // &minus;
 			buttons.push(decButton);
 			decButton.on("repeatclick", function () {
 				if (input.disabled()) return;
@@ -2982,22 +3090,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? +min : 0;
 				var stepAttr = "";
-				if (input.data("step")) stepAttr = input.data("step") + "";else if (input.attr("step")) stepAttr = input.attr("step");
-				var match = stepAttr.match(/^\s*\*(.*)/);
+				if (input.data("step"))
+					stepAttr = input.data("step") + "";
+				else if (input.attr("step"))
+					stepAttr = input.attr("step");
+				let match = stepAttr.match(/^\s*\*(.*)/);
 				if (match) {
-					var factor = +match[1] || 10;
-					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max)) value /= factor;
-				} else {
+					let factor = +match[1] || 10;
+					if ((min === undefined || value / factor >= min) && (max === undefined || value / factor <= max))
+						value /= factor;
+				}
+				else {
 					if (max !== undefined && value > +max) value = +max + 1;
 					var step = +stepAttr || 1;
-					var corr = step / 1000; // Correct JavaScript's imprecise numbers
-					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase; // Set to next-smaller valid step
+					var corr = step / 1000;   // Correct JavaScript's imprecise numbers
+					value = (Math.ceil((value - stepBase - corr) / step) - 1) * step + stepBase;   // Set to next-smaller valid step
 					if (min !== undefined && value < +min) value = +min;
-					while (max !== undefined && value > +max) {
-						value -= step;
-					}
+					while (max !== undefined && value > +max) value -= step;
 				}
-				var valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
+				let valueStr = value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
 				input.val(valueStr);
 				input.trigger("input").change();
 			});
@@ -3011,23 +3122,26 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var max = input.attr("max");
 				var stepBase = min !== undefined ? +min : 0;
 				var stepAttr = "";
-				if (input.data("step")) stepAttr = input.data("step") + "";else if (input.attr("step")) stepAttr = input.attr("step");
-				var match = stepAttr.match(/^\s*\*(.*)/);
+				if (input.data("step"))
+					stepAttr = input.data("step") + "";
+				else if (input.attr("step"))
+					stepAttr = input.attr("step");
+				let match = stepAttr.match(/^\s*\*(.*)/);
 				if (match) {
-					var factor = +match[1] || 10;
-					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max)) value *= factor;
-				} else {
+					let factor = +match[1] || 10;
+					if ((min === undefined || value * factor >= min) && (max === undefined || value * factor <= max))
+						value *= factor;
+				}
+				else {
 					if (max !== undefined && value > +max) value = +max + 1;
 					var step = +stepAttr || 1;
-					var corr = step / 1000; // Correct JavaScript's imprecise numbers
+					var corr = step / 1000;   // Correct JavaScript's imprecise numbers
 					// TODO: With max=100 and step=0.1, incrementing from 100 results in 99.9 again. JavaScript double precision is still broken here!
-					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase; // Set to next-greater valid step
+					value = (Math.floor((value - stepBase + corr) / step) + 1) * step + stepBase;   // Set to next-greater valid step
 					if (min !== undefined && value < +min) value = +min;
-					while (max !== undefined && value > +max) {
-						value -= step;
-					}
+					while (max !== undefined && value > +max) value -= step;
 				}
-				var valueStr = +value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, ""); // Correct JavaScript's imprecise numbers again
+				let valueStr = +value.toFixed(10).replace(/0+$/, "").replace(/[.,]$/, "");   // Correct JavaScript's imprecise numbers again
 				input.val(valueStr);
 				input.trigger("input").change();
 			});
@@ -3041,44 +3155,53 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Converts each selected checkbox input into a toggle button.
 	function toggleButton() {
 		return this.each$(function (_, input) {
-			if (!input.is("input[type=checkbox]")) return; // Wrong element
-			var content = void 0;
-			var isActive = input.prop("checked");
+			if (!input.is("input[type=checkbox]")) return;   // Wrong element
+			let content;
+			let isActive = input.prop("checked");
 			//let activeValue = input.attr("value");
-			var button = void 0;
+			let button;
 			if (input.parent().is("label")) {
-				var label = input.parent();
+				let label = input.parent();
 				input.insertBefore(label);
 				content = label.html();
 				label.remove();
-			} else if (input.attr("id")) {
-				var _label = $("label[for='" + input.attr("id") + "']");
-				if (_label.length > 0) {
-					content = _label.html();
-					_label.remove();
+			}
+			else if (input.attr("id")) {
+				let label = $("label[for='" + input.attr("id") + "']");
+				if (label.length > 0) {
+					content = label.html();
+					label.remove();
 				}
 			}
-
-			button = $("<button/>").attr("type", "button").attr("title", input.attr("title")).attr("style", input.attr("style")).addClass("button toggle-button").html(content).insertAfter(input);
+			
+			button = $("<button/>")
+				.attr("type", "button")
+				.attr("title", input.attr("title"))
+				.attr("style", input.attr("style"))
+				.addClass("button toggle-button")
+				.html(content)
+				.insertAfter(input);
 			//input.attr("type", "hidden");
 			input.hide();
 			input.data(replacementKey, button);
 			// Copy some CSS classes to the button
-			["narrow", "transparent", "input-validation-error"].forEach(function (clsName) {
-				if (input.hasClass(clsName)) button.addClass(clsName);
+			["narrow", "transparent", "input-validation-error"].forEach(clsName => {
+				if (input.hasClass(clsName))
+					button.addClass(clsName);
 			});
 
-			if (isActive) button.addClass("active");
+			if (isActive)
+				button.addClass("active");
 			//else
 			//	input.val("");
 
-			button.click(function () {
+			button.click(() => {
 				button.toggleClass("active");
 				//input.val(button.hasClass("active") ? activeValue : "");
 				input.prop("checked", button.hasClass("active")).change();
 			});
-
-			input.on("change", function () {
+			
+			input.on("change", () => {
 				button.toggleClass("active", input.prop("checked"));
 			});
 		});
@@ -3089,10 +3212,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Converts each selected input[type=color] element into a text field with color picker button.
 	function colorPicker() {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass$1)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass$1)) return;   // Already done
 			var lastColor;
 
-			input.attr("type", "text").attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false");
+			input.attr("type", "text")
+				.attr("autocapitalize", "off")
+				.attr("autocomplete", "off")
+				.attr("autocorrect", "off")
+				.attr("spellcheck", "false");
 
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass$1).attr("style", input.attr("style"));
@@ -3101,14 +3228,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// Create picker dropdown
 			var dropdown = $("<div/>").addClass("dropdown bordered ff-colorpicker");
 			dropdown.keydown(function (event) {
-				if (event.keyCode >= 37 && event.keyCode <= 40) {
-					// Arrow keys
+				if (event.keyCode >= 37 && event.keyCode <= 40) {   // Arrow keys
 					event.preventDefault();
 					dropdown.find("button").first().focus();
 					dropdown.removeAttr("tabindex");
 				}
-				if (event.keyCode === 27) {
-					// Esc
+				if (event.keyCode === 27) {   // Esc
 					event.preventDefault();
 					dropdown.dropdown.close();
 					pickButton[0].focus();
@@ -3119,46 +3244,42 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var buttons = [];
 			var pickButton = $("<button type='button'/>").addClass("button ff-colorbutton").appendTo(wrapper);
 			buttons.push(pickButton);
-			var colorBox = $("<div/>").appendTo(pickButton).text('\u2026'); // &hellip;
-			input.on("input change", function () {
-				return setColor(lastColor = input.val());
-			});
+			var colorBox = $("<div/>").appendTo(pickButton).text("\u2026");   // &hellip;
+			input.on("input change", () => setColor(lastColor = input.val()));
 			setColor(lastColor = input.val());
 
 			// Create dropdown contents
 			// Add grey tones explicitly
 			var colors = [0x000000, 0x404040, 0x707070, 0xa0a0a0, 0xd0d0d0, 0xf0f0f0, 0xffffff];
 			// Add colors with shades
-			[0xff0000, // red
-			0xff8000, // orange
-			0xffc000, // orangeyellow
-			0xffe000, // gold
-			0xffff00, // yellow
-			0xc0ff00, // greenyellow
-			0x00ff00, // green
-			0x00ffc0, // greencyan
-			0x00ffff, // cyan
-			0x00c0ff, // bluecyan
-			0x0080ff, // lightblue
-			0x0000ff, // blue
-			0x8000ff, // purple
-			0xc000ff, // violet
-			0xff00ff // magenta
+			[
+				0xff0000,   // red
+				0xff8000,   // orange
+				0xffc000,   // orangeyellow
+				0xffe000,   // gold
+				0xffff00,   // yellow
+				0xc0ff00,   // greenyellow
+				0x00ff00,   // green
+				0x00ffc0,   // greencyan
+				0x00ffff,   // cyan
+				0x00c0ff,   // bluecyan
+				0x0080ff,   // lightblue
+				0x0000ff,   // blue
+				0x8000ff,   // purple
+				0xc000ff,   // violet
+				0xff00ff    // magenta
 			].forEach(function (baseColor_) {
 				var baseColor = Color(baseColor_);
-				[0.75, 0.5, 0.25].forEach(function (factor) {
-					return colors.push(baseColor.blendWith(0x000000, factor));
-				});
+				[0.75, 0.5, 0.25].forEach(factor => colors.push(baseColor.blendWith(0x000000, factor)));
 				colors.push(baseColor.toHTML());
-				[0.5, 0.75, 0.875].forEach(function (factor) {
-					return colors.push(baseColor.blendWith(0xffffff, factor));
-				});
+				[0.5, 0.75, 0.875].forEach(factor => colors.push(baseColor.blendWith(0xffffff, factor)));
 			});
 			var buttonRow;
 			colors.forEach(function (color, index) {
 				color = Color(color);
 				color.format = "HTML";
-				if (index % 7 === 0) buttonRow = $("<div/>").appendTo(dropdown);
+				if (index % 7 === 0)
+					buttonRow = $("<div/>").appendTo(dropdown);
 				var button = $("<button type='button'/>").addClass("button").css("background", color).data("color", String(color)).appendTo(buttonRow);
 				if (color.isDark()) button.addClass("dark");
 				button.click(function (event) {
@@ -3176,34 +3297,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					var newButton;
 
 					switch (event.keyCode) {
-						case 37:
-							// Left
+						case 37:   // Left
 							newButton = activeButton.prev();
 							break;
-						case 39:
-							// Right
+						case 39:   // Right
 							newButton = activeButton.next();
 							break;
-						case 40:
-							// Down
+						case 40:   // Down
 							newButton = activeButton.parent().next().children().eq(activeButton.index());
 							break;
-						case 38:
-							// Up
+						case 38:   // Up
 							newButton = activeButton.parent().prev().children().eq(activeButton.index());
 							break;
-						case 27:
-							// Esc
+						case 27:   // Esc
 							setColor(lastColor, true);
 							dropdown.dropdown.close();
 							pickButton[0].focus();
 							break;
-						case 13:
-							// Enter
+						case 13:   // Enter
 							button.click();
 							break;
 						default:
-							return; // Not handled
+							return;   // Not handled
 					}
 
 					event.preventDefault();
@@ -3224,7 +3339,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				dropdown.dropdown(pickButton, { placement: "right" });
 				if (activeButton) {
 					activeButton.focus();
-				} else {
+				}
+				else {
 					dropdown.attr("tabindex", "-1");
 					dropdown.focus();
 				}
@@ -3246,9 +3362,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Applies the enhanced style on the selected checkbox and radio input elements.
 	function styleCheckbox() {
 		return this.each$(function (_, input) {
-			if (input.hasClass(styleCheckboxClass)) return; // Already done
-			if (!input.is("input[type=checkbox], input[type=radio]")) return; // Wrong element
-			if (input.hasClass("toggle-button")) return; // Hidden and replaced by a button
+			if (input.hasClass(styleCheckboxClass)) return;   // Already done
+			if (!input.is("input[type=checkbox], input[type=radio]")) return;   // Wrong element
+			if (input.hasClass("toggle-button")) return;   // Hidden and replaced by a button
 
 			if (input.parents("label").length === 0) {
 				// Styled input needs a label around it to remain clickable
@@ -3263,8 +3379,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes each selected checkbox cycle through indeterminate (third) state on clicking.
 	function threeState() {
 		return this.each$(function (_, input) {
-			if (input.hasClass(treeStateClass)) return; // Already done
-			if (!input.is("input[type=checkbox]")) return; // Wrong element
+			if (input.hasClass(treeStateClass)) return;   // Already done
+			if (!input.is("input[type=checkbox]")) return;   // Wrong element
 			input.addClass(treeStateClass);
 
 			var cb = input[0];
@@ -3277,9 +3393,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					// Was unchecked and not readonly (indeterminate) -> uncheck and make indeterminate
 					cb.checked = false;
 					cb.readOnly = cb.indeterminate = true;
-				} else if (cb.readOnly) {
+				}
+				else if (cb.readOnly) {
 					// Was readonly (indeterminate) -> check and forget indeterminate state (unset readonly)
-					cb.checked = true; // Firefox and Chrome are already checked here, Edge is not
+					cb.checked = true;   // Firefox and Chrome are already checked here, Edge is not
 					cb.readOnly = false;
 				}
 			});
@@ -3292,7 +3409,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function autoHeight(minRows, maxRows, extraRows) {
 		minRows = minRows || 3;
 		return this.each$(function (_, textarea) {
-			if (textarea.parent().hasClass(textareaWrapperClass)) return; // Already done
+			if (textarea.parent().hasClass(textareaWrapperClass)) return;   // Already done
 
 			// Put a wrapper between the textarea and its parent, and host a new shadow element in
 			// the wrapper as well. The textarea is set to fill the container, and the shadow
@@ -3314,7 +3431,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			updateShadow();
 
 			// The autofocus option often gets lost after this, so redo it explicitly
-			if (textarea.prop("autofocus")) textarea.focus();
+			if (textarea.prop("autofocus"))
+				textarea.focus();
 
 			function updateShadow() {
 				// Copy textarea contents; browser will calculate correct height of shadow copy,
@@ -3322,11 +3440,23 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// Also make sure the last line break is visible.
 				// Add an extra line break to convince the browser that the textarea doesn't need a scrollbar.
 				var text = textarea.val().replace(/\n$/, "\n.");
-				if (extraRows) text += "\n.".repeat(extraRows);
+				if (extraRows)
+					text += "\n.".repeat(extraRows);
 				shadowContent.text(text);
 
 				// Copy all layout-relevant styles from textarea to shadow element, in case they've changed
-				["border-bottom-style", "border-bottom-width", "border-left-style", "border-left-width", "border-right-style", "border-right-width", "border-top-style", "border-top-width", "font-family", "font-feature-settings", "font-kerning", "font-size", "font-stretch", "font-style", "font-variant", "font-variant-alternates", "font-variant-caps", "font-variant-east-asian", "font-variant-ligatures", "font-variant-numeric", "font-variant-position", "font-weight", "hyphens", "letter-spacing", "line-height", "padding-bottom", "padding-left", "padding-right", "padding-top", "text-transform", "word-break", "word-spacing"].forEach(copyStyle);
+				[
+					"border-bottom-style", "border-bottom-width",
+					"border-left-style", "border-left-width",
+					"border-right-style", "border-right-width",
+					"border-top-style", "border-top-width",
+					"font-family", "font-feature-settings", "font-kerning", "font-size", "font-stretch", "font-style",
+					"font-variant", "font-variant-alternates", "font-variant-caps", "font-variant-east-asian",
+					"font-variant-ligatures", "font-variant-numeric", "font-variant-position", "font-weight",
+					"hyphens", "letter-spacing", "line-height",
+					"padding-bottom", "padding-left", "padding-right", "padding-top",
+					"text-transform", "word-break", "word-spacing"
+				].forEach(copyStyle);
 			}
 
 			function copyStyle(name) {
@@ -3346,7 +3476,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Locks form submit buttons for a moment to avoid accidental double-submit.
 	function submitLock(options) {
 		return this.each$(function (_, button) {
-			if (button.data("hasSubmitLock")) return; // Already done
+			if (button.data("hasSubmitLock")) return;   // Already done
 			button.data("hasSubmitLock", true);
 
 			var opt = initOptions("submitLock", submitLockDefaults, button, {}, options);
@@ -3360,16 +3490,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				}, 500);
 			});
 
-			var icon = button.find("i:empty");
-			var loading = void 0;
+			let icon = button.find("i:empty");
+			let loading;
 
 			// Connect with form submit event if there is a form; otherwise, only explicit locking
 			// available for this button
-			var form = button[0].form;
+			let form = button[0].form;
 			if (form) {
 				$(form).on("submit", function (event) {
 					//event.preventDefault();   // DEBUG
-					if (button.disabled()) return; // Nothing to do for this button
+					if (button.disabled()) return;   // Nothing to do for this button
 					lockButton(opt.timeout);
 				});
 			}
@@ -3379,14 +3509,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				button.disable();
 				if (icon.length > 0) {
 					if (button.data("submitLockClicked")) {
-						var iconWidth = icon.width();
-						var iconMarginLeft = parseFloat(icon.css("margin-left"));
-						var iconMarginRight = parseFloat(icon.css("margin-right"));
+						let iconWidth = icon.width();
+						let iconMarginLeft = parseFloat(icon.css("margin-left"));
+						let iconMarginRight = parseFloat(icon.css("margin-right"));
 						icon.hide();
-						loading = $("<i/>").addClass("loading thick").css("font-size", "1em").css("vertical-align", "-2px").insertAfter(icon);
-						var loadingWidth = loading.width();
-						var dx = loadingWidth - iconWidth;
-						loading.css("margin-left", -dx / 2 + iconMarginLeft).css("margin-right", -dx / 2 + iconMarginRight);
+						loading = $("<i/>")
+							.addClass("loading thick")
+							.css("font-size", "1em")
+							.css("vertical-align", "-2px")
+							.insertAfter(icon);
+						let loadingWidth = loading.width();
+						let dx = loadingWidth - iconWidth;
+						loading
+							.css("margin-left", -dx / 2 + iconMarginLeft)
+							.css("margin-right", -dx / 2 + iconMarginRight);
 					}
 				}
 
@@ -3434,9 +3570,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			itemsWithSubmenu.each$(function (_, item) {
 				item.addClass("ff-has-submenu");
 				var submenu = item.children("ul").first();
-				if (submenu.hasClass("ff-submenu")) return; // Already done
+				if (submenu.hasClass("ff-submenu")) return;   // Already done
 				submenu.addClass("ff-submenu dropdown");
-				if (item.closest("nav").length > 0) submenu.addClass("nav");
+				if (item.closest("nav").length > 0)
+					submenu.addClass("nav");
 
 				// Open submenu on click
 				item.children("a").first().click(function (event) {
@@ -3460,7 +3597,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						obj.addClass("separator");
 					}
 				});
-
+				
 				// Close submenu when clicking on one of its items
 				submenu.find("li > a:not(.stay-open)").each$(function (_, obj) {
 					obj.click(function () {
@@ -3468,7 +3605,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					});
 				});
 			});
-
+			
 			// Replace # href with a true no-op
 			menu.find("li > a[href='#']").attr("href", "javascript:");
 		});
@@ -3481,7 +3618,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes each selected message div element closable by adding a close button to it.
 	function closableMessage() {
 		return this.each$(function (_, message) {
-			if (message.find("." + messageCloseButtonClass).length !== 0) return; // Already added
+			if (message.find("." + messageCloseButtonClass).length !== 0) return;   // Already added
 
 			// Add close button
 			var closeButton = $("<a/>").addClass(messageCloseButtonClass).attr("href", "#").appendTo(message);
@@ -3518,11 +3655,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Dims the entire document by adding an overlay.
 	function dimBackground(noinput) {
 		dimCount++;
-		if ($("body > div." + backgroundDimmerClass + ":not(.closing)").length !== 0) return; // Already there
+		if ($("body > div." + backgroundDimmerClass + ":not(.closing)").length !== 0) return;   // Already there
 		var existingBackgroundLayer = $("body > div." + backgroundDimmerClass);
-		if (existingBackgroundLayer.length === 0) $("body").trigger("dim");
+		if (existingBackgroundLayer.length === 0)
+			$("body").trigger("dim");
 		$("body").addClass(dimmingClass).addClass(dimmedClass);
-		var backgroundLayer = $("<div/>").addClass(backgroundDimmerClass).appendTo("body");
+		var backgroundLayer = $("<div/>")
+			.addClass(backgroundDimmerClass)
+			.appendTo("body");
 		noinput && backgroundLayer.addClass("noinput");
 		forceReflow();
 		backgroundLayer.css("opacity", "1");
@@ -3532,9 +3672,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// fade-out transition.
 	function undimBackground() {
 		var backgroundLayer = $("body > div." + backgroundDimmerClass);
-		if (backgroundLayer.length === 0) return; // Not there
+		if (backgroundLayer.length === 0) return;   // Not there
 		dimCount--;
-		if (dimCount > 0) return false; // Not the last one, keep it dimmed
+		if (dimCount > 0) return false;   // Not the last one, keep it dimmed
 		var $body = $("body");
 		$body.removeClass(dimmedClass);
 		backgroundLayer.addClass("closing").css("opacity", "0");
@@ -3560,10 +3700,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Indicates whether the modal is closed when clicking anywhere outside of it or pressing Esc.
 		// This also shows a close button in the model overlay. Default: true.
 		cancellable: true,
-
+		
 		// The tooltip text for the close button. Default: empty.
 		closeTooltip: "",
-
+		
 		// Indicates whether the page background is dimmed while the modal is open. Default: true.
 		dimBackground: true,
 
@@ -3574,18 +3714,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Opens a modal with the selected element.
 	function modal(options) {
 		var modal = this.first();
-		if (modal.length === 0) return this; // Nothing to do
-		if (modal.parent().hasClass(modalClass)) return this; // Already open
+		if (modal.length === 0) return this;   // Nothing to do
+		if (modal.parent().hasClass(modalClass)) return this;   // Already open
 		modalLevel++;
 		var opt = initOptions("modal", modalDefaults, modal, {}, options);
 		opt.level = modalLevel;
-		if (opt.dimBackground && modalLevel === 1) dimBackground();
+		if (opt.dimBackground && modalLevel === 1)
+			dimBackground();
 
 		var container = $("<div/>").addClass(modalClass).appendTo("body");
 		modal.appendTo(container);
 		modal.find(":focusable").first().focus().blur();
 
-		if (modalLevel === 1) preventScrolling();
+		if (modalLevel === 1)
+			preventScrolling();
 
 		// Prevent moving the focus out of the modal
 		$(document).on("focusin" + modalEventNamespace + "-" + opt.level, function (event) {
@@ -3606,18 +3748,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		if (opt.cancellable) {
 			// Close on pressing the Escape key or clicking outside the modal
 			$(document).on("keydown" + modalEventNamespace + "-" + opt.level, function (event) {
-				if (event.keyCode === 27) {
-					// Escape
-					if (modalLevel === opt.level) {
-						// There might be another modal on top
+				if (event.keyCode === 27) {   // Escape
+					if (modalLevel === opt.level) {   // There might be another modal on top
 						event.preventDefault();
 						modal.modal.close();
 					}
 				}
-				if (event.keyCode === 13 && opt.defaultAction) {
-					// Enter
-					if (modalLevel === opt.level) {
-						// There might be another modal on top
+				if (event.keyCode === 13 && opt.defaultAction) {   // Enter
+					if (modalLevel === opt.level) {   // There might be another modal on top
 						event.preventDefault();
 						opt.defaultAction();
 					}
@@ -3634,7 +3772,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Add default close button
 			closeButton = $("<a/>").addClass(modalCloseButtonClass).attr("href", "#").appendTo(modal);
-			if (opt.closeTooltip) closeButton[0].title = opt.closeTooltip;
+			if (opt.closeTooltip)
+				closeButton[0].title = opt.closeTooltip;
 			closeButton.click(function (event) {
 				event.preventDefault();
 				if (event.button === 0) {
@@ -3648,22 +3787,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Closes the selected modal.
 	function closeModal() {
 		var modal = this.first();
-		if (modal.length === 0) return this; // Nothing to do
+		if (modal.length === 0) return this;   // Nothing to do
 		var container = modal.parent();
-		if (!container.hasClass(modalClass)) return this; // Modal is not open
+		if (!container.hasClass(modalClass)) return this;   // Modal is not open
 		modalLevel--;
 		var opt = loadOptions("modal", modal);
 		var closeButton = modal.find("." + modalCloseButtonClass).first();
 
-		if (!modalLevel) preventScrolling(false);
+		if (!modalLevel)
+			preventScrolling(false);
 		$(document).off("focusin" + modalEventNamespace + "-" + opt.level);
 		$(document).off("keydown" + modalEventNamespace + "-" + opt.level);
 		modal.appendTo("body");
 		container.remove();
-		if (closeButton) closeButton.remove();
-		if (opt.dimBackground && !modalLevel) undimBackground();
+		if (closeButton)
+			closeButton.remove();
+		if (opt.dimBackground && !modalLevel)
+			undimBackground();
 
-		var event = $.Event("close");
+		let event = $.Event("close");
 		modal.trigger(event);
 		return this;
 	}
@@ -3696,27 +3838,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				resultHandler: closeHandler
 			};
 		}
+		
+		let modal = $("<div/>")
+			.addClass("modal");
+		if (options.className)
+			modal.addClass(options.className);
+		let content = $("<div/>")
+			.css("overflow", "auto")
+			.css("max-height", "calc(100vh - 80px - 5em)")   // padding of modal, height of buttons
+			.appendTo(modal);
+		if (options.content)
+			content.append(options.content);
+		else if (options.html)
+			content.html(options.html);
+		else if (options.text)
+			content.text(options.text).css("white-space", "pre-wrap");
 
-		var modal = $("<div/>").addClass("modal");
-		if (options.className) modal.addClass(options.className);
-		var content = $("<div/>").css("overflow", "auto").css("max-height", "calc(100vh - 80px - 5em)") // padding of modal, height of buttons
-		.appendTo(modal);
-		if (options.content) content.append(options.content);else if (options.html) content.html(options.html);else if (options.text) content.text(options.text).css("white-space", "pre-wrap");
-
-		var buttons = options.buttons;
+		let buttons = options.buttons;
 		if (typeof buttons === "string") {
 			switch (buttons) {
 				case "OK":
-					buttons = [{ text: "OK", className: "default", result: true }];
+					buttons = [
+						{ text: "OK", className: "default", result: true }
+					];
 					break;
 				case "OK cancel":
-					buttons = [{ text: "OK", className: "default", result: true }, { text: "Cancel", className: "transparent", result: false }];
+					buttons = [
+						{ text: "OK", className: "default", result: true },
+						{ text: "Cancel", className: "transparent", result: false }
+					];
 					break;
 				case "YES no":
-					buttons = [{ text: "Yes", className: "default", result: true }, { text: "No", result: false }];
+					buttons = [
+						{ text: "Yes", className: "default", result: true },
+						{ text: "No", result: false }
+					];
 					break;
 				case "yes NO":
-					buttons = [{ text: "Yes", result: true }, { text: "No", className: "default", result: false }];
+					buttons = [
+						{ text: "Yes", result: true },
+						{ text: "No", className: "default", result: false }
+					];
 					break;
 				default:
 					buttons = [];
@@ -3724,27 +3886,38 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 		}
 
-		var buttonsElement = void 0;
-		var buttonPressed = false;
+		let buttonsElement;
+		let buttonPressed = false;
 		if (buttons && buttons.length > 0) {
-			buttonsElement = $("<div/>").addClass("buttons").appendTo(modal);
+			buttonsElement = $("<div/>")
+				.addClass("buttons")
+				.appendTo(modal);
 			buttons.forEach(function (button) {
-				var buttonElement = $("<button/>").addClass("button").addClass(button.className).appendTo(buttonsElement);
-				if (button.icon) buttonElement.append($("<i/>").addClass(button.icon));
-				if (button.icon && button.text) buttonElement.append(" ");
-				if (button.text) buttonElement.append(button.text);
+				let buttonElement = $("<button/>")
+					.addClass("button")
+					.addClass(button.className)
+					.appendTo(buttonsElement);
+				if (button.icon)
+					buttonElement.append($("<i/>").addClass(button.icon));
+				if (button.icon && button.text)
+					buttonElement.append(" ");
+				if (button.text)
+					buttonElement.append(button.text);
 				buttonElement.click(function (event) {
 					buttonPressed = true;
 					modal.modal.close();
-					if (options.resultHandler) options.resultHandler(button.result);
+					if (options.resultHandler)
+						options.resultHandler(button.result);
 				});
 			});
 		}
 		modal.modal(options);
-		if (buttonsElement) buttonsElement.find("button").first().focus();
+		if (buttonsElement)
+			buttonsElement.find("button").first().focus();
 		if (options.resultHandler) {
 			modal.on("close", function () {
-				if (!buttonPressed) options.resultHandler();
+				if (!buttonPressed)
+					options.resultHandler();
 			});
 		}
 	};
@@ -3771,15 +3944,17 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Opens an off-canvas with the selected element.
 	function offCanvas(options) {
 		var offCanvas = this.first();
-		if (offCanvas.length === 0) return this; // Nothing to do
-		if (offCanvas.hasClass(offCanvasClass)) return this; // Already open
+		if (offCanvas.length === 0) return this;   // Nothing to do
+		if (offCanvas.hasClass(offCanvasClass)) return this;   // Already open
 		var opt = initOptions("offCanvas", offCanvasDefaults, offCanvas, {}, options);
 
 		offCanvas.addClass(offCanvasClass);
 		offCanvas.detach().appendTo("body");
 
-		if (["left", "right"].indexOf(opt.edge) === -1) opt.edge = "left";
-		if (opt.edge === "left") opt._opposite = "right";else if (opt.edge === "right") opt._opposite = "left";
+		if (["left", "right"].indexOf(opt.edge) === -1)
+			opt.edge = "left";
+		if (opt.edge === "left") opt._opposite = "right";
+		else if (opt.edge === "right") opt._opposite = "left";
 
 		var html = $("html");
 		var width = offCanvas.outerWidth();
@@ -3829,8 +4004,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Close on pressing the Escape key or clicking outside the offCanvas
 		if (opt.cancellable) {
 			$(document).on("keydown" + offCanvasEventNamespace, function (event) {
-				if (event.keyCode === 27) {
-					// Escape
+				if (event.keyCode === 27) {   // Escape
 					event.preventDefault();
 					offCanvas.offCanvas.close();
 				}
@@ -3857,8 +4031,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Closes the selected off-canvas.
 	function closeOffCanvas() {
 		var offCanvas = this.first();
-		if (offCanvas.length === 0) return this; // Nothing to do
-		if (!offCanvas.hasClass(offCanvasClass)) return this; // offCanvas is not open
+		if (offCanvas.length === 0) return this;   // Nothing to do
+		if (!offCanvas.hasClass(offCanvasClass)) return this;   // offCanvas is not open
 		var opt = loadOptions("offCanvas", offCanvas);
 
 		var html = $("html");
@@ -3899,13 +4073,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// The maximum value of the progress bar. Default: 100.
 		max: 100,
-
+		
 		// The current progress value. Default: 0.
 		value: 0,
-
+		
 		// The string to display before the value in the progress bar. Default: "".
 		valuePrefix: "",
-
+		
 		// The string to display after the value in the progress bar. Default: "".
 		valueSuffix: ""
 	};
@@ -3913,26 +4087,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Shows a progressbar on the element.
 	function progressbar(options) {
 		return this.each$(function (_, elem) {
-			if (elem.hasClass(progressbarClass)) return; // Already done
+			if (elem.hasClass(progressbarClass)) return;   // Already done
 			elem.addClass(progressbarClass);
 			var opt = initOptions("progressbar", progressbarDefaults, elem, {}, options);
 			opt._setValue = setValue;
 
-			var bar = $("<div/>").addClass("ff-bar").appendTo(elem);
-			var number = $("<span/>").appendTo(bar);
+			let bar = $("<div/>")
+				.addClass("ff-bar")
+				.appendTo(elem);
+			let number = $("<span/>")
+				.appendTo(bar);
 			setValue(opt.value);
-
+			
 			// Sets a progress bar value and triggers the change event.
 			function setValue(value) {
 				value = minmax(value, opt.min, opt.max);
-				var relWidth = (value - opt.min) / (opt.max - opt.min);
-				bar.css("width", relWidth * 100 + "%");
+				let relWidth = (value - opt.min) / (opt.max - opt.min);
+				bar.css("width", (relWidth * 100) + "%");
 				number.text(opt.valuePrefix + value + opt.valueSuffix);
 				number.toggleClass("outside", number.width() + 8 > relWidth * elem.width());
-
+				
 				if (value !== opt.value) {
 					opt.value = value;
-					elem.trigger("valuechange");
+					elem.triggerNative("valuechange");
 				}
 			}
 		});
@@ -3945,7 +4122,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (value === undefined) {
 			var progressbar = this.first();
-			if (progressbar.length === 0) return; // Nothing to do
+			if (progressbar.length === 0) return;   // Nothing to do
 			var opt = loadOptions("progressbar", progressbar);
 			return opt.value;
 		}
@@ -3964,7 +4141,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (prefix === undefined) {
 			var progressbar = this.first();
-			if (progressbar.length === 0) return; // Nothing to do
+			if (progressbar.length === 0) return;   // Nothing to do
 			var opt = loadOptions("progressbar", progressbar);
 			return opt.valuePrefix;
 		}
@@ -3984,7 +4161,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (suffix === undefined) {
 			var progressbar = this.first();
-			if (progressbar.length === 0) return; // Nothing to do
+			if (progressbar.length === 0) return;   // Nothing to do
 			var opt = loadOptions("progressbar", progressbar);
 			return opt.valueSuffix;
 		}
@@ -4013,7 +4190,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// The resizing handles to use. Can be "all" or a combination of "n,ne,e,se,s,sw,w,nw". Default: All.
 		handles: undefined,
-
+		
 		// The width of the default handles. Default: 10.
 		handleWidth: 10,
 
@@ -4042,11 +4219,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes each selected element resizable.
 	function resizable(options) {
 		return this.each$(function (_, elem) {
-			if (elem.hasClass(resizableClass)) return; // Already done
+			if (elem.hasClass(resizableClass)) return;   // Already done
 			elem.addClass(resizableClass);
 			var handleElements = $();
 			var opt = initOptions("resizable", resizableDefaults, elem, {}, options);
-			var $window = $(window);
+			let $window = $(window);
 
 			var aspectRatio = opt.aspectRatio;
 			if (aspectRatio === true || aspectRatio === "true") aspectRatio = elem.outerWidth() / elem.outerHeight();
@@ -4059,9 +4236,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			var optHandles = opt.handles;
-			if (optHandles === undefined) optHandles = "all";
-			if (optHandles === "all") optHandles = "n,ne,e,se,s,sw,w,nw";
-			if ($.isString(optHandles)) optHandles = optHandles.replace(/\s/g, "").toLowerCase().split(",");
+			if (optHandles === undefined)
+				optHandles = "all";
+			if (optHandles === "all")
+				optHandles = "n,ne,e,se,s,sw,w,nw";
+			if ($.isString(optHandles))
+				optHandles = optHandles.replace(/\s/g, "").toLowerCase().split(",");
 			opt.handles = optHandles;
 
 			var vCursor = "ns-resize";
@@ -4070,26 +4250,43 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var neCursor = "nesw-resize";
 
 			if (opt.handleAddClass === "box") {
-				if (optHandles.indexOf("n") !== -1) addHandle({ left: "calc(50% - 4px)", top: -9 }, vCursor, true, true); // Top edge
-				if (optHandles.indexOf("e") !== -1) addHandle({ right: -9, top: "calc(50% - 4px)" }, hCursor, false, false); // Right edge
-				if (optHandles.indexOf("s") !== -1) addHandle({ left: "calc(50% - 4px)", bottom: -9 }, vCursor, true, false); // Bottom edge
-				if (optHandles.indexOf("w") !== -1) addHandle({ left: -9, top: "calc(50% - 4px)" }, hCursor, false, true); // Left edge
+				if (optHandles.indexOf("n") !== -1)
+					addHandle({ left: "calc(50% - 4px)", top: -9 }, vCursor, true, true);   // Top edge
+				if (optHandles.indexOf("e") !== -1)
+					addHandle({ right: -9, top: "calc(50% - 4px)" }, hCursor, false, false);   // Right edge
+				if (optHandles.indexOf("s") !== -1)
+					addHandle({ left: "calc(50% - 4px)", bottom: -9 }, vCursor, true, false);   // Bottom edge
+				if (optHandles.indexOf("w") !== -1)
+					addHandle({ left: -9, top: "calc(50% - 4px)" }, hCursor, false, true);   // Left edge
 
-				if (optHandles.indexOf("ne") !== -1) addHandle({ top: -9, right: -9 }, neCursor, false, false, true, true); // Top right corner
-				if (optHandles.indexOf("se") !== -1) addHandle({ bottom: -9, right: -9 }, nwCursor, false, false, true, false); // Bottom right corner
-				if (optHandles.indexOf("sw") !== -1) addHandle({ bottom: -9, left: -9 }, neCursor, false, true, true, false); // Bottom left corner
-				if (optHandles.indexOf("nw") !== -1) addHandle({ top: -9, left: -9 }, nwCursor, false, true, true, true); // Top left corner
-			} else {
-				var w = opt.handleWidth;
-				if (optHandles.indexOf("n") !== -1) addHandle({ left: w / 2, right: w / 2, top: -w / 2, height: w }, vCursor, true, true); // Top edge
-				if (optHandles.indexOf("e") !== -1) addHandle({ top: w / 2, bottom: w / 2, right: -w / 2, width: w }, hCursor, false, false); // Right edge
-				if (optHandles.indexOf("s") !== -1) addHandle({ left: w / 2, right: w / 2, bottom: -w / 2, height: w }, vCursor, true, false); // Bottom edge
-				if (optHandles.indexOf("w") !== -1) addHandle({ top: w / 2, bottom: w / 2, left: -w / 2, width: w }, hCursor, false, true); // Left edge
+				if (optHandles.indexOf("ne") !== -1)
+					addHandle({ top: -9, right: -9 }, neCursor, false, false, true, true);   // Top right corner
+				if (optHandles.indexOf("se") !== -1)
+					addHandle({ bottom: -9, right: -9 }, nwCursor, false, false, true, false);   // Bottom right corner
+				if (optHandles.indexOf("sw") !== -1)
+					addHandle({ bottom: -9, left: -9 }, neCursor, false, true, true, false);   // Bottom left corner
+				if (optHandles.indexOf("nw") !== -1)
+					addHandle({ top: -9, left: -9 }, nwCursor, false, true, true, true);   // Top left corner
+			}
+			else {
+				let w = opt.handleWidth;
+				if (optHandles.indexOf("n") !== -1)
+					addHandle({ left: w / 2, right: w / 2, top: -w / 2, height: w }, vCursor, true, true);   // Top edge
+				if (optHandles.indexOf("e") !== -1)
+					addHandle({ top: w / 2, bottom: w / 2, right: -w / 2, width: w }, hCursor, false, false);   // Right edge
+				if (optHandles.indexOf("s") !== -1)
+					addHandle({ left: w / 2, right: w / 2, bottom: -w / 2, height: w }, vCursor, true, false);   // Bottom edge
+				if (optHandles.indexOf("w") !== -1)
+					addHandle({ top: w / 2, bottom: w / 2, left: -w / 2, width: w }, hCursor, false, true);   // Left edge
 
-				if (optHandles.indexOf("ne") !== -1) addHandle({ right: -w / 2, top: -w / 2, width: w, height: w }, neCursor, false, false, true, true); // Top right corner
-				if (optHandles.indexOf("se") !== -1) addHandle({ right: -w / 2, bottom: -w / 2, width: w, height: w }, nwCursor, false, false, true, false); // Bottom right corner
-				if (optHandles.indexOf("sw") !== -1) addHandle({ left: -w / 2, bottom: -w / 2, width: w, height: w }, neCursor, false, true, true, false); // Bottom left corner
-				if (optHandles.indexOf("nw") !== -1) addHandle({ left: -w / 2, top: -w / 2, width: w, height: w }, nwCursor, false, true, true, true); // Top left corner
+				if (optHandles.indexOf("ne") !== -1)
+					addHandle({ right: -w / 2, top: -w / 2, width: w, height: w }, neCursor, false, false, true, true);   // Top right corner
+				if (optHandles.indexOf("se") !== -1)
+					addHandle({ right: -w / 2, bottom: -w / 2, width: w, height: w }, nwCursor, false, false, true, false);   // Bottom right corner
+				if (optHandles.indexOf("sw") !== -1)
+					addHandle({ left: -w / 2, bottom: -w / 2, width: w, height: w }, neCursor, false, true, true, false);   // Bottom left corner
+				if (optHandles.indexOf("nw") !== -1)
+					addHandle({ left: -w / 2, top: -w / 2, width: w, height: w }, nwCursor, false, true, true, true);   // Top left corner
 			}
 
 			installDisabledchangeHook();
@@ -4098,34 +4295,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			});
 
 			function addHandle(style, cursor, vertical, negative, vertical2, negative2) {
-				var handle = $("<div/>").addClass("ff-resizable-handle " + opt.handleAddClass).css(style).css("position", "absolute").css("cursor", cursor);
+				var handle = $("<div/>")
+					.addClass("ff-resizable-handle " + opt.handleAddClass)
+					.css(style)
+					.css("position", "absolute")
+					.css("cursor", cursor);
 				elem.append(handle);
 				handleElements = handleElements.add(handle);
 				handle.draggable({ scroll: opt.scroll, dragCursor: cursor });
 				handle.on("draggablestart", function (event) {
-					event.stopPropagation(); // Don't trigger for the resized (parent) element
-					var event2 = $.Event("resizablestart");
-					event2.vertical = vertical;
-					event2.negative = negative;
-					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
-					elem.trigger(event2);
-					if (event2.isDefaultPrevented()) {
+					event.stopPropagation();   // Don't trigger for the resized (parent) element
+					let event2 = elem.triggerNative("resizablestart", {
+						vertical: vertical,
+						negative: negative,
+						edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right")
+					});
+					if (event2.defaultPrevented) {
 						event.preventDefault();
 					}
 				});
 				handle.on("draggablemove", function (event) {
-					event.stopPropagation(); // Don't trigger for the resized (parent) element
-					event.preventDefault(); // The handles already move with the element, don't touch their position
-					resize(handle, event.newPoint, vertical, negative);
-					if (vertical2 !== undefined) resize(handle, event.newPoint, vertical2, negative2);
+					event.stopPropagation();   // Don't trigger for the resized (parent) element
+					event.preventDefault();   // The handles already move with the element, don't touch their position
+					resize(handle, event.originalEvent.newPoint, vertical, negative);
+					if (vertical2 !== undefined)
+						resize(handle, event.originalEvent.newPoint, vertical2, negative2);
 				});
 				handle.on("draggableend", function (event) {
-					event.stopPropagation(); // Don't trigger for the resized (parent) element
-					var event2 = $.Event("resizableend");
-					event2.vertical = vertical;
-					event2.negative = negative;
-					event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
-					elem.trigger(event2);
+					event.stopPropagation();   // Don't trigger for the resized (parent) element
+					elem.triggerNative("resizableend", {
+						vertical: vertical,
+						negative: negative,
+						edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right")
+					});
 				});
 				return handle;
 			}
@@ -4141,23 +4343,24 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var step = opt.grid ? opt.grid[vertical ? 1 : 0] : 1;
 
 				if (opt.grid) {
-					var gridBase = elem.parent().offset();
+					let gridBase = elem.parent().offset();
 					if (negative) {
-						delta = newElemOffset[side] - (Math.round((newElemOffset[side] - delta - gridBase[side]) / step) * step + gridBase[side]);
-					} else {
-						var length = elem["outer" + extent]();
-						delta = Math.round((newElemOffset[side] + length + delta - gridBase[side]) / step) * step + gridBase[side] - (newElemOffset[side] + length);
+						delta = newElemOffset[side] - (Math.round(((newElemOffset[side] - delta) - gridBase[side]) / step) * step + gridBase[side]);
+					}
+					else {
+						let length = elem["outer" + extent]();
+						delta = Math.round(((newElemOffset[side] + length + delta) - gridBase[side]) / step) * step + gridBase[side] - (newElemOffset[side] + length);
 					}
 				}
 
 				var newLength = elem["outer" + extent]() + delta;
 
-				var minLength = Math.max(elem["outer" + extent]() - elem[extentLower](), opt["min" + extent] || 0);
+				let minLength = Math.max(elem["outer" + extent]() - elem[extentLower](), opt["min" + extent] || 0);
 				while (newLength < minLength) {
 					delta += step;
 					newLength += step;
 				}
-				var maxLength = opt["max" + extent];
+				let maxLength = opt["max" + extent];
 				while (maxLength && newLength > maxLength) {
 					delta -= step;
 					newLength -= step;
@@ -4166,20 +4369,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (negative) newElemOffset[side] -= delta;
 
 				if (opt.containment) {
-					var cont = void 0,
-					    contRect = void 0;
+					let cont, contRect;
 					if (opt.containment === "parent") {
 						cont = elem.parent();
-					} else if (opt.containment === "viewport") {
-						var scrollTop = $window.scrollTop();
-						var scrollLeft = $window.scrollLeft();
+					}
+					else if (opt.containment === "viewport") {
+						let scrollTop = $window.scrollTop();
+						let scrollLeft = $window.scrollLeft();
 						contRect = {
 							top: 0 + scrollTop,
 							left: 0 + scrollLeft,
 							height: $window.height(),
 							width: $window.width()
 						};
-					} else {
+					}
+					else {
 						cont = $(opt.containment);
 					}
 					if (cont && cont.length > 0) {
@@ -4192,7 +4396,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 								delta -= step;
 								newLength -= step;
 							}
-						} else {
+						}
+						else {
 							while (newElemOffset[side] + newLength > contRect[side] + contRect[extentLower]) {
 								delta -= step;
 								newLength -= step;
@@ -4201,14 +4406,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 
-				var event2 = $.Event("resizing");
-				event2.vertical = vertical;
-				event2.negative = negative;
-				event2.edge = vertical ? negative ? "top" : "bottom" : negative ? "left" : "right";
-				event2.newLength = newLength;
-				event2.newPosition = newElemOffset[side];
-				elem.trigger(event2);
-				if (!event2.isDefaultPrevented()) {
+				let event2 = elem.triggerNative("resizing", {
+					vertical: vertical,
+					negative: negative,
+					edge: vertical ? (negative ? "top" : "bottom") : (negative ? "left" : "right"),
+					newLength: newLength,
+					newPosition: newElemOffset[side]
+				});
+				if (!event2.defaultPrevented) {
 					elem["outer" + extent](event2.newLength);
 					newElemOffset[side] = event2.newPosition;
 					if (negative) elem.offset(newElemOffset);
@@ -4223,7 +4428,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (!elem.hasClass(resizableClass)) return;
 			elem.removeClass(resizableClass);
 			var opt = loadOptions("resizable", elem);
-			if (opt.wasPositionStatic) elem.css("position", "static");
+			if (opt.wasPositionStatic)
+				elem.css("position", "static");
 			elem.find(".ff-resizable-handle").remove();
 			elem.off("disabledchange.resizable");
 		});
@@ -4254,7 +4460,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes the child elements in each selected element selectable.
 	function selectable(options) {
 		return this.each$(function (_, elem) {
-			if (elem.hasClass(selectableClass)) return; // Already done
+			if (elem.hasClass(selectableClass)) return;   // Already done
 			elem.addClass(selectableClass);
 			var opt = initOptions("selectable", selectableDefaults, elem, {}, options);
 			opt._prepareChild = prepareChild;
@@ -4262,24 +4468,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			opt._selectNone = selectNone;
 			opt._selectItem = selectItem;
 
-			var replaceHtmlSelect = elem[0].nodeName === "SELECT";
-			var useDropdown = replaceHtmlSelect && !elem.attr("size");
-			var htmlSelect = void 0,
-			    button = void 0;
-			var htmlSelectChanging = void 0;
-			var blurCloseTimeout = void 0;
-
+			let replaceHtmlSelect = elem[0].nodeName === "SELECT";
+			let useDropdown = replaceHtmlSelect && !elem.attr("size");
+			let htmlSelect, button;
+			let htmlSelectChanging;
+			let blurCloseTimeout;
+			
 			if (replaceHtmlSelect) {
 				htmlSelect = elem;
-				var origStyle = elem.attr("style");
+				let origStyle = elem.attr("style");
 				htmlSelect.hide();
 				opt.multiple |= htmlSelect.attr("multiple") !== undefined;
-				var newSelect = $("<div/>").addClass(selectableClass).insertAfter(htmlSelect);
+				let newSelect = $("<div/>")
+					.addClass(selectableClass)
+					.insertAfter(htmlSelect);
 				elem = newSelect;
 				htmlSelect.data("ff-replacement", newSelect);
 				updateFromHtmlSelect();
 				if (useDropdown) {
-					button = $("<div/>").addClass("ff-selectable-button").attr("tabindex", 0).insertAfter(htmlSelect);
+					button = $("<div/>")
+						.addClass("ff-selectable-button")
+						.attr("tabindex", 0)
+						.insertAfter(htmlSelect);
 					button.attr("style", origStyle);
 					newSelect.addClass("no-border dropdown bordered");
 					htmlSelect.data("ff-replacement", button);
@@ -4287,11 +4497,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					button.click(function () {
 						if (button.disabled()) return;
 						button.addClass("open");
-						var fixed = button.parentWhere(function (p) {
-							return $(p).css("position") === "fixed";
-						}).length > 0;
-						var cssClass = "";
-						if (button.closest(".dark").length > 0) cssClass = "dark"; // Set dropdown container to dark
+						let fixed = button.parentWhere(p => $(p).css("position") === "fixed").length > 0;
+						let cssClass = "";
+						if (button.closest(".dark .not-dark").hasClass("dark"))
+							cssClass = "dark";   // Set dropdown container to dark
 						newSelect.dropdown(button, { fixed: fixed, cssClass: cssClass });
 						newSelect.parent(".ff-dropdown-container").css("min-width", button.outerWidth());
 					});
@@ -4302,41 +4511,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						//console.log(event);
 						if (button.disabled()) return;
 						switch (event.originalEvent.keyCode) {
-							case 13: // Enter
-							case 32:
-								// Space
+							case 13:   // Enter
+							case 32:   // Space
 								event.preventDefault();
 								button.click();
 								break;
-							case 35:
-								// End
+							case 35:   // End
 								event.preventDefault();
 								changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
 								break;
-							case 36:
-								// Home
+							case 36:   // Home
 								event.preventDefault();
 								changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
 								break;
-							case 38:
-								// ArrowUp
+							case 38:   // ArrowUp
 								event.preventDefault();
 								changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
 								break;
-							case 40:
-								// ArrowDown
+							case 40:   // ArrowDown
 								event.preventDefault();
 								changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
 								break;
-							case 65:
-								// KeyA
+							case 65:   // KeyA
 								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
 									event.preventDefault();
 									selectAll();
 								}
 								break;
-							case 68:
-								// KeyD
+							case 68:   // KeyD
 								if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
 									event.preventDefault();
 									selectNone();
@@ -4346,8 +4548,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					});
 
 					// Make the button unfocusable while it is disabled
-					var onDisabledchange = function onDisabledchange() {
-						if (button.disabled()) button.attr("tabindex", null);else button.attr("tabindex", 0);
+					let onDisabledchange = function () {
+						if (button.disabled())
+							button.attr("tabindex", null);
+						else
+							button.attr("tabindex", 0);
 					};
 					button.on("disabledchange", onDisabledchange);
 					onDisabledchange();
@@ -4373,12 +4578,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 				// Apply disabled property where appropriate
 				if (htmlSelect.disabled()) {
-					if (useDropdown) button.disable();else newSelect.disable();
+					if (useDropdown)
+						button.disable();
+					else
+						newSelect.disable();
 				}
 
 				// Copy some CSS classes to the replacement element (new list or button)
-				["wrap", "input-validation-error"].forEach(function (clsName) {
-					if (htmlSelect.hasClass(clsName)) htmlSelect.data("ff-replacement").addClass(clsName);
+				["wrap", "input-validation-error"].forEach(clsName => {
+					if (htmlSelect.hasClass(clsName))
+						htmlSelect.data("ff-replacement").addClass(clsName);
 				});
 
 				htmlSelect.change(function () {
@@ -4386,7 +4595,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						updateFromHtmlSelect();
 						elem.children().each(prepareChild);
 						lastClickedItem = elem.children(".selected").first();
-						if (lastClickedItem.length === 0) lastClickedItem = elem.children(":not(.disabled)").first();
+						if (lastClickedItem.length === 0)
+							lastClickedItem = elem.children(":not(.disabled)").first();
 					}
 					if (useDropdown) {
 						updateButton();
@@ -4397,42 +4607,37 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			elem.attr("tabindex", 0);
 			elem.children().each(prepareChild);
 			var lastClickedItem = elem.children(".selected").first();
-			if (lastClickedItem.length === 0) lastClickedItem = elem.children(":not(.disabled)").first();
+			if (lastClickedItem.length === 0)
+				lastClickedItem = elem.children(":not(.disabled)").first();
 			var lastSelectedItem;
-
+			
 			elem.on("keydown", function (event) {
 				//console.log(event);
 				if (elem.disabled()) return;
 				switch (event.originalEvent.keyCode) {
-					case 35:
-						// End
+					case 35:   // End
 						event.preventDefault();
 						changeSelectedIndex(elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
 						break;
-					case 36:
-						// Home
+					case 36:   // Home
 						event.preventDefault();
 						changeSelectedIndex(-elem.children().length, !!event.originalEvent.shiftKey && opt.multiple);
 						break;
-					case 38:
-						// ArrowUp
+					case 38:   // ArrowUp
 						event.preventDefault();
 						changeSelectedIndex(-1, !!event.originalEvent.shiftKey && opt.multiple);
 						break;
-					case 40:
-						// ArrowDown
+					case 40:   // ArrowDown
 						event.preventDefault();
 						changeSelectedIndex(1, !!event.originalEvent.shiftKey && opt.multiple);
 						break;
-					case 65:
-						// KeyA
+					case 65:   // KeyA
 						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
 							event.preventDefault();
 							selectAll();
 						}
 						break;
-					case 68:
-						// KeyD
+					case 68:   // KeyD
 						if (!!event.originalEvent.ctrlKey && !event.originalEvent.shiftKey) {
 							event.preventDefault();
 							selectNone();
@@ -4443,14 +4648,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Also don't close the dropdown if clicked on a disabled item or empty space (if there are no items)
 			if (useDropdown) {
-				var isMouseDown = false;
+				let isMouseDown = false;
 				elem.on("mousedown", function (event) {
 					if (event.originalEvent.button === 0) {
 						isMouseDown = true;
-						setTimeout(function () {
+						setTimeout(() => {
 							button.focus();
 						}, 0);
-					} else {
+					}
+					else {
 						isMouseDown = false;
 					}
 				});
@@ -4464,52 +4670,64 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// Sets up event handlers on a selection child (passed as this).
 			function prepareChild() {
 				var child = $(this);
-				if (child.hasClass("disabled")) return;
+				if (child.hasClass("disabled"))
+					return;
 				var isMouseDown = false;
 				child.on("mousedown", function (event) {
 					if (event.originalEvent.button === 0) {
-						event.stopPropagation(); // No need to handle events on elem itself
+						event.stopPropagation();   // No need to handle events on elem itself
 						isMouseDown = true;
-						setTimeout(function () {
-							if (useDropdown) button.focus();else elem.focus();
+						setTimeout(() => {
+							if (useDropdown)
+								button.focus();
+							else
+								elem.focus();
 						}, 0);
-					} else {
+					}
+					else {
 						isMouseDown = false;
 					}
 				});
 				child.on("mouseup", function (event) {
 					if (!isMouseDown) return;
-					event.stopPropagation(); // No need to handle events on elem itself
+					event.stopPropagation();   // No need to handle events on elem itself
 					isMouseDown = false;
-					if (useDropdown) button.focus();else elem.focus();
-					var ctrlKey = !!event.originalEvent.ctrlKey;
-					var shiftKey = !!event.originalEvent.shiftKey;
+					if (useDropdown)
+						button.focus();
+					else
+						elem.focus();
+					let ctrlKey = !!event.originalEvent.ctrlKey;
+					let shiftKey = !!event.originalEvent.shiftKey;
 					if (!opt.multiple) ctrlKey = shiftKey = false;
 					if (opt.toggle) ctrlKey = true;
-					var changed = false;
+					let changed = false;
 					if (ctrlKey) {
 						child.toggleClass("selected");
 						if (!opt.allowEmpty && elem.children(".selected").length === 0) {
 							// Empty selection not allowed
 							child.addClass("selected");
-						} else {
+						}
+						else {
 							changed = true;
 						}
 						lastClickedItem = child;
-					} else if (shiftKey) {
-						var lastIndex = lastClickedItem.index();
-						var currentIndex = child.index();
+					}
+					else if (shiftKey) {
+						let lastIndex = lastClickedItem.index();
+						let currentIndex = child.index();
 						// Bring indices in a defined order
-						var i1 = Math.min(lastIndex, currentIndex);
-						var i2 = Math.max(lastIndex, currentIndex);
+						let i1 = Math.min(lastIndex, currentIndex);
+						let i2 = Math.max(lastIndex, currentIndex);
 						// Replace selection with all items between these indices (inclusive)
 						elem.children().removeClass("selected");
-						for (var i = i1; i <= i2; i++) {
-							var c = elem.children().eq(i);
-							if (!c.hasClass("disabled")) c.addClass("selected");
+						for (let i = i1; i <= i2; i++) {
+							let c = elem.children().eq(i);
+							if (!c.hasClass("disabled"))
+								c.addClass("selected");
 						}
 						changed = true;
-					} else {
+					}
+					else {
 						if (!child.hasClass("selected")) {
 							elem.children().removeClass("selected");
 							child.addClass("selected");
@@ -4519,9 +4737,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 					lastSelectedItem = child;
 					if (changed) {
-						elem.trigger("selectionchange");
+						elem.triggerNative("selectionchange");
 					}
-
+					
 					if (replaceHtmlSelect) {
 						updateHtmlSelect();
 						if (useDropdown) {
@@ -4534,28 +4752,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 				if (useDropdown && opt.multiple && !opt.toggle) {
 					child.on("dblclick", function (event) {
-						var ctrlKey = !!event.originalEvent.ctrlKey;
-						var shiftKey = !!event.originalEvent.shiftKey;
+						let ctrlKey = !!event.originalEvent.ctrlKey;
+						let shiftKey = !!event.originalEvent.shiftKey;
 						if (!ctrlKey && !shiftKey) {
 							elem.dropdown.close();
 						}
 					});
 				}
 			}
-
+			
 			// Updates the HTML select element's selection from the UI elements (selected CSS class).
 			function updateHtmlSelect() {
-				var selectedValues = [];
+				let selectedValues = [];
 				elem.children().each$(function (_, child) {
-					if (child.hasClass("selected")) selectedValues.push(child.data("value"));
+					if (child.hasClass("selected"))
+						selectedValues.push(child.data("value"));
 				});
 
 				htmlSelectChanging = true;
 				htmlSelect.children("option").each$(function (_, option) {
-					var selected = selectedValues.indexOf(option.prop("value")) !== -1;
+					let selected = selectedValues.indexOf(option.prop("value")) !== -1;
 					option.prop("selected", selected);
 				});
-				htmlSelect.change();
+				htmlSelect.triggerNative("change");
 				htmlSelectChanging = false;
 			}
 
@@ -4563,76 +4782,100 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			// state.
 			function updateFromHtmlSelect() {
 				elem.children().remove();
-				var haveOptions = false;
+				let haveOptions = false;
 				htmlSelect.children("option").each$(function (_, option) {
 					haveOptions = true;
-					var newOption = $("<div/>").text(option.text()).data("value", option.prop("value")).appendTo(elem);
-					if (option.data("html")) newOption.html(option.data("html"));
-					if (option.data("summary")) newOption.data("summary", option.data("summary"));
-					if (option.data("summary-html")) newOption.data("summary-html", option.data("summary-html"));
-					if (option.prop("selected")) newOption.addClass("selected");
-					if (option.prop("disabled")) newOption.addClass("disabled");
+					let newOption = $("<div/>")
+						.text(option.text())
+						.data("value", option.prop("value"))
+						.appendTo(elem);
+					if (option.data("html"))
+						newOption.html(option.data("html"));
+					if (option.data("summary"))
+						newOption.data("summary", option.data("summary"));
+					if (option.data("summary-html"))
+						newOption.data("summary-html", option.data("summary-html"));
+					if (option.prop("selected"))
+						newOption.addClass("selected");
+					if (option.prop("disabled"))
+						newOption.addClass("disabled");
 				});
-				if (!haveOptions) elem.css("height", "4em");else elem.css("height", "");
+				if (!haveOptions)
+					elem.css("height", "4em");
+				else
+					elem.css("height", "");
 			}
 
 			// Updates the dropdown list button's text from the current selection.
 			function updateButton() {
-				var html = "";
+				let html = "";
 				elem.children(".selected").each$(function (_, child) {
 					if (html) html += opt.separator;
-					var summaryText = child.data("summary");
-					var summaryHtml = child.data("summary-html");
-					if (summaryHtml) html += summaryHtml;else if (summaryText) html += summaryText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");else html += child.html();
+					let summaryText = child.data("summary");
+					let summaryHtml = child.data("summary-html");
+					if (summaryHtml)
+						html += summaryHtml;
+					else if (summaryText)
+						html += summaryText.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+					else
+						html += child.html();
 				});
 				if (html) {
 					button.html("<span>" + html + "</span>");
-				} else {
+				}
+				else {
 					button.html("&nbsp;");
 				}
 			}
-
+			
 			// Moves (and optionally extends) the selected index up or down.
 			function changeSelectedIndex(offset, extend) {
-				var children = elem.children();
-				var count = children.length;
+				let children = elem.children();
+				let count = children.length;
 				if (count > 0 && offset !== 0) {
-					var index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
+					let index = lastSelectedItem ? lastSelectedItem.index() : lastClickedItem.index();
 					if (offset === -1 || offset === 1) {
-						if (!lastClickedItem.hasClass("selected")) ;else {
+						if (!lastClickedItem.hasClass("selected")) ;
+						else {
 							// Move selection until an enabled item was found
 							do {
 								index += offset;
-								if (index < 0 || index >= count) return; // Nothing found
-							} while (children.eq(index).hasClass("disabled"));
+								if (index < 0 || index >= count) return;   // Nothing found
+							}
+							while (children.eq(index).hasClass("disabled"));
 						}
-					} else if (offset < 0) {
+					}
+					else if (offset < 0) {
 						// Move selection to the first enabled item
 						index = elem.children(":not(.disabled)").first().index();
-					} else if (offset > 0) {
+					}
+					else if (offset > 0) {
 						// Move selection to the last enabled item
 						index = elem.children(":not(.disabled)").last().index();
 					}
-					if (index === -1) return; // Nothing found
+					if (index === -1) return;   // Nothing found
 
 					children.removeClass("selected");
 					if (extend) {
-						var lastIndex = lastClickedItem.index();
+						let lastIndex = lastClickedItem.index();
 						// Bring indices in a defined order
-						var i1 = Math.min(lastIndex, index);
-						var i2 = Math.max(lastIndex, index);
+						let i1 = Math.min(lastIndex, index);
+						let i2 = Math.max(lastIndex, index);
 						// Replace selection with all items between these indices (inclusive)
-						for (var i = i1; i <= i2; i++) {
-							var c = children.eq(i);
-							if (!c.hasClass("disabled")) c.addClass("selected");
+						for (let i = i1; i <= i2; i++) {
+							let c = children.eq(i);
+							if (!c.hasClass("disabled"))
+								c.addClass("selected");
 						}
 						lastSelectedItem = children.eq(index);
-					} else {
+					}
+					else {
 						lastClickedItem = children.eq(index);
 						lastClickedItem.addClass("selected");
 						lastSelectedItem = lastClickedItem;
 					}
-					if (replaceHtmlSelect) updateHtmlSelect();
+					if (replaceHtmlSelect)
+						updateHtmlSelect();
 				}
 			}
 
@@ -4640,7 +4883,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function selectAll() {
 				if (opt.multiple || opt.toggle) {
 					elem.children(":not(.disabled)").addClass("selected");
-					if (replaceHtmlSelect) updateHtmlSelect();
+					if (replaceHtmlSelect)
+						updateHtmlSelect();
 				}
 			}
 
@@ -4648,7 +4892,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function selectNone() {
 				if (opt.allowEmpty) {
 					elem.children().removeClass("selected");
-					if (replaceHtmlSelect) updateHtmlSelect();
+					if (replaceHtmlSelect)
+						updateHtmlSelect();
 				}
 			}
 
@@ -4656,8 +4901,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function selectItem(item) {
 				elem.children().removeClass("selected");
 				item.addClass("selected");
-				elem.trigger("selectionchange");
-				if (replaceHtmlSelect) updateHtmlSelect();
+				elem.triggerNative("selectionchange");
+				if (replaceHtmlSelect)
+					updateHtmlSelect();
 			}
 		});
 	}
@@ -4674,7 +4920,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function removeChild(child) {
 		var selectable = $(this);
 		if (child.hasClass("selected")) {
-			selectable.trigger("selectionchange");
+			selectable.triggerNative("selectionchange");
 		}
 		// TODO: Need to update HTML select, too?
 	}
@@ -4782,7 +5028,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		ranges: null,
 
 		// Indicates whether the slider has a logarithmic scale. Default: false.
-		logarithmic: false, // TODO
+		logarithmic: false,   // TODO
 
 		// The mouse cursor to show during dragging the slider. Default: None.
 		dragCursor: undefined
@@ -4791,12 +5037,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Creates a slider widget.
 	function slider(options) {
 		return this.each$(function (_, slider) {
-			if (slider.hasClass(sliderClass)) return; // Already done
+			if (slider.hasClass(sliderClass)) return;   // Already done
 			slider.addClass(sliderClass);
 			var opt = initOptions("slider", sliderDefaults, slider, {}, options);
 			var htmlCursor, draggedHandleCursor;
-			var dragHandleOffset = [],
-			    dragHandlePointerId = [];
+			var dragHandleOffset = [], dragHandlePointerId = [];
 			var lastTouchedHandleIndex = 0;
 			var isVertical = opt.orientation === "v";
 			var sliderBorder;
@@ -4812,7 +5057,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Create 1 pair of ranges by default; more only if individually specified
 			var ranges = [];
-			for (var index = 0; index < Math.max(1, opt.ranges && opt.ranges.length); index++) {
+			for (let index = 0; index < Math.max(1, opt.ranges && opt.ranges.length); index++) {
 				ranges[index * 2] = $("<div/>").addClass(rangeClass).appendTo(slider);
 				ranges[index * 2 + 1] = $("<div/>").addClass(rangeClass).appendTo(slider);
 			}
@@ -4834,11 +5079,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			// Create handles
 			// Also keep them in a jQuery collection to add events to
-			var handles = [],
-			    $handles = $();
-			for (var _index = 0; _index < opt.handleCount; _index++) {
-				handles[_index] = $("<div/>").addClass(handleClass).appendTo(slider);
-				$handles = $handles.add(handles[_index]);
+			var handles = [], $handles = $();
+			for (let index = 0; index < opt.handleCount; index++) {
+				handles[index] = $("<div/>").addClass(handleClass).appendTo(slider);
+				$handles = $handles.add(handles[index]);
 			}
 
 			// Use precision to avoid ugly JavaScript floating point rounding issues
@@ -4852,7 +5096,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var rangeBasePos = Math.round((rangeBaseValue - opt.min) / (opt.max - opt.min) * 10000) / 100;
 
 			var startAttr, endAttr;
-			var handleLength; // Length of the handle in drag direction
+			var handleLength;   // Length of the handle in drag direction
 
 			if (isVertical) {
 				startAttr = "bottom";
@@ -4860,28 +5104,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				slider.addClass("vertical");
 				sliderBorder = (slider.outerHeight() - slider.innerHeight()) / 2;
 				handleLength = handles[0].outerHeight();
-			} else {
+			}
+			else {
 				startAttr = "left";
 				endAttr = "right";
 				slider.removeClass("vertical");
 				sliderBorder = (slider.outerWidth() - slider.innerWidth()) / 2;
 				handleLength = handles[0].outerWidth();
 			}
-			for (var _index2 = 0; _index2 < opt.handleCount; _index2++) {
-				resetDragHandleOffset(_index2);
-				setValue(_index2, opt.values[_index2]);
+			for (let index = 0; index < opt.handleCount; index++) {
+				resetDragHandleOffset(index);
+				setValue(index, opt.values[index]);
 			}
 
 			// Draw ticks
 			if (opt.smallTicks || opt.largeTicks) {
 				var minTick = Math.ceil(opt.min / opt.smallStep) * opt.smallStep;
-				for (var value = minTick; value <= opt.max; value += opt.smallStep) {
+				for (let value = minTick; value <= opt.max; value += opt.smallStep) {
 					value = round(value, decimals);
-					var large = value / opt.largeStep === Math.trunc(value / opt.largeStep);
+					let large = value / opt.largeStep === Math.trunc(value / opt.largeStep);
 					if (!large && !opt.smallTicks) continue;
 
-					var pos = Math.round((value - opt.min) / (opt.max - opt.min) * 10000) / 100;
-					var tickArr = $();
+					let pos = Math.round((value - opt.min) / (opt.max - opt.min) * 10000) / 100;
+					let tickArr = $();
 					if (opt.tickPlacement === "both" || opt.tickPlacement === "topleft") {
 						tickArr = tickArr.add($("<div/>").css(startAttr, pos + "%").appendTo(ticks));
 					}
@@ -4909,11 +5154,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				var index = $.inArray(handle[0], $handles);
 				if (index === -1) {
 					console.warn("Clicked slider handle not found");
-					return; // Should not happen: handle not found
+					return;   // Should not happen: handle not found
 				}
 
 				// Remember where the handle was dragged (probably not exactly the center)
-				if (isVertical) dragHandleOffset[index] = handles[index].offset().top + handles[index].outerHeight() - event.pageY;else dragHandleOffset[index] = event.pageX - handles[index].offset().left;
+				if (isVertical)
+					dragHandleOffset[index] = handles[index].offset().top + handles[index].outerHeight() - event.pageY;
+				else
+					dragHandleOffset[index] = event.pageX - handles[index].offset().left;
 
 				draggedHandleCursor = handles[index].actualCursor();
 			});
@@ -4928,7 +5176,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					dragHandlePointerId.forEach(function (item) {
 						if (item !== undefined) isFirstDrag = false;
 					});
-					if (isFirstDrag) slider.trigger("firstdragstart");
+					if (isFirstDrag)
+						slider.triggerNative("firstdragstart");
 
 					// Select touched or nearest handle and remember by pointerId
 					var handle = $(event.target).closest("." + handleClass);
@@ -4940,7 +5189,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						var minValueDistance = Infinity;
 						opt.values.forEach(function (value, valueIndex) {
 							var valueDistance = Math.abs(value - pointerValue);
-							if (valueDistance < minValueDistance || pointerValue > value && valueDistance <= minValueDistance) {
+							if (valueDistance < minValueDistance ||
+								pointerValue > value && valueDistance <= minValueDistance) {
 								minValueDistance = valueDistance;
 								index = valueIndex;
 							}
@@ -4953,8 +5203,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					onMove(event);
 
 					if (isFirstDrag) {
-						slider.setCapture && slider.setCapture(); // Firefox only (set cursor over entire desktop)
-						$("html").addClass(resetAllCursorsClass); // All browsers (set cursor at least within page)
+						slider.setCapture && slider.setCapture();   // Firefox only (set cursor over entire desktop)
+						$("html").addClass(resetAllCursorsClass);   // All browsers (set cursor at least within page)
 						htmlCursor = document.documentElement.style.getPropertyValue("cursor");
 						document.documentElement.style.setProperty("cursor", opt.dragCursor || draggedHandleCursor || slider.actualCursor(), "important");
 
@@ -4976,7 +5226,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			slider.on("disabledchange", function () {
 				if (slider.disabled()) {
 					slider.removeAttr("tabindex");
-				} else {
+				}
+				else {
 					slider.attr("tabindex", initialTabindex);
 				}
 			});
@@ -4989,23 +5240,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function onMove(event) {
 				// Select dragged handle from pointerId
 				var index = dragHandlePointerId.indexOf(event.pointerId);
-				if (index === -1) return; // Not my pointer
+				if (index === -1) return;   // Not my pointer
 
 				var value = getValueFromEvent(event);
 
 				if (opt.handleCount > 1) {
 					switch (opt.handleInteractionMode) {
 						case "locked":
-							if (index > 0 && value < opt.values[index - 1]) value = opt.values[index - 1];
-							if (index < opt.handleCount - 1 && value > opt.values[index + 1]) value = opt.values[index + 1];
+							if (index > 0 && value < opt.values[index - 1])
+								value = opt.values[index - 1];
+							if (index < opt.handleCount - 1 && value > opt.values[index + 1])
+								value = opt.values[index + 1];
 							break;
 
 						case "push":
-							for (var otherIndex = index - 1; otherIndex >= 0; otherIndex--) {
-								if (value < opt.values[otherIndex]) setValue(otherIndex, value);
+							for (let otherIndex = index - 1; otherIndex >= 0; otherIndex--) {
+								if (value < opt.values[otherIndex])
+									setValue(otherIndex, value);
 							}
-							for (var _otherIndex = index + 1; _otherIndex < opt.handleCount; _otherIndex++) {
-								if (value > opt.values[_otherIndex]) setValue(_otherIndex, value);
+							for (let otherIndex = index + 1; otherIndex < opt.handleCount; otherIndex++) {
+								if (value > opt.values[otherIndex])
+									setValue(otherIndex, value);
 							}
 							break;
 					}
@@ -5017,7 +5272,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function onEnd(event) {
 				// Select dragged handle from pointerId
 				var index = dragHandlePointerId.indexOf(event.pointerId);
-				if (index === -1) return; // Not my pointer
+				if (index === -1) return;   // Not my pointer
 
 				if (event.button === 0) {
 					dragHandlePointerId[index] = undefined;
@@ -5033,35 +5288,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						$("html").removeClass(resetAllCursorsClass);
 						document.documentElement.style.setProperty("cursor", htmlCursor);
 
-						eventRemovers.forEach(function (eventRemover) {
-							eventRemover();
-						});
+						eventRemovers.forEach(function (eventRemover) { eventRemover(); });
 						eventRemovers = [];
 
-						slider.trigger("lastdragend");
+						slider.triggerNative("lastdragend");
 					}
 				}
 			}
 
 			function onKeydown(event) {
 				if (slider.disabled()) return;
-				if (event.keyCode === 40 || event.keyCode === 37) {
-					// Down, Left
+				if (event.keyCode === 40 || event.keyCode === 37) {   // Down, Left
 					event.preventDefault();
 					setValue(lastTouchedHandleIndex, opt.values[lastTouchedHandleIndex] - (event.shiftKey ? opt.largeStep : opt.smallStep));
 				}
-				if (event.keyCode === 38 || event.keyCode === 39) {
-					// Up, Right
+				if (event.keyCode === 38 || event.keyCode === 39) {   // Up, Right
 					event.preventDefault();
 					setValue(lastTouchedHandleIndex, opt.values[lastTouchedHandleIndex] + (event.shiftKey ? opt.largeStep : opt.smallStep));
 				}
-				if (event.keyCode === 36) {
-					// Home
+				if (event.keyCode === 36) {   // Home
 					event.preventDefault();
 					setValue(lastTouchedHandleIndex, opt.min);
 				}
-				if (event.keyCode === 35) {
-					// End
+				if (event.keyCode === 35) {   // End
 					event.preventDefault();
 					setValue(lastTouchedHandleIndex, opt.max);
 				}
@@ -5077,61 +5326,64 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (index !== -1) myDragHandleOffset = dragHandleOffset[index];
 
 				var sliderRect = slider.rect();
-				var pointerPosIntoSlider; // Distance from min end of the slider to the pointer
-				var sliderLength; // Length of the slider in drag direction
+				var pointerPosIntoSlider;   // Distance from min end of the slider to the pointer
+				var sliderLength;   // Length of the slider in drag direction
 				if (isVertical) {
 					pointerPosIntoSlider = sliderRect.bottom - sliderBorder - event.pageY;
 					sliderLength = slider.innerHeight();
-				} else {
+				}
+				else {
 					pointerPosIntoSlider = event.pageX - sliderRect.left - sliderBorder;
 					sliderLength = slider.innerWidth();
 				}
 
-				var handleCenterPos = pointerPosIntoSlider - myDragHandleOffset + handleLength / 2; // Position of the handle's center
-				var value = handleCenterPos / sliderLength * (opt.max - opt.min) + opt.min; // Selected value
+				var handleCenterPos = pointerPosIntoSlider - myDragHandleOffset + handleLength / 2;   // Position of the handle's center
+				var value = handleCenterPos / sliderLength * (opt.max - opt.min) + opt.min;   // Selected value
 				return value;
 			}
 
 			// Sets a slider value and triggers the change event. Also moves the handle.
 			function setValue(index, value) {
 				value = minmax(value, opt.min, opt.max);
-				value = Math.round(value / opt.smallStep) * opt.smallStep; // Snap to steps
+				value = Math.round(value / opt.smallStep) * opt.smallStep;   // Snap to steps
 				value = round(value, decimals);
 				moveHandle(index, value);
 				if (value !== opt.values[index]) {
 					opt.values[index] = value;
-					slider.trigger("valuechange"); // TODO: Indicate the changed value index
+					slider.triggerNative("valuechange");   // TODO: Indicate the changed value index
 				}
 			}
 
 			// Moves a handle to the specified slider value and updates the ranges.
 			function moveHandle(index, value) {
 				var pos = getPosFromValue(value);
-				handles[index].css(startAttr, "calc(" + pos + "% - " + handleLength / 2 + "px)");
+				handles[index].css(startAttr, "calc(" + pos + "% - " + (handleLength / 2) + "px)");
 
 				// Also update ranges
 				if (opt.ranges) {
 					opt.ranges.forEach(function (rangeItem, rangeIndex) {
-						var start = rangeItem.start,
-						    startHandleIndex;
+						var start = rangeItem.start, startHandleIndex;
 						if (start === "min") {
 							start = opt.min;
-						} else if (start === "max") {
+						}
+						else if (start === "max") {
 							start = opt.max;
-						} else if (start[0] === "#") {
+						}
+						else if (start[0] === "#") {
 							startHandleIndex = Number(start.substr(1));
 							start = startHandleIndex === index ? value : opt.values[startHandleIndex];
 						}
 						if (start < opt.min) start = opt.min;
 						if (start > opt.max) start = opt.max;
 
-						var end = rangeItem.end,
-						    endHandleIndex;
+						var end = rangeItem.end, endHandleIndex;
 						if (end === "min") {
 							end = opt.min;
-						} else if (end === "max") {
+						}
+						else if (end === "max") {
 							end = opt.max;
-						} else if (end[0] === "#") {
+						}
+						else if (end[0] === "#") {
 							endHandleIndex = Number(end.substr(1));
 							end = endHandleIndex === index ? value : opt.values[endHandleIndex];
 						}
@@ -5140,12 +5392,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 						var startPos = getPosFromValue(start);
 						var endPos = getPosFromValue(end);
-						var overflowEqual = rangeItem.overflowEqual || startHandleIndex !== undefined && endHandleIndex !== undefined && endHandleIndex < startHandleIndex;
+						var overflowEqual = rangeItem.overflowEqual ||
+							startHandleIndex !== undefined && endHandleIndex !== undefined && endHandleIndex < startHandleIndex;
 						setRange(rangeIndex, startPos, endPos, overflowEqual, opt.hideWrapping);
 					});
-				} else if (opt.handleCount === 1) {
-					if (pos < rangeBasePos) setRange(0, pos, rangeBasePos, false, opt.hideWrapping);else setRange(0, rangeBasePos, pos, false, opt.hideWrapping);
-				} else if (opt.handleCount === 2) {
+				}
+				else if (opt.handleCount === 1) {
+					if (pos < rangeBasePos)
+						setRange(0, pos, rangeBasePos, false, opt.hideWrapping);
+					else
+						setRange(0, rangeBasePos, pos, false, opt.hideWrapping);
+				}
+				else if (opt.handleCount === 2) {
 					var pos0 = index === 0 ? pos : getPosFromValue(opt.values[0]);
 					var pos1 = index === 1 ? pos : getPosFromValue(opt.values[1]);
 					setRange(0, pos0, pos1, opt.rangeOverflowEqual, opt.hideWrapping);
@@ -5157,19 +5415,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (start < end || start === end && !overflowEqual) {
 					// Only one contiguous range, hide the second element
 					ranges[index * 2].css(startAttr, start + "%");
-					ranges[index * 2].css(endAttr, 100 - end + "%");
+					ranges[index * 2].css(endAttr, (100 - end) + "%");
 					ranges[index * 2 + 1].css(startAttr, "0%");
 					ranges[index * 2 + 1].css(endAttr, "100%");
-				} else if (!hideWrapping) {
+				}
+				else if (!hideWrapping) {
 					// Overflow range, split in two elements from either end of the slider
 					ranges[index * 2].css(startAttr, "0%");
-					ranges[index * 2].css(endAttr, 100 - end + "%");
+					ranges[index * 2].css(endAttr, (100 - end) + "%");
 					ranges[index * 2 + 1].css(startAttr, start + "%");
 					ranges[index * 2 + 1].css(endAttr, "0%");
-				} else {
+				}
+				else {
 					// Overflow range, hidden
 					ranges[index * 2].css(startAttr, start + "%");
-					ranges[index * 2].css(endAttr, 100 - start + "%");
+					ranges[index * 2].css(endAttr, (100 - start) + "%");
 					ranges[index * 2 + 1].css(startAttr, "0%");
 					ranges[index * 2 + 1].css(endAttr, "100%");
 				}
@@ -5202,7 +5462,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (value === undefined) {
 			var slider = this.first();
-			if (slider.length === 0) return; // Nothing to do
+			if (slider.length === 0) return;   // Nothing to do
 			var opt = loadOptions("slider", slider);
 			return opt.values[index];
 		}
@@ -5253,7 +5513,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Makes the child elements in each selected element sortable by drag&drop.
 	function sortable(options) {
 		return this.each$(function (_, elem) {
-			if (elem.hasClass(sortableClass)) return; // Already done
+			if (elem.hasClass(sortableClass)) return;   // Already done
 			elem.addClass(sortableClass);
 			var opt = initOptions("sortable", sortableDefaults, elem, {}, options);
 			opt._prepareChild = prepareChild;
@@ -5270,12 +5530,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var crossEnd = isVertical ? "right" : "bottom";
 
 			elem.children().each(prepareChild);
-
+			
 			function prepareChild() {
 				var child = $(this);
 				var placeholder, initialChildAfterElement, placeholderAfterElement, betweenChildren, initialChildIndex;
 				var stack = opt.stack;
-				if (stack === true) stack = elem.children();
+				if (stack === true)
+					stack = elem.children();
 
 				child.draggable({
 					handle: opt.handle,
@@ -5289,19 +5550,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 				child.on("draggablestart", function (event) {
 					event.stopImmediatePropagation();
-					var event2 = $.Event("sortablestart");
-					child.trigger(event2);
-					if (event2.isDefaultPrevented()) {
+					let event2 = child.triggerNative("sortablestart");
+					if (event2.defaultPrevented) {
 						event.preventDefault();
 						return;
 					}
 
 					// Remember where the element was before it was dragged, so it can be moved back there
 					initialChildAfterElement = child.prev();
-					if (initialChildAfterElement.length === 0) initialChildAfterElement = null;
+					if (initialChildAfterElement.length === 0)
+						initialChildAfterElement = null;
 					initialChildIndex = child.index();
 
-					var rect = child.rect();
+					let rect = child.rect();
 
 					// Fix the size of table row cells while dragging
 					if (child[0].nodeName === "TR") {
@@ -5314,16 +5575,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 						child.css("min-width", child.outerWidth() + 1);
 					}
-
+					
 					// Create the placeholder element that will take the place of the dragged element
-					placeholder = $("<" + child[0].nodeName + "/>").addClass(child[0].className).addClass(sortablePlaceholderClass).text("\xa0").css({ width: rect.width, height: rect.height });
+					placeholder = $("<" + child[0].nodeName + "/>")
+						.addClass(child[0].className)
+						.addClass(sortablePlaceholderClass)
+						.text("\xa0")
+						.css({ width: rect.width, height: rect.height });
 					if (child[0].nodeName === "TR") {
-						var colCount = child.children("td, th").map(function (td) {
-							return $(td).attr("colspan") || 1;
-						}).get() // Convert jQuery array to Array
-						.reduce(function (a, b) {
-							return a + b;
-						});
+						let colCount = child.children("td, th")
+							.map(td => $(td).attr("colspan") || 1)
+							.get()   // Convert jQuery array to Array
+							.reduce((a, b) => a + b);
 						placeholder.append($("<td/>").attr("colspan", colCount));
 					}
 
@@ -5334,9 +5597,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				});
 				child.on("draggablemove", function (event) {
 					event.stopImmediatePropagation();
-					var event2 = $.Event("sortablemove");
-					child.trigger(event2);
-					if (event2.isDefaultPrevented()) {
+					let event2 = child.triggerNative("sortablemove");
+					if (event2.defaultPrevented) {
 						event.preventDefault();
 						return;
 					}
@@ -5373,20 +5635,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					//console.log("start is after center of " + $(newPlaceholderAfterElementStart).text());
 					//console.log("end is after center of " + $(newPlaceholderAfterElementEnd).text());
 					var newPlaceholderAfterElement;
-					if (newPlaceholderAfterElementStart !== placeholderAfterElement) newPlaceholderAfterElement = newPlaceholderAfterElementStart;
-					if (newPlaceholderAfterElementEnd !== placeholderAfterElement) newPlaceholderAfterElement = newPlaceholderAfterElementEnd;
+					if (newPlaceholderAfterElementStart !== placeholderAfterElement)
+						newPlaceholderAfterElement = newPlaceholderAfterElementStart;
+					if (newPlaceholderAfterElementEnd !== placeholderAfterElement)
+						newPlaceholderAfterElement = newPlaceholderAfterElementEnd;
 
 					// ...and move it there
 					if (newPlaceholderAfterElement !== undefined) {
 						var eventCancelled = false;
 						if (placeholderAfterElement !== undefined) {
-							var _event2 = $.Event("sortablechange");
-							_event2.after = newPlaceholderAfterElement;
-							child.trigger(_event2);
-							eventCancelled = _event2.isDefaultPrevented();
+							let event2 = child.triggerNative("sortablechange", {
+								after: newPlaceholderAfterElement
+							});
+							eventCancelled = event2.defaultPrevented;
 						}
 						if (!eventCancelled) {
-							if (!newPlaceholderAfterElement) placeholder.detach().insertBefore(elem.firstChild());else placeholder.detach().insertAfter(newPlaceholderAfterElement);
+							if (!newPlaceholderAfterElement)
+								placeholder.detach().insertBefore(elem.firstChild());
+							else
+								placeholder.detach().insertAfter(newPlaceholderAfterElement);
 							placeholderAfterElement = newPlaceholderAfterElement;
 							updateChildren();
 						}
@@ -5411,13 +5678,16 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						child.css("width", "");
 					}
 
-					var event2 = $.Event("sortableend");
-					event2.initialIndex = initialChildIndex;
-					event2.newIndex = child.index();
-					event2.after = placeholderAfterElement;
-					child.trigger(event2);
-					if (event2.isDefaultPrevented()) {
-						if (!initialChildAfterElement) child.detach().insertBefore(elem.firstChild());else child.detach().insertAfter(initialChildAfterElement);
+					let event2 = child.triggerNative("sortableend", {
+						initialIndex: initialChildIndex,
+						newIndex: child.index(),
+						after: placeholderAfterElement
+					});
+					if (event2.defaultPrevented) {
+						if (!initialChildAfterElement)
+							child.detach().insertBefore(elem.firstChild());
+						else
+							child.detach().insertAfter(initialChildAfterElement);
 					}
 					initialChildAfterElement = undefined;
 				});
@@ -5425,15 +5695,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				function updateChildren() {
 					betweenChildren = [];
 					var rowElements = [];
-					var rowMin,
-					    rowMax,
-					    currentPos,
-					    childElem = null;
+					var rowMin, rowMax, currentPos, childElem = null;
 					elem.children().each(function (_, obj) {
 						if (obj !== child[0]) {
 							var rect = $(obj).rect();
-							if (rect[flowStart] + 0.1 < currentPos) {
-								// Need to compensate for rounding issues from the 4th decimal in Chrome/Edge/IE
+							if (rect[flowStart] + 0.1 < currentPos) {   // Need to compensate for rounding issues from the 4th decimal in Chrome/Edge/IE
 								// This element is in a new row
 								addRow();
 							}
@@ -5509,7 +5775,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// Source: https://jsfiddle.net/beentaken/9k1sf6p2/ (modified)
 		function dist2(v, w) {
-			return Math.pow(v.left - w.left, 2) + Math.pow(v.top - w.top, 2);
+			return (v.left - w.left) ** 2 + (v.top - w.top) ** 2;
 		}
 
 		function distToSegmentSquared(p, v, w) {
@@ -5542,13 +5808,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var tabPagesClass = "ff-tab-pages";
 
 	// Defines default options for the tabs plugin.
-	var tabsDefaults = {};
+	var tabsDefaults = {
+	};
 
 	// Converts all div elements in each selected element into tab pages.
 	// The tab page headers are read from the div elements' title attribute.
 	function tabs(options) {
 		return this.each$(function (_, container) {
-			if (container.children("div." + tabHeadersClass).length !== 0) return; // Already done
+			if (container.children("div." + tabHeadersClass).length !== 0) return;   // Already done
 			var opt = initOptions("tabs", tabsDefaults, container, {}, options);
 			opt._addTab = addTab;
 
@@ -5557,7 +5824,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var headers = $("<div/>").addClass(tabHeadersClass).appendTo(container);
 			var pages = $("<div/>").addClass(tabPagesClass).appendTo(container);
 			pageDivs.each(addTab);
-
+			
 			function addTab() {
 				var header = $("<a/>").attr("href", "#").attr("tabindex", "-1").text($(this).attr("title")).appendTo(headers);
 				var page = $(this).removeAttr("title").detach().appendTo(pages);
@@ -5571,23 +5838,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					container.tabs.activeTab(page);
 				});
 				header.keydown(function (event) {
-					if (event.which === 37) {
-						// Left
+					if (event.which === 37) {   // Left
 						event.preventDefault();
 						header.prev().focus().click();
 					}
-					if (event.which === 39) {
-						// Right
+					if (event.which === 39) {   // Right
 						event.preventDefault();
 						header.next().focus().click();
 					}
-					if (event.which === 36) {
-						// Home
+					if (event.which === 36) {   // Home
 						event.preventDefault();
 						header.parent().children().first().focus().click();
 					}
-					if (event.which === 35) {
-						// End
+					if (event.which === 35) {   // End
 						event.preventDefault();
 						header.parent().children().last().focus().click();
 					}
@@ -5623,8 +5886,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		page.remove();
 		if (page.hasClass("active")) {
 			// Activate another tab
-			var newIndex = Math.min(index, count - 2);
-			if (newIndex >= 0) container.tabs.activeTab(newIndex);
+			let newIndex = Math.min(index, count - 2);
+			if (newIndex >= 0)
+				container.tabs.activeTab(newIndex);
 		}
 	}
 
@@ -5640,12 +5904,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			index = indexOrPage.index();
 		}
 		var header = headers.children().eq(index);
-
+		
 		// Getter
 		if (title === undefined) {
 			return header.text();
 		}
-
+		
 		// Setter
 		header.text(title);
 	}
@@ -5667,7 +5931,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if ($.isNumeric(indexOrPage)) {
 				index = +indexOrPage;
 				page = pages.children().eq(index);
-			} else {
+			}
+			else {
 				index = indexOrPage.index();
 				page = indexOrPage;
 			}
@@ -5678,7 +5943,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				headers.children().eq(index).addClass("active").removeAttr("tabindex");
 				pages.children(".active").removeClass("active");
 				page.addClass("active");
-				container.trigger("activeTabChange");
+				container.triggerNative("activeTabChange");
 			}
 		});
 	}
@@ -5711,16 +5976,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				// Move to end
 				header.insertAfter(headersChildren.last());
 				page.insertAfter(pagesChildren.last());
-			} else {
+			}
+			else {
 				// Move to beginning
 				header.insertBefore(headersChildren.first());
 				page.insertBefore(pagesChildren.first());
 			}
-		} else if (newIndex > index) {
+		}
+		else if (newIndex > index) {
 			// Move after newIndex
 			header.insertAfter(destHeader);
 			page.insertAfter(destPage);
-		} else if (newIndex < index) {
+		}
+		else if (newIndex < index) {
 			// Move before newIndex
 			header.insertBefore(destHeader);
 			page.insertBefore(destPage);
@@ -5745,7 +6013,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	var timePickerDefaults = {
 		// The locale used for formats and text translations. Default: Auto.
 		localeCode: undefined,
-
+		
 		// A function that changes the format of a month item. Default: None.
 		monthFormatter: undefined,
 
@@ -5762,7 +6030,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Converts each selected date/time input element into a masked text field with time picker button.
 	function timePicker(options) {
 		return this.each$(function (_, input) {
-			if (input.parent().hasClass(inputWrapperClass)) return; // Already done
+			if (input.parent().hasClass(inputWrapperClass)) return;   // Already done
 			var opt = initOptions("timePicker", timePickerDefaults, input, {}, options);
 			var originalType = input.attr("type").trim().toLowerCase();
 			var dateSelection = originalType === "date" || originalType === "datetime-local" || originalType === "month" || originalType === "week";
@@ -5773,7 +6041,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var minuteSelection = timeSelection && step < 3600;
 			var secondSelection = timeSelection && step < 60;
 			var required = input.prop("required");
-			input.prop("required", false); // We have no way to show a browser-generated message on the original hidden and new readonly field
+			input.prop("required", false);   // We have no way to show a browser-generated message on the original hidden and new readonly field
 
 			// Put a wrapper between the input and its parent
 			var wrapper = $("<div/>").addClass(inputWrapperClass).attr("style", input.attr("style"));
@@ -5784,12 +6052,22 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.attr("autocomplete", "off");
 			var inputChanging = false;
 			var isKeyboardMode = false;
-			var newInput = $("<input/>").attr("type", "text").prop("readonly", true).attr("inputmode", "none").attr("enterkeyhint", "done") // Enter key is handled separately to close dropdown/keyboard but prevent submit
-			.attr("autocapitalize", "off").attr("autocomplete", "off").attr("autocorrect", "off").attr("spellcheck", "false").insertAfter(input);
+			var newInput = $("<input/>")
+				.attr("type", "text")
+				.addClass("ff-timepicker-input")
+				.prop("readonly", true)
+				.attr("inputmode", "none")
+				.attr("enterkeyhint", "done")   // Enter key is handled separately to close dropdown/keyboard but prevent submit
+				.attr("autocapitalize", "off")
+				.attr("autocomplete", "off")
+				.attr("autocorrect", "off")
+				.attr("spellcheck", "false")
+				.insertAfter(input);
 			input.data("ff-replacement", newInput);
 			// Copy some CSS classes to the replacement element
-			["input-validation-error"].forEach(function (clsName) {
-				if (input.hasClass(clsName)) newInput.addClass(clsName);
+			["input-validation-error"].forEach(clsName => {
+				if (input.hasClass(clsName))
+					newInput.addClass(clsName);
 			});
 
 			newInput.change(function () {
@@ -5802,7 +6080,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			input.change(function () {
 				if (!inputChanging) {
 					setValue(input.val());
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
 			});
 
@@ -5815,40 +6094,41 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			newInput.on("paste", function (event) {
 				event.preventDefault();
 				if (event.originalEvent.clipboardData) {
-					var text = event.originalEvent.clipboardData.getData("text");
-					var pattern = "";
-					var matchParts = [];
-					for (var i = 0; i < parts.length; i++) {
+					let text = event.originalEvent.clipboardData.getData("text");
+					let pattern = "";
+					let matchParts = [];
+					for (let i = 0; i < parts.length; i++) {
 						if (parts[i].name) {
 							if (parts[i].options) {
-								pattern += "(" + parts[i].options.map(function (o) {
-									return regExpEscape(o);
-								}).join("|") + ")";
-							} else {
+								pattern += "(" + parts[i].options.map(o => regExpEscape(o)).join("|") + ")";
+							}
+							else {
 								pattern += "([0-9]{1," + parts[i].length + "})";
 							}
 							matchParts.push(parts[i]);
-						} else {
+						}
+						else {
 							pattern += regExpEscape(parts[i].text);
 						}
 					}
-					var re = new RegExp("^" + pattern + "$");
-					var match = re.exec(text);
-					var newPartData = {};
+					let re = new RegExp("^" + pattern + "$");
+					let match = re.exec(text);
+					let newPartData = {};
 					if (match) {
-						for (var _i4 = 0; _i4 < matchParts.length; _i4++) {
-							var value = +match[_i4 + 1];
+						for (let i = 0; i < matchParts.length; i++) {
+							let value = +match[i + 1];
 							if (isNaN(value)) {
-								value = matchParts[_i4].options.indexOf(match[_i4 + 1]) + matchParts[_i4].min;
+								value = matchParts[i].options.indexOf(match[i + 1]) + matchParts[i].min;
 							}
-							if (value < matchParts[_i4].min || value > matchParts[_i4].max) return; // Invalid value
-							newPartData[matchParts[_i4].name] = value;
+							if (value < matchParts[i].min || value > matchParts[i].max) return;   // Invalid value
+							newPartData[matchParts[i].name] = value;
 						}
 						partData = newPartData;
-						input.val(getValue()); // Update native field for validation/fixing
+						input.val(getValue());   // Update native field for validation/fixing
 						fixValue(true);
 						updateText();
-						newInput.trigger("input").change();
+						newInput.triggerNative("input");
+						newInput.triggerNative("change");
 					}
 				}
 			});
@@ -5876,13 +6156,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			};
 
 			function translate(key) {
-				if (key in dictionary[language]) return dictionary[language][key];
+				if (key in dictionary[language])
+					return dictionary[language][key];
 				return dictionary.en[key];
 			}
 
 			function fixValue(noChangeEvent) {
-				var isComplete = true;
-				for (var i = 0; i < parts.length; i++) {
+				let isComplete = true;
+				for (let i = 0; i < parts.length; i++) {
 					if (parts[i].name && !$.isSet(partData[parts[i].name])) {
 						isComplete = false;
 						break;
@@ -5891,22 +6172,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (isComplete && !input.val()) {
 					// All values set but no valid value available
 					if (weekSelection) {
-						var part = findPart("w");
+						let part = findPart("w");
 						if (part) partData.w = getPartMax(part);
-					} else {
-						var _part = findPart("d");
-						if (_part) partData.d = getPartMax(_part);
+					}
+					else {
+						let part = findPart("d");
+						if (part) partData.d = getPartMax(part);
 					}
 					if (!noChangeEvent) {
 						updateText();
-						newInput.trigger("input").change();
+						newInput.triggerNative("input");
+						newInput.triggerNative("change");
 					}
 				}
 			}
 
 			function validate() {
 				if (required) {
-					if (input.val()) newInput.attr("pattern", null);else newInput.attr("pattern", "^invalid$");
+					if (input.val())
+						newInput.attr("pattern", null);
+					else
+						newInput.attr("pattern", "^invalid$");
 				}
 			}
 
@@ -5916,7 +6202,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var dropdown = $("<div/>").addClass("dropdown bordered");
 
 			// Set up masked edit
-			var formatOptions = {
+			let formatOptions = {
 				calendar: "gregory",
 				numberingSystem: "latn"
 			};
@@ -5924,14 +6210,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (daySelection) {
 					formatOptions.day = "numeric";
 					formatOptions.month = "numeric";
-				} else {
+				}
+				else {
 					formatOptions.month = "long";
 				}
 				formatOptions.year = "numeric";
 			}
 			if (timeSelection) {
 				formatOptions.hour = "numeric";
-				formatOptions.hour12 = false; // TODO: Add 12h clock support; detect from format part "dayPeriod"
+				formatOptions.hour12 = false;   // TODO: Add 12h clock support; detect from format part "dayPeriod"
 				if (minuteSelection) {
 					formatOptions.minute = "numeric";
 					if (secondSelection) {
@@ -5939,8 +6226,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 			}
-			var format = new Intl.DateTimeFormat(opt.localeCode, formatOptions);
-			var formatResolvedOptions = format.resolvedOptions();
+			let format = new Intl.DateTimeFormat(opt.localeCode, formatOptions);
+			let formatResolvedOptions = format.resolvedOptions();
 			//console.log(formatResolvedOptions);
 			var language = formatResolvedOptions.locale.split("-")[0];
 			// All data and text parts of the masked input
@@ -5957,7 +6244,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						}
 					}
 					if (timeSelection) {
-						if (dateSelection) parts.push({ text: opt.isoFormatSeparator });
+						if (dateSelection)
+							parts.push({ text: opt.isoFormatSeparator });
 						parts.push({ name: "h", min: 0, max: 23, length: 2 });
 						if (minuteSelection) {
 							parts.push({ text: ":" });
@@ -5968,102 +6256,80 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							}
 						}
 					}
-				} else {
-					var formatParts = format.formatToParts(new Date());
-					var _iteratorNormalCompletion = true;
-					var _didIteratorError = false;
-					var _iteratorError = undefined;
-
-					try {
-						for (var _iterator = formatParts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-							var f = _step.value;
-
-							switch (f.type) {
-								case "literal":
-									parts.push({ text: f.value });break;
-								case "year":
-									parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });break;
-								case "month":
-									if (formatOptions.month === "numeric") {
-										parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
-									} else {
-										// Collect all localised month names
-										var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
-										var monthNames = [];
-										for (var m = 0; m < 12; m++) {
-											monthNames.push(monthFormat.format(new Date(2000, m, 1)));
-										}parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
-									}
-									break;
-								case "day":
-									parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") });break;
-								case "hour":
-									parts.push({ name: "h", min: 0, max: 23, length: 2 });break;
-								case "minute":
-									parts.push({ name: "min", min: 0, max: 59, length: 2 });break;
-								case "second":
-									parts.push({ name: "s", min: 0, max: 59, length: 2 });break;
-							}
-						}
-					} catch (err) {
-						_didIteratorError = true;
-						_iteratorError = err;
-					} finally {
-						try {
-							if (!_iteratorNormalCompletion && _iterator.return) {
-								_iterator.return();
-							}
-						} finally {
-							if (_didIteratorError) {
-								throw _iteratorError;
-							}
+				}
+				else {
+					let formatParts = format.formatToParts(new Date());
+					for (let f of formatParts) {
+						switch (f.type) {
+							case "literal": parts.push({ text: f.value }); break;
+							case "year": parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") }); break;
+							case "month":
+								if (formatOptions.month === "numeric") {
+									parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: translate("mo") });
+								}
+								else {
+									// Collect all localised month names
+									let monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+									let monthNames = [];
+									for (let m = 0; m < 12; m++)
+										monthNames.push(monthFormat.format(new Date(2000, m, 1)));
+									parts.push({ name: "mo", min: 1, max: 12, length: 4, options: monthNames, placeholder: translate("month") });
+								}
+								break;
+							case "day": parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: translate("d") }); break;
+							case "hour": parts.push({ name: "h", min: 0, max: 23, length: 2 }); break;
+							case "minute": parts.push({ name: "min", min: 0, max: 59, length: 2 }); break;
+							case "second": parts.push({ name: "s", min: 0, max: 59, length: 2 }); break;
 						}
 					}
 				}
-			} else {
-				if (translate("week1")) parts.push({ text: translate("week1") });
+			}
+			else {
+				if (translate("week1"))
+					parts.push({ text: translate("week1") });
 				parts.push({ name: "w", min: 1, max: 53, length: 2, placeholder: translate("w") });
-				if (translate("week2")) parts.push({ text: translate("week2") });
+				if (translate("week2"))
+					parts.push({ text: translate("week2") });
 				parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: translate("y") });
 			}
 			/*
-   if (dateSelection && !weekSelection) {
-   	if (daySelection) {
-   		parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: "tt" });
-   		parts.push({ text: "." });
-   		parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: "mm" });
-   		parts.push({ text: "." });
-   	}
-   	else {
-   		parts.push({ name: "mo", min: 1, max: 12, options: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], length: 4, placeholder: "mmmm" });
-   		parts.push({ text: " " });
-   	}
-   	parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
-   	if (timeSelection) {
-   		parts.push({ text: ", " });
-   	}
-   }
-   if (weekSelection) {
-   	parts.push({ text: "Woche " });
-   	parts.push({ name: "w", min: 1, max: 53, length: 2, placeholder: "ww" });
-   	parts.push({ text: ", " });
-   	parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
-   }
-   if (timeSelection) {
-   	parts.push({ name: "h", min: 0, max: 23, length: 2 });
-   	if (minuteSelection) {
-   		parts.push({ text: ":" });
-   		parts.push({ name: "min", min: 0, max: 59, length: 2 });
-   		if (secondSelection) {
-   			parts.push({ text: ":" });
-   			parts.push({ name: "s", min: 0, max: 59, length: 2 });
-   		}
-   	}
-   }
-   */
+			if (dateSelection && !weekSelection) {
+				if (daySelection) {
+					parts.push({ name: "d", min: 1, max: 31, length: 2, placeholder: "tt" });
+					parts.push({ text: "." });
+					parts.push({ name: "mo", min: 1, max: 12, length: 2, placeholder: "mm" });
+					parts.push({ text: "." });
+				}
+				else {
+					parts.push({ name: "mo", min: 1, max: 12, options: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"], length: 4, placeholder: "mmmm" });
+					parts.push({ text: " " });
+				}
+				parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
+				if (timeSelection) {
+					parts.push({ text: ", " });
+				}
+			}
+			if (weekSelection) {
+				parts.push({ text: "Woche " });
+				parts.push({ name: "w", min: 1, max: 53, length: 2, placeholder: "ww" });
+				parts.push({ text: ", " });
+				parts.push({ name: "y", min: 1, max: 9999, length: 4, placeholder: "jjjj" });
+			}
+			if (timeSelection) {
+				parts.push({ name: "h", min: 0, max: 23, length: 2 });
+				if (minuteSelection) {
+					parts.push({ text: ":" });
+					parts.push({ name: "min", min: 0, max: 59, length: 2 });
+					if (secondSelection) {
+						parts.push({ text: ":" });
+						parts.push({ name: "s", min: 0, max: 59, length: 2 });
+					}
+				}
+			}
+			*/
 			// The index of the selected data part (text part indices are invalid)
 			var selectedPart = -1;
-			for (var i = 0; i < parts.length; i++) {
+			for (let i = 0; i < parts.length; i++) {
 				if (parts[i].name) {
 					selectedPart = i;
 					break;
@@ -6083,35 +6349,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			var optionSearchTimeout;
 
 			function findPart(name) {
-				for (var _i5 = 0; _i5 < parts.length; _i5++) {
-					if (parts[_i5].name === name) return parts[_i5];
+				for (let i = 0; i < parts.length; i++) {
+					if (parts[i].name === name)
+						return parts[i];
 				}
 				return null;
 			}
 
 			function findGreaterPartName(name) {
 				switch (name) {
-					case "mo":
-						return "y";
-					case "w":
-						return "y";
-					case "d":
-						return "mo";
-					case "h":
-						return "d";
-					case "min":
-						return "h";
-					case "s":
-						return "min";
-					default:
-						return null;
+					case "mo": return "y";
+					case "w": return "y";
+					case "d": return "mo";
+					case "h": return "d";
+					case "min": return "h";
+					case "s": return "min";
+					default: return null;
 				}
 			}
 
 			function selectPart(name) {
-				for (var _i6 = 0; _i6 < parts.length; _i6++) {
-					if (parts[_i6].name === name) {
-						selectedPart = _i6;
+				for (let i = 0; i < parts.length; i++) {
+					if (parts[i].name === name) {
+						selectedPart = i;
 						appendInput = false;
 						inputLength = 0;
 						break;
@@ -6120,30 +6380,39 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function updateText() {
-				var text = "";
-				for (var _i7 = 0; _i7 < parts.length; _i7++) {
-					var part = parts[_i7];
+				let text = "";
+				let anyValueSet = false;
+				for (let i = 0; i < parts.length; i++) {
+					let part = parts[i];
 					if ($.isSet(part.text)) {
 						text += part.text;
-					} else if (part.name) {
+					}
+					else if (part.name) {
 						part.start = text.length;
-						var value = partData[part.name];
+						let value = partData[part.name];
 						if ($.isSet(value)) {
 							// Display value
+							anyValueSet = true;
 							if (part.options) {
 								text += part.options[value - part.min];
-							} else {
+							}
+							else {
 								text += (value + "").padStart(part.length, "0");
 							}
-						} else {
+						}
+						else {
 							// Display placeholder or empty space
-							if (part.placeholder) text += part.placeholder;else text += "-".repeat(part.length);
-							//text += "\u2007".repeat(part.length);   // FIGURE SPACE
+							if (part.placeholder)
+								text += part.placeholder;
+							else
+								text += "-".repeat(part.length);
+								//text += "\u2007".repeat(part.length);   // FIGURE SPACE
 						}
 						part.end = text.length;
 					}
 				}
 				newInput.val(text);
+				newInput.toggleClass("empty", !anyValueSet);
 				if (parts[selectedPart] && parts[selectedPart].end) {
 					newInput[0].setSelectionRange(parts[selectedPart].start, parts[selectedPart][isFocused ? "end" : "start"]);
 					// Setting a non-empty selection always shows the selection background, even if not
@@ -6155,14 +6424,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			updateText();
 
 			function getValue() {
-				var value = "";
+				let value = "";
 				if (dateSelection) {
 					if (!$.isSet(partData.y)) return "";
 					value += (partData.y + "").padStart(4, "0") + "-";
 					if (weekSelection) {
 						if (!$.isSet(partData.w)) return "";
 						value += "W" + (partData.w + "").padStart(2, "0");
-					} else {
+					}
+					else {
 						if (!$.isSet(partData.mo)) return "";
 						value += (partData.mo + "").padStart(2, "0");
 						if (daySelection) {
@@ -6172,10 +6442,12 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					}
 				}
 				if (timeSelection) {
-					if (dateSelection) value += "T";
+					if (dateSelection)
+						value += "T";
 					if (!$.isSet(partData.h)) return "";
 					if (!$.isSet(partData.min)) return "";
-					value += (partData.h + "").padStart(2, "0") + ":" + (partData.min + "").padStart(2, "0");
+					value += (partData.h + "").padStart(2, "0") + ":" +
+						(partData.min + "").padStart(2, "0");
 					if (secondSelection) {
 						if (!$.isSet(partData.s)) return "";
 						value += ":" + (partData.s + "").padStart(2, "0");
@@ -6185,21 +6457,28 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function setValue(value) {
-				var match = void 0;
+				let match;
 				partData = {};
 				if (match = value.match(/^([0-9]+)-([0-9]+)(?:-([0-9]+)(?:T([0-9]+):([0-9]+)(?::([0-9]+)(?:.[0-9]+)?)?)?)?$/)) {
 					partData.y = +match[1];
 					partData.mo = +match[2];
-					if (match[3]) partData.d = +match[3];
-					if (match[4]) partData.h = +match[4];
-					if (match[5]) partData.min = +match[5];
-					if (match[6]) partData.s = +match[6];
+					if (match[3])
+						partData.d = +match[3];
+					if (match[4])
+						partData.h = +match[4];
+					if (match[5])
+						partData.min = +match[5];
+					if (match[6])
+						partData.s = +match[6];
 					// Ignore (but accept) optional milliseconds
-				} else if (match = value.match(/^([0-9]+):([0-9]+)(?::([0-9]+))?$/)) {
+				}
+				else if (match = value.match(/^([0-9]+):([0-9]+)(?::([0-9]+))?$/)) {
 					partData.h = +match[1];
 					partData.min = +match[2];
-					if (match[3]) partData.s = +match[3];
-				} else if (match = value.match(/^([0-9]+)-W([0-9]+)$/)) {
+					if (match[3])
+						partData.s = +match[3];
+				}
+				else if (match = value.match(/^([0-9]+)-W([0-9]+)$/)) {
 					partData.y = +match[1];
 					partData.w = +match[2];
 				}
@@ -6225,41 +6504,47 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			//bindInputButtonsDisabled(newInput, buttons);
 
 			function changeValue(direction, count, partName) {
-				var part = partName ? findPart(partName) : parts[selectedPart];
+				let part = partName ? findPart(partName) : parts[selectedPart];
 				if (part) {
-					var value = partData[part.name];
+					let value = partData[part.name];
 					// TODO: Consider valid values as defined by step and min
 					if ($.isSet(value)) {
-						var backupPartData = $.extend({}, partData);
+						let backupPartData = $.extend({}, partData);
 						while (count-- > 0) {
-							var isOverflow = void 0;
-							var myPart = part;
-							do {
+							let isOverflow;
+							let myPart = part;
+							do
+							{
 								partData[myPart.name] += direction;
 								isOverflow = false;
 								if (direction > 0 && partData[myPart.name] > getPartMax(myPart)) {
 									isOverflow = true;
-									partData[myPart.name] = getPartMin(myPart); // min of next overflow state
-								} else if (direction < 0 && partData[myPart.name] < getPartMin(myPart)) {
+									partData[myPart.name] = getPartMin(myPart);   // min of next overflow state
+								}
+								else if (direction < 0 && partData[myPart.name] < getPartMin(myPart)) {
 									isOverflow = true;
-									partData[myPart.name] = getPartMax(myPart, direction); // max of next overflow state
+									partData[myPart.name] = getPartMax(myPart, direction);   // max of next overflow state
 								}
 								if (isOverflow) {
 									myPart = findPart(findGreaterPartName(myPart.name));
-									if (myPart && !$.isSet(partData[myPart.name])) isOverflow = false; // Incomplete data, don't overflow to next field
+									if (myPart && !$.isSet(partData[myPart.name]))
+										isOverflow = false;   // Incomplete data, don't overflow to next field
 								}
-							} while (myPart && isOverflow);
+							}
+							while (myPart && isOverflow);
 							if (isOverflow && dateSelection) {
 								// No more space for the overflow, cancel entire change
 								partData = backupPartData;
 							}
 						}
-					} else {
+					}
+					else {
 						partData[part.name] = part[direction > 0 ? "min" : "max"];
 					}
 					updateText();
 					cancelSearchTimeout();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 					newInput[0].focus();
 					appendInput = false;
 					inputLength = 0;
@@ -6282,9 +6567,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			function getPartMax(part, nextLevelOffset) {
 				// TODO: Consider valid values as defined by min and max
 				if (part.name === "w") {
-					var year = partData.y;
+					let year = partData.y;
 					if (year) {
-						year += nextLevelOffset || 0;
+						year += (nextLevelOffset || 0);
 						// A year has 53 weeks if it begins or ends on a Thursday
 						// Source: https://de.wikipedia.org/wiki/Woche#Z%C3%A4hlweise_nach_ISO_8601
 						// Algorithm to determine the weekday of the 1st January in a year (0 = Sun ... 6 = Sat)
@@ -6293,30 +6578,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						// * A year that begins on a Thursday (= 4) has 53 weeks
 						// * A year that ends on a Thursday (the next year begins on a Friday = 5) has 53 weeks
 						// * Other years have 52 weeks
-						var firstWeekday = function firstWeekday(year) {
-							return (1 + 5 * ((year - 1) % 4) + 4 * ((year - 1) % 100) + 6 * ((year - 1) % 400)) % 7;
-						};
-						if (firstWeekday(year) !== 4 && firstWeekday(year + 1) !== 5) return 52;
+						let firstWeekday = year => (1 + 5 * ((year - 1) % 4) + 4 * ((year - 1) % 100) + 6 * ((year - 1) % 400)) % 7;
+						if (firstWeekday(year) !== 4 && firstWeekday(year + 1) !== 5)
+							return 52;
 					}
 					return part.max;
 				}
 				if (part.name === "d") {
-					var month = partData.mo;
+					let month = partData.mo;
 					if (month) {
-						month += nextLevelOffset || 0;
+						month += (nextLevelOffset || 0);
 						if (month === 0) month = 12;
-						var _year = partData.y;
-						return getDaysInMonth(month, _year);
+						let year = partData.y;
+						return getDaysInMonth(month, year);
 					}
 					return part.max;
 				}
 				return part.max;
 			}
-
+			
 			// Focus and selection events
 			var isFocused = false;
 			var blurCloseTimeout;
-			newInput.focus(function () {
+			newInput.focus(() => {
 				//console.log("newInput.focus:", newInput[0]);
 				isFocused = true;
 				setTimeout(fixSelection, 0);
@@ -6326,13 +6610,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					blurCloseTimeout = undefined;
 				}
 			});
-			newInput.blur(function () {
+			newInput.blur(() => {
 				//console.log("newInput.blur:", newInput[0]);
 				isFocused = false;
 				cancelSearchTimeout();
-				newInput.prop("readonly", true).attr("inputmode", "none");
+				newInput.prop("readonly", true)
+					.attr("inputmode", "none");
 				isKeyboardMode = false;
-				if (!newInput.hasClass("open")) fixValue();
+				if (!newInput.hasClass("open"))
+					fixValue();
 				// Close the dropdown when leaving the field with the Tab key
 				// (but not when clicking an item in the dropdown)
 				// DEBUG: disable following code to allow inspecting the dropdown contents
@@ -6356,150 +6642,165 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					if (daySelection && !partData.d) {
 						selectPart("d");
 						updateText();
-					} else if (weekSelection && !partData.w) {
+					}
+					else if (weekSelection && !partData.w) {
 						selectPart("w");
 						updateText();
-					} else if (timeSelection && !$.isSet(partData.h)) {
+					}
+					else if (timeSelection && !$.isSet(partData.h)) {
 						selectPart("h");
 						updateText();
 					}
 					openDropdown();
 				}
 			});
-			var separatorChars = [".", ":", "-", "/", ","];
+			let separatorChars = [".", ":", "-", "/", ","];
 			newInput.keydown(function (event) {
 				//console.log("keydown: keyCode:", event.keyCode, event);
 				//alert("keyCode: " + event.keyCode + ", key: " + event.originalEvent.key);
-				var keyCode = event.keyCode;
-				if (event.keyCode === 13) {
-					// Enter
+				let keyCode = event.keyCode;
+				if (event.keyCode === 13) {   // Enter
 					event.preventDefault();
 					dropdown.dropdown.close();
-					newInput.prop("readonly", true).attr("inputmode", "none");
+					newInput.prop("readonly", true)
+						.attr("inputmode", "none");
 					isKeyboardMode = false;
 				}
-				if (event.keyCode === 27) {
-					// Esc
+				if (event.keyCode === 27) {   // Esc
 					event.preventDefault();
 					dropdown.dropdown.close();
 				}
-				if (event.keyCode === 32) {
-					// Space
+				if (event.keyCode === 32) {   // Space
 					event.preventDefault();
-					if (!newInput.hasClass("open")) openDropdown();else dropdown.dropdown.close();
-				} else if (keyCode === 37) {
-					// Left
+					if (!newInput.hasClass("open"))
+						openDropdown();
+					else
+						dropdown.dropdown.close();
+				}
+				else if (keyCode === 37) {   // Left
 					event.preventDefault();
 					prevPart();
 					updateText();
 					cancelSearchTimeout();
-				} else if (keyCode === 39) {
-					// Right
+				}
+				else if (keyCode === 39) {   // Right
 					event.preventDefault();
 					nextPart();
 					updateText();
 					cancelSearchTimeout();
-				} else if (keyCode === 38) {
-					// Up
+				}
+				else if (keyCode === 38) {   // Up
 					event.preventDefault();
 					changeValue(1, 1);
-				} else if (keyCode === 40) {
-					// Down
+				}
+				else if (keyCode === 40) {   // Down
 					event.preventDefault();
 					changeValue(-1, 1);
-				} else if (keyCode === 33) {
-					// PageUp
+				}
+				else if (keyCode === 33) {   // PageUp
 					event.preventDefault();
 					changeValue(1, getPartLargeStep());
-				} else if (keyCode === 34) {
-					// PageDown
+				}
+				else if (keyCode === 34) {   // PageDown
 					event.preventDefault();
 					changeValue(-1, getPartLargeStep());
-				} else if (keyCode === 8 || keyCode === 46) {
-					// Backspace, Del
+				}
+				else if (keyCode === 8 || keyCode === 46) {   // Backspace, Del
 					event.preventDefault();
 					if (!required) {
 						delete partData[parts[selectedPart].name];
 						updateText();
-						newInput.trigger("input").change();
+						newInput.triggerNative("input");
+						newInput.triggerNative("change");
 					}
 					cancelSearchTimeout();
-				} else if (keyCode >= 48 && keyCode <= 57 || keyCode >= 96 && keyCode <= 105) {
-					// 0-9, Num0-Num9
+				}
+				else if (keyCode >= 48 && keyCode <= 57 || keyCode >= 96 && keyCode <= 105) {   // 0-9, Num0-Num9
 					event.preventDefault();
-					var digit = event.keyCode;
-					if (digit >= 96) digit -= 96 - 48;
+					let digit = event.keyCode;
+					if (digit >= 96) digit -= (96 - 48);
 					digit -= 48;
-					var part = parts[selectedPart];
-					var value = partData[part.name];
+					let part = parts[selectedPart];
+					let value = partData[part.name];
 					if ($.isSet(value) && appendInput) {
 						value = value * 10 + digit;
-						if (value > getPartMax(part)) value = digit;
-					} else {
+						if (value > getPartMax(part))
+							value = digit;
+					}
+					else {
 						value = digit;
 					}
 					appendInput = true;
 					inputLength++;
 					partData[part.name] = value;
 					// Skip to next part if the value is complete
-					if (inputLength >= part.length && value >= part.min || value * 10 > getPartMax(part)) {
+					if (inputLength >= part.length && value >= part.min ||
+						value * 10 > getPartMax(part)) {
 						nextPart();
 					}
 					updateText();
 					cancelSearchTimeout();
-					newInput.trigger("input").change();
-				} else if (separatorChars.indexOf(event.originalEvent.key) !== -1) {
-					// Separator
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
+				}
+				else if (separatorChars.indexOf(event.originalEvent.key) !== -1) {   // Separator
 					event.preventDefault();
 					if (appendInput) {
 						nextPart();
 						updateText();
 					}
 					cancelSearchTimeout();
-				} else if (event.originalEvent.key.length === 1 && !event.originalEvent.altKey && !event.originalEvent.ctrlKey) {
-					// Other char
+				}
+				else if (event.originalEvent.key.length === 1 && !event.originalEvent.altKey && !event.originalEvent.ctrlKey) {   // Other char
 					event.preventDefault();
-					if (!appendInput) optionSearch = "";
+					if (!appendInput)
+						optionSearch = "";
 					optionSearch += event.originalEvent.key.toLowerCase();
 					appendInput = true;
 					inputLength++;
 					//console.log("optionSearch:", optionSearch);
-					var _part2 = parts[selectedPart];
-					if (_part2.options) {
-						for (var _i8 = 0; _i8 < _part2.options.length; _i8++) {
-							if (_part2.options[_i8].toLowerCase().startsWith(optionSearch)) {
-								partData[_part2.name] = _i8 + _part2.min;
+					let part = parts[selectedPart];
+					if (part.options) {
+						for (let i = 0; i < part.options.length; i++) {
+							if (part.options[i].toLowerCase().startsWith(optionSearch)) {
+								partData[part.name] = i + part.min;
 								updateText();
 								break;
 							}
 						}
 					}
 					startSearchTimeout();
-				} else {
+				}
+				else {
 					// Whatever it was, reset the text
 					updateText();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
 			});
+			let newInputInInputEvent = false;
 			newInput.on("input", function (event) {
+				if (newInputInInputEvent) return;   // Recursion
+				newInputInInputEvent = true;
 				if (event.originalEvent) {
 					// Something was typed in, reset the text
 					// (Generated input events have no originalEvent)
-					if (separatorChars.indexOf(event.originalEvent.data) !== -1) {
-						// Separator (for Chrome/Android: https://crbug.com/118639)
+					if (separatorChars.indexOf(event.originalEvent.data) !== -1) {   // Separator (for Chrome/Android: https://crbug.com/118639)
 						if (appendInput) {
 							nextPart();
 						}
 						cancelSearchTimeout();
 					}
 					updateText();
-					newInput.trigger("input").change();
+					newInput.triggerNative("input");
+					newInput.triggerNative("change");
 				}
+				newInputInInputEvent = false;
 			});
 
 			function startSearchTimeout() {
 				if (!optionSearchTimeout) {
-					optionSearchTimeout = setTimeout(function () {
+					optionSearchTimeout = setTimeout(() => {
 						appendInput = false;
 						inputLength = 0;
 						optionSearchTimeout = null;
@@ -6518,28 +6819,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function getPartLargeStep() {
 				switch (parts[selectedPart].name) {
-					case "y":
-						return 10;
-					case "mo":
-						return 3;
-					case "d":
-						return 7;
-					case "h":
-						return 12;
-					case "min":
-						return 15;
-					case "s":
-						return 15;
-					default:
-						return 1;
+					case "y": return 10;
+					case "mo": return 3;
+					case "d": return 7;
+					case "h": return 12;
+					case "min": return 15;
+					case "s": return 15;
+					default: return 1;
 				}
 			}
 
 			function prevPart() {
 				//console.log("selectedPart:", selectedPart);
-				for (var _i9 = selectedPart - 1; _i9 >= 0; _i9--) {
-					if (parts[_i9].name) {
-						selectedPart = _i9;
+				for (let i = selectedPart - 1; i >= 0; i--) {
+					if (parts[i].name) {
+						selectedPart = i;
 						//console.log("new selectedPart:", selectedPart);
 						appendInput = false;
 						inputLength = 0;
@@ -6551,9 +6845,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 			function nextPart() {
 				//console.log("selectedPart:", selectedPart);
-				for (var _i10 = selectedPart + 1; _i10 < parts.length; _i10++) {
-					if (parts[_i10].name) {
-						selectedPart = _i10;
+				for (let i = selectedPart + 1; i < parts.length; i++) {
+					if (parts[i].name) {
+						selectedPart = i;
 						//console.log("new selectedPart:", selectedPart);
 						appendInput = false;
 						inputLength = 0;
@@ -6564,17 +6858,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			}
 
 			function fixSelection() {
-				var selStart = newInput[0].selectionStart;
+				let selStart = newInput[0].selectionStart;
 				//console.log("selectionStart:", selStart);
-				for (var _i11 = 0; _i11 < parts.length; _i11++) {
-					var part = parts[_i11];
+				for (let i = 0; i < parts.length; i++) {
+					let part = parts[i];
 					if (part.name && selStart <= part.end) {
-						selectedPart = _i11;
+						selectedPart = i;
 						//console.log("New selected part:", i);
 						appendInput = false;
 						inputLength = 0;
 						updateViewVisibilities();
-						if (isFocused) newInput[0].setSelectionRange(part.start, part.end);
+						if (isFocused)
+							newInput[0].setSelectionRange(part.start, part.end);
 						break;
 					}
 				}
@@ -6584,38 +6879,48 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			setValue(input.val());
 
 			// Create dropdown contents
-			var dropdownInner = $("<div/>").addClass("ff-timepicker").appendTo(dropdown);
-			var dropdownButtons = $("<div/>").addClass("ff-timepicker-buttons").appendTo(dropdownInner);
+			let dropdownInner = $("<div/>")
+				.addClass("ff-timepicker")
+				.appendTo(dropdown);
+			let dropdownButtons = $("<div/>")
+				.addClass("ff-timepicker-buttons")
+				.appendTo(dropdownInner);
 
-			var boxSize = { width: 280, height: 240 };
-			if (!dateSelection) boxSize.width = boxSize.height; // No need for space for longer month names
-			var dropdownContent = $("<div/>").addClass("ff-timepicker-content").css("width", boxSize.width).css("height", boxSize.height).appendTo(dropdownInner);
-			var darkMode = dropdown.parent().hasClass("dark");
+			let boxSize = { width: 280, height: 240 };
+			if (!dateSelection)
+				boxSize.width = boxSize.height;   // No need for space for longer month names
+			let dropdownContent = $("<div/>")
+				.addClass("ff-timepicker-content")
+				.css("width", boxSize.width)
+				.css("height", boxSize.height)
+				.appendTo(dropdownInner);
+			let darkMode = dropdown.parent().hasClass("dark");
 
-			var updateHandler = function updateHandler() {
+			let updateHandler = () => {
 				updateText();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			};
 
-			var yearView = void 0;
-			var monthView = void 0;
-			var clockHourView = void 0;
-			var clockMinuteView = void 0;
-			var clockSecondView = void 0;
+			let yearView;
+			let monthView;
+			let clockHourView;
+			let clockMinuteView;
+			let clockSecondView;
 			if (dateSelection) {
-				yearView = new YearView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection, function () {
-					return partData;
-				}, changeValue, updateHandler, function () {
+				yearView = new YearView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection, () => partData, changeValue, updateHandler, () => {
 					if (daySelection) {
 						selectPart("d");
 						updateText();
 						yearView.hide();
 						monthView.show();
-					} else if (weekSelection) {
+					}
+					else if (weekSelection) {
 						// Convert month selection to week selection
 						// (Keep selected week if the month matches)
-						if (partData.w < getWeekData(new Date(partData.y, partData.mo - 1, 1)).w || partData.w > getWeekData(new Date(partData.y, partData.mo, 0)).w) {
-							var weekData = getWeekData(new Date(partData.y, partData.mo - 1, 4)); // Thursday
+						if (partData.w < getWeekData(new Date(partData.y, partData.mo - 1, 1)).w ||
+							partData.w > getWeekData(new Date(partData.y, partData.mo, 0)).w) {
+							let weekData = getWeekData(new Date(partData.y, partData.mo - 1, 4));   // Thursday
 							delete partData.mo;
 							partData.y = weekData.y;
 							partData.w = weekData.w;
@@ -6625,77 +6930,94 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						monthView.update();
 						yearView.hide();
 						monthView.show();
-					} else {
+					}
+					else {
 						dropdown.dropdown.close();
 					}
 				});
-				monthView = new MonthView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection ? "w" : "d", function () {
-					return partData;
-				}, changeValue, updateHandler, function () {
+				monthView = new MonthView(dropdownContent, boxSize, darkMode, opt, translate, weekSelection ? "w" : "d", () => partData, changeValue, updateHandler, () => {
 					if (timeSelection) {
 						selectPart("h");
 						updateText();
 						monthView.hide();
 						clockHourView.show();
-					} else {
+					}
+					else {
 						dropdown.dropdown.close();
 					}
 				});
-				opt._updateMonthView = function () {
-					return monthView.update(true);
-				};
+				opt._updateMonthView = () => monthView.update(true);
 			}
 			if (timeSelection) {
-				clockHourView = new ClockView(dropdownContent, boxSize, darkMode, translate, "h", function () {
-					return partData;
-				}, changeValue, updateHandler, function () {
+				clockHourView = new ClockView(dropdownContent, boxSize, darkMode, translate, "h", () => partData, changeValue, updateHandler, () => {
 					if (minuteSelection) {
 						selectPart("min");
 						updateText();
 						clockHourView.hide();
 						clockMinuteView.show();
-					} else {
+					}
+					else {
 						dropdown.dropdown.close();
 					}
 				});
-				if (minuteSelection) clockMinuteView = new ClockView(dropdownContent, boxSize, darkMode, translate, "min", function () {
-					return partData;
-				}, changeValue, updateHandler, function () {
-					if (secondSelection) {
-						selectPart("s");
-						updateText();
-						clockMinuteView.hide();
-						clockSecondView.show();
-					} else {
+				if (minuteSelection)
+					clockMinuteView = new ClockView(dropdownContent, boxSize, darkMode, translate, "min", () => partData, changeValue, updateHandler, () => {
+						if (secondSelection) {
+							selectPart("s");
+							updateText();
+							clockMinuteView.hide();
+							clockSecondView.show();
+						}
+						else {
+							dropdown.dropdown.close();
+						}
+					});
+				if (secondSelection)
+					clockSecondView = new ClockView(dropdownContent, boxSize, darkMode, translate, "s", () => partData, changeValue, updateHandler, () => {
 						dropdown.dropdown.close();
-					}
-				});
-				if (secondSelection) clockSecondView = new ClockView(dropdownContent, boxSize, darkMode, translate, "s", function () {
-					return partData;
-				}, changeValue, updateHandler, function () {
-					dropdown.dropdown.close();
-				});
+					});
 			}
 
-			var backButton = $("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>').attr("title", translate("back")).appendTo(dropdownButtons).click(function (event) {
-				selectPart(findGreaterPartName(parts[selectedPart].name));
-				updateViewVisibilities();
-				updateText();
-				cancelSearchTimeout();
-			});
-			$("<button type='button'/>").addClass("button").text(timeSelection ? translate("now") : translate("today")).appendTo(dropdownButtons).click(setNow);
-			$("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>').attr("title", translate("keyboard")).appendTo(dropdownButtons).click(function (event) {
-				isKeyboardMode = true;
-				dropdown.dropdown.close();
-				newInput.prop("readonly", false).attr("inputmode", "decimal");
-				// https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
-			});
-			if (!required) {
-				$("<button type='button'/>").addClass("button narrow").html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>').attr("title", translate("clear")).appendTo(dropdownButtons).click(function (event) {
-					dropdown.dropdown.close();
-					setValue("");
-					newInput.trigger("input").change();
+			let backButton = $("<button type='button'/>")
+				.addClass("button narrow")
+				.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px"><path d="M6,6L6,9.5L0,5L6,0.5L6,4L10,4C11.796,4 13.284,4.62 14.332,5.668C15.38,6.716 16,8.204 16,10C16,11.796 15.38,13.284 14.332,14.332C13.284,15.38 11.796,16 10,16L8,16L8,14L10,14C11.204,14 12.216,13.62 12.918,12.918C13.62,12.216 14,11.204 14,10C14,8.796 13.62,7.784 12.918,7.082C12.216,6.38 11.204,6 10,6L6,6Z"/></svg>')
+				.attr("title", translate("back"))
+				.appendTo(dropdownButtons)
+				.click(event => {
+					selectPart(findGreaterPartName(parts[selectedPart].name));
+					updateViewVisibilities();
+					updateText();
+					cancelSearchTimeout();
 				});
+			$("<button type='button'/>")
+				.addClass("button")
+				.text(timeSelection ? translate("now") : translate("today"))
+				.appendTo(dropdownButtons)
+				.click(setNow);
+			$("<button type='button'/>")
+				.addClass("button narrow")
+				.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M9,13L6,13L6,16L9,16L9,13ZM5,9L2,9L2,12L5,12L5,9ZM13,9L10,9L10,12L13,12L13,9ZM9,9L6,9L6,12L9,12L9,9ZM5,5L2,5L2,8L5,8L5,5ZM9,5L6,5L6,8L9,8L9,5ZM13,5L10,5L10,8L13,8L13,5ZM5,1L2,1L2,4L5,4L5,1ZM9,1L6,1L6,4L9,4L9,1ZM13,1L10,1L10,4L13,4L13,1Z"/></svg>')
+				.attr("title", translate("keyboard"))
+				.appendTo(dropdownButtons)
+				.click(event => {
+					isKeyboardMode = true;
+					dropdown.dropdown.close();
+					newInput.prop("readonly", false)
+						.attr("inputmode", "decimal");
+					// https://html.spec.whatwg.org/multipage/interaction.html#input-modalities:-the-inputmode-attribute
+				});
+			if (!required) {
+				$("<button type='button'/>")
+					.addClass("button narrow")
+					.html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="margin:-2px;fill-rule:evenodd;"><path d="M0.293,8L6.293,14L16,14L16,2L6.293,2L0.293,8ZM6.707,3L1.707,8L6.707,13L15,13L15,3L6.707,3ZM10,7.293L12.646,4.646L13.354,5.354L10.707,8L13.354,10.646L12.646,11.354L10,8.707L7.354,11.354L6.646,10.646L9.293,8L6.646,5.354L7.354,4.646L10,7.293Z"/></svg>')
+					.attr("title", translate("clear"))
+					.appendTo(dropdownButtons)
+					.click(event => {
+						dropdown.dropdown.close();
+						setValue("");
+						newInput.triggerNative("input");
+						newInput.triggerNative("change");
+					});
 				dropdownButtons.addClass("four-buttons");
 			}
 
@@ -6725,7 +7047,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						clockHourView && clockHourView.show();
 						clockMinuteView && clockMinuteView.hide();
 						clockSecondView && clockSecondView.hide();
-						if (!dateSelection) backButton.disable();
+						if (!dateSelection)
+							backButton.disable();
 						break;
 					case "min":
 						yearView && yearView.hideReverse();
@@ -6757,16 +7080,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				updateViews();
 				newInput.addClass("open");
 				dropdown.dropdown(newInput, { autoClose: false });
-				if (newInput.closest(".dark").length > 0) dropdown.parent().addClass("dark"); // Set dropdown container to dark
+				if (newInput.closest(".dark .not-dark").hasClass("dark"))
+					dropdown.parent().addClass("dark");   // Set dropdown container to dark
 			}
 
 			function setNow() {
-				var now = new Date();
+				let now = new Date();
 				if (weekSelection) {
-					var weekData = getWeekData(now);
+					let weekData = getWeekData(now);
 					partData.y = weekData.y;
 					partData.w = weekData.w;
-				} else if (dateSelection) {
+				}
+				else if (dateSelection) {
 					partData.y = now.getFullYear();
 					partData.mo = now.getMonth() + 1;
 				}
@@ -6775,17 +7100,19 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if (minuteSelection) partData.min = now.getMinutes();
 				if (secondSelection) partData.s = now.getSeconds();
 				updateText();
-				newInput.trigger("input").change();
+				newInput.triggerNative("input");
+				newInput.triggerNative("change");
 			}
 
 			var isMouseDown = false;
 			dropdown.on("mousedown", function (event) {
 				if (event.originalEvent.button === 0) {
 					isMouseDown = true;
-					setTimeout(function () {
+					setTimeout(() => {
 						newInput.focus();
 					}, 0);
-				} else {
+				}
+				else {
 					isMouseDown = false;
 				}
 			});
@@ -6797,7 +7124,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			dropdown.on("dropdownclose", function () {
 				//console.log("dropdown.dropdownclose");
 				newInput.removeClass("open");
-				if (!isKeyboardMode) fixValue();
+				if (!isKeyboardMode)
+					fixValue();
 			});
 		});
 	}
@@ -6805,74 +7133,98 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function YearView(container, boxSize, darkMode, opt, translate, weekSelection, partDataAccessor, changeValue, updateHandler, doneHandler) {
 		var instance = this;
 
-		var outerDiv = $("<div/>").addClass("ff-timepicker-year").appendTo(container);
-		var innerDiv = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").appendTo(outerDiv);
+		let outerDiv = $("<div/>")
+			.addClass("ff-timepicker-year")
+			.appendTo(container);
+		let innerDiv = $("<div/>")
+			.addClass("ff-timepicker-inner")
+			.addClass("hidden")
+			.appendTo(outerDiv);
 
-		var headerHeight = 30;
-		var monthHeight = (boxSize.height - headerHeight - 1 /* margin */) / 4;
+		let headerHeight = 30;
+		let monthHeight = (boxSize.height - headerHeight - 1 /* margin */) / 4;
 
-		var header = $("<div/>").addClass("header").css("height", headerHeight).appendTo(innerDiv);
-		var prevButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>').on("repeatclick", function (event) {
-			event.preventDefault();
-			ensureYear();
-			changeValue(-1, 1, "y");
-		}).appendTo(header);
+		let header = $("<div/>")
+			.addClass("header")
+			.css("height", headerHeight)
+			.appendTo(innerDiv);
+		let prevButton = $("<a/>")
+			.addClass("button narrow transparent")
+			.html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>')
+			.on("repeatclick", event => {
+				event.preventDefault();
+				ensureYear();
+				changeValue(-1, 1, "y");
+			})
+			.appendTo(header);
 		prevButton.repeatButton();
-		var yearText = $("<span/>").appendTo(header);
-		var nextButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>').on("repeatclick", function (event) {
-			event.preventDefault();
-			ensureYear();
-			changeValue(1, 1, "y");
-		}).appendTo(header);
+		let yearText = $("<span/>")
+			.appendTo(header);
+		let nextButton = $("<a/>")
+			.addClass("button narrow transparent")
+			.html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>')
+			.on("repeatclick", event => {
+				event.preventDefault();
+				ensureYear();
+				changeValue(1, 1, "y");
+			})
+			.appendTo(header);
 		nextButton.repeatButton();
 
 		function ensureYear() {
-			var partData = partDataAccessor();
-			var now = new Date();
-			if (!partData.y) partData.y = now.getFullYear();
+			let partData = partDataAccessor();
+			let now = new Date();
+			if (!partData.y)
+				partData.y = now.getFullYear();
 		}
 
-		var months = $("<div/>").addClass("months").appendTo(innerDiv);
-		var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+		let months = $("<div/>")
+			.addClass("months")
+			.appendTo(innerDiv);
+		let monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
 
 		instance.update = function () {
 			var partData = partDataAccessor();
 
-			var now = new Date();
-			var year = partData.y || now.getFullYear();
+			let now = new Date();
+			let year = partData.y || now.getFullYear();
 			yearText.text((year + "").padStart(4, "0"));
 
 			prevButton.disabled(partData.y === 1);
 			nextButton.disabled(partData.y === 9999);
 
 			months.children().remove();
-
-			var _loop2 = function _loop2(n) {
-				var item = $("<div/>").addClass("item").css("height", monthHeight).appendTo(months).click(function () {
-					var partData = partDataAccessor();
-					partData.mo = n;
-					if (!$.isSet(partData.y)) partData.y = new Date().getFullYear();
-					instance.update();
-					updateHandler && updateHandler();
-					doneHandler && doneHandler();
-				});
-				$("<span/>").text(monthFormat.format(new Date(2000, n - 1, 1))).appendTo(item);
+			for (let n = 1; n <= 12; n++) {
+				let item = $("<div/>")
+					.addClass("item")
+					.css("height", monthHeight)
+					.appendTo(months)
+					.click(function () {
+						let partData = partDataAccessor();
+						partData.mo = n;
+						if (!$.isSet(partData.y))
+							partData.y = (new Date()).getFullYear();
+						instance.update();
+						updateHandler && updateHandler();
+						doneHandler && doneHandler();
+					});
+				$("<span/>")
+					.text(monthFormat.format(new Date(2000, n - 1, 1)))
+					.appendTo(item);
 				opt.monthFormatter && opt.monthFormatter(item, new Date(year, n - 1, 1));
-			};
-
-			for (var n = 1; n <= 12; n++) {
-				_loop2(n);
 			}
 
 			// Update week numbers
 			if (weekSelection) {
-				months.find(".item").each$(function (n, item) {
+				months.find(".item").each$((n, item) => {
 					item.children().eq(1).remove();
-					$("<span/>").addClass("week-numbers").text(translate("w").substring(0, 1).toUpperCase() + " " + getWeekData(new Date(year, n, 1)).w + '\u202F\u2013\u202F' + getWeekData(new Date(year, n + 1, 0)).w) // NNBSP
-					.appendTo(item);
+					$("<span/>")
+						.addClass("week-numbers")
+						.text(translate("w").substring(0, 1).toUpperCase() + " " + getWeekData(new Date(year, n, 1)).w + "\u202F–\u202F" + getWeekData(new Date(year, n + 1, 0)).w)   // NNBSP
+						.appendTo(item);
 				});
 			}
-
+			
 			// Set current month as "selected"
 			months.find(".item").removeClass("selected now");
 			if ($.isSet(partData.mo)) {
@@ -6903,94 +7255,120 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function MonthView(container, boxSize, darkMode, opt, translate, partName, partDataAccessor, changeValue, updateHandler, doneHandler) {
 		var instance = this;
 
-		var outerDiv = $("<div/>").addClass("ff-timepicker-month").appendTo(container);
-		var innerDiv = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").appendTo(outerDiv);
+		let outerDiv = $("<div/>")
+			.addClass("ff-timepicker-month")
+			.appendTo(container);
+		let innerDiv = $("<div/>")
+			.addClass("ff-timepicker-inner")
+			.addClass("hidden")
+			.appendTo(outerDiv);
 
-		var headerHeight = 30;
-		var weekdayHeight = 20;
-		var dayHeight = (boxSize.height - headerHeight - 1 /* margin */ - weekdayHeight) / 6;
-		var skipWeeksFwd = void 0,
-		    skipWeeksRev = void 0;
+		let headerHeight = 30;
+		let weekdayHeight = 20;
+		let dayHeight = (boxSize.height - headerHeight - 1 /* margin */ - weekdayHeight) / 6;
+		let skipWeeksFwd, skipWeeksRev;
 
-		var header = $("<div/>").addClass("header").css("height", headerHeight).appendTo(innerDiv);
-		var prevButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>').on("repeatclick", function (event) {
-			event.preventDefault();
-			if (partName === "d") {
-				ensureYearMonth();
-				changeValue(-1, 1, "mo");
-			} else {
-				ensureYearWeek();
-				changeValue(-1, skipWeeksRev, "w");
-			}
-		}).appendTo(header);
+		let header = $("<div/>")
+			.addClass("header")
+			.css("height", headerHeight)
+			.appendTo(innerDiv);
+		let prevButton = $("<a/>")
+			.addClass("button narrow transparent")
+			.html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="6,1 1,6 6,11"/></svg>')
+			.on("repeatclick", event => {
+				event.preventDefault();
+				if (partName === "d") {
+					ensureYearMonth();
+					changeValue(-1, 1, "mo");
+				}
+				else {
+					ensureYearWeek();
+					changeValue(-1, skipWeeksRev, "w");
+				}
+			})
+			.appendTo(header);
 		prevButton.repeatButton();
-		var monthText = $("<span/>").appendTo(header);
-		var nextButton = $("<a/>").addClass("button narrow transparent").html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>').on("repeatclick", function (event) {
-			event.preventDefault();
-			if (partName === "d") {
-				ensureYearMonth();
-				changeValue(1, 1, "mo");
-			} else {
-				ensureYearWeek();
-				changeValue(1, skipWeeksFwd, "w");
-			}
-		}).appendTo(header);
+		let monthText = $("<span/>")
+			.appendTo(header);
+		let nextButton = $("<a/>")
+			.addClass("button narrow transparent")
+			.html('<svg xmlns="http://www.w3.org/2000/svg" width="8" height="12"><polyline fill="none" stroke-width="1.2" points="1,1 6,6 1,11"/></svg>')
+			.on("repeatclick", event => {
+				event.preventDefault();
+				if (partName === "d") {
+					ensureYearMonth();
+					changeValue(1, 1, "mo");
+				}
+				else {
+					ensureYearWeek();
+					changeValue(1, skipWeeksFwd, "w");
+				}
+			})
+			.appendTo(header);
 		nextButton.repeatButton();
 
 		function ensureYearMonth() {
-			var partData = partDataAccessor();
-			var now = new Date();
-			if (!partData.mo) partData.mo = now.getMonth() + 1;
-			if (!partData.y) partData.y = now.getFullYear();
+			let partData = partDataAccessor();
+			let now = new Date();
+			if (!partData.mo)
+				partData.mo = now.getMonth() + 1;
+			if (!partData.y)
+				partData.y = now.getFullYear();
 		}
 
 		function ensureYearWeek() {
-			var partData = partDataAccessor();
-			var now = new Date();
-			var weekData = getWeekData(now);
+			let partData = partDataAccessor();
+			let now = new Date();
+			let weekData = getWeekData(now);
 			if (!partData.w || !partData.y) {
 				partData.w = weekData.w;
 				partData.y = weekData.y;
 			}
 		}
 
-		var dayFormat = new Intl.DateTimeFormat(opt.localeCode, { weekday: "short" });
-		var weekdays = $("<div/>").addClass("weekdays").appendTo(innerDiv);
-		for (var n = 1; n <= 7; n++) {
-			$("<div/>").css("height", weekdayHeight).text(dayFormat.format(new Date(2018, 0, n)).toUpperCase()).appendTo(weekdays);
+		let dayFormat = new Intl.DateTimeFormat(opt.localeCode, { weekday: "short" });
+		let weekdays = $("<div/>")
+			.addClass("weekdays")
+			.appendTo(innerDiv);
+		for (let n = 1; n <= 7; n++) {
+			$("<div/>")
+				.css("height", weekdayHeight)
+				.text(dayFormat.format(new Date(2018, 0, n)).toUpperCase())
+				.appendTo(weekdays);
 		}
 
-		var weeks = $("<div/>").addClass("weeks").addClass(partName === "d" ? "day-selection" : "week-selection").appendTo(innerDiv);
-		var monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
+		let weeks = $("<div/>")
+			.addClass("weeks")
+			.addClass(partName === "d" ? "day-selection" : "week-selection")
+			.appendTo(innerDiv);
+		let monthFormat = new Intl.DateTimeFormat(opt.localeCode, { month: "long" });
 
-		var displayedYear = void 0,
-		    displayedMonth = void 0,
-		    prevMonthFirstDay = void 0;
+		let displayedYear, displayedMonth, prevMonthFirstDay;
 
 		instance.update = function (force) {
 			var partData = partDataAccessor();
 
-			var now = new Date();
-			var year = partData.y || now.getFullYear();
-			var month = partData.mo || now.getMonth() + 1;
+			let now = new Date();
+			let year = partData.y || now.getFullYear();
+			let month = partData.mo || now.getMonth() + 1;
 			if (partName === "w" && partData.w) {
 				// Find month that contains the selected week
-				var date = new Date(year, 1, 1);
-				while (date.getDay() !== 4) {
-					// Thursday
+				let date = new Date(year, 1, 1);
+				while (date.getDay() !== 4)   // Thursday
 					date.setDate(date.getDate() + 1);
-				}while (partData.w !== getWeekData(date).w) {
+				while (partData.w !== getWeekData(date).w)
 					date.setDate(date.getDate() + 7);
-				}month = date.getMonth() + 1;
+				month = date.getMonth() + 1;
 
 				skipWeeksFwd = 4;
 				date = new Date(year, month - 1, 1);
-				if (getDaysInMonth(month, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36) // Found by try&analyse
+				if (getDaysInMonth(month, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36)   // Found by try&analyse
 					skipWeeksFwd++;
-
+				
 				skipWeeksRev = 4;
 				date = new Date(year, month - 2, 1);
-				if (getDaysInMonth(month - 1, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36) skipWeeksRev++;
+				if (getDaysInMonth(month - 1, year) + (date.getDay() === 0 ? 7 : date.getDay()) >= 36)
+					skipWeeksRev++;
 			}
 
 			monthText.text(monthFormat.format(new Date(year, month - 1, 1)) + " " + (year + "").padStart(4, "0"));
@@ -7001,25 +7379,27 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			if (force || year !== displayedYear || month !== displayedMonth) {
 				// Recreate days for the selected month
 				weeks.children().remove();
-				var maxDay = getDaysInMonth(month, year);
-				var _date = new Date(year, month - 1, 1);
-				var dayOfWeek = _date.getDay(); // 0 = Sun ... 6 = Sat
-				if (dayOfWeek === 0) dayOfWeek = 7; // 1 = Mon ... 7 = Sun
-				var maxDayPrevMonth = getDaysInMonth(month === 1 ? 12 : month - 1, year);
+				let maxDay = getDaysInMonth(month, year);
+				let date = new Date(year, month - 1, 1);
+				let dayOfWeek = date.getDay();   // 0 = Sun ... 6 = Sat
+				if (dayOfWeek === 0) dayOfWeek = 7;   // 1 = Mon ... 7 = Sun
+				let maxDayPrevMonth = getDaysInMonth(month === 1 ? 12 : month - 1, year);
 				prevMonthFirstDay = maxDayPrevMonth - (dayOfWeek - 2);
-				var days = addWeek(_date);
-				var daysCount = 0;
-
-				var _loop3 = function _loop3(_n) {
+				let days = addWeek(date);
+				let daysCount = 0;
+				for (let n = prevMonthFirstDay; n <= maxDayPrevMonth; n++) {
 					if (days.children(".item").length === 7) {
-						_date.setDate(_date.getDate() + 7);
-						days = addWeek(_date);
+						date.setDate(date.getDate() + 7);
+						days = addWeek(date);
 					}
-					var item = $("<div/>").addClass("item prev-month").css("height", dayHeight).appendTo(days);
+					let item = $("<div/>")
+						.addClass("item prev-month")
+						.css("height", dayHeight)
+						.appendTo(days);
 					if (partName === "d" && (month > 1 || year > 1)) {
 						item.click(function () {
-							var partData = partDataAccessor();
-							partData.d = _n;
+							let partData = partDataAccessor();
+							partData.d = n;
 							partData.mo = month - 1;
 							partData.y = year;
 							if (partData.mo === 0) {
@@ -7032,28 +7412,29 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 					}
 					if (month > 1 || year > 1) {
-						$("<span/>").text(_n).appendTo(item);
-					} else {
+						$("<span/>")
+							.text(n)
+							.appendTo(item);
+					}
+					else {
 						item.disable();
 					}
-					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 2, _n));
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 2, n));
 					daysCount++;
-				};
-
-				for (var _n = prevMonthFirstDay; _n <= maxDayPrevMonth; _n++) {
-					_loop3(_n);
 				}
-
-				var _loop4 = function _loop4(_n2) {
+				for (let n = 1; n <= maxDay; n++) {
 					if (days.children(".item").length === 7) {
-						_date.setDate(_date.getDate() + 7);
-						days = addWeek(_date);
+						date.setDate(date.getDate() + 7);
+						days = addWeek(date);
 					}
-					var item = $("<div/>").addClass("item day").css("height", dayHeight).appendTo(days);
+					let item = $("<div/>")
+						.addClass("item day")
+						.css("height", dayHeight)
+						.appendTo(days);
 					if (partName === "d") {
 						item.click(function () {
-							var partData = partDataAccessor();
-							partData.d = _n2;
+							let partData = partDataAccessor();
+							partData.d = n;
 							partData.mo = month;
 							partData.y = year;
 							instance.update();
@@ -7061,25 +7442,25 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 							doneHandler && doneHandler();
 						});
 					}
-					$("<span/>").text(_n2).appendTo(item);
-					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 1, _n2));
+					$("<span/>")
+						.text(n)
+						.appendTo(item);
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month - 1, n));
 					daysCount++;
-				};
-
-				for (var _n2 = 1; _n2 <= maxDay; _n2++) {
-					_loop4(_n2);
 				}
-
-				var _loop5 = function _loop5(_n3) {
+				for (let n = 1; n <= 6 * 7 - daysCount; n++) {
 					if (days.children(".item").length === 7) {
-						_date.setDate(_date.getDate() + 7);
-						days = addWeek(_date);
+						date.setDate(date.getDate() + 7);
+						days = addWeek(date);
 					}
-					var item = $("<div/>").addClass("item next-month").css("height", dayHeight).appendTo(days);
+					let item = $("<div/>")
+						.addClass("item next-month")
+						.css("height", dayHeight)
+						.appendTo(days);
 					if (partName === "d" && (month < 12 || year < 9999)) {
 						item.click(function () {
-							var partData = partDataAccessor();
-							partData.d = _n3;
+							let partData = partDataAccessor();
+							partData.d = n;
 							partData.mo = month + 1;
 							partData.y = year;
 							if (partData.mo === 13) {
@@ -7092,27 +7473,34 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 						});
 					}
 					if (month < 12 || year < 9999) {
-						$("<span/>").text(_n3).appendTo(item);
-					} else {
+						$("<span/>")
+							.text(n)
+							.appendTo(item);
+					}
+					else {
 						item.disable();
 					}
-					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month, _n3));
-				};
-
-				for (var _n3 = 1; _n3 <= 6 * 7 - daysCount; _n3++) {
-					_loop5(_n3);
+					opt.dayFormatter && opt.dayFormatter(item, new Date(year, month, n));
 				}
-
+				
 				displayedYear = year;
 				displayedMonth = month;
 			}
 
 			function addWeek(date) {
-				var weekData = getWeekData(date);
-				var week = $("<div/>").addClass("days").data("week", weekData.w).data("year", weekData.y).appendTo(weeks).append($("<div/>").addClass("week-number").append($("<span/>").text(weekData.w)));
+				let weekData = getWeekData(date);
+				let week = $("<div/>")
+					.addClass("days")
+					.data("week", weekData.w)
+					.data("year", weekData.y)
+					.appendTo(weeks)
+					.append($("<div/>")
+						.addClass("week-number")
+						.append($("<span/>")
+							.text(weekData.w)));
 				if (partName === "w") {
 					week.click(function () {
-						var partData = partDataAccessor();
+						let partData = partDataAccessor();
 						partData.w = weekData.w;
 						partData.y = weekData.y;
 						instance.update();
@@ -7129,11 +7517,13 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				if ($.isSet(partData.d)) {
 					weeks.find(".item.day").eq(partData.d - 1).addClass("selected");
 				}
-			} else {
+			}
+			else {
 				weeks.children().removeClass("selected");
 				if ($.isSet(partData.w)) {
-					weeks.children().each$(function (_, week) {
-						if (week.data("week") == partData.w) week.addClass("selected");
+					weeks.children().each$((_, week) => {
+						if (week.data("week") == partData.w)
+							week.addClass("selected");
 					});
 				}
 			}
@@ -7142,12 +7532,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			weeks.find(".item").removeClass("now");
 			if (now.getFullYear() === year && now.getMonth() === month - 1) {
 				weeks.find(".item.day").eq(now.getDate() - 1).addClass("now");
-			} else {
-				var nowYearMonth = now.getFullYear() * 12 + now.getMonth();
-				var yearMonth = year * 12 + month - 1;
+			}
+			else {
+				let nowYearMonth = now.getFullYear() * 12 + now.getMonth();
+				let yearMonth = year * 12 + month - 1;
 				if (nowYearMonth === yearMonth - 1 && now.getDate() >= prevMonthFirstDay) {
 					weeks.find(".item.prev-month").eq(now.getDate() - prevMonthFirstDay).addClass("now");
-				} else if (nowYearMonth === yearMonth + 1 && now.getDate() <= 14) {
+				}
+				else if (nowYearMonth === yearMonth + 1 && now.getDate() <= 14) {
 					weeks.find(".item.next-month").eq(now.getDate() - 1).addClass("now");
 				}
 			}
@@ -7173,52 +7565,74 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	function ClockView(container, boxSize, darkMode, translate, partName, partDataAccessor, changeValue, updateHandler, doneHandler) {
 		var instance = this;
 
-		var padding = 10;
-		var clockOuter = $("<div/>").addClass("ff-timepicker-clock").css("padding", padding + "px " + ((boxSize.width - boxSize.height) / 2 + padding) + "px").appendTo(container);
-		var clockSize = boxSize.height - 2 * padding;
-		var clockInner = $("<div/>").addClass("ff-timepicker-inner").addClass("hidden").css("width", clockSize).css("height", clockSize).appendTo(clockOuter);
-		var itemSize = 32;
-		var outerRadius = clockSize / 2 - itemSize / 2 - 5;
-		var innerRadius = clockSize * 0.32 - itemSize / 2;
+		let padding = 10;
+		let clockOuter = $("<div/>")
+			.addClass("ff-timepicker-clock")
+			.css("padding", padding + "px " + ((boxSize.width - boxSize.height) / 2 + padding) + "px")
+			.appendTo(container);
+		let clockSize = boxSize.height - 2 * padding;
+		let clockInner = $("<div/>")
+			.addClass("ff-timepicker-inner")
+			.addClass("hidden")
+			.css("width", clockSize)
+			.css("height", clockSize)
+			.appendTo(clockOuter);
+		let itemSize = 32;
+		let outerRadius = clockSize / 2 - itemSize / 2 - 5;
+		let innerRadius = clockSize * 0.32 - itemSize / 2;
 		if (partName === "h") {
-			for (var n = 1; n <= 24; n++) {
-				var radius = n <= 12 ? outerRadius : innerRadius;
-				var top = clockSize / 2 - Math.cos(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
-				var left = clockSize / 2 + Math.sin(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
-				var _item = $("<span/>").css("top", top).css("left", left).appendTo(clockInner);
-				$("<span/>").text(n % 24).appendTo(_item);
-				if (n > 12) _item.addClass("inner-circle");
-			}
-		} else {
-			for (var _n4 = 0; _n4 < 60; _n4 += 5) {
-				var _top = clockSize / 2 - Math.cos(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
-				var _left = clockSize / 2 + Math.sin(_n4 / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
-				var _item2 = $("<span/>").css("top", _top).css("left", _left).appendTo(clockInner);
-				$("<span/>").text(_n4).appendTo(_item2);
+			for (let n = 1; n <= 24; n++) {
+				let radius = n <= 12 ? outerRadius : innerRadius;
+				let top = clockSize / 2 - Math.cos(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
+				let left = clockSize / 2 + Math.sin(n / 12 * 2 * Math.PI) * radius - itemSize / 2;
+				let item = $("<span/>")
+					.css("top", top)
+					.css("left", left)
+					.appendTo(clockInner);
+				$("<span/>")
+					.text(n % 24)
+					.appendTo(item);
+				if (n > 12)
+					item.addClass("inner-circle");
 			}
 		}
-		clockInner.children().addClass("item").css("width", itemSize).css("height", itemSize);
+		else {
+			for (let n = 0; n < 60; n += 5) {
+				let top = clockSize / 2 - Math.cos(n / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
+				let left = clockSize / 2 + Math.sin(n / 60 * 2 * Math.PI) * outerRadius - itemSize / 2;
+				let item = $("<span/>")
+					.css("top", top)
+					.css("left", left)
+					.appendTo(clockInner);
+				$("<span/>")
+					.text(n)
+					.appendTo(item);
+			}
+		}
+		clockInner.children()
+			.addClass("item")
+			.css("width", itemSize)
+			.css("height", itemSize);
 
-		var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		clockInner.append(svg);
-		var centerCircle = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+		let centerCircle = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
 		centerCircle.setAttribute("class", "clock-center-cirle");
 		centerCircle.setAttribute("cx", clockSize / 2);
 		centerCircle.setAttribute("cy", clockSize / 2);
 		centerCircle.setAttribute("rx", 3.5);
 		centerCircle.setAttribute("ry", 3.5);
 		svg.appendChild(centerCircle);
-		var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		let line = document.createElementNS("http://www.w3.org/2000/svg", "line");
 		line.setAttribute("class", "clock-hour-line");
 		line.setAttribute("visibility", "hidden");
 		line.setAttribute("x1", clockSize / 2);
 		line.setAttribute("y1", clockSize / 2);
 		svg.appendChild(line);
-		var extraItem = void 0,
-		    line2 = void 0;
+		let extraItem, line2;
 		if (partName !== "h") {
 			line.setAttribute("class", "clock-minute-line");
-			var backSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+			let backSvg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 			clockInner.prepend(backSvg);
 			extraItem = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
 			extraItem.setAttribute("class", "clock-extra-item");
@@ -7234,58 +7648,67 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 			line2.setAttribute("y1", clockSize / 2);
 			backSvg.appendChild(line2);
 		}
-		var draggable = $("<div/>").css("width", 0).css("height", 0) // draggable itself need not be seen or touchable
-		.appendTo(clockInner);
+		let draggable = $("<div/>")
+			.css("width", 0)
+			.css("height", 0)   // draggable itself need not be seen or touchable
+			.appendTo(clockInner);
 		draggable.draggable({ catchElement: clockOuter });
 		draggable.on("draggablemove", function (event) {
 			// Compute angle and distance of draggable from centre
-			var draggableRadius = draggable.outerWidth() / 2;
-			var clockRect = clockInner.rect();
-			var clockRadius = clockRect.width / 2;
-			var angle = Math.atan2(event.newPoint.left + draggableRadius - (clockRect.left + clockRadius), clockRect.top + clockRadius - (event.newPoint.top + draggableRadius));
-			var distance = Math.sqrt(Math.pow(event.newPoint.left + draggableRadius - (clockRect.left + clockRadius), 2) + Math.pow(event.newPoint.top + draggableRadius - (clockRect.top + clockRadius), 2));
+			let draggableRadius = draggable.outerWidth() / 2;
+			let clockRect = clockInner.rect();
+			let clockRadius = clockRect.width / 2;
+			let angle = Math.atan2(
+				(event.originalEvent.newPoint.left + draggableRadius) - (clockRect.left + clockRadius),
+				(clockRect.top + clockRadius) - (event.originalEvent.newPoint.top + draggableRadius));
+			let distance = Math.sqrt(
+				Math.pow((event.originalEvent.newPoint.left + draggableRadius) - (clockRect.left + clockRadius), 2) +
+				Math.pow((event.originalEvent.newPoint.top + draggableRadius) - (clockRect.top + clockRadius), 2));
 
 			if (partName === "h") {
 				// Closer to inner or outer hours circle?
-				var isOuterCircle = distance > (innerRadius + outerRadius) / 2;
+				let isOuterCircle = distance > (innerRadius + outerRadius) / 2;
 
 				// Determine nearest hour
-				var angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360; // rad to degrees
-				var hour = Math.round(angleDegree / 360 * 12);
-				hour = (hour + 11) % 12 + 1; // 0..11 → 1..12
+				let angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360;   // rad to degrees
+				let hour = Math.round(angleDegree / 360 * 12);
+				hour = (hour + 11) % 12 + 1;   // 0..11 → 1..12
 				angleDegree = hour / 12 * 360;
-				angle = angleDegree / 360 * 2 * Math.PI; // degrees to rad
-				if (!isOuterCircle) hour = (hour + 12) % 24; // 1..12 → 13..0
+				angle = angleDegree / 360 * 2 * Math.PI;   // degrees to rad
+				if (!isOuterCircle)
+					hour = (hour + 12) % 24;   // 1..12 → 13..0
 				partDataAccessor()[partName] = hour;
-				var _radius = isOuterCircle ? outerRadius : innerRadius;
+				let radius = isOuterCircle ? outerRadius : innerRadius;
 				instance.update();
 				updateHandler && updateHandler();
 
 				// Calculate point for determined hour (not really displayed...)
-				event.newPoint = {
-					top: -Math.cos(angle) * _radius + clockRect.top + clockRadius - draggableRadius,
-					left: Math.sin(angle) * _radius + clockRect.left + clockRadius - draggableRadius
+				event.originalEvent.newPoint = {
+					top: -Math.cos(angle) * radius + clockRect.top + clockRadius - draggableRadius,
+					left: Math.sin(angle) * radius + clockRect.left + clockRadius - draggableRadius
 				};
-			} else {
+			}
+			else {
 				// Determine nearest minute/second
-				var _angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360; // rad to degrees
-				var _n5 = Math.round(_angleDegree / 360 * 60) % 60; // 60 → 0
-				_angleDegree = _n5 / 60 * 360;
-				angle = _angleDegree / 360 * 2 * Math.PI; // degrees to rad
-				var partData = partDataAccessor();
-				if (partData[partName] >= 45 && _n5 <= 15) {
+				let angleDegree = (angle / 2 / Math.PI * 360 + 360) % 360;   // rad to degrees
+				let n = Math.round(angleDegree / 360 * 60) % 60;   // 60 → 0
+				angleDegree = n / 60 * 360;
+				angle = angleDegree / 360 * 2 * Math.PI;   // degrees to rad
+				let partData = partDataAccessor();
+				if (partData[partName] >= 45 && n <= 15) {
 					// Increment next level
 					changeValue(1, 1, partName === "s" ? "min" : "h");
-				} else if (partData[partName] <= 15 && _n5 >= 45) {
+				}
+				else if (partData[partName] <= 15 && n >= 45) {
 					// Decrement next level
 					changeValue(-1, 1, partName === "s" ? "min" : "h");
 				}
-				partData[partName] = _n5;
+				partData[partName] = n;
 				instance.update();
 				updateHandler && updateHandler();
 
 				// Calculate point for determined minute/second (not really displayed...)
-				event.newPoint = {
+				event.originalEvent.newPoint = {
 					top: -Math.cos(angle) * outerRadius + clockRect.top + clockRadius - draggableRadius,
 					left: Math.sin(angle) * outerRadius + clockRect.left + clockRadius - draggableRadius
 				};
@@ -7305,54 +7728,61 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 					// hour 1 → index 0 (first element), 2 → 1, 23 → 22, 0 → 23 (last element)
 					clockInner.find(".item").eq((partData[partName] + 23) % 24).addClass("selected");
 					// Move line to the edge of that item circle
-					var clockRadius = clockSize / 2;
-					var angle = partData[partName] / 12 * 2 * Math.PI; // rad
-					var _radius2 = partData[partName] >= 1 && partData[partName] <= 12 ? outerRadius : innerRadius;
-					_radius2 -= itemSize / 2 + 4; // only touch the item circle, don't go to its centre
+					let clockRadius = clockSize / 2;
+					let angle = partData[partName] / 12 * 2 * Math.PI;   // rad
+					let radius = partData[partName] >= 1 && partData[partName] <= 12 ? outerRadius : innerRadius;
+					radius -= itemSize / 2 + 4;   // only touch the item circle, don't go to its centre
 					line.setAttribute("visibility", "visible");
-					line.setAttribute("x2", Math.sin(angle) * _radius2 + clockRadius);
-					line.setAttribute("y2", -Math.cos(angle) * _radius2 + clockRadius);
-				} else {
+					line.setAttribute("x2", Math.sin(angle) * radius + clockRadius);
+					line.setAttribute("y2", -Math.cos(angle) * radius + clockRadius);
+				}
+				else {
 					// Remove line
 					line.setAttribute("visibility", "hidden");
 					line.setAttribute("x2", clockSize / 2);
 					line.setAttribute("y2", clockSize / 2);
 				}
-			} else {
+			}
+			else {
 				// Set current minute/second as "selected"
 				clockInner.find(".item").removeClass("selected");
 				if ($.isSet(partData[partName])) {
-					if (partData[partName] % 5 === 0) clockInner.find(".item").eq(partData[partName] / 5).addClass("selected");
+					if (partData[partName] % 5 === 0)
+						clockInner.find(".item").eq(partData[partName] / 5).addClass("selected");
 					// Move line to the edge of that item circle
-					var _clockRadius = clockSize / 2;
-					var _angle = partData[partName] / 60 * 2 * Math.PI; // rad
-					var _radius3 = outerRadius - (itemSize / 2 + 4); // only touch the item circle, don't go to its centre
+					let clockRadius = clockSize / 2;
+					let angle = partData[partName] / 60 * 2 * Math.PI;   // rad
+					let radius = outerRadius - (itemSize / 2 + 4);   // only touch the item circle, don't go to its centre
 					line.setAttribute("visibility", "visible");
-					line.setAttribute("x2", Math.sin(_angle) * _radius3 + _clockRadius);
-					line.setAttribute("y2", -Math.cos(_angle) * _radius3 + _clockRadius);
+					line.setAttribute("x2", Math.sin(angle) * radius + clockRadius);
+					line.setAttribute("y2", -Math.cos(angle) * radius + clockRadius);
 					// Set extra item position
 					if (partData[partName] % 5 !== 0) {
 						extraItem.setAttribute("visibility", "visible");
-						extraItem.setAttribute("cx", Math.sin(_angle) * outerRadius + _clockRadius);
-						extraItem.setAttribute("cy", -Math.cos(_angle) * outerRadius + _clockRadius);
-					} else {
+						extraItem.setAttribute("cx", Math.sin(angle) * outerRadius + clockRadius);
+						extraItem.setAttribute("cy", -Math.cos(angle) * outerRadius + clockRadius);
+					}
+					else {
 						extraItem.setAttribute("visibility", "hidden");
 					}
 
 					if (partName === "min") {
 						if ($.isSet(partData.h)) {
 							// Set secondary (hour) line
-							_angle = (partData.h + partData.min / 60) / 12 * 2 * Math.PI; // rad
-							_radius3 *= 0.6;
+							angle = (partData.h + partData.min / 60) / 12 * 2 * Math.PI;   // rad
+							radius *= 0.6;
 							line2.setAttribute("visibility", "visible");
-							line2.setAttribute("x2", Math.sin(_angle) * _radius3 + _clockRadius);
-							line2.setAttribute("y2", -Math.cos(_angle) * _radius3 + _clockRadius);
-						} else {
+							line2.setAttribute("x2", Math.sin(angle) * radius + clockRadius);
+							line2.setAttribute("y2", -Math.cos(angle) * radius + clockRadius);
+						}
+						else
+						{
 							// Remove secondary (hour) line
 							line2.setAttribute("visibility", "hidden");
 						}
 					}
-				} else {
+				}
+				else {
 					// Remove lines
 					line.setAttribute("visibility", "hidden");
 					line2.setAttribute("visibility", "hidden");
@@ -7380,10 +7810,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	}
 
 	function getDaysInMonth(month, year) {
-		if (month === 4 || month === 6 || month === 9 || month === 11) return 30;
+		if (month === 4 || month === 6 || month === 9 || month === 11)
+			return 30;
 		if (month === 2) {
 			if (year) {
-				var leapYear = year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+				let leapYear = (year % 4 === 0) && (year % 100 !== 0) || (year % 400 === 0);
 				return leapYear ? 29 : 28;
 			}
 			return 29;
@@ -7413,7 +7844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (fn === undefined) {
 			var timePicker = this.first();
-			if (timePicker.length === 0) return; // Nothing to do
+			if (timePicker.length === 0) return;   // Nothing to do
 			var opt = loadOptions("timePicker", timePicker);
 			return opt.monthFormatter;
 		}
@@ -7432,7 +7863,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		// Getter
 		if (fn === undefined) {
 			var timePicker = this.first();
-			if (timePicker.length === 0) return; // Nothing to do
+			if (timePicker.length === 0) return;   // Nothing to do
 			var opt = loadOptions("timePicker", timePicker);
 			return opt.dayFormatter;
 		}
@@ -7455,12 +7886,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 	// Doing it now is faster than waiting for the DOM ready event, and when loaded at the end of the
 	// document, all relevant DOM parts are already there.
 
-	$.fn.frontfire = function (prefix) {
+	$.fn.frontfire = function (prefix, isAutostart) {
 		if (prefix === undefined) prefix = "";
-		var t = this;
+		let t = this;
 
 		function findInclSelf(selector) {
-			return t.find(selector).addBack(selector);
+			let q = t.find(selector).addBack(selector);
+			if (isAutostart)
+				q = q.filter((_, n) => !n.classList.contains("no-frontfire") && !n.closest(".no-frontfire"));
+			return q;
 		}
 
 		findInclSelf(prefix + ".accordion").accordion();
@@ -7486,15 +7920,15 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 		findInclSelf(prefix + ".tabs").tabs();
 		findInclSelf(prefix + ".selectable").selectable();
 		findInclSelf(prefix + "select").selectable();
-
+		
 		// Duplicate all overlay texts to separate background and foreground opacity.
 		// This effect cannot be achieved with a single element and rgba() background
 		// because the semitransparent backgrounds of each text line overlap a bit and
 		// reduce transparency in these areas. The line gap cannot be determined reliably
 		// so a bit overlap is necessary to avoid empty space between the lines.
-		findInclSelf(prefix + "div.image-overlay-text, " + prefix + "a.image-overlay-text").each$(function (_, el) {
+		findInclSelf(prefix + "div.image-overlay-text, " + prefix + "a.image-overlay-text").each$((_, el) => {
 			// Skip images (they're styled differently) and already marked elements
-			el.children(":not(img):not(.ff-foreground-only):not(.ff-background-only)").each$(function (_, el) {
+			el.children(":not(img):not(.ff-foreground-only):not(.ff-background-only)").each$((_, el) => {
 				// The second (duplicate) will show only the text.
 				el.clone().addClass("ff-foreground-only").insertAfter(el);
 				// The first (original) will show only the background and have a
@@ -7503,12 +7937,21 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 				el.addClass("ff-background-only").attr("aria-hidden", "true");
 			});
 		});
-
+		
 		return this;
 	};
 
-	$(document).frontfire(":not(.no-autostart)");
+	if (document.body) {
+		// We expect this script to be placed at the end of <body> after all visible elements.
+		$(document).frontfire("", true);
+	}
+	else {
+		// If the script is included in <head>, document.body is still null, so gracefully revert to the
+		// DOM ready event to run this.
+		$(() => {
+			$(document).frontfire("", true);
+		});
+	}
+
 })(jQuery, window, document);
 //# sourceMappingURL=frontfire.bundle.js.map
-
-//# sourceMappingURL=frontfire.es5.js.map
